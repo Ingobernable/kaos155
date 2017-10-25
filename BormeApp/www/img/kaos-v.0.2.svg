@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="200.75"
+   height="50.75"
+   version="1.1"
+   id="svg86"
+   sodipodi:docname="kaos-v.0.2.svg"
+   inkscape:version="0.92.1 r15371">
+  <metadata
+     id="metadata92">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs90" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1280"
+     inkscape:window-height="961"
+     id="namedview88"
+     showgrid="false"
+     inkscape:zoom="4.0048524"
+     inkscape:cx="100.56153"
+     inkscape:cy="28.179083"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2"
+     showguides="true"
+     inkscape:guide-bbox="true">
+    <sodipodi:guide
+       position="467.44882,44.583269"
+       orientation="1,0"
+       id="guide4573"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="308.38292,118.5472"
+       orientation="1,0"
+       id="guide4575"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="kaos"
+     style="display:inline"
+     transform="translate(0,-265)" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Text"
+     style="display:inline"
+     transform="translate(0,-265)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="129.44411"
+       y="-19.085114"
+       id="text4987"><tspan
+         sodipodi:role="line"
+         id="tspan4985"
+         x="129.44411"
+         y="17.408098" /></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot5000"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
+         id="flowRegion5002"><rect
+           id="rect5004"
+           width="112.72623"
+           height="43.944122"
+           x="155.71504"
+           y="154.30312" /></flowRegion><flowPara
+         id="flowPara5006"></flowPara></flowRoot>    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:35.29804611px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;display:inline;fill:#eacc37;fill-opacity:0.99523806;stroke:#000000;stroke-width:0.26173624;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0"
+       x="99.89563"
+       y="301.36475"
+       id="text5010-5-0"><tspan
+         sodipodi:role="line"
+         id="tspan5008-7-9"
+         x="99.895638"
+         y="301.36475"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#eacc37;fill-opacity:0.99523806;stroke:#000000;stroke-width:0.26173624;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0">KAOS-155</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:35.29804611px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;display:inline;fill:#eacc37;fill-opacity:0.57142861;stroke:#000000;stroke-width:0.26173624;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0"
+       x="102.14291"
+       y="300.61566"
+       id="text5010-5-0-8"><tspan
+         sodipodi:role="line"
+         id="tspan5008-7-9-6"
+         x="102.14291"
+         y="300.61566"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';text-align:center;text-anchor:middle;fill:#eacc37;fill-opacity:0.57142861;stroke:#000000;stroke-width:0.26173624;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0">KAOS-155</tspan></text>
+  </g>
+</svg>
