@@ -1,2 +1,2 @@
 # kaos155
-Herramienta para limpiar tramas de corrupción
+Herramienta para seguimiento de supuestas tramas de corrupción
