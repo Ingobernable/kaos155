@@ -4,7 +4,7 @@ console.log('loading App - version -' + Version)
 var myArgs = process.argv.slice(2);
 
 if (myArgs.length == 0)
-    myArgs = ['127.0.0.1', 'CREATE']//['142.44.166.218', 'BORME',  false]
+    myArgs = ['CREATE']//['142.44.166.218', 'BORME',  false]
 
 //myArgs[1] = myArgs[1].substr(2, myArgs[2].length - 2)
 
@@ -112,7 +112,7 @@ var App = {
  
 
         var arg = myArgs[2]
-        app.SqlIP = myArgs[0]
+        //app.SqlIP = myArgs[0]
         if (app.SqlIP != null && app.SqlIP != 'localhost') {
             if (app.SqlIP.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g).length != 1) {
                 app.SqlIP = 'localhost'
@@ -121,7 +121,7 @@ var App = {
             app.SqlIP = 'localhost'
         }
 
-        if (myArgs[1] == "CREATE" || myArgs[1] == "BORME" || myArgs[1] == "BOE" || myArgs[1] == "BOCM") {
+        if (myArgs[0] == "CREATE" || myArgs[0] == "BORME" || myArgs[0] == "BOE" || myArgs[0] == "BOCM") {
             //if (myArgs[2]) { // = (myArgs[1] == 'true' ? true : false)
             //    if (typeof (myArgs[2]) === "boolean") {
             //        app.drop = myArgs[2]
@@ -135,7 +135,7 @@ var App = {
             perocess.exit(1)
         }
         
-        app.Type = myArgs[1]
+        app.Type = myArgs[0]
         callback(app)
     }
 }
