@@ -1,4 +1,4 @@
-﻿module.exports = function (app, drop, callback) {
+﻿module.exports = function (app, callback) {
 
     var options = {
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
@@ -342,7 +342,7 @@
 
    // app.commonSQL.getConnect({ SQL: { db: null } }, false, 'RELACIONES', function (_options) {
     options.vConnect = app.VisualCif
-    app.commonSQL.init(options, drop, 'BOCM', callback)
+    app.commonSQL.init(options, 'BOCM', callback)
     //})
 
 }

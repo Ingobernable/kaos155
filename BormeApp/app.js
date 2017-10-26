@@ -4,7 +4,7 @@ console.log('loading App - version -' + Version)
 var myArgs = process.argv.slice(2);
 
 if (myArgs.length == 0)
-    myArgs = ['127.0.0.1', 'BOE',  false]//['142.44.166.218', 'BORME',  false]
+    myArgs = ['127.0.0.1', 'CREATE']//['142.44.166.218', 'BORME',  false]
 
 //myArgs[1] = myArgs[1].substr(2, myArgs[2].length - 2)
 
@@ -68,19 +68,19 @@ var App = {
             
             cb({
                 BOCM: function (dataFile) {
-                    require('./node_app/parser/borme.js')(app, false, dataFile, function (options) {
-                        app.Borme = options
-                        require('./node_app/parser/bocm.js')(app, app.drop, function (options) {
+                   // require('./node_app/parser/borme.js')(app, false, dataFile, function (options) {
+                        //app.Borme = options
+                        require('./node_app/parser/bocm.js')(app, function (options) {
                             app.commonSQL.ActualizeCounters(options, function (options) {                                
                                 options._common.Actualize(options, 'BOCM', { desde: app._xData.Sumario.BOCM.SUMARIO_NEXT.substr(5, 8), type: "BOCM", hasta: new Date() })
                             })
                         })
-                    })
+                    //})
                 },
                 BOE: function (dataFile) {
                     //require('./node_app/parser/borme.js')(app, false, dataFile, function (Borme) {
                         //app.Borme = options
-                        require('./node_app/parser/boe.js')(app, app.drop, function (options) {
+                        require('./node_app/parser/boe.js')(app, function (options) {
                             app.BOE = options
                             //options.Borme = Borme
                             app.commonSQL.ActualizeCounters(options, function (options) {
@@ -90,14 +90,19 @@ var App = {
                     //})
                 },
                 BORME: function (dataFile) {
-                    
-                        require('./node_app/parser/borme.js')(app, app.drop, dataFile, function (options) {
+                        require('./node_app/parser/borme.js')(app, dataFile, function (options) {
                             app.commonSQL.ActualizeCounters(options, function (options) {
                                 console.log('actualización de contadores OK')
                                 options._common.Actualize(options, 'BORME', { desde: app._xData.Sumario.BORME.SUMARIO_NEXT.substr(8, 8), into:app._xData.Sumario.BORME.ID_LAST , type: "BORME", hasta: new Date() })
                             })
                         })
                     //})
+                },
+                CREATE: function (datafile) {
+                    app.commonSQL.init({ SQL: { db:null} }, 'CREATE', function () { 
+                        process.exit(1)
+                    })
+
                 }
             })
             //})
@@ -116,15 +121,15 @@ var App = {
             app.SqlIP = 'localhost'
         }
 
-        if (myArgs[1] != "BORME" || myArgs[1] != "BOE" || myArgs[1] || "BOCM") {
-            if (myArgs[2]) { // = (myArgs[1] == 'true' ? true : false)
-                if (typeof (myArgs[2]) === "boolean") {
-                    app.drop = myArgs[2]
-                } else {
-                    var arg = myArgs[2]
-                    app.drop = (arg.toLowerCase() == 'true' ? true : false)
-                }
-            }
+        if (myArgs[1] == "CREATE" || myArgs[1] == "BORME" || myArgs[1] == "BOE" || myArgs[1] == "BOCM") {
+            //if (myArgs[2]) { // = (myArgs[1] == 'true' ? true : false)
+            //    if (typeof (myArgs[2]) === "boolean") {
+            //        app.drop = myArgs[2]
+            //    } else {
+            //        var arg = myArgs[2]
+             //       app.drop = (arg.toLowerCase() == 'true' ? true : false)
+             //   }
+           // }
         } else {
             console.log('parametros no validos falta BOCM,BOE,BORME')
             perocess.exit(1)

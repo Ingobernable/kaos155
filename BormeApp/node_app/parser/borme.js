@@ -1,4 +1,4 @@
-﻿module.exports = function (app, drop, dataCargos, callback) {
+﻿module.exports = function (app, dataCargos, callback) {
 
     options = {
        
@@ -457,6 +457,6 @@
         }
     }
     options.Rutines.cargos = dataCargos
-    app.commonSQL.init(options, drop, 'BORME', callback)
+    app.commonSQL.init(options, 'BORME', callback)
 
 }

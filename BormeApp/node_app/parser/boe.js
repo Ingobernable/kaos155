@@ -1,4 +1,4 @@
-﻿module.exports = function (app, drop, callback) {
+﻿module.exports = function (app, callback) {
 
     var options = {
         url: app.urlBOE,
@@ -239,6 +239,6 @@
     }
 
 
-   app.commonSQL.init(options, drop, 'BOE', callback)
+   app.commonSQL.init(options, 'BOE', callback)
 
 }
