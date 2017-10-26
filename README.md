@@ -12,6 +12,7 @@ https://listas.ingobernable.net/cgi-bin/mailman/listinfo/kaos
 
 ### Debian 9
 
+```
 git clone https://github.com/Ingobernable/kaos155
 cd kaos155
 
