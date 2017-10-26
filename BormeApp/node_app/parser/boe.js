@@ -46,7 +46,7 @@
                     //        params.idEmpresa = recordEmpresa.length>0 ? recordEmpresa[0].id : 0
                     //}
                 data.extra.materias = data.extra.materias + (data.extra.materias_cpv.length > 0 && data.extra.materias.length > 0  ? ";" : '') + data.extra.materias_cpv
-                options.SQL.db.query('Call Insert_Data(' + data.contratista.split(';').length + ',' + data.extra.materias.split(';').length + ",'" + data.type + "',?,?,?,?,?,?,?,?,?,?,?,?" + _ing + ')', params, function (err, record) {
+                options.SQL.db.query('Call Insert_Data_BOE(' + data.contratista.split(';').length + ',' + data.extra.materias.split(';').length + ",'" + data.type + "',?,?,?,?,?,?,?,?,?,?,?,?" + _ing + ')', params, function (err, record) {
                         if (err != null) {
                             cadSql = "INSERT INTO errores (BOE, SqlMensaje, SqlError) SET (?,?,?)"
                             options.SQL.db.query(cadsql, [data.id, err.SqlMensaje, err.SqlError], function (err2) {

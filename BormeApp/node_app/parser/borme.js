@@ -111,7 +111,7 @@
 
                 var _p = {
                     BORME_Id: Number.isInteger(_data.id*1)?_data.id:0,
-                    BORME: _lines.BORME,
+                    BOLETIN: _lines.BORME,
                     Empresa_Id: idEmpresa,
                     Empresa: _data._empresa,
                     Original: _data._original ,
@@ -120,15 +120,16 @@
 
                 process.stdout.write('.') //console.log(_p.Empresa+"->"+_p.Empresa_Id)
                 //cadsql = "UPDATE lastread SET ID_LAST="+_p.BORME_Id +";"
-                options.SQL.db.query("UPDATE lastread SET ID_LAST='"+ ID_Sumario + "#" + _p.BORME+ '#' + _p.BORME_Id + "';INSERT INTO strings SET ? ", _p, function (err, Diario) {
+                options.SQL.db.query("UPDATE lastread SET ID_LAST='"+ ID_Sumario + "#" + _p.BOLETIN+ '#' + _p.BORME_Id + "' WHERE Type='BORME'; SELECT "+_l+" as _l;", function (err, Diario) {
                     if (err) {
                         debugger
                         console.log(err)
                     }
-                    cadsql = "SELECT _l FROM strings Where id=" + Diario[1].insertId
-                    options.SQL.db.query(cadsql,{id:Diario.insertId}, function(err,_rec){
-                        cb(_rec[0]._l)
-                    })
+                    cb(Diario[1][0]._l)
+                    //cadsql = "SELECT _l FROM strings Where id=" + Diario[1].insertId
+                    //options.SQL.db.query(cadsql,{id:Diario.insertId}, function(err,_rec){
+                    //    cb(_rec[0]._l)
+                    //})
                                                                                         
                 })
             },
@@ -152,11 +153,11 @@
                     _ok=true
                 }
                 if (_ok) {
-                    options.SQL.db.query("CALL InsertEmpresa(?," + _l + ")", _lines.data[_l]._empresa, function (err, _rec) {
+                    options.SQL.db.query("CALL Insert_Data_BORME_Empresa(?," + _l + ")", _lines.data[_l]._empresa, function (err, _rec) {
                         //console.log(_rec2)
                         if (err != null || _rec[0][0] == null) {
                             var cadsql = "INSERT INTO errores ?"
-                            options.SQL.db.query(_cadsql, { table: 'empresa', text: err.sql }, function (err, reg) {
+                            options.SQL.db.query(_cadsql, { BOLETIN: _lines.BORME , SqlError: err.sql }, function (err, reg) {
                                 if (_l == _lines.data.length - 1) {
                                     app._xData.TBORME++
                                     options.parser.saveDiarioMovimientos(0, _lines, data, _cb)
@@ -240,7 +241,7 @@
                             if (_idEmpresa ==null)
                                 debugger
 
-                            cadsql = "INSERT INTO diario SET ?"
+                            cadsql = "INSERT INTO borme_diario SET ?"
                             //if (_Dl.value == null && _Dl.values == null)
                             //    debugger
                             params = {
@@ -270,7 +271,7 @@
 
                                 process.stdout.write('D')
 
-                                cadsql = "SELECT * FROM diario where id="+_record.insertId
+                                cadsql = "SELECT * FROM borme_diario where id="+_record.insertId
                                 options.SQL.db.query(cadsql, function(err,_params){
                                     if (err)
                                         debugger
@@ -292,7 +293,7 @@
 
                                     if (_e == line.contenido.length - 1) {
                                         if (params.Empresa_Id > 0 && params.Directivo_Id>0) {
-                                            cadsql = "INSERT INTO relaciones SET ? ON DUPLICATE KEY UPDATE Activo=" + (Active?1:0)
+                                            cadsql = "INSERT INTO borme_relaciones SET ? ON DUPLICATE KEY UPDATE Activo=" + (Active?1:0)
 
 
                                             var _params = { Diario_Id: _record.insertId, Empresa_Id: params.Empresa_Id, Directivo_Id: params.Directivo_Id, Motivo: _Dl.type, Cargo: _Dl.values.key, Activo: (Active ? 1 : 0), Anyo: params.Anyo }
@@ -306,7 +307,7 @@
                                                 //} else {
                                                 //    _params = [_params.Diario_Id,]
                                                 //}
-                                                cadsql = "SELECT * FROM relaciones WHERE ?"
+                                                cadsql = "SELECT * FROM borme_relaciones WHERE ?"
                                                 options.SQL.db.query(cadsql, _params, function (err, _record) {
                                                     if (err || _record[0] == null || _recordR.insertId==null)
                                                         debugger
@@ -414,15 +415,18 @@
                                                     if (_lines.data.length == 0){
                                                         callback(data, null)
                                                     } else {
-                                                        var cadsql = {
-                                                            SUMARIO: data.id,
-                                                            BORME: _lines.BORME,
-                                                            Anyo: data.desde.substr(0, 4),
-                                                            Provincia: _lines.PROVINCIA,
-                                                            PDF: urlDoc
-                                                        }
+                                                        var params = [
+                                                             data.desde.substr(6, 2),                                      //Dia
+                                                             data.desde.substr(4, 2),                                      //Mes
+                                                             data.desde.substr(0, 4),                                       //Anyo
+                                                            'BORME',
+                                                            data.id,
+                                                            _lines.BORME,
+                                                            _lines.PROVINCIA,
+                                                            urlDoc
+                                                        ]
 
-                                                        options.SQL.db.query('INSERT INTO borme SET ? ', cadsql , function (err, DataRecord) {
+                                                        options.SQL.db.query('CALL Insert_Data_BORME( ?,?,?,?,?,?,?,? ) ', params , function (err, DataRecord) {
 
                                                             var _avanza = true
                                                             if (err)

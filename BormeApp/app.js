@@ -4,7 +4,7 @@ console.log('loading App - version -' + Version)
 var myArgs = process.argv.slice(2);
 
 if (myArgs.length == 0)
-    myArgs = ['CREATE']//['142.44.166.218', 'BORME',  false]
+    myArgs = ['BOCM']//['142.44.166.218', 'BORME',  false]
 
 //myArgs[1] = myArgs[1].substr(2, myArgs[2].length - 2)
 
@@ -121,7 +121,7 @@ var App = {
             app.SqlIP = 'localhost'
         }
 
-        if (myArgs[0] == "CREATE" || myArgs[0] == "BORME" || myArgs[0] == "BOE" || myArgs[0] == "BOCM") {
+        if (myArgs[0] == "BORME" || myArgs[0] == "BOE" || myArgs[0] == "BOCM") {
             //if (myArgs[2]) { // = (myArgs[1] == 'true' ? true : false)
             //    if (typeof (myArgs[2]) === "boolean") {
             //        app.drop = myArgs[2]
@@ -132,7 +132,7 @@ var App = {
            // }
         } else {
             console.log('parametros no validos falta BOCM,BOE,BORME')
-            perocess.exit(1)
+            process.exit(1)
         }
         
         app.Type = myArgs[0]

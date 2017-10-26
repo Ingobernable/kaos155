@@ -5,20 +5,9 @@
         getConnect: function (options, type, callback, SqlIP, sqlPss) {
             _this = this
             var _exit = function (options, type, callback) {
-                if (type=='CREATE') {
-                    //_this.SQL.tables[type].drop(_this.SQL, options.SQL.db, function () {
-                        _this.SQL.tables[type].create(_this.SQL,options.SQL.db, function () {
-                            callback(options)
-                        })
-                    //})
-                } else {
-                    //if (options.SQL.actions) {
-                    //_this.SQL.tables[type].create(_this.SQL, options.SQL.db, drop, function () {
-                        callback(options)
-                    //})
-                }
+                callback(options)
             }
-            if (this.poolSql[sqlPss==null? type: sqlPss] != null) {
+            if (this.poolSql[ type ] != null) {
                 if (options.SQL.db == null) {
                     this.poolSql[ type].getConnection(function (err, connection) {
                         // connected! (unless `err` is set)
@@ -39,7 +28,7 @@
             }
  
         },
-        init: function (options, type, callback, SqlIP, sqlPss) {
+        init: function (options, type, callback) {
             var _this = this
             app.fs.readFile(app.path.normalize('../sqlfiles/ACCESO_mysql.sql'), function (err, _JSON) {
                 if (err) {
@@ -56,7 +45,7 @@
                     }
                     
                     if (_this.poolSql[ type ] == null) {
-                        if (type != 'CREATE') {
+
                             _this.poolSql[ type ] = app.mysql.createPool({
                                 host: _sql.mySQL.host, //, //'localhost', //'66.70.184.214',
                                 user: _sql.mySQL.user,
@@ -66,29 +55,8 @@
                                 waitForConnection: true,
                             })
 
-                            _this.getConnect(options, type, callback, SqlIP, sqlPss)
-                        } else {
-                            var con = app.mysql.createConnection(_sql.mySQL)
-                            con.connect(function (err) {
-                                if (err) throw err;
-                                console.log("Connected to mysql!");
-                                con.query("CREATE DATABASE bbdd_kaos155", function (err, result) {
-                                    if (!err) {
-                                        console.log("Database creada");
-                                    }
-                                    _this.poolSql[ type ] = app.mysql.createPool({
-                                        host: _sql.mySQL.host, //, //'localhost', //'66.70.184.214',
-                                        user: _sql.mySQL.user,
-                                        password: _sql.mySQL.password,
-                                        database: 'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
-                                        multipleStatements: true,
-                                        waitForConnection: true,
-                                    })
-
-                                    _this.getConnect(options, type, callback, SqlIP, sqlPss)
-                                });
-                            });
-                        }
+                            _this.getConnect(options, type, callback)
+                        
                     } else {
                         callback(options)
                     }
@@ -96,12 +64,12 @@
             })
             //return options
         },
-        ActualizeCounters: function (obj, callback) {
+        ActualizeCounters: function (_options, callback) {
             var _this = this
             //this.getConnect({ SQL: { db: null } }, false, 'RELACIONES', function (options) {
 
 
-            _this.getConnect({ SQL: { db :null } }, false, 'BOE',function(_options){
+            //_this.getConnect({ SQL: { db :null } }, 'BOE',function(_options){
                 _cadsql = "SELECT * FROM lastread WHERE Type = 'BOE'"
                 _options.SQL.db.query(_cadsql, function (err, Record) {
                     if (err)
@@ -122,7 +90,7 @@
                         _options.SQL.db.query(_cadsql, function (err, Record) {
                             app._xData.TBOE = Record[0]["count(*)"]
                             
-                            _this.getConnect({ SQL: { db :null } }, false, 'BORME',function(_options){
+                            //_this.getConnect({ SQL: { db :null } }, false, 'BORME',function(_options){
                                 _cadsql = "SELECT * FROM lastread  WHERE Type = 'BORME'"    
                                 _options.SQL.db.query(_cadsql, function (err, Record) {
                                     if (Record.length == 0) {
@@ -156,25 +124,26 @@
                                                     app._xData.TSUMARIOS.BOCM = Record[0]["count(*)"]
                                                     _options.SQL.db.query("SELECT count(*) FROM boletin WHERE Type='BORME'", function (err, Record) {
                                                         app._xData.TBOCM = Record[0]["count(*)"]
-                                                        callback(obj)
+                                                        callback(_options)
                                                     })
                                                 })
                                             })
                                             //})
                                         })
                                     })
-                                })
+                                //})
                             })
                         })
                     })
                 })
-            })
+            //})
         },
         SQL: {
             commands:{
                 create: function (cadsql, db, callback) {
                     db.query(cadsql, function (err, results) {
                         if (err) {
+                            x=cadsql
                             console.log(err)
 
                         }
@@ -185,28 +154,28 @@
             tables: {
                 CREATE: {
                     create: function (_this, db, callback) {
-                        app.fs.readFile(app.path.normalize('../sqlfiles/CREATE_Procs.sql'), function (err, _sql) {
-                            if (err) {
-                                console.log(err)
-                                debugger
-                            } else {
+                        app.fs.readFile(app.path.normalize('../sqlfiles/CREATE.sql'), function (err, _sql) {
+                            //if (err) {
+                            //    console.log(err)
+                            //    debugger
+                            //} else {
                                 
-                                _this.commands.create(_sql.toString(), db, function () {
-                                    console.log('procedimientos almacenados y funciones creadas......')
-                                    app.fs.readFile(app.path.normalize('../sqlfiles/CREATE_Tables.sql'), function (err, _sql) {
+                                //_this.commands.create(_sql.toString(), db, function () {
+                                    //console.log('tablas vacias creadas......')
+                                    //app.fs.readFile(app.path.normalize('../sqlfiles/CREATE_Procs.sql'), function (err, _sql) {
                                         if (err) {
                                             console.log(err)
                                             debugger
                                         } else {
                                             _this.commands.create(_sql.toString(), db, function () {
-                                                console.log('tablas vacias creadas......')
+                                                console.log('elementos de la DB bbdd_kaos155 creadas......')
                                                 callback()
                                             })
                                         }
-                                    })
+                                    //})
 
-                                })
-                            }
+                                //})
+                            //}
                         })
                     },
                 }

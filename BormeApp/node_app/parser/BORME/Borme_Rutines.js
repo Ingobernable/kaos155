@@ -410,17 +410,17 @@
                     if (__data.values.Empresa)
                         _t = "Empresa"
 
-                    cadsql = "SELECT id FROM " + _t.toLowerCase() + " WHERE ?"
+                    cadsql = "SELECT id FROM borme_" + _t.toLowerCase() + " WHERE ?"
                     options.SQL.db.query(cadsql, { Name: __data.values.value }, function (err, _directivo) {
                         if (_directivo.length == 0) {
-                            cadsql = "INSERT INTO " + _t.toLowerCase() + " SET ? ON DUPLICATE KEY UPDATE _l=id"
+                            cadsql = "INSERT INTO borme_" + _t.toLowerCase() + " SET ? ON DUPLICATE KEY UPDATE _l=id"
                             options.SQL.db.query(cadsql, { Name: __data.values.value }, function (err, _directivo) {
-                                if (err) {
-                                    cadsql = "INSERT INTO errores ?"
-                                    options.SQL.db.query(cadsql, { Table: 'directivos', text: err }, function () {
-                                        callback(__data, null, null, false)
-                                    })
-                                } else {
+                                if (!err) {
+                                //    cadsql = "INSERT INTO errores ?"
+                                //    options.SQL.db.query(cadsql, { Table: 'directivos', text: err }, function () {
+                                //        callback(__data, null, null, false)
+                                //    })
+                                //} else {
 
                                     if (_directivo.insertId == null) {
                                         debugger

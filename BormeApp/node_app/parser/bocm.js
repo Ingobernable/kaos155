@@ -242,6 +242,9 @@
                         _list.contratista = options.Rutines.transforms(text.substr(_ci + 1, _cf - (_ci + 1)).toUpperCase(), patterns)
                         //Rutines.transforms(_arrT[1], patterns)
                         var _p = [
+                                data.desde.substr(6, 2),                                      //Dia
+                                data.desde.substr(4, 2),                                      //Mes
+                                data.desde.substr(0, 4),                                       //Anyo
                              data.SUMARIO_LAST,
                              ''.Trim(_list.BOCM.substr(0, 17)),
                              _list.Tramitacion,
@@ -254,11 +257,12 @@
                         //if (isNaN(_list.importe))
                         //    _list.importe = 0
                         //if (_list.contratista.length < 255) {
-                        _cadsql = "CALL InsertEmpresa(?,?,?,?,?,?,?)" // VALUES ('" + ''.Trim(_list.BOCM.substr(0, 17)) + "','" + _list.contratista.substr(0, 254) + "'," + _list.importe + ");"
+                        _cadsql = "CALL Insert_Data_BOCM(?,?,?,?,?,?,?,?,?,?)" // VALUES ('" + ''.Trim(_list.BOCM.substr(0, 17)) + "','" + _list.contratista.substr(0, 254) + "'," + _list.importe + ");"
                         console.log(_cadsql)
                         options.SQL.db.query(_cadsql,_p, function (err, records) {
-                            if (err)
+                            if (err) {
                                 debugger
+                            }
                             callback(data)
                         })
                     } else {
@@ -299,7 +303,7 @@
                                             //
                                             if (err) {
                                                 console.error(err);
-                                                callback(sdata, list)
+                                                callback(data, _list)
                                         
                                             } else {
                                                 //console.log(text);
