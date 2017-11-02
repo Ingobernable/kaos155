@@ -14,6 +14,7 @@
     <script src="css/Semantic-UI-CSS-master/semantic.js"></script>
 
     <script src="js/plugins/vue/vue.js"></script>
+    <script src="js/plugins/jspdf/jspdf_1.3.5.js"></script>
     <script src="js/client_app.js"></script>
     <script src="js/modules/io_app.js"></script>
     <script src="js/modules/tree_app.js"></script>
@@ -148,9 +149,9 @@
                                         Tipos de Adjudicación
                                     </h4>
                                     <div v-for="TBoe in LTIPOBOE" class="item">
-                                        <div v-checkboxboe class="ui checkbox TBoe" v-bind:data="TBoe">
+                                        <div v-checkboxboe class="ui checkbox TBoe" v-bind:data="TBoe.descripcion" v-bind:data-code="TBoe.code">
                                             <input type="checkbox" name="TipoBoe" class="hidden" >
-                                            <label>{{ TBoe }}</label>
+                                            <label>{{ TBoe.descripcion }}</label>
                                         </div>
 
                                     </div>
@@ -164,9 +165,9 @@
                                         Tipo de Tramitación
                                     </h4>
                                     <div v-for="TBoe in LTRAMITACION" class="item">
-                                        <div v-checkboxboe class="ui checkbox Tramitacion" v-bind:data="TBoe">
+                                        <div v-checkboxboe class="ui checkbox Tramitacion" v-bind:data="TBoe.descripcion"  v-bind:data-code="TBoe.code">
                                             <input type="checkbox" name="Tramitacion" class="hidden" >
-                                            <label>{{ TBoe }}</label>
+                                            <label>{{ TBoe.descripcion }}</label>
                                         </div>
 
                                     </div>
@@ -269,9 +270,9 @@
                                         Tipo de Tramitación
                                     </h4>
                                     <div v-for="TBocm in LTIPOBOCM" class="item">
-                                        <div v-checkboxbocm class="ui checked checkbox TipoBocm" v-bind:data="TBocm">
+                                        <div v-checkboxbocm class="ui checked checkbox TipoBocm" v-bind:data="TBocm.descripcion" v-bind:data-code="TBocm.code">
                                             <input type="checkbox" name="TBocm" class="hidden">
-                                            <label>{{ TBocm }}</label>
+                                            <label>{{ TBocm.descripcion }}</label>
                                         </div>
 
                                     </div>
@@ -326,7 +327,9 @@
                                     <input type="checkbox">
                                     <div style="font-size:0.8em">Limpiar ruta</div>
                                 </div>
-
+                                <button class="ui button" v-on:click="visualcif($event).popUp()">
+                                    <i class="zoom out icon" style="font-size:1.5em;padding-top:3px;padding-left:15px;"></i>
+                                </button>
                             </div>
                             <div class="spinTree" style="visibility:hidden"><span><span class="spinTree_c">cargando </span><span class="spinTree_a"></span></span></div>
                         </div>

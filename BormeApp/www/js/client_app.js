@@ -34,12 +34,12 @@ var App = {
             var _tramite = []
             $('.TBoe.checked').each(function (i, item) {
                 if ($(item).attr('data') != null)
-                    _tipo[_tipo.length] = $(item).attr('data')
+                    _tipo[_tipo.length] = $(item).attr('data-code')
             })
             var _tramite = []
             $('.Tramitacion.checked').each(function (i, item) {
                 if ($(item).attr('data') != null)
-                    _tramite[_tramite.length] = $(item).attr('data')
+                    _tramite[_tramite.length] = $(item).attr('data-code')
             })
             return { Tipo_BOE: _tipo, tramite: _tramite }
         }
@@ -48,8 +48,8 @@ var App = {
             var _tramite = []
             //debugger
             $('.TipoBocm.checked').each(function (i, item) {
-                if ($(item).attr('data') != null)
-                    _tipo[_tipo.length] = $(item).attr('data')
+                if ($(item).attr('data-code') != null)
+                    _tipo[_tipo.length] = $(item).attr('data-code')
             })
             var _tramite = []
             return { Tipo_BOCM: _tipo }

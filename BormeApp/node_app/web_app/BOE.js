@@ -8,20 +8,20 @@
                     if (_key.filters != null) {
                         //CadSqlTipo_BOE = "("
                         for (k in _key.filters.Tipo_BOE) {
-                            CadSqlTipo_BOE = CadSqlTipo_BOE + (CadSqlTipo_BOE.length > 1 ? " OR " : "") + " boe.Tipo_BOE = '" + _key.filters.Tipo_BOE[k] + "'"
+                            CadSqlTipo_BOE = CadSqlTipo_BOE + (CadSqlTipo_BOE.length > 1 ? " OR " : "") + " boletin.Tipo_BOLETIN = '" + _key.filters.Tipo_BOE[k] + "'"
                         }
                         //CadSqlTipo_BOE = CadSqlTipo_BOE + ")"
 
                         //CadSqltramite = "("
                         for (k in _key.filters.tramite) {
-                            CadSqltramite = CadSqltramite + (CadSqltramite.length > 1 ? " OR " : "") + " boe.Tipo_TRAMITE = '" + _key.filters.tramite[k] + "'"
+                            CadSqltramite = CadSqltramite + (CadSqltramite.length > 1 ? " OR " : "") + " boletin.Tipo_TRAMITE = '" + _key.filters.tramite[k] + "'"
                         }
                         //CadSqltramite = CadSqltramite + ")"
                     }
 
-                    var _cadsql = "SELECT count(*) FROM strings INNER JOIN boe ON strings.BOE = boe.BOE WHERE ((_keys Like '%" + _key.key + "%') " + (CadSqlTipo_BOE.length > 0 ? " AND ((" + CadSqlTipo_BOE + ")" : "") + (CadSqltramite.length > 0 ? (CadSqlTipo_BOE.length > 0 ? " AND ":" AND ") + "(" + CadSqltramite + ")" : "") + ")" + ( CadSqlTipo_BOE.length  > 0 ? ")":"")
+                    var _cadsql = "SELECT count(*) FROM strings INNER JOIN boletin ON strings.BOLETIN = boletin.BOLETIN WHERE ((_keys Like '%" + _key.key + "%') " + (CadSqlTipo_BOE.length > 0 ? " AND ((" + CadSqlTipo_BOE + ")" : "") + (CadSqltramite.length > 0 ? (CadSqlTipo_BOE.length > 0 ? " AND ":" AND ") + "(" + CadSqltramite + ")" : "") + ")" + ( CadSqlTipo_BOE.length  > 0 ? ")":"")
                     //console.log(cadsql)
-                    app.SQL.BOE.db.query(_cadsql, function (err, rows) {
+                    app.SQL.db.query(_cadsql, function (err, rows) {
                         //debugger
                         var x = _cadsql
                         app.SQL.getLsts(app, _key, function (err, lst, data) {
@@ -54,8 +54,8 @@
                     this.ejec(cadsql, callback)
                 },
                 getDoc: function (key, callback) {
-                    var cadsql = "SELECT * FROM boe WHERE boe.BOE = '" + key.key + "' order by boe.BOE"
-                    this.ejec(cadsql, callback)
+                    var cadsql = "call get_boletin(?)" + key.key + "'"
+                    this.ejec(cadsql,  key, callback)
                 },
                 ejec: function (cadsql, callback) {
                     app.SQL.BOE.db.query(cadsql, function (err, rows) {

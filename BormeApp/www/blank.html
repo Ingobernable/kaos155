@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="css/Semantic-UI-CSS-master/semantic.css" />
+    <link rel="stylesheet" type="text/css" href="css/font-awesome-4.7.0/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css" href="css/Semantic-UI-CSS-master/components/checkbox.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/app.css" />
+    <script src="js/plugins/jquery/jquery-2.2.0.min.js"></script>
+    <style>
+        #RelationsCard {
+            width: 100%;
+            height:100%;
+            overflow:auto;
+            padding-left:25px;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 25px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #4CAF50;
+            cursor: pointer;
+        }
+    </style>
+    <title></title>
+</head>
+<body>
+    <div id="slidecontainer">
+        <input type="range" min="1" max="100" value="100" class="slider" id="myRange">
+    </div>
+    <div id="RelationsCard"></div>
+    <script>
+            var slider = document.getElementById("myRange");
+            slider.oninput = function () {
+                zoom = (this.value / 100)
+                $('#RelationsCard').css({ 'zoom': zoom.toFixed(1) });
+            }
+    </script>
+</body>
+</html>

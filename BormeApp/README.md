@@ -7,7 +7,7 @@ Tarea a realizar:
 
 	ejemplos
 		
-		node app.js 127.0.0.1 BOE true			-> recolección de datos del BOE desde 01/01/2000 en DB Local		tiempo 2/3 dias
-		node app.js 127.0.0.1 BORME false
+		node app.js 127.0.0.1 BOE 			-> recolección de datos del BOE desde 01/01/2000 en DB Local		tiempo 2/3 dias
+		node app.js 127.0.0.1 BORME			-> recolección de datos del BORME
 
 

@@ -4,6 +4,7 @@
             $(el).checkbox({
                 onChecked: function () {
                     $('.GO.BOE').addClass('notched circle loading')
+                    debugger
                     App.socket.emit('BOE', {
                         command: 'count',
                         key: App.vueAppFramework.search.BOE.toLowerCase(),
@@ -14,6 +15,7 @@
                 },
                 onUnchecked: function () {
                     $('.GO.BOE').addClass('notched circle loading')
+                    debugger
                     App.socket.emit('BOE', {
                         command: 'count',
                         key: App.vueAppFramework.search.BOE.toLowerCase(),
@@ -119,6 +121,18 @@
 
                 var _this = this
                 return {
+                    popUp: function() {
+                        var w = window.open('blank.html', '_blank');
+                        w.onload = function () {
+                            setTimeout(function () { $(w.document.body).find('#RelationsCard').html($('#RelationsCard').html()) }, 2000);
+                        }
+                        //$(w.document.head).innerHTML =''
+
+
+                        //var doc = new jsPDF()
+                        //doc.fromHTML($('#RelationsCard').html(), 10, 10)
+                        //doc.save('relaciones.pdf')
+                    },
                     isInList: function (i, search, tab) {
                         if (search.length == 0 || !$("[data-tab='" + tab + "']").hasClass('active')) {
                             return true

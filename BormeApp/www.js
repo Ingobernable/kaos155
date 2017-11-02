@@ -62,32 +62,36 @@ var App = {
         app._io = require('./node_www/IO.js')(app)
         //app.secureContext = require('./node-app/secureContext')(app)
         app.responseHttp = require('./node_www/httpServer.js')(app, 'www')
-        app.commonSQL = require('./node_app/sql_common.js')(app, function (SQL) {
-            
-            SQL.init({ SQL: { db: null } }, false, 'BORME', function (options) {
-                app.SQL.BORME.db = options.SQL.db
+        require('./node_app/sql_common.js')(app, function (SQL) {
+            app.commonSQL = SQL
+            //SQL.init({ SQL: { db: null } },  'BORME', function (options) {
+            //    app.SQL.BORME.db = options.SQL.db
                 app.Relaciones = require('./node_www/RelacionesDB.js')(app)
-                SQL.init({ SQL: { db: null } }, false, 'VISUALCIF', function (options) {
-                    app.Relaciones.SQL.db = options.SQL.db
-                    SQL.init({ SQL: { db: null } }, false, 'BOE', function (options) {
-                        app.SQL.BOE.db = options.SQL.db
-                        SQL.init({ SQL: { db: null } }, false, 'BOCM', function (options) {
-                            app.SQL.BOCM.db = options.SQL.db
-                            app.commonSQL = SQL
+                //SQL.init({ SQL: { db: null } }, 'VISUALCIF', function (options) {
+                    //app.Relaciones.SQL.db = options.SQL.db
+                    SQL.init({ SQL: { db: null } },  'BOE', function (options) {
+                        app.SQL.db = options.SQL.db
+                        //SQL.init({ SQL: { db: null } }, 'BOCM', function (options) {
+                        //    app.SQL.BOCM.db = options.SQL.db
+                        //    app.commonSQL = SQL
                             
                                 console.log('www abierto port ' + app.webport)
-                                app.SQL.ActualizeCounters(app, function (app) {
-                                    app.httpServer = app.http.createServer(function (request, response) {
-                                        app.responseHttp.listener(request, response)
-                                    }).listen(app.webport);
-                                    console.log('io abre port ' + app.webport)
-                                    app.io = app._io.listen(require('socket.io')(app.httpServer, { pingInterval: 60000 }).listen(app.httpServer), require('./node_app/elasticIO.js')(app))
+                                app.commonSQL.ActualizeCounters(options, function (options) {
+                                    app.SQL.getListas(app, {
+                                        key:  '' 
+                                    }, function (err, lst,key ) {
+                                        app.httpServer = app.http.createServer(function (request, response) {
+                                            app.responseHttp.listener(request, response)
+                                        }).listen(app.webport);
+                                        console.log('io abre port ' + app.webport)
+                                        app.io = app._io.listen(require('socket.io')(app.httpServer, { pingInterval: 60000 }).listen(app.httpServer), require('./node_app/elasticIO.js')(app))
+                                    })
                                 })
                             
-                        })
+                        //})
                     })
-                })
-            })
+                //})
+            //})
         })
     },
    
@@ -142,18 +146,56 @@ var App = {
                 })
                 */
             },
+            getLstTipo: function (app, type, key, callback) {
+                var _this =this
+                var cadsql = 'SELECT DISTINCT boletin.Tipo_Boletin as code, _tipo_contrato_aux.descripcion FROM boletin INNER JOIN _tipo_contrato_aux ON boletin.Tipo_Boletin = _tipo_contrato_aux.codigo WHERE boletin.Type="' + type + '";' //'SELECT DISTINCT Tipo_TRAMITE  FROM boe INNER JOIN  strings ON boe.BOE = strings.BOE WHERE length(Tipo_Tramite)-length(replace(Tipo_Tramite," " ,""))=0 AND length(replace(Tipo_Tramite," " ,""))>0 '
+                //if (key.key != null) {
+                //    if (key.key.length > 0) {
+                //        var cadsql_Tramite = 'SELECT DISTINCT Tipo_TRAMITE  FROM boe INNER JOIN strings ON boe.BOE = strings.BOE WHERE length(Tipo_Tramite)-length(replace(Tipo_Tramite," " ,""))=0 AND length(replace(Tipo_Tramite," " ,""))>0 AND strings._keys LIKE \'%' + key.key + '%\''
+                //    }
+                //}
+                _this.getLstAuxFromdb(app,cadsql,callback)
+            },
+            getLstTramite: function (app, type, key, callback) {
+                var _this = this
+                var cadsql = 'SELECT DISTINCT boletin.Tipo_Tramite as code, _tipo_tramitacion_aux.descripcion FROM boletin RIGHT JOIN  _tipo_tramitacion_aux ON boletin.Tipo_Tramite = _tipo_tramitacion_aux.codigo WHERE boletin.Type="' + type + '";' //'SELECT DISTINCT Tipo_TRAMITE  FROM boe INNER JOIN  strings ON boe.BOE = strings.BOE WHERE length(Tipo_Tramite)-length(replace(Tipo_Tramite," " ,""))=0 AND length(replace(Tipo_Tramite," " ,""))>0 '
+                //if (key.key != null) {
+                //    if (key.key.length > 0) {
+                //        var cadsql_Tramite = 'SELECT DISTINCT Tipo_TRAMITE  FROM boe INNER JOIN strings ON boe.BOE = strings.BOE WHERE length(Tipo_Tramite)-length(replace(Tipo_Tramite," " ,""))=0 AND length(replace(Tipo_Tramite," " ,""))>0 AND strings._keys LIKE \'%' + key.key + '%\''
+                //    }
+                //}
+                _this.getLstAuxFromdb(app, cadsql, callback)
+            },
+            getLstAuxFromdb: function (app, params, callback) {
+
+                app.SQL.db.query(' call getLST_Aux(?,?)', params, function (err, data) {
+                    callback(err,data)
+                })
+            }
+
             
         },
         getLsts: function (app, key, callback) {
             callback(null, { BOCM: app._lData.LTipoBOCM, tipo: app._lData.LTipoBOE, tramite: app._lData.LTramite, data: app._xData }, key)
             return
         },
-        getTipos: function (app, key, callback){
+        getListas: function (app, key, callback) {
+            app.SQL.commands.getLstAuxFromdb(app, ['BOE', key.key ], function (err, data) {
+                app._lData.LTipoBOE = data[0]
+                //app.SQL.commands.getLstTramite(app, 'BOE', key, function (err, data) {
+                    app._lData.LTramite = data[1]
+                    app.SQL.commands.getLstAuxFromdb(app, 'BOCM', key.key , function (err, data) {
+                        app._lData.LTipoBOCM = data
+                        callback(err, { BOCM: app._lData.LTipoBOCM, tipo: app._lData.LTipoBOE, tramite: app._lData.LTramite, tramas: null, data: app._xData }, key)
+                    })
+                //})
+            })
 
+            return
             var _this = {}
             //debugger
-            var cadsql_Tramite = 'SELECT DISTINCT Tipo_TRAMITE  FROM boe INNER JOIN  strings ON boe.BOE = strings.BOE WHERE length(Tipo_Tramite)-length(replace(Tipo_Tramite," " ,""))=0 AND length(replace(Tipo_Tramite," " ,""))>0 '
-            var cadsql_BOE = 'SELECT DISTINCT Tipo_BOE FROM boe INNER JOIN  strings ON boe.BOE = strings.BOE'
+            var cadsql_Tramite = 'SELECT DISTINCT boletin.Tipo_Boletin, _tipo_contrato_aux.descripcion FROM boletin INNER JOIN _tipo_contrato_aux ON boletin.Tipo_Boletin = _tipo_contrato_aux.codigo WHERE boletin.Type="BOE";' //'SELECT DISTINCT Tipo_TRAMITE  FROM boe INNER JOIN  strings ON boe.BOE = strings.BOE WHERE length(Tipo_Tramite)-length(replace(Tipo_Tramite," " ,""))=0 AND length(replace(Tipo_Tramite," " ,""))>0 '
+            var cadsql_BOE = 'SELECT DISTINCT boletin.Tipo_Tramite, _tipo_tramitacion_aux.descripcion FROM boletin RIGHT JOIN  _tipo_tramitacion_aux ON boletin.Tipo_Tramite = _tipo_tramitacion_aux.codigo ;' //'SELECT DISTINCT Tipo_BOE FROM boe INNER JOIN  strings ON boe.BOE = strings.BOE'
 
             if (key.key != null) {
                 if (key.key.length > 0) {
@@ -161,18 +203,18 @@ var App = {
                     var cadsql_BOE = 'SELECT DISTINCT Tipo_BOE  FROM boe INNER JOIN  strings ON boe.BOE = strings.BOE WHERE strings._keys LIKE \'%' + key.key + '%\''
                 }
             }
-            app.SQL.BOE.db.query(cadsql_Tramite, function (err, data) {
+            app.SQL.db.query(cadsql_Tramite, function (err, data) {
                 app._lData.LTramite = []
                 for (e in data) {
                     if (data[e].Tipo_TRAMITE.length > 0)
                         if (data[e].Tipo_TRAMITE != null)
-                            app._lData.LTramite[app._lData.LTramite.length] = app.Rutines.getCleanedString(data[e].Tipo_TRAMITE)
+                            app._lData.LTramite[app._lData.LTramite.length] = data[e] //app.Rutines.getCleanedString(data[e].Tipo_TRAMITE)
                 }
-                app.SQL.BOE.db.query(cadsql_BOE, function (err, data) {
+                app.SQL.db.query(cadsql_BOE, function (err, data) {
                     app._lData.LTipoBOE = []
                     for (e in data) {
                         if (data[e].Tipo_BOE != null)
-                            app._lData.LTipoBOE[app._lData.LTipoBOE.length] = app.Rutines.getCleanedString(data[e].Tipo_BOE)
+                            app._lData.LTipoBOE[app._lData.LTipoBOE.length] = data[e] //app.Rutines.getCleanedString(data[e].Tipo_BOE)
                     }
 
 
@@ -180,7 +222,7 @@ var App = {
                     if (key.key != null) {
                         var cadsql_BOCM = 'SELECT DISTINCT Tipo_TRAMITE  FROM bocm INNER JOIN  strings ON bocm.BOCM = strings.BOCM WHERE length(Tipo_Tramite)-length(replace(Tipo_Tramite," " ,""))=0 AND length(replace(Tipo_Tramite," " ,""))>0 AND strings._keys LIKE \'%' + key.key + '%\''
                     }
-                    app.SQL.BOCM.db.query(cadsql_BOCM, function (err, data) {
+                    app.SQL.db.query(cadsql_BOCM, function (err, data) {
                         app._lData.LTipoBOCM = []
                         for (e in data) {
                             if (data[e].Tipo_TRAMITE != null)
@@ -199,94 +241,7 @@ var App = {
 
                 })
             })
-        },
-        ActualizeCounters: function (app, callback) {
-            var _cadsql = "SELECT * FROM lastread"
-            app.Relaciones.SQL.db.query(_cadsql, function (err, Record) {
-                if (err)
-                    console.log(err)
-                if (Record.length == 0) {
-                    _cadsql = "INSERT INTO lastread (Empresa,Directivo) VALUES (1,1)"
-                    app.Relaciones.SQL.db.query(_cadsql, function (err, _data) {
-                        app._xData.VisualCif.Empresa = 1
-                        app._xData.VisualCif.Directivo = 1
-                    })
-
-                } else {
-                    app._xData.VisualCif.Empresa = Record[0].Empresa
-                    app._xData.VisualCif.Directivo = Record[0].Directivo
-                }
-                _cadsql = 'SELECT * FROM directivo WHERE ActiveRelations>100 or Mark>0 order by ActiveRelations DESC'
-                app.Relaciones.SQL.db.query(_cadsql, function (err, rows) {
-                    app._xData.VisualCif.Ranking.Directivos = rows
-                    _cadsql = "SELECT * FROM lastread"
-                    app.SQL.BOE.db.query(_cadsql, function (err, Record) {
-                        if (Record.length == 0) {
-                            _cadsql = "INSERT INTO lastread (SUMARIO_NEXT) VALUES ('BOE-S-20010101')"
-                            app.Boe.SQL.db.query(_cadsql, function (err, _data) {
-                                app._xData.Sumario.BOE = { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOE-S-20010101' }
-                            })
-
-                        } else {
-                            app._xData.Sumario.BOE = Record[0]
-                        }
-                        var _cadsql = "SELECT count(*) FROM sumarios_boe"
-                        app.SQL.BOE.db.query(_cadsql, function (err, Record) {
-                            app._xData.TSUMARIOS.BOE = Record[0]["count(*)"]
-                            _cadsql = "SELECT count(*) FROM boe"
-                            app.SQL.BOE.db.query(_cadsql, function (err, Record) {
-                                app._xData.TBOE = Record[0]["count(*)"]
-                                _cadsql = "SELECT * FROM lastread"
-                                app.SQL.BORME.db.query(_cadsql, function (err, Record) {
-                                    if (Record.length == 0) {
-                                        _cadsql = "INSERT INTO lastread (SUMARIO_NEXT) VALUES ('BORME-S-20090102')"
-                                        app.SQL.BORME.db.query(_cadsql, function (err, Record) {
-                                            app._xData.Sumario.BORME = { SUMARIO_LAST: '', SUMARIO_NEXT: 'BORME-S-20090102' }
-                                        })
-
-                                    } else {
-                                        app._xData.Sumario.BORME = Record[0]
-                                    }
-
-                                    app.SQL.BORME.db.query("SELECT count(*) FROM sumarios_borme", function (err, Record) {
-                                        app._xData.TSUMARIOS.BORME = Record[0]["count(*)"]
-                                        app.SQL.BORME.db.query("SELECT count(*) FROM borme", function (err, Record) {
-                                            app._xData.TBORME = Record[0]["count(*)"]
-
-                                            app.SQL.BOCM.db.query("SELECT * FROM lastread", function (err, Record) {
-                                                if (Record.length == 0) {
-                                                    app.SQL.BOCM.db.query("INSERT INTO lastread (SUMARIO_NEXT) VALUES ('BOCM-20100212')", function (err, Record) {
-                                                        app._xData.Sumario.BOCM = { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOCM-20100212' }
-                                                    })
-
-                                                } else {
-                                                    app._xData.Sumario.BOCM = Record[0]
-                                                }
-                                                app.SQL.BOCM.db.query("SELECT count(*) FROM sumarios_bocm", function (err, Record) {
-                                                    app._xData.TSUMARIOS.BOCM = Record[0]["count(*)"]
-                                                    app.SQL.BOCM.db.query("SELECT count(*) FROM bocm", function (err, Record) {
-                                                        app._xData.TBOCM = Record[0]["count(*)"]
-
-                                                        app.SQL.getTipos(app, { key:null }, function () {
-                                                            callback(app)
-                                                        })
-
-                                                    })
-                                                })
-                                            })
-
-                                        })
-                                        //
-                                    })
-                                })
-                            })
-
-                        })
-                    })
-                })
-            })
-
-        }
+        }       
     },
     Rutines:{
             parameters: function (app, myArgs, callback) {
@@ -318,7 +273,7 @@ var App = {
 
                 return cadena;
             }
-        }
+    }
 }
 App.Rutines.parameters(App, myArgs, function (app) {
 

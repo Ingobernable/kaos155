@@ -8,10 +8,10 @@
             var _this = this
             return {
                 setmark: function (iodata, socket) {
-                    var _cadsql = 'UPDATE ' + iodata.Type + ' SET Mark=' + iodata.value + ' WHERE Id=' + iodata.Id
+                    var _cadsql = 'UPDATE borme_' + iodata.Type + ' SET Mark=' + iodata.value + ' WHERE Id=' + iodata.Id
                     _this.SQL.db.query(_cadsql, function (err, records) {
                         //debugger
-                        var _cadsql = 'SELECT * FROM Directivo WHERE ActiveRelations>100 or Mark>0 order by ActiveRelations DESC'
+                        var _cadsql = 'SELECT * FROM borme_directivo WHERE ActiveRelations>100 or Mark>0 order by ActiveRelations DESC'
                         _this.SQL.db.query(_cadsql, function (err, rows) {
                             app._xData.VisualCif.Ranking.Directivos = rows
                             app.io.emit('lst_cif', { data: app._xData })
@@ -53,7 +53,7 @@
                         data.Nodes[i].BOCM = 0
 
                         if (data.Nodes[i].Type == 1) {
-                            var _cadsql = "SELECT nBOE,nBOCM FROM Empresa WHERE Id =" + data.Nodes[i].Id // + "%'"
+                            var _cadsql = "SELECT nBOE,nBOCM FROM borme_empresa WHERE Id =" + data.Nodes[i].Id // + "%'"
                             console.log(_cadsql)
                             _this.SQL.db.query(_cadsql, function (err, record) {
                                 if (err)
@@ -94,7 +94,7 @@
                         if (n < data.Nodes.length) {
                             var item = data.Nodes[n]
                             if (item.Type == 1) {
-                                var _cadsql = "SELECT nBOE,nBOCM FROM Empresa WHERE Id =" + item.CompanyId
+                                var _cadsql = "SELECT nBOE,nBOCM FROM borme_empresa WHERE Id =" + item.CompanyId
                                 console.log(_cadsql)
                                 app.VisualCif.SQL.db.query(_cadsql, function (err, record) {
                                     if (err)
@@ -113,7 +113,7 @@
                                     })
                                 })
                             } else {
-                                cadsql = 'Select * From Directivo WHERE Id=' + item.PersonId
+                                cadsql = 'Select * From borme_directivo WHERE Id=' + item.PersonId
                                 app.VisualCif.SQL.db.query(cadsql, function (err, record) {
                                     //debugger
                                     if (record.length > 0) {
@@ -177,7 +177,7 @@
                                         _callback(iodata, content, n, _links, _callback, _exit)
                                     } else {
                                         var _Empresa = link.val.toLowerCase() //.replace(/ sa /g," s.a.").replace(/ sl /g, " s.l.")
-                                        var _cadsql = "SELECT nBOE,nBOCM FROM Empresa WHERE Id = " + link.ID
+                                        var _cadsql = "SELECT nBOE,nBOCM FROM borme_empresa WHERE Id = " + link.ID
                                         console.log(_cadsql)
                                         app.VisualCif.SQL.db.query(_cadsql, function (err, record) {
                                             console.log(err, _cadsql)
@@ -198,7 +198,7 @@
                                         })
                                     }
                                 } else {
-                                    cadsql = 'Select * From Directivo WHERE Id=' + link.ID
+                                    cadsql = 'Select * From borme_directivo WHERE Id=' + link.ID
                                     app.VisualCif.SQL.db.query(cadsql, function (err, record) {
                                         //debugger
                                         if (record.length > 0) {
@@ -253,7 +253,7 @@
             if (iodata.command == 'search') {
                 if (!app.semaforo.Relaciones && iodata.value.length>3 ) {
                     app.semaforo.Relaciones=true
-                    this.SQL.db.query('CALL GetSearchLst(?)', [iodata.value], function (err, recordset) {
+                    app.SQL.db.query('CALL GetSearchLst(?)', [iodata.value], function (err, recordset) {
                        
                         var _links = []
                         //for (p in recordset) {
@@ -305,9 +305,9 @@
                     app.request('http://terminator1.ingoberlab.net/vsf/' + Type + '/Relaciones/' + id, '', function (err, res, body) {
                         if (err == null) {
                             var data = JSON.parse( body.replace(/\'/g, "") )
-                            var CadSql = "UPDATE " + Type.toLowerCase() + " SET ActiveRelations=" + data.Nodes.length + " WHERE Id=" + id
+                            var CadSql = "UPDATE borme_" + Type.toLowerCase() + " SET ActiveRelations=" + data.Nodes.length + " WHERE Id=" + id
                             _this.SQL.db.query(CadSql, function (err, recordset) {
-                                var CadSql = "INSERT INTO relations_" + Type.toLowerCase() + " (id" + Type.toLowerCase() + ",Nodes) VALUES (" + id + " , ? )"
+                                var CadSql = "INSERT INTO borme_relations_" + Type.toLowerCase() + " (id" + Type.toLowerCase() + ",Nodes) VALUES (" + id + " , ? )"
                                 //var params = { Nodes: data }
                                 //params['id'+type] = id
                                 _this.SQL.db.query(CadSql, body.replace(/\'/g, ""), function (err, data) {
@@ -337,7 +337,7 @@
                                 var ActiveRelations = list[e].ActiveRelations
                                 var JuridicId = list[e].JuridicId
                                 var e = e + 1
-                                cadsql = "SELECT " + data.Id + " as _id, " + e + " as e,'" + roles + "' as Roles,directivo.Name," + ActiveRelations + " as ActiveRelations," + JuridicId + " as JuridicId, directivo.Mark, directivo.Id FROM directivo WHERE id=" + id
+                                cadsql = "SELECT " + data.Id + " as _id, " + e + " as e,'" + roles + "' as Roles,directivo.Name," + ActiveRelations + " as ActiveRelations," + JuridicId + " as JuridicId, directivo.Mark, directivo.Id FROM borme_directivo WHERE id=" + id
                                 db.query(cadsql, function (err, recordset) {
                                     if (err) {
                                         x = cadsql

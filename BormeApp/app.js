@@ -4,7 +4,7 @@ console.log('loading App - version -' + Version)
 var myArgs = process.argv.slice(2);
 
 if (myArgs.length == 0)
-    myArgs = ['BOCM']//['142.44.166.218', 'BORME',  false]
+    myArgs = ['BOE']//['142.44.166.218', 'BORME',  false]
 
 //myArgs[1] = myArgs[1].substr(2, myArgs[2].length - 2)
 
@@ -59,8 +59,11 @@ var App = {
         return require('./node_app/func_common.js')(app)
     },
     init: function (app, cb) {
-        app._io = require('./node_www/IO.js')(app)
-        app.io = app._io.listen(require('socket.io').listen(80), require('./node_app/elasticIO.js')(app))
+        //app._io = require('./node_www/IO.js')(app)
+        require('./node_app/elasticIO.js')(app).init( function (options) {
+            app.io = { elasticIO: options }
+        })
+                //= app._io.listen(require('socket.io').listen(80), require('./node_app/elasticIO.js')(app))
 
         this.pdftotext = require('./node_app/pdftotext.js')
         require('./node_app/sql_common.js')(app, function (SQL) {

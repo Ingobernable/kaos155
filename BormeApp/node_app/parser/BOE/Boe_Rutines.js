@@ -164,7 +164,7 @@
                     $('p.parrafo').each(function (p, _parraf) {
                         var _t = Trim($($('p.parrafo')[p]).html())
                         if (_t.length > 0) {
-                            if (_t.indexOf(')') == 1 || _t.indexOf('.') == 1){ // || _lastParragraf) {
+                            if ((_t.indexOf(')') == 1 || _t.indexOf('.') == 1) && _t.substr(2,1)==" " ){ // || _lastParragraf) {
                                 _arr[_arr.length] = _t
                             } else {
                                 _arr[_arr.length - 1] = _arr[_arr.length - 1] + ' ' + _t
@@ -177,43 +177,138 @@
                 }
             },
             importes: function (data, options, patterns) {
-                data.importe = "*" + options.Rutines.extract(data.textExtend, 'd) Importe ', options.transforms.ADD(
-                    [patterns.General]
-                ))
 
-                var _imp = data.importe.Between('(', ')', 'euros', ".")
-                if (_imp != null) {
-                    if (_imp.indexOf(";") > 0) {
-                        _imp= _imp.replaceAll(",", ".").split(";")
+               
+                var importe = "*" + options.Rutines.extract(data.textExtend, 'Importe de la adjudicación:', options.transforms.ADD(
+                        [patterns.General,
+                        patterns.Importes]
+                    ))
+                if (importe == "*")
+                    importe = "*" + options.Rutines.extract(data.textExtend, 'd) Importe ', options.transforms.ADD(
+                        [patterns.General,
+                        patterns.Importes]
+                    ))
+
+
+
+                if (importe == "*")
+                    importe = "*" + options.Rutines.extract(data.textExtend, 'Importe total:', options.transforms.ADD(
+                        [patterns.General,
+                        patterns.Importes]
+                    ))
+
+                
+
+                var _imp = this.adaptImportes(importe.replace("*",""), data )
+
+                return _imp != null ? _imp : 0 
+            },
+            adaptImportes: function (_dataimporte, data) {
+
+                function isNumeric(n) {
+                    return !isNaN(parseFloat(n)) && isFinite(n);
+                }
+
+                if (_dataimporte.indexOf(';') == -1) {
+                    if (!isNaN(_dataimporte)) {
+                        _imp = _dataimporte
                     } else {
-                        _imp.replace(",", ".")
+                        if (_dataimporte.indexOf(',') > -1) {
+                            var _imp = _dataimporte.Between('(', ')', 'euros', ".")
+                        } else {
+                            var _imp = _dataimporte.Between('(', ')', 'euros', ",")
+                        }
+
+                        if (_imp != null) {
+                            if (_imp.indexOf(";") > 0) {
+                                _imp = _imp.replaceAll(",", ".").split(";")
+                            } else {
+                                _imp.replace(",", ".")
+                            }
+                        } else {
+                            _imp = _dataimporte.Between('*', 's', 'pe', ".")
+                            if (_imp != null) {
+                                _imp = (_imp / 166.386).toFixed(2)
+                            } else {
+                                _imp = _dataimporte.Between('Importe total:', 's', 'euro', " ")
+                                if (_imp == null) {
+                                    _imp = _dataimporte.Between('Importe total:', 's', 'euro', ".")
+
+                                    if (_imp == null) {
+                                        if (_dataimporte.indexOf(";") > 0) {
+                                            debugger
+                                        } else {
+                                            _imp = data.presupuesto
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 } else {
-                    _imp = data.importe.Between('*', 's', 'pe', ".")
-                    if (_imp != null) {
-                        _imp = (_imp / 166.386).toFixed(2)
+                    var _imp = _dataimporte.replace("*", " ").split(";")
+                    if (data.contratista.indexOf("UTE ") == -1) {
+
+                        var _emp = data.contratista.split(";")
+                        var _test = []
+                        var _moneda = ""
+                        for (n in _emp) {
+                            importe = _imp[n] != null ? _imp[n] : (data.presupuesto != null ? data.presupuesto:0)
+                            if (!isNumeric(importe)) {
+                                if (importe.indexOf("euros") > 0 || importe.indexOf(_moneda) == -1) {
+                                    _moneda = "euros"
+                                    if (importe.indexOf(_moneda) > -1) {
+                                        _i = importe.split(_moneda)[0]
+                                    } else {
+                                        _i = importe
+                                    }
+                                    if (isNumeric(_i)) {
+                                        _test[_test.length] = parseFloat(_i).toFixed(2)
+                                    } else {
+                                        _test[_test.length] = data.presupuesto
+                                    }
+                                } else {
+                                    if (importe.indexOf("pesetas") > 0 || importe.indexOf(_moneda) == -1) {
+                                        _moneda = "pesetas"
+                                        if (importe.indexOf(_moneda) > -1) {
+                                            _i = importe.split(_moneda)[0]
+                                        } else {
+                                            _i = importe
+                                        }
+                                        if (isNumeric(_i)) {
+                                            _test[_test.length] = parseFloat(_i) / 166.386
+                                            _test[_test.length - 1] = _test[_test.length - 1].toFixed(2)
+                                        } else {
+                                            _test[_test.length] = data.presupuesto
+                                        }
+                                    }
+
+                                }
+                            } else {
+                                _test[_test.length] = importe
+                            }
+                        }
                     } else {
-                        _imp = data.importe.Between('Importe total:', 's', 'euro', ".")
-                        //if (_imp != null) {
-                        //    if (_imp.indexOf(";") > 0)
-                        //        debugger
-                        //}
+                        _test = [_imp[0]]
                     }
+                    _imp = _test.join(';')
                 }
-                return _imp != null ? _imp : 0 
+                return _imp
             }
         },
         transforms: function (_array, _regexp) {
-            if (_array == null)
-                debugger
+            ////if (_array == null)
+                //debugger
             if (_regexp != null)
             //for (i in _array) {
                 for (p in _regexp) {
 
                     if (_regexp[p][0] == 'F') {
-
-                        _array = _regexp[p][1].f(this, _array, _regexp[p][2], _regexp[p][3])
-
+                        if (_array != null) {
+                            _array = _regexp[p][1].f(this, _array, _regexp[p][2], _regexp[p][3])
+                        } else {
+                            _array = ""
+                        }
                     } else {
                         //console.log(_array, p)
                         //if (p == 9)
@@ -222,26 +317,210 @@
                             //console.log(_array, p)
                     }
 
-
+                    
                 }
                 //}
             return _array
         },
         extract: function(_arrayText, search, transforms) {
-            //var _arr = []
+            var _arrT = []
 
             for (i in _arrayText) {
                 //console.log(_arrayText[i])
-                if (_arrayText[i].toLowerCase() != null)
+                if (_arrayText[i].toLowerCase() != null) {
                     if (_arrayText[i].toLowerCase().indexOf(search.toLowerCase()) > -1) {
-                        _arrT = _arrayText[i].split(":")
-                        if (_arrT.length > 1) {
-                            if (_arrT[1].length > 1)
-                                return this.transforms(_arrT[1], transforms)
+                        if (_arrayText[i].toLowerCase().indexOf('presupuesto')>0 && _arrayText[i].toLowerCase().indexOf('importe total')>-1) {
+                            var _arrT = _arrayText[i].toLowerCase().split('importe total')
+                            return this.transforms( _arrT[1].replace("(euros),","").split('euros')[0], transforms)
+                        } else {
+                            if (_arrayText[i].toLowerCase().indexOf('descripción') > 0 || _arrayText[i].toLowerCase().indexOf('contratista') > 0 || (_arrayText[i].match(/\d{1,3}(?:\.\d{3})*/)||[]).length==0 ||  (_arrayText[i].toLowerCase().indexOf('lote') == -1 && search.toLowerCase().indexOf('importe') == -1)) {
+                                var _c = _arrayText[i].match(/"([^"]*)"|'([^']*)'/g) || []
+                                var _pesetas = _arrayText[i].match(/\d{1,3}(?:\.\d{3})* pesetas/g) || []
+                                var _euros = _arrayText[i].match(/\d{1,3}(?:\.\d{3})* euros/g) || []
+                                if (_c.length > 0 ) {
+                                    for (_n in _c) {
+                                        if (_pesetas.length == _c.length || _euros.length == _c.length) {
+                                            if (_pesetas.length > 0 && _pesetas.length>_n)
+                                                var _m = (_pesetas[_n].replace("pesetas", "").replaceAll(".", "") * 1) / 166.386
+                                            if (_euros.length > 0 && _euros.length > _n)
+                                                var _m = _euros[_n].replace("euros", "").replaceAll(",", "#").replaceAll(".", "").replaceAll("#", ".") * 1
+                                            if (_euros.length > _n || _pesetas.length > _n) {
+                                                _arrT[_arrT.length] = this.transforms(_c[_n], transforms) + "#" + _m.toFixed(2)
+                                            } else {
+                                                _arrT[_arrT.length] = this.transforms(_c[_n], transforms) + "#0.00"
+                                            }
+                                        } else {
+                                            _arrT[_arrT.length] = this.transforms(_c[_n], transforms)
+                                        }
+                                    }
+                                    return _arrT.join(";")
+                                } else {
+                                    if ((_arrayText[i].match(/:/g) || []).length > 0 && (_arrayText[i].indexOf("pesetas") == -1 && _arrayText[i].indexOf("euros") == -1)) {
+                                        var _arrT = _arrayText[i].split(":")
+                                        if (_arrT.length > 1) {
+                                            if (_arrT[1].length > 1)
+                                                if ((_arrayText[i].toLowerCase().match(/lote número \d{1,2}\,/g) || []).length == 0) {
+                                                    return this.transforms(_arrT[1], transforms)
+                                                } else {
+                                                    var _retT = []
+                                                    var _t = _arrT[1].toLowerCase().replace(/lote número \d{1,3}\,/g, "").replace(/\"/g, "").split(".")
+                                                    for (_n in _t) {
+                                                        if (_t[_n].length > 0)
+                                                            _retT[_retT.length] = this.transforms(_t[_n], transforms)
+                                                    }
+                                                    return _retT.join(";")
+                                                }
+                                        }
+                                    } else {
+                                        if (_arrayText[i].indexOf('. "') > -1) {
+                                            var _arrT = _arrayText[i].replaceAll(":", "#").split('. "')
+                                        } else {
+                                            if (_arrayText[i].indexOf('. ') > -1) {
+                                                var _arrT = _arrayText[i].replaceAll(":", "#").split('. ')
+                                            }
+                                        }
+                                        for (_n in _arrT) {
+                                            if (_arrT[_n].toLowerCase().indexOf(search.toLowerCase() + "s#") > -1) {
+                                                _arrT[_n] = _arrT[_n].substr(_arrT[_n].toLowerCase().indexOf("s# ") + 3, _arrT[_n].length)
+                                            }
+                                            var _arrTs = _arrT[_n].split('#')
+                                            if (_arrTs[0].toLowerCase().indexOf(search.toLowerCase()) > -1) {
+                                                _arrTs.splice(0, 1)
+                                            }
+
+                                            var _arrTse = this.transforms(_arrTs[0], transforms)
+                                            if (_arrTs.length > 1) {
+                                                if (_arrTs[1].indexOf("euros") > 0) {
+                                                    if (_arrTs[1].indexOf("(") > 0) {
+                                                        _arrTsm = _arrTs[1].split("(")[1].split('euros')[0].replace(",", "#").replace(".", "").replace("#", ".") * 1
+                                                    } else {
+                                                        if (_arrTs[1].indexOf("/") > 0) {
+                                                            _arrTsm = _arrTs[1].split("/")[1].split('euros')[0].replace(",", "#").replace(".", "").replace("#", ".") * 1
+                                                        } else {
+                                                            _arrTsm = _arrTs[1].split('euros')[0].replace(",", "#").replace(".", "").replace("#", ".") * 1
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (_arrTs[1].indexOf("pesetas") > 0) {
+                                                        _arrTsm = _arrTs[1].split("pesetas")[0]
+                                                        _arrTsm = (_arrTsm.replaceAll(".", "") * 1) / 166.386
+                                                    } else {
+                                                        _arrTsm = 0
+                                                    }
+                                                }
+                                            } else {
+                                                _arrTsm = 0
+                                            }
+                                            if (_arrTsm > 0) {
+                                                _arrT[_n] = _arrTse + "#" + _arrTsm.toFixed(2)
+                                            } else {
+                                                _arrT[_n] = _arrTse
+                                            }
+                                        }
+                                        //return _arrT.join(';')
+                                    }
+                                }
+                            } else {
+                                if (_arrayText[i].indexOf(";") > -1 && _arrayText[i].indexOf(":") > -1 && _arrayText[i].indexOf(".-") == -1) {
+                                    _arrT = _arrayText[i].substr(_arrayText[i].indexOf(": ") + 1, _arrayText[i].length).split(";")
+                                    for (n in _arrT) {
+                                        //if (_arrT[n].length>0 && )
+                                        if (_arrT[n].indexOf(": ") > -1) {
+                                            _arrT[n] = this.transforms(_arrT[n].split(": ")[1], transforms)
+                                        } else {
+                                            _arrT[n] = this.transforms(_arrT[n])
+                                        }
+                                    }
+                                    return _arrT.join(";")
+                                } else {
+                                    if (_arrayText[i].toLowerCase().indexOf('lote número') > -1 && _arrayText[i].toLowerCase().indexOf('.') > -1 && _arrayText[i].indexOf(": ") > -1) {
+                                        _arrT = _arrayText[i].substr(_arrayText[i].indexOf(": ") + 1, _arrayText[i].length).split(". ")
+                                        var _ret = []
+                                        for (n in _arrT) {
+                                            //if (_arrT[n].length>0 && )
+                                            if (_arrT[n].toLowerCase().indexOf('lote número') > -1) {
+                                                _ret[_ret.length] = this.transforms(_arrT[n].toLowerCase().replace(/lote número \d{1,2},/g, ""), transforms)
+                                            } else {
+                                                if (_arrT[n].match(/\w/g).length == 0 || (_arrT[n].indexOf("pesetas") > 0 || _arrT[n].indexOf("euros") > 0))
+                                                    _ret[_ret.length] = this.transforms(_arrT[n], transforms)
+                                            }
+                                        }
+                                        return _ret.join(";")
+                                    } else {
+                                        if (_arrayText[i].indexOf("euros)") > 0) {
+                                            _arrT = _arrayText[i].split("euros)")
+                                        } else {
+                                            if (_arrayText[i].indexOf("euros.") > 0) {
+                                                _arrT = _arrayText[i].split("euros.")
+                                            } else {
+                                                if (_arrayText[i].indexOf("euros,") > 0) {
+                                                    _arrT = _arrayText[i].split("euros,")
+                                                } else {
+                                                    if (_arrayText[i].indexOf("euros ") > 0) {
+                                                        _arrT = _arrayText[i].split("euros ")
+                                                    } else {
+                                                        if (_arrayText[i].indexOf("Ninguno") > 0) {
+                                                            _arrT = []
+                                                        } else {
+                                                            _arrT = []
+                                                            if ((_arrayText[i].match(/\d{1,3}(?:\.\d{3})*,\d{2}/) || []).length>0 ) {
+                                                                _arrT = [_arrayText[i].match(/\d{1,3}(?:\.\d{3})*,\d{2}/)[0]]
+                                                            } else {
+                                                                if ((_arrayText[i].match(/\d{1,3}(?:\.\d{3})* pesetas/g) || []).length > 0) {
+                                                                    _arrT = _arrayText[i].match(/\d{1,3}(?:\.\d{3})* pesetas/g)
+                                                                    for (_n in _arrT) {
+                                                                        _arrT[_n] = (_arrT[_n].replaceAll("pesetas","").replaceAll(".", "") / 166.386).toFixed(2)
+                                                                    }
+                                                                } else {
+                                                                    _arrT = []
+                                                                    //debugger
+                                                                }
+                                                            }
+
+                                                        
+                                                        }
+                                                        
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        _ret = []
+                                        if (_arrT.length > 1) {
+                                            var _ret = []
+                                            for (_n in _arrT) {
+                                                if (_arrT[_n].indexOf(":") > -1)
+                                                    _arrT[_n] = _arrT[_n].split(":")[1]
+                                                if (_arrT[_n].indexOf(') (') > -1)
+                                                    _arrT[_n] = _arrT[_n].split(") (")[1]
+
+                                                if (_arrT[_n].indexOf('(') > -1)
+                                                    _arrT[_n] = _arrT[_n].split("(")[1]
+
+                                                _arrT[_n] = _arrT[_n].replace(/\./g, "")
+                                                _arrT[_n] = _arrT[_n].replace(/\,/g, ".")
+
+                                                if (isNaN(_arrT[_n])) {
+                                                    _arrT[_n] = "0.00"
+                                                } else {
+                                                    _arrT[_n] = _arrT[_n] * 1
+                                                    _arrT[_n] = _arrT[_n].toFixed(2)
+                                                    _ret[_ret.length] = _arrT[_n]
+                                                }
+                                            }
+                                            if (_ret.length > 0) {
+                                                return _ret.join(';')
+                                            } else {
+                                                return null
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
+                }
             }
-            return ""
+            return _arrT.join(';')
 
         },
         removeLastChar: function(string, char) {

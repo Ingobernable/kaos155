@@ -12,7 +12,7 @@
             insert: function (options, _analisis, data, callback) {
                 var i = isNaN(data.importe * 1) ? 0 : data.importe * 1
                 var params = [
-
+                        
                         data.id.substr(12, 2),                                      //Dia
                         data.id.substr(10, 2),                                      //Mes
                         data.id.substr(6, 4),                                       //Anyo
@@ -26,7 +26,7 @@
                         data.textExtend.join("<br>").replace(/'/g, "\'"),             //Texto
 
                         data.contratista != null ? data.contratista.substr(0, 254).replace(/'/g, "\'"):null,          //_keys
-                        i.toFixed(2)
+                        data.importe.indexOf(";") == -1 ? i.toFixed(2) : data.importe
                         //''.Trim(data.importe.replace(/\n/g, "").replace(/'/g, '') ) //Importes
                 ]
                 var _ing = ""
@@ -46,15 +46,17 @@
                     //        params.idEmpresa = recordEmpresa.length>0 ? recordEmpresa[0].id : 0
                     //}
                 data.extra.materias = data.extra.materias + (data.extra.materias_cpv.length > 0 && data.extra.materias.length > 0  ? ";" : '') + data.extra.materias_cpv
-                options.SQL.db.query('Call Insert_Data_BOE(' + data.contratista.split(';').length + ',' + data.extra.materias.split(';').length + ",'" + data.type + "',?,?,?,?,?,?,?,?,?,?,?,?" + _ing + ')', params, function (err, record) {
-                        if (err != null) {
-                            cadSql = "INSERT INTO errores (BOE, SqlMensaje, SqlError) SET (?,?,?)"
-                            options.SQL.db.query(cadsql, [data.id, err.SqlMensaje, err.SqlError], function (err2) {
+                options.SQL.db.query('Call Insert_Data_BOE(' + data.textExtend.length + ',' + data.contratista.split(';').length + ','  + data.extra.materias.split(';').length + ",'" + data.type + "',?,?,?,?,?,?,?,?,?,?,?,?" + _ing + ')', params, function (err, record) {
+                    if (err != null) {
+                            //debugger
+                            cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
+                            options.SQL.db.query(cadSql, [_analisis._BOE.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                 var x = err
                                 var y = params
-                                //debugger
+                                callback(data)
                             })
                         } else {
+                            //debugger
                            // for (n in record) {
                            //     if (record[n][0] != null)
                            //         if (record[n][0].ID != null)
@@ -63,9 +65,10 @@
                             //                    debugger
                             //            })
                            // }
+                            callback(data)
                         }
                         //debugger
-                        callback(data)
+                        
                     })
                 //})
 
@@ -128,14 +131,16 @@
                     //var xcadsql = null
                     var contratos = []
                     if (body != null) {
-
+                        
                         var $ = app.Rutines(app).XmlToDom(body)                 // convertimos el texto xml en objetos DOM
                         if ($('error').length == 0) {
                             data.codigo = options.Rutines.get.principal($)      // rescatamos las variables directas
                             var _analisis = options.Rutines.get.data(options, data)      //creamos la estructura con los datos principales
                             if (_analisis._type == null)
                                 debugger
-                            //console.log(_analisis._modalidad)
+
+                            if (["BOE-B-2001-1037"].indexOf(_analisis._BOE.split("=")[1]) > -1)
+                                debugger
 
                             if (_analisis._type.indexOf('Adjudicación') > -1 || _analisis._modalidad == "Formalización contrato") {
                                 options.Rutines.get.p_parrafo(options, $, '.', body, function (_data) {
@@ -144,37 +149,18 @@
                                     var textExtend = data.textExtend = _data._arr   // recojemos todo el texto en una array (con caracter final)
                                     if (data.textExtend.length > 0) {
                                         var patterns = options.transforms.getPatern(options.transforms)
-                                        data.contratista = options.Rutines.extract(data.textExtend, 'contratista')
-                                        if (data.contratista.indexOf('Lote') > -1) {
-                                           
-                                            contratos = data.contratista.split(".")
-                                            var transforms = options.transforms.ADD(
+                                        data.contratista = options.Rutines.extract(data.textExtend, 'contratista',
+
+                                            options.transforms.ADD(
                                                 [patterns.General,
-                                                 patterns.Contratista,
-                                                 patterns.exoticChars,
-                                                [["F", { f: options.transforms.removeFirstChar }, ' ']]
-                                                ])
-                                            var transformsChars = options.transforms.ADD([
-                                                patterns.especialChars
-                                            ])
-                                            data.contratista = []
-                                            for (_c in contratos) {
-                                                if(contratos[_c].length>0)
-                                                    data.contratista[_c] = options.Rutines.transforms(options.Rutines.transforms(contratos[_c], transforms).split(",")[0], transformsChars).toUpperCase()
-                                            }
+                                                    patterns.Contratista,
+                                                    patterns.especialChars,
+                                                    patterns.exoticChars,
+                                                    patterns.specialContratista,
+                                                    [["F", { f: options.transforms.removeFirstChar }, ' '], ['R', new RegExp(/\./, "g"), ""]],
 
-                                        }else{
+                                                ]))
 
-                                            data.contratista = options.Rutines.extract(data.textExtend, 'contratista',
-                                                options.transforms.ADD(
-                                                    [patterns.General,
-                                                        patterns.Contratista,
-                                                        patterns.exoticChars,
-                                                        patterns.especialChars,
-                                                    [["F", { f: options.transforms.removeFirstChar }, ' ']]
-                                                    ]))
-
-                                        }
                                         data.extra.adjudicador = options.Rutines.extract(data.textExtend, 'Organismo',
                                             options.transforms.ADD(
                                                 [patterns.General,
@@ -182,12 +168,49 @@
                                                 [["F", { f: options.transforms.removeFirstChar }, ' ']]
                                                 ]))
 
+                                        data.presupuesto = options.Rutines.extract(data.textExtend,'Presupuesto base de licitación',
+                                            options.transforms.ADD(
+                                                [patterns.General,
+                                                patterns.Importes,
+                                                [["F", { f: options.transforms.removeFirstChar }, ' ']]
+                                                ]))
 
-                                        data.importe = options.Rutines.get.importes(data, options, patterns) 
+                                        //data.presupuesto = options.Rutines.get.adaptImportes(data.presupuesto ,data)
 
+                                        for (_i in data.textExtend) {
+                                            //console.log(_arrayText[i])
+                                            if (data.textExtend[_i].toLowerCase() != null) {
+                                                if (data.textExtend[_i].indexOf('.-') > -1) {
+                                                    data.extra.cargo = data.textExtend[_i].split(".-")[1].split(',')[0].replace(/\"/g,"")
+                                                    data.extra.firma = data.textExtend[_i].split(".-")[1].split(',').length>1 ? ''.Trim(data.textExtend[_i].split(".-")[1].split(',')[1]) : ''
+                                                }
+                                            }
+                                        }
+                                        if (data.contratista.indexOf("#") == -1) {
+                                            var _imp = options.Rutines.get.importes(data, options, patterns)
+                                            data.importe = _imp
+                                            if (data.importe == 0) {
+                                                data.importe = ""
+                                                for (_l in data.contratista.split(";")) {
+                                                    data.importe = data.importe + (data.importe.length > 0 ? ";" : "") + data.presupuesto
+                                                }
+                                            }
+                                        } else {
+                                            data.importe = ""
+                                            var _e = data.contratista.split(";")
+                                            data.contratista = ""
 
-                                        _analisis._tramitacion = ''.Trim(options.Rutines.extract(data.textExtend, 'Tramitación', options.transforms.General))
+                                            for (_l in _e) {
+                                                data.importe = data.importe + (data.importe.length > 0 ? ";" : "") + _e[_l].split("#")[1]
+                                                data.contratista = data.contratista + (data.contratista.length > 0 ? ";" : "") + _e[_l].split("#")[0]
+                                            }
+                                        }
+                                        _analisis._tramitacion = ''.Trim(options.Rutines.extract(data.textExtend, 'Tramitación', options.transforms.General)).split(" ")[0]
                                         _analisis._objeto = ''.Trim(options.Rutines.extract(data.textExtend, 'Descripción del objeto:', options.transforms.General))
+
+                                        //if(data.contratista.indexOf(' S')==-1)
+                                        //    debugger
+
 
                                         if (data.contratista != null) {
                                             if (data.contratista.length > 0) {
@@ -225,9 +248,12 @@
                                     }
                                 }, urlDoc)
                             } else {
-                                //debugger
+                                
                                 callback(data)
                             }
+                         
+
+                        
                         } else {
                             callback(data)
                         }

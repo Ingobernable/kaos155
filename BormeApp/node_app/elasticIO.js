@@ -3,24 +3,25 @@
         io: require('socket.io-client'),
         ioevents: ['elasticsearch'],
 
-        init: function(app, callback) {
+        init: function (callback) {
+            var _this =this
             this.socket = this.io.connect('http://elastic.BBDD.ovh:8080', { reconnect: true })
             this.socket.firstConnect = true
             this.socket.on('connect', function () {
                 console.log('Connected!');
-                if (this.socket.firstConnect) {
+                if (_this.socket.firstConnect) {
                     for (n in this.ioevents) {
-                        this.socket.on(options.ioevents[n], function (data) {
+                        _this.socket.on(options.ioevents[n], function (data) {
                             console.log('(' + n + ')receive event:' + options.ioevents[n])
                             app[data.command](data)
                         })
                     }
                 }
-                this.socket.firstConnect = false
+                _this.socket.firstConnect = false
 
                 setTimeout(function () {
                     console.log('send elastic hello')
-                    this.socket.emit('elasticsearch', { command: 'hello' })
+                    _this.socket.emit('elasticsearch', { command: 'hello' })
                 }, 1000)
             });
             this.socket.on('disconnect', function () {

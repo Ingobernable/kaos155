@@ -25,6 +25,13 @@ module.exports = function (app) {
             //debugger
             return Trim(string.split(_regexp)).join(';')
         },
+        removeFromLastChar: function (opc,string, char) {
+            if (string.lastIndexOf(char) > -1) {
+                return string.substr(0, string.lastIndexOf(char) + 1)
+            } else {
+                return string
+            }
+        },
         replaceLastChar: function (opc,string, char, charReplace) {
             if (string.lastIndexOf(char) == string.length - 1) {
                 return string.substr(0,string.length-1) + charReplace
@@ -40,8 +47,14 @@ module.exports = function (app) {
         },
         removeFirstChar: function (opc,string, char) {
             if (string.indexOf(char) == 0)
-                string = string.substr(1, string.length - 2)
+                string = string.substr(1, string.length - 1)
             return string
+        },
+        moveToEnd: function (opc, string, char) {
+            return string.substr(char.length, string.length) + char + "."
+        },
+        recortaDesdeLast: function (opc, string, end) {
+            return string.substr(0, string.lastIndexOf(end) + end.length )
         },
         executeIF: function (opc,string, _func, arrayOk) {
             if (_func(string)) {
@@ -60,24 +73,36 @@ module.exports = function (app) {
                     ['F', { f: _this.splitsecondpart }, ":"],
                 ],
                 Importes: [
-                    ['R', new RegExp(/Importe total,/, "g"), ""]
+                    ['R', new RegExp(/Importe total,/, "g"), ""],
+                    ['F', { f: _this.replaceAll }, ",", '#'],
+                    ['F', { f: _this.replaceAll }, ".", ''],
+                    ['F', { f: _this.replaceAll }, "#", '.'],
+                    ['F', { f: _this.replaceAll }, "y ", ''],
+                    ['F', { f: _this.removeFromLastChar }, "s"],
+                    ['F', { f: _this.executeIF }, function (string) {
+                        return (string.match(/:/g) || []).length>1
+                    }, [
+                            ['F', { f: _this.replace }, ":", ''],
+                        ]]
                 ],
                 Contratista: [
 
                     ["F", { f: _this.removeFirstChar }, '" "'],
-                    //['R', new RegExp(/S.A/, "g"), "S.A.\";"],
-                    // ['R', new RegExp(/S. A./, "g"), "S.A.\";"],
-                    //['R', new RegExp(/S.A./, "g"), "S.A.\";"],
+                    ['F', { f: _this.replaceAll }, ', SAU.', ' SA.'],
+                    ['F', { f: _this.replaceAll }, 'S o c i e d a d A n ó n i -ma', ' SA.'],
+                    ['F', { f: _this.replaceAll }, ', S o c i e d a d A n ó n i m a', ' SA.'],
+                    ['F', { f: _this.replaceAll }, ', S oc ie d ad Lim i ta da', ' SL.'],
+                    ['F', { f: _this.replaceAll }, 'Sociedad Limitada de Riegos,', ' SL.'],
+                    ['F', { f: _this.replaceAll }, ', Sociedad de Responsabilidad Limitada', ' SL.'],
+                    ['F', { f: _this.replaceAll }, ', Sociedad Anóni ma', ' SA.'],
 
-                    //['R', new RegExp(/S.L/, "g"), "S.L.\";"], 
-                    //['R', new RegExp(/S. L./, "g"), "S.L.\";"],
-
-                    //['R', new RegExp(/, Sociedad Anónima/, "g"), " S.A.\";"],
-
+                    ['F', { f: _this.replaceAll }, ', Sociedad Anónima Laboral', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', Sociedad Anónima Española', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'Sociedad Anónima Española', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', Sociedad Anónima', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', Sociedad Limitada', ' SL.'],
+                    ['F', { f: _this.replaceAll }, ', Sociedad Limitada', ' SL.'],
+                    ['F', { f: _this.replaceAll }, ' Sociedad Limitada', ' SL.'],
                     ['F', { f: _this.replaceAll }, 'Sociedad Anónima', ' SA.'],
 
                     ['F', { f: _this.replaceAll }, ', sociedad anónima española', ' SA.'],
@@ -94,9 +119,20 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, 'sociedad anómima española', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', sociedad anónima', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'sociedad anómima', ' SA.'],
-                    ['F', { f: _this.replaceAll }, 'Union Temporal de Empresas', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'union temporal de empresas', 'UTE '],
+                    ['F', { f: _this.replaceAll }, 'Union Temporal de Empresas', 'UTE '],
+                    ['F', { f: _this.replaceAll }, 'Unión Temporal de Empresas', 'UTE '],
+                    ['F', { f: _this.replaceAll }, 'unión temporal de empresas', 'UTE '],
+                    ['F', { f: _this.replaceAll }, '. S L', ' SL.'],
+                    ['F', { f: _this.replaceAll }, '. S A', ' SA.'],
+                    ['F', { f: _this.replaceAll }, ', S A L', ' SA.'],
+                    ['F', { f: _this.replaceAll }, ', S L L', ' SL.'],
+                    ['F', { f: _this.replaceAll }, '. S L U',  ' SL.'],
                     ['F', { f: _this.replaceAll }, 'S.L.', 'SL.'],
                     ['F', { f: _this.replaceAll }, 'S.A.', 'SA.'],
+                    ['F', { f: _this.replaceAll }, ', S A', ' SA.'],
+                    ['F', { f: _this.replaceAll }, ' SAE', ' SA.'],
+                    ['F', { f: _this.replaceAll }, 'UTE ', 'UTE. '],
 
                     //['R', new RegExp(/Sociedad Anónima/, "g"), "S.A.\";"],
                     //['R', new RegExp(/, Sociedad Anónima Española/, "g"), "S.A.\";"],
@@ -119,6 +155,39 @@ module.exports = function (app) {
 
 
                     //['R', new RegExp(/.../, "g"), ""]
+                ],
+                specialContratista: [
+                    ['F', { f: _this.executeIF }, function (string) {
+                        return string.indexOf('SA.') > -1 || string.indexOf('SL.') > -1
+                    }, [
+                            ['R', new RegExp(/"/, "g"), ""],
+                            ['R', new RegExp(/\.\.\./, "g"), ""],
+                            ['R', new RegExp(/\.\./, "g"), "."],
+                            ['R', new RegExp(/\L\./, "g"), "L"],
+                            ['R', new RegExp(/\A\./, "g"), "A"],
+                            ['R', new RegExp(/\,/, "g"), ""]
+                        ]],
+                    ['F', { f: _this.executeIF }, function (string) {
+                        return string.indexOf(' SA ') == 1
+                    }, [
+                            ['F', { f: _this.moveToEnd }, ' SA ', '']
+                        ]],
+                    ['F', { f: _this.executeIF }, function (string) {
+                        return string.indexOf(' SL ') == 1
+                    }, [
+                            ['F', { f: _this.moveToEnd }, ' SL ', ''],
+                        ]],
+                    ['F', { f: _this.executeIF }, function (string) {
+                        return string.lastIndexOf(' SA.') > 0 && string.lastIndexOf(' SA.') < string.length - 4
+                    }, [
+                            ['F', { f: _this.recortaDesdeLast }, ' SA.', '']
+                        ]],
+                    ['F', { f: _this.executeIF }, function (string) {
+                        return string.lastIndexOf(' SL.')>0 && string.lastIndexOf(' SL.') < string.length - 4
+                    }, [
+                            ['F', { f: _this.recortaDesdeLast }, ' SL.', '']
+                        ]],
+                    
                 ],
                 exoticChars: [
                     ['F', { f: _this.replaceAll }, '/(À|Á|Â|Ã|Ä|Å|Æ)/gi', 'A'],
@@ -145,16 +214,10 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, '&amp;', '&'],
                     ['F', { f: _this.replaceAll }, ' c) Nacionalidad', ';'],
                     ['F', { f: _this.replaceAll }, '";",', '";"'],
+                    ['F', { f: _this.replaceAll }, 'A.-', 'A.;'],
+                    ['F', { f: _this.replaceAll }, 'L.-', 'L.;'],
+                    ['F', { f: _this.replaceAll }, '- ', '-'],
                     
-                    ['F', { f: _this.executeIF }, function (string) {
-                        return string.indexOf('SA')>-1 || string.indexOf('SL')>-1
-                    }, [
-                            ['R', new RegExp(/"/, "g"), ""],
-                            ['R', new RegExp(/\.\.\./, "g"), ""],
-                            ['R', new RegExp(/\.\./, "g"), "."],
-                            ['R', new RegExp(/\./, "g"), ""],
-                            ['R', new RegExp(/\,/, "g"), ""]
-                        ]],
                     
 
                     
