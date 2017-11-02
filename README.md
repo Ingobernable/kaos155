@@ -1,5 +1,5 @@
 # kaos155
-Herramienta para seguimiento de supuestas tramas de corrupción
+Herramienta para la obtención de datos de Contratación con la administración pública y relaciones societarias en España.
 
 
 ## Formas de contactar
