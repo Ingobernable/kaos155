@@ -3,11 +3,11 @@
 Tarea a realizar:
 	recolección de datos
 
-		node app.js <ip mysql> TAREA CREATBL
+		node app.js TAREA AÑO
 
 	ejemplos
 		
-		node app.js 127.0.0.1 BOE 			-> recolección de datos del BOE desde 01/01/2000 en DB Local		tiempo 2/3 dias
-		node app.js 127.0.0.1 BORME			-> recolección de datos del BORME
+		node app.js 127.0.0.1 BOE 	2001		-> recolección de datos del BOE el año	2001
+		node app.js 127.0.0.1 BORME	2009		-> recolección de datos del BORME al año 2009
 
 

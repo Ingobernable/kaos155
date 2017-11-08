@@ -36,7 +36,7 @@
             Secciones: function (options, url, data, callback) {
                 app.Rutines(app).askToServer(options, url, data, function (options, body, data) {
                     //debugger
-                    try {
+                    //try {
                         if (body != null) {
                             var $ = app.cheerio.load(body, {
                                 withDomLvl1: true,
@@ -90,18 +90,19 @@
                                     })
                                     data.id = url.uri.split('=')[1]
                                     data._list = _reg
+                                    //retornamos la lista del contenido del sumario
                                     callback(data)
                                 //})
                             }
                         } else {
                             debugger
-                            callback(data)
+                            callback(data,true)
                         }
-                    }
-                    catch (err) {
-                        debugger
-                        callback(data)
-                    }
+                    //}
+                    //catch (err) {
+                    //    debugger
+                    //    callback(data)
+                    //}
                 })
             },
             saveStrings: function (ID_Sumario, _lines, idEmpresa, _l, cb) {
@@ -120,7 +121,7 @@
 
                 process.stdout.write('.') //console.log(_p.Empresa+"->"+_p.Empresa_Id)
                 //cadsql = "UPDATE lastread SET ID_LAST="+_p.BORME_Id +";"
-                options.SQL.db.query("UPDATE lastread SET ID_LAST='"+ ID_Sumario + "#" + _p.BOLETIN+ '#' + _p.BORME_Id + "' WHERE Type='BORME'; SELECT "+_l+" as _l;", function (err, Diario) {
+                options.SQL.db.query("UPDATE lastread SET ID_LAST='"+ ID_Sumario + "#" + _p.BOLETIN+ '#' + _p.BORME_Id + "' WHERE Type='BORME' and Anyo=" + app.anyo + "; SELECT "+_l+" as _l;", function (err, Diario) {
                     if (err) {
                         debugger
                         console.log(err)
@@ -134,71 +135,57 @@
                 })
             },
             saveLinesDeMovimientos: function (_l,_lines, data, _cb) {
-                var _ok =false
+                //var _ok =false
                 var _this = this
-                _linea = _lines.data[_l]
 
-                _lines.data[_l]._empresa = ''.Trim(_linea.e.replace(/'/g, "\'").replace(/'/g, "\'"))
-                _lines.data[_l]._original = _linea.original.replace(/"/g, "").replace(/'/g, "\'").replace(/\n/g, "")
-                
-                if (data.into != null) {
-                    if (data.into.split('#')[2] * 1 == _linea.id * 1) {
-                        debugger
-                    }
-                    if (data.into.split('#')[2] * 1 < _linea.id * 1) {
-                        data.into = null
-                        _ok = true
-                    }
-                } else {
-                    _ok=true
-                }
-                if (_ok) {
+                _ok = function (options, _l, _lines) {
+                    // if (_ok) {
                     options.SQL.db.query("CALL Insert_Data_BORME_Empresa(?," + _l + ")", _lines.data[_l]._empresa, function (err, _rec) {
                         //console.log(_rec2)
                         if (err != null || _rec[0][0] == null) {
                             var cadsql = "INSERT INTO errores ?"
-                            options.SQL.db.query(_cadsql, { BOLETIN: _lines.BORME , SqlError: err.sql }, function (err, reg) {
+                            options.SQL.db.query(_cadsql, { BOLETIN: _lines.BORME, SqlError: err.sql }, function (err, reg) {
                                 if (_l == _lines.data.length - 1) {
                                     app._xData.TBORME++
                                     options.parser.saveDiarioMovimientos(0, _lines, data, _cb)
                                 } else {
-                                    
+
                                     _l++
                                     options.parser.saveLinesDeMovimientos(_l, _lines, data, _cb)
                                 }
                             })
                         } else {
-
+                            process.stdout.write('E')
                             options.DirEmpresas[_rec[0][0].i] = _rec[0][0]
-                            
+
                             var _empresa = {
                                 // id: _rec[0][0].Id,
                                 Name: _rec[0][0].Name,
                                 ActiveRelations: 0,
-                                TotalRelations:0,
+                                TotalRelations: 0,
                                 Nodes: [],
                                 //CompanyId: _rec[0][0].Id,
                                 Type: 1,
-                                CapitalSocial:0,
+                                CapitalSocial: 0,
                                 Provincia: data._list[data.e].titulo,
                                 Year: data.next.substr(6, 4),
-                                LastUpdate: data.SUMARIO_LAST.substr(8,8)
+                                LastUpdate: data.SUMARIO_LAST.substr(8, 8)
                             }
 
-                           
+
                             if (_lines.data[_l].keys.length > 0) {
                                 for (_n in _lines.data[_l].contenido) {
                                     var _t = _lines.data[_l].contenido[_n].type.toLowerCase()
-                                    console.log(_t)
+                                    //console.log(_t)
                                     if (options.Rutines.actions[_t] != null)
                                         _empresa = options.Rutines.actions[_t](_empresa, _lines.data[_l].contenido[_n].values)
                                 }
                                 //debugger
                             }
+                            if (app._io)
+                                app._io.elasticIO.send('NEW', 'BORME', 'Empresa', _rec[0][0].Id, _empresa)
 
-                            app._io.elasticIO.send('NEW', 'BORME' , 'Empresa', _rec[0][0].Id , _empresa)
-
-                            options.parser.saveStrings( data.id, _lines, _rec[0][0].Id, _rec[0][0].i, function (_l) {
+                            options.parser.saveStrings(data.id, _lines, _rec[0][0].Id, _rec[0][0].i, function (_l) {
                                 if (_l == _lines.data.length - 1) {
                                     app._xData.TBORME++
                                     options.parser.saveDiarioMovimientos(0, _lines, data, _cb)
@@ -211,18 +198,56 @@
                         }
 
                     })
-                } else {
-                    //debugger
-                    if (_l == _lines.data.length - 1) {
-                        app._xData.TBORME++
-                        options.parser.saveDiarioMovimientos(0, _lines, data, _cb)
-                    } else {
-                        _l++
-                        options.parser.saveLinesDeMovimientos(_l, _lines, data, _cb)
-                    }
+
                 }
-                    
-        
+
+
+
+                _linea = _lines.data[_l]
+
+                _lines.data[_l]._empresa = ''.Trim(_linea.e.replace(/'/g, "\'").replace(/'/g, "\'"))
+                _lines.data[_l]._original = _linea.original.replace(/"/g, "").replace(/'/g, "\'").replace(/\n/g, "")
+                
+                if (data.into != null) {
+                    if (data.into.split('#').length > 1) {
+                        //if (data.into.split('#')[2] * 1 == _linea.id * 1) {
+                            //debugger
+                        //} else {
+                            if (data.into.split('#')[2] * 1 < _linea.id * 1) {
+                                data.into = null
+                                _ok(options, _l, _lines)
+
+                            } else {
+                                cadSQl = "SELECT Id,Name," + _linea.id+" as i FROM borme_empresa WHERE Name='" + _linea._empresa.replaceAll("'","\\'") + "'"
+
+                                options.SQL.db.query(cadSQl, function (err, _rec) {
+                                    if (err != null) {
+                                        debugger
+                                    } else {
+                                        if (_rec.length > 0) {
+                                            options.DirEmpresas[_rec[0].i] = _rec[0]
+                                        }
+
+                                        if (_l == _lines.data.length - 1) {
+                                            app._xData.TBORME++
+                                            options.parser.saveDiarioMovimientos(0, _lines, data, _cb)
+                                        } else {
+                                            _l++
+                                            options.parser.saveLinesDeMovimientos(_l, _lines, data, _cb)
+                                        }
+                                       
+                                    }
+                                })
+                            }
+                        //}
+                    } else {
+                        _ok(options,_l,_lines)
+                    }
+                } else {
+                    _ok(options, _l, _lines)
+                }
+
+ 
 
             },
             saveDiarioMovimientos: function ( e, _lines, _data, _ret) {
@@ -233,107 +258,42 @@
                         if (options.Rutines.SQL[_line.data[e].contenido[_e].type] == null)
                             debugger
 
-                        options.Rutines.SQL[_line.data[e].contenido[_e].type](_line.data[e].contenido[_e], _data , function (_Dl, idDirectivo, Active) {
+                        options.Rutines.SQL[_line.data[e].contenido[_e].type](_line.data[e].contenido[_e], _data, function (_Dl, idDirectivo, Active) {
                             if (_Dl == null)
                                 debugger
-
-                            var _idEmpresa = options.foundEmpresas(options.DirEmpresas,_line.data[e]._empresa)
-                            if (_idEmpresa ==null)
+                            if (_line.data[e] == null)
+                                debugger
+                            var _idEmpresa = options.foundEmpresas(options.DirEmpresas, _line.data[e]._empresa)
+                            if (_idEmpresa == null)
                                 debugger
 
-                            cadsql = "INSERT INTO borme_diario SET ?"
-                            //if (_Dl.value == null && _Dl.values == null)
-                            //    debugger
-                            params = {
-                                BORME: _line.BORME,
-                                BORME_Id: _line.data[e].id.match(/[\d]{1,7}$/)[0],
-                                Dia: _data.id.substr(14, 2),
-                                Mes: _data.id.substr(12, 2),
-                                Anyo: _data.id.substr(8, 4),
-                                Provincia: _line.PROVINCIA,
-                                Empresa_Id: _idEmpresa.Id,
-                                Directivo_Id: idDirectivo,
-                            }
-                            if (_Dl != null) {
-                                params.type = _Dl.type ? _Dl.type : _Dl.values.type,
-                                params._key = _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
-                                params._value = (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values==null ? null : _Dl.values.value)
-                            } else {
+                            params = [
+                                 _line.BORME,
+                                 _line.data[e].id.match(/[\d]{1,7}$/)[0],
+                                 _data.id.substr(14, 2),
+                                 _data.id.substr(12, 2),
+                                 _data.id.substr(8, 4),
+                                 _line.PROVINCIA,
+                                 _idEmpresa.Id,
+                                 idDirectivo,
+                                 _idEmpresa.empresa ? 0 : 1,
+                                 (Active ? 1 : 0),
+                                 _Dl.type ? _Dl.type : _Dl.values.type,
+                                 _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
+                                 (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value)
+                            ]
+
+                            if (_Dl == null) {
                                 debugger
+                                console.log('_Dl = null error borme.js')
                             }
-
-                            //if (params.Provincia == "BARCELONA")
-                            //    debugger
-                            //debugger
-                            options.SQL.db.query(cadsql, params, function (err, _record) {
-                                if (err)
-                                    debugger
-
+                            options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
                                 process.stdout.write('D')
+                                _e++
+                                saveLineContenido(e, _e, _line, _data, _cb)
 
-                                cadsql = "SELECT * FROM borme_diario where id="+_record.insertId
-                                options.SQL.db.query(cadsql, function(err,_params){
-                                    if (err)
-                                        debugger
-                                    var params = _params[0]
-                                    _params = {
-                                        BORME: _params[0].BORME,
-                                        BORME_ID: _params[0].BORME_ID,
-                                        Dia: _params[0].Dia,
-                                        Mes: _params[0].Mes,
-                                        Anyo: _params[0].Anyo,
-                                        Provincia: _params[0].Provincia,
-                                        Empresa_Id: _params[0].Empresa_Id,
-                                        Directivo_Id: _params[0].Directivo_Id,
-                                        type: _params[0].type,
-                                        key: _params[0]._key,
-                                        value: _params[0]._value
-                                    }
-                                    app._io.elasticIO.send('NEW', 'BORME', 'Diario', params.id, _params)
-
-                                    if (_e == line.contenido.length - 1) {
-                                        if (params.Empresa_Id > 0 && params.Directivo_Id>0) {
-                                            cadsql = "INSERT INTO borme_relaciones SET ? ON DUPLICATE KEY UPDATE Activo=" + (Active?1:0)
-
-
-                                            var _params = { Diario_Id: _record.insertId, Empresa_Id: params.Empresa_Id, Directivo_Id: params.Directivo_Id, Motivo: _Dl.type, Cargo: _Dl.values.key, Activo: (Active ? 1 : 0), Anyo: params.Anyo }
-                                            options.SQL.db.query(cadsql, _params, function (err, _recordR) {
-                                                if (err || _recordR.insertId == null)
-                                                    debugger
-
-                                                //app._io.elasticIO.send('NEW', 'Relations', _paramsIO)
-                                                //if (_recordR.insertId > 0) {
-                                                    _params = { id: _recordR.insertId }
-                                                //} else {
-                                                //    _params = [_params.Diario_Id,]
-                                                //}
-                                                cadsql = "SELECT * FROM borme_relaciones WHERE ?"
-                                                options.SQL.db.query(cadsql, _params, function (err, _record) {
-                                                    if (err || _record[0] == null || _recordR.insertId==null)
-                                                        debugger
-                                                    var _params = { Diario_Id: _record[0].Diario_Id, Empresa_Id: _record[0].Empresa_id, Directivo_Id: _record[0].Directivo_id, Cargo: _record[0].Cargo, Motivo: _record[0].Motivo, Activo: _record[0].Activo[0], Anyo: _record[0].Anyo ,LastUpdate: _data.SUMARIO_LAST.substr(8,8)}
-                                                    app._io.elasticIO.send('NEW','BORME', 'Relaciones', _record[0].id, _params)
-                                                    process.stdout.write('R')
-                                                    _e++
-                                                    saveLineContenido(e, _e, _line, _data, _cb)
-                                                })
-                                            })
-                                            //debugger
-                                            //} else {
-                                            //    _cb(e, _line)
-                                        } else {
-                                            _e++
-                                            saveLineContenido(e, _e, _line, _data, _cb)
-                                        }
-                                    } else {
-                                        _e++
-                                        saveLineContenido(e, _e, _line, _data, _cb)
-                                    }
-                                })
                             })
-
                         })
-
                     } else {
                         //e++
                         _cb(e, _line)
@@ -354,14 +314,14 @@
                     if (line.contenido.length > 0) {
                         saveLineContenido( e, 0, _lines, _data, function (e, _line) {
                             //for (_e in line.contenido) {
-                                if (e < _lines.data.length) {
+                                if (e < _lines.data.length-1) {
                                     e++
                                     //if (_lines.data[e].Id == null)
                                     //    debugger
                                     _this.saveDiarioMovimientos(e, _lines, _data, _ret)
 
                                 }else{
-                                    _ret(_data, _lines)
+                                    _ret(_data)
                                 }
                             //}
                         })
@@ -374,7 +334,7 @@
                     
 
                 } else {
-                    _ret(_data, _lines)
+                    _ret(_data)
                 }
             },
             Preceptos: function (options, urlDoc, body, data, callback) {
@@ -431,7 +391,7 @@
                                                             var _avanza = true
                                                             if (err)
                                                                 if (err.code = 'ER_DUP_ENTRY') {
-                                                                    _avanza = false
+                                                                    _avanza = true
                                                                 } else {
                                                                     debugger
                                                                 }
@@ -456,6 +416,8 @@
                             })
                         })
                     })
+                } else {
+                    callback(data,true)
                 }
             }
         }

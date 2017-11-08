@@ -410,45 +410,42 @@
                     if (__data.values.Empresa)
                         _t = "Empresa"
 
-                    cadsql = "SELECT id FROM borme_" + _t.toLowerCase() + " WHERE ?"
-                    options.SQL.db.query(cadsql, { Name: __data.values.value }, function (err, _directivo) {
+                    cadsql = "Call Insert_Data_Borme_" + capitalizeFirstLetter(_t.toLowerCase()) + "(?,?)"
+                    options.SQL.db.query(cadsql,[__data.values.value, data.e ], function (err, _directivo) {
+                        if (err)
+                            debugger
                         if (_directivo.length == 0) {
-                            cadsql = "INSERT INTO borme_" + _t.toLowerCase() + " SET ? ON DUPLICATE KEY UPDATE _l=id"
-                            options.SQL.db.query(cadsql, { Name: __data.values.value }, function (err, _directivo) {
-                                if (!err) {
+                            debugger
+                            //cadsql = "INSERT INTO borme_" + _t.toLowerCase() + " SET ? ON DUPLICATE KEY UPDATE _l=id"
+                            ///options.SQL.db.query(cadsql, { Name: __data.values.value }, function (err, _directivo) {
+                                //if (!err) {
                                 //    cadsql = "INSERT INTO errores ?"
                                 //    options.SQL.db.query(cadsql, { Table: 'directivos', text: err }, function () {
                                 //        callback(__data, null, null, false)
                                 //    })
                                 //} else {
 
-                                    if (_directivo.insertId == null) {
-                                        debugger
-                                    } else {
-                                        app._io.elasticIO.send('NEW', 'BORME', capitalizeFirstLetter(_t.toLowerCase()),_directivo.insertId, {
-                                            Name: __data.values.value,
+                                    //if (_directivo.insertId == null) {
+                                    //    debugger
+                                    //} else {
 
-                                            ActiveRelations: Active ? 1 : 0 ,
-                                            TotalRelations:0,
-                                            Nodes: [],
-
-                                            Type: __data.values.Empresa ? 1:2,
-                                            Year: data.next.substr(6, 4),
-                                            LastUpdate: data.SUMARIO_LAST.substr(8, 8)
-                                        })
-                                    }
+                                    //}
 
 
 
-                                    callback(__data, err == null ? _directivo.insertId : null, __data.values.Empresa, Active)
-                                }
-                            })
+                                ////    callback(__data, err == null ? _directivo.insertId : null, __data.values.Empresa, Active)
+                                //} else {
+                                //    debugger
+                                //}
+                            //})
                         } else {
                             if (_directivo.length > 1) {
-                                debugger
+                                //debugger
+                                x=1
                             }
                             //__data.idEmpresa = _directivo[0].id
-                            callback(__data, _directivo[0].id, __data.values.Empresa)
+                            process.stdout.write(__data.values.Empresa?"e":'d')
+                            callback(__data, _directivo[0][0].Id, __data.values.Empresa)
                         }
                     })
                
@@ -702,9 +699,11 @@
                 return result;
             },
             getDataFromMap: function (_this, lines, map) {
+                if (lines.length == 0)
+                    debugger
                 var exclusion = ['Núm','Actos inscritos', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'SECCIÓN', 'Empresarios', 'BOLETÍN OFICIAL DEL REGISTRO MERCANTIL', 'Pág.', 'http://','D.L.:' ]
-                var inclusion = ['cve:', 'A CORUÑA', 'LA CORUÑA', 'ÁLAVA', 'ALBACETE', 'ALICANTE', 'ALMERÍA', 'ASTURIAS', 'ÁVILA', 'BADAJOZ', 'BARCELONA', 'BURGOS', 'CÁCERES', 'CÁDIZ', 'CANTABRIA', 'CASTELLÓN', 'CIUDAD REAL', 'CÓRDOBA', 'CUENCA', 'CEUTA', 'GIRONA', 'GRANADA', 'GUADALAJARA', 'GUIPÚZCOA', 'HUELVA', 'HUESCA', 'ILLES BALEARS', 'ISLAS BALEARES', 'JAÉN', 'LA RIOJA', 'LAS PALMAS', 'LEÓN', 'LLEIDA', 'LUGO', 'MADRID', 'MÁLAGA', 'MELILLA', 'MURCIA', 'NAVARRA', 'ORENSE', 'OURENSE', 'PALENCIA', 'PONTEVEDRA', 'SALAMANCA', 'SEGOVIA', 'SEVILLA', 'SORIA', 'TARRAGONA', 'SANTA CRUZ DE TENERIFE', 'TERUEL', 'TOLEDO', 'VALENCIA', 'VALLADOLID', 'VIZCAYA', 'ZAMORA', 'ZARAGOZA']
-                var sinonimos = ['A CORUÑA#LA CORUÑA','ALABAÁLABA#ÁLAVA', 'ILLES BALEARS#ISLAS BALEARES', 'OURENSE#ORENSE']
+                var inclusion = ['cve:', 'A CORUÑA', 'LA CORUÑA', 'ÁLAVA', 'ALBACETE', 'ALICANTE', 'ALMERÍA', 'ASTURIAS', 'ÁVILA', 'BADAJOZ', 'BARCELONA', 'BURGOS', 'CÁCERES', 'CÁDIZ', 'CANTABRIA', 'CASTELLÓN', 'CIUDAD REAL', 'CÓRDOBA', 'CUENCA', 'CEUTA', 'GIRONA', 'GRANADA', 'GUADALAJARA', 'GUIPÚZCOA', 'GIPUZKOA', 'HUELVA', 'HUESCA', 'ILLES BALEARS', 'ISLAS BALEARES', 'JAÉN', 'LA RIOJA', 'LAS PALMAS', 'LEÓN', 'LLEIDA', 'LUGO', 'MADRID', 'MÁLAGA', 'MELILLA', 'MURCIA', 'NAVARRA', 'ORENSE', 'OURENSE', 'PALENCIA', 'PONTEVEDRA', 'SALAMANCA', 'SEGOVIA', 'SEVILLA', 'SORIA', 'TARRAGONA', 'SANTA CRUZ DE TENERIFE', 'TERUEL', 'TOLEDO', 'VALENCIA', 'VALLADOLID', 'VIZCAYA', 'ZAMORA', 'ZARAGOZA']
+                var sinonimos = ['A CORUÑA#LA CORUÑA', 'ALABAÁLABA#ÁLAVA', 'GUIPÚZCOA#GIPUZKOA', 'ILLES BALEARS#ISLAS BALEARES', 'OURENSE#ORENSE']
                 isNumeric = function (n) {
                     return !isNaN(parseFloat(n)) && isFinite(n);
                 }
@@ -754,7 +753,10 @@
                     
                     }
                 }
-                //debugger
+                for (i in sinonimos) {
+                    if (sinonimos[i].indexOf(Provincia) > -1)
+                        Provincia = sinonimos[i].split('#')[1]
+                }
                 lines = []
                 if (Borme != null && Provincia != null) {
                 
@@ -822,10 +824,7 @@
                         }
           
                     }
-                    for (i in sinonimos) {
-                        if( sinonimos[i].indexOf(Provincia)>-1)
-                            Provincia = sinonimos[i].split('#')[1]
-                    }
+
                     //debugger
                     return { BORME:Borme, PROVINCIA:Provincia, data: _lines}
                 } else {

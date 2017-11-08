@@ -70,14 +70,14 @@
 
 
             //_this.getConnect({ SQL: { db :null } }, 'BOE',function(_options){
-                _cadsql = "SELECT * FROM lastread WHERE Type = 'BOE'"
+                _cadsql = "SELECT * FROM lastread WHERE Type = 'BOE' AND Anyo = " + app.anyo
                 _options.SQL.db.query(_cadsql, function (err, Record) {
                     if (err)
                         debugger
                     if (Record.length == 0) {
-                        _cadsql = "INSERT INTO lastread (Type,SUMARIO_NEXT) VALUES ('BOE','BOE-S-20010101')"
+                        _cadsql = "INSERT INTO lastread (Type, Anyo, SUMARIO_NEXT) VALUES ('BOE'," + app.anyo + ",'BOE-S-" + app.anyo + "0101')"  //2001
                         _options.SQL.db.query(_cadsql, function (err, _data) {
-                            app._xData.Sumario.BOE = { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOE-S-20010101' }
+                            app._xData.Sumario.BOE = { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOE-S-' + app.initDate }
                         })
                     } else {
                         app._xData.Sumario.BOE = Record[0]
@@ -91,29 +91,30 @@
                             app._xData.TBOE = Record[0]["count(*)"]
                             
                             //_this.getConnect({ SQL: { db :null } }, false, 'BORME',function(_options){
-                                _cadsql = "SELECT * FROM lastread  WHERE Type = 'BORME'"    
+                            _cadsql = "SELECT * FROM lastread  WHERE Type = 'BORME' AND Anyo = " + app.anyo    
                                 _options.SQL.db.query(_cadsql, function (err, Record) {
                                     if (Record.length == 0) {
-                                        _cadsql = "INSERT INTO lastread (type,SUMARIO_NEXT) VALUES ('BORME','BORME-S-20090102')"
+                                        _cadsql = "INSERT INTO lastread (Type, Anyo, SUMARIO_NEXT) VALUES ('BORME'," + app.anyo + ",'BORME-S-" + app.anyo + "0101')"
                                         _options.SQL.db.query(_cadsql, function (err, Record) {
-                                            app._xData.Sumario.BORME = { SUMARIO_LAST: '', SUMARIO_NEXT: 'BORME-S-20090102' }
+                                            app._xData.Sumario.BORME = { SUMARIO_LAST: '', SUMARIO_NEXT: 'BORME-S-' + app.anyo + '0101' }  //2009
                                         })
 
                                     } else {
                                         app._xData.Sumario.BORME = Record[0]
-                                        app._xData.Sumario.BORME.SUMARIO_LAST = app._xData.Sumario.BORME.ID_LAST.split("#")[0]
+                                        if (app._xData.Sumario.BORME.SUMARIO_LAST = app._xData.Sumario.BORME.ID_LAST!=null)
+                                            app._xData.Sumario.BORME.SUMARIO_LAST = app._xData.Sumario.BORME.ID_LAST.split("#")[0]
                                         //app._xData.Sumario.BORME.SUMARIO_NEXT= app._xData.Sumario.BORME.ID_LAST.split("#")[0] //'BORME-S-20090102'
                                     }
 
                                     _options.SQL.db.query("SELECT count(*) FROM sumarios WHERE Type='BORME'", function (err, Record) {
                                         app._xData.TSUMARIOS.BORME = Record[0]["count(*)"]
-                                        _options.SQL.db.query("SELECT count(*) FROM boletin", function (err, Record) {
-                                            app._xData.TBORME = Record[0]["count(*)"]
+                                        //_options.SQL.db.query("SELECT count(*) FROM boletin", function (err, Record) {
+                                        //    app._xData.TBORME = Record[0]["count(*)"]
 
                                             //_this.getConnect({ SQL: { db: null } }, false, 'BOCM', function (_options) {
-                                            _options.SQL.db.query("SELECT * FROM lastread WHERE Type='BOCM'", function (err, Record) {
+                                            _options.SQL.db.query("SELECT * FROM lastread WHERE Type='BOCM' AND Anyo = " + app.anyo , function (err, Record) {
                                                 if (Record.length == 0) {
-                                                    _options.SQL.db.query("INSERT INTO lastread (type,SUMARIO_NEXT) VALUES ('BOCM','BOCM-20100301')", function (err, Record) {
+                                                    _options.SQL.db.query("INSERT INTO lastread (type , Anyo , SUMARIO_NEXT) VALUES ('BOCM'," + app.anyo + ",'BOCM-" + app.anyo + "0301')", function (err, Record) {
                                                         app._xData.Sumario.BOCM = { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOCM-20100301' }
                                                     })
 
@@ -129,7 +130,7 @@
                                                 })
                                             })
                                             //})
-                                        })
+                                        //})
                                     })
                                 //})
                             })

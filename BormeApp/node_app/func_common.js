@@ -2,12 +2,16 @@
 
 
     return {
+        lastupdate: Date.now(),
         askToServer: function (options, requestOptions, data, callback) {
             //console.log("\n"+requestOptions.uri)
             if (requestOptions.uri.file == null) {
+               
+                this.lastupdate = Date.now()
                 var _d = new Date()
 
-                process.stdout.write("\n" + _d.toString() + "->" + requestOptions.uri)
+                console.log("\n" + app.moment().format('MMM D, HH:MM:SS') + "->" + requestOptions.uri)
+                //leemos el documento SUMARIO
                 app.request.get(requestOptions, function (req, res, body) {
                     if (body != null) {
                         if (body.length > 0) {
@@ -29,9 +33,13 @@
                             callback(_this, null, data)
                         }
                     } else {
-                        debugger
-                        console.log("ERROR " + requestOptions.uri + 'response NULL', req)
-                        callback(_this, null, data)
+                        //debugger
+                        console.log("ERROR " + requestOptions.uri + ' response ' + req)
+                        setTimeout(function () { 
+                            console.log('delay ok.')
+                            callback(_this, null, data)
+                        }, app.timeDelay)
+
                     }
 
                 })

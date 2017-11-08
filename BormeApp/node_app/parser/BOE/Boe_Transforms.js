@@ -74,9 +74,13 @@ module.exports = function (app) {
                 ],
                 Importes: [
                     ['R', new RegExp(/Importe total,/, "g"), ""],
-                    ['F', { f: _this.replaceAll }, ",", '#'],
-                    ['F', { f: _this.replaceAll }, ".", ''],
-                    ['F', { f: _this.replaceAll }, "#", '.'],
+                    ['F', { f: _this.executeIF }, function (string) {
+                        return string.indexOf(",") > -1 
+                    }, [
+                            ['F', { f: _this.replaceAll }, ",", '#'],
+                            ['F', { f: _this.replaceAll }, ".", ''],
+                            ['F', { f: _this.replaceAll }, "#", '.'],
+                    ]],
                     ['F', { f: _this.replaceAll }, "y ", ''],
                     ['F', { f: _this.removeFromLastChar }, "s"],
                     ['F', { f: _this.executeIF }, function (string) {
@@ -123,15 +127,20 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, 'Union Temporal de Empresas', 'UTE '],
                     ['F', { f: _this.replaceAll }, 'Unión Temporal de Empresas', 'UTE '],
                     ['F', { f: _this.replaceAll }, 'unión temporal de empresas', 'UTE '],
+
+
+                    ['F', { f: _this.replaceAll }, ' S A', ' SA.'],
                     ['F', { f: _this.replaceAll }, '. S L', ' SL.'],
                     ['F', { f: _this.replaceAll }, '. S A', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', S A L', ' SA.'],
+                    ['F', { f: _this.replaceAll }, ', SAL', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', S L L', ' SL.'],
                     ['F', { f: _this.replaceAll }, '. S L U',  ' SL.'],
                     ['F', { f: _this.replaceAll }, 'S.L.', 'SL.'],
                     ['F', { f: _this.replaceAll }, 'S.A.', 'SA.'],
                     ['F', { f: _this.replaceAll }, ', S A', ' SA.'],
                     ['F', { f: _this.replaceAll }, ' SAE', ' SA.'],
+                    ['F', { f: _this.replaceAll }, '. SAU', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'UTE ', 'UTE. '],
 
                     //['R', new RegExp(/Sociedad Anónima/, "g"), "S.A.\";"],

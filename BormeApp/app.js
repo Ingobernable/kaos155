@@ -2,9 +2,29 @@ var Version = '0.1.3'
 //debugger
 console.log('loading App - version -' + Version)
 var myArgs = process.argv.slice(2);
-
+ 
 if (myArgs.length == 0)
-    myArgs = ['BOE']//['142.44.166.218', 'BORME',  false]
+    myArgs = ['BOE', '2001'] //, 'BOE-B-2003-31017' ]
+
+if (myArgs[0] != 'BORME') {
+
+    var date = new Date(myArgs[1].substr(0, 4), 0, 1) //myArgs[1])
+
+    if (date.getDay() == 0) {
+        date.setDate(date.getDate() + 1)
+    }
+} else {
+
+    var date = new Date(myArgs[1].substr(0, 4), 0, 2) //myArgs[1])
+    if (date.getDay() == 6) {
+        date.setDate(date.getDate() + 1)
+
+    }
+    if (date.getDay() == 0) {
+        date.setDate(date.getDate() + 1)
+
+    }
+}
 
 //myArgs[1] = myArgs[1].substr(2, myArgs[2].length - 2)
 
@@ -12,6 +32,11 @@ if (myArgs.length == 0)
 //process.exit(1)
 
 var App = {
+    update: myArgs[2] ,
+    anyo: !isNaN(myArgs[1]) ? myArgs[1] : date.getFullYear(),
+    TypeBoletines:["BORME" ,"BOE" ,"BOCM"],
+    Mins : { BOE: 1995, BOCM: 2010, BORME: 2009 },
+    timeDelay: 1500,
     drop:false,
     SqlIP:null, //'192.168.0.3',
     urlBOE: 'http://81.89.32.200/',
@@ -39,7 +64,7 @@ var App = {
             counter: 1
         },
         Sumario: {
-            BOE: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOE-S-20000101' },
+            BOE: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOE-S-19950102' },
             BORME: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BORME-S-20090102' },
             BOCM: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOCM-S-20100212' }
         },
@@ -86,7 +111,7 @@ var App = {
                         require('./node_app/parser/boe.js')(app, function (options) {
                             app.BOE = options
                             //options.Borme = Borme
-                            app.commonSQL.ActualizeCounters(options, function (options) {
+                            app.getCounter(app , options, 'BOE', function (options) {
                                 options._common.Actualize(options, 'BOE', { desde: app._xData.Sumario.BOE.SUMARIO_NEXT.substr(6, 8), type: "BOE", Secciones: "5A", hasta: new Date() })
                             })
                         })
@@ -94,7 +119,7 @@ var App = {
                 },
                 BORME: function (dataFile) {
                         require('./node_app/parser/borme.js')(app, dataFile, function (options) {
-                            app.commonSQL.ActualizeCounters(options, function (options) {
+                            app.getCounter(app,options, 'BORME', function (options) {
                                 console.log('actualización de contadores OK')
                                 options._common.Actualize(options, 'BORME', { desde: app._xData.Sumario.BORME.SUMARIO_NEXT.substr(8, 8), into:app._xData.Sumario.BORME.ID_LAST , type: "BORME", hasta: new Date() })
                             })
@@ -124,23 +149,41 @@ var App = {
             app.SqlIP = 'localhost'
         }
 
-        if (myArgs[0] == "BORME" || myArgs[0] == "BOE" || myArgs[0] == "BOCM") {
-            //if (myArgs[2]) { // = (myArgs[1] == 'true' ? true : false)
-            //    if (typeof (myArgs[2]) === "boolean") {
-            //        app.drop = myArgs[2]
-            //    } else {
-            //        var arg = myArgs[2]
-             //       app.drop = (arg.toLowerCase() == 'true' ? true : false)
-             //   }
-           // }
-        } else {
+        if (app.TypeBoletines.indexOf(myArgs[0])==-1) {
             console.log('parametros no validos falta BOCM,BOE,BORME')
             process.exit(1)
         }
         
         app.Type = myArgs[0]
         callback(app)
+    },
+    getCounter: function (app, _options, type, callback) {
+        _cadsql = "SELECT * FROM lastread WHERE Type = '" + type + "' AND Anyo = " + app.anyo
+        _options.SQL.db.query(_cadsql, function (err, Record) {
+            if (err)
+                debugger
+            if (Record.length == 0) {
+                _cadsql = "INSERT INTO lastread (Type, Anyo, SUMARIO_NEXT) VALUES ('" + type + "'," + app.anyo + ",'" + type + "-S-" + app.initDate + "')"  //2001
+                _options.SQL.db.query(_cadsql, function (err, _data) {
+                    app._xData.Sumario[type] = { SUMARIO_LAST: '', SUMARIO_NEXT: type + '-S-' + app.initDate }
+                })
+            } else {
+                app._xData.Sumario[type] = Record[0]
+            }
+            var _cadsql = "SELECT count(*) FROM sumarios WHERE Type='" + type + "'"
+            _options.SQL.db.query(_cadsql, function (err, Record) {
+                if (err)
+                    app._xData.TSUMARIOS[type] = Record[0]["count(*)"]
+
+                _cadsql = "SELECT count(*) FROM boletin where Type='" + type + "'"
+                _options.SQL.db.query(_cadsql, function (err, Record) {
+                    app._xData['T'+type] = Record[0]["count(*)"]
+                    callback(_options)
+                })
+            })
+        })
     }
+
 }
 
 String.prototype.Trim = function Trim(x) {
@@ -152,6 +195,11 @@ String.prototype.Trim = function Trim(x) {
     } else {
         return x.replace(/^\s+|\s+$/gm, '');
     }
+}
+ 
+String.prototype.pad = function(size) {
+    var s = "000000000" + this;
+    return s.substr(s.length - size);
 }
 
 String.prototype.Between = function(init, last, contains, not) {
@@ -189,12 +237,18 @@ String.prototype.lastIndexOfRegex = function (regex) {
 }
 
 App.parameters(App, myArgs, function (app) {
-
-    console.log('MySQL IP:' + app.SqlIP)
-    console.log('PROCESS:' + app.Type)
-    console.log('DELETE DATA:' + app.drop)
-   // app.fs.readFile(app.path.normalize('../DataFiles/cargos.json'), 'utf-8', function (err, dataFile) {
-   //     console.log(JSON.parse(dataFile))
+    myArgs[1] = (date.getFullYear()+'').pad(4) + (date.getMonth() + 1+'').pad(2) + (date.getDate()+'').pad(2)
+    //debugger
+    if (app.Mins[myArgs[0]] <= app.anyo) {
+        app.initDate = myArgs[1]
+        console.log('MySQL IP:' + app.SqlIP)
+        console.log('PROCESS:' + app.Type)
+        console.log('DELETE DATA:' + app.drop)
+        // app.fs.readFile(app.path.normalize('../DataFiles/cargos.json'), 'utf-8', function (err, dataFile) {
+        //     console.log(JSON.parse(dataFile))
         app.init(app, function (_f) { _f[app.Type]([]) })
-    //})
+        //})
+    } else {
+        console.log( 'no se puede analizar ' + myArgs[0] + ' con fecha anterior a ' + app.Mins[myArgs[0]] )
+    }
 })
