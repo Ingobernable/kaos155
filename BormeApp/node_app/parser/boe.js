@@ -4,8 +4,8 @@
         url: app.urlBOE,
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
         pdfOpc: ['-raw', '-nopgbrk', '-enc UTF-8'],
-        Rutines: require('./BOE/Boe_Rutines')(app),
-        transforms: require('./BOE/Boe_Transforms')(app),
+        Rutines: require('./BOLETIN/__Rutines')(app),
+        transforms: require('./BOLETIN/__Transforms')(app),
         _common: require('../parser_common')(app),
         SQL: {
             db: null,
@@ -17,22 +17,22 @@
                         data.id.substr(10, 2),                                      //Mes
                         data.id.substr(6, 4),                                       //Anyo
                         data.id,                                                    //SUMARIO
-                        _analisis._BOE.split("=")[1],                               //BOE
+                        _analisis._BOLETIN.split("=")[1],                               //BOE
                         app.Rutines(app).getCleanedString(_analisis._type),         //Tipo_BOE
                         app.Rutines(app).getCleanedString(_analisis._tramitacion.split(" ")[0]),  //Tipo_TRAMITE
                         app.Rutines(app).getCleanedString(_analisis._objeto),       //Objeto del contrato
 
                         _analisis.urlPdf,                                           //PDF                                                           
-                        data.textExtend.join("<br>").replace(/'/g, "\'"),             //Texto
+                        data.textExtend.join("<br>").replace(/\r/g, "").replace(/'/g, "\'"),             //Texto
 
-                        data.contratista != null ? data.contratista.substr(0, 254).replace(/'/g, "\'"):null,          //_keys
+                        data.contratista != null ? data.contratista.replace(/\r/g,"").replace(/'/g, "\'"):null,          //_keys
                         data.importe.indexOf(";") == -1 ? i.toFixed(2) : data.importe
                         //''.Trim(data.importe.replace(/\n/g, "").replace(/'/g, '') ) //Importes
                 ]
                 var _ing = ""
                 for (i in data.extra) {
                     _ing=_ing+",?"
-                    params[params.length] = data.extra[i].replace(/'/g, "").replace(/\n/g, "")
+                    params[params.length] = data.extra[i].replace(/'/g, "").replace(/\r/g, "").replace(/\n/g, "")
                 }
                 
                 //if (data.contratista.split(';').length > 1)
@@ -50,7 +50,7 @@
                     if (err != null) {
                             //debugger
                             cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
-                            options.SQL.db.query(cadSql, [_analisis._BOE.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
+                            options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                 var x = err
                                 var y = params
                                 callback(data)
@@ -147,7 +147,7 @@
                             if (_analisis._type == null)
                                 debugger
 
-                            if (["BOE-B-2001-3002"].indexOf(_analisis._BOE.split("=")[1]) > -1)
+                            if (["BOE-B-2001-3002"].indexOf(_analisis._BOLETIN.split("=")[1]) > -1)
                                 debugger
 
                             if (_analisis._type.indexOf('Adjudicación') > -1 || _analisis._modalidad == "Formalización contrato") {
@@ -261,7 +261,7 @@
                                     } else {
                                         callback(data,true)
                                     }
-                                }, urlDoc)
+                                }, urlDoc, options.Rutines)
                             } else {
                                 
                                 callback(data)

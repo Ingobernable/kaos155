@@ -179,12 +179,21 @@
                 }
             },
             importes: function (data, options, patterns) {
-
-               
-                var importe = "*" + options.Rutines.extract(data.textExtend, 'Importe de la adjudicación:', options.transforms.ADD(
+                
+                var importe = "*" + options.Rutines.extract(data.textExtend, 'Importe o canon de adjudicación: Importe neto:', options.transforms.ADD(
+                    [patterns.General,
+                    patterns.Importes]
+                ))
+                if (importe == "*")
+                    importe = "*" + options.Rutines.extract(data.textExtend,  'Valor estimado del contrato:', options.transforms.ADD(
                         [patterns.General,
                         patterns.Importes]
-                ))
+                    ))
+                if (importe == "*")
+                    importe = "*" + options.Rutines.extract(data.textExtend, 'Importe de la adjudicación:', options.transforms.ADD(
+                            [patterns.General,
+                            patterns.Importes]
+                    ))
                 if (importe == "*")
                     importe = "*" + options.Rutines.extract(data.textExtend, 'Importes de las adjudicaciones:', options.transforms.ADD(
                         [patterns.General,

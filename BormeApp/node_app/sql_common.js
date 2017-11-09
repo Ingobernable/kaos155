@@ -30,7 +30,7 @@
         },
         init: function (options, type, callback) {
             var _this = this
-            app.fs.readFile(app.path.normalize('../sqlfiles/ACCESO_mysql.sql'), function (err, _JSON) {
+            app.fs.readFile(app.path.normalize('../sqlfiles/ACCESO_mysql.json'), function (err, _JSON) {
                 if (err) {
                     console.log('faltan Credenciales mysql, sistema detenido')
                     process.exit(1)

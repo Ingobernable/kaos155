@@ -4,7 +4,7 @@ console.log('loading App - version -' + Version)
 var myArgs = process.argv.slice(2);
  
 if (myArgs.length == 0)
-    myArgs = ['BOE', '2001'] //, 'BOE-B-2003-31017' ]
+    myArgs = ['BOE', '2016'] //, 'BOE-B-2003-31017' ]
 
 if (myArgs[0] != 'BORME') {
 
@@ -99,8 +99,8 @@ var App = {
                    // require('./node_app/parser/borme.js')(app, false, dataFile, function (options) {
                         //app.Borme = options
                         require('./node_app/parser/bocm.js')(app, function (options) {
-                            app.commonSQL.ActualizeCounters(options, function (options) {                                
-                                options._common.Actualize(options, 'BOCM', { desde: app._xData.Sumario.BOCM.SUMARIO_NEXT.substr(5, 8), type: "BOCM", hasta: new Date() })
+                            app.getCounter(app, options, 'BOCM', function (options) {                                
+                                options._common.Actualize(options, 'BOCM', { desde: app._xData.Sumario.BOCM.SUMARIO_NEXT.substr(7, 8), type: "BOCM", hasta: new Date() })
                             })
                         })
                     //})
@@ -237,7 +237,11 @@ String.prototype.lastIndexOfRegex = function (regex) {
 }
 
 App.parameters(App, myArgs, function (app) {
-    myArgs[1] = (date.getFullYear()+'').pad(4) + (date.getMonth() + 1+'').pad(2) + (date.getDate()+'').pad(2)
+    if (myArgs[0] == 'BOCM' && app.Mins[myArgs[0]] == app.anyo) {
+        myArgs[1] = (date.getFullYear() + '').pad(4) + '0212'
+    } else {
+        myArgs[1] = (date.getFullYear() + '').pad(4) + (date.getMonth() + 1 + '').pad(2) + (date.getDate() + '').pad(2)
+    }
     //debugger
     if (app.Mins[myArgs[0]] <= app.anyo) {
         app.initDate = myArgs[1]

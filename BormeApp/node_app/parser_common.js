@@ -48,7 +48,7 @@
                             //if (err) {
                                 var url = options.url + 'diario_' + data.type.toLowerCase() + '/xml.php?id=' + Sumario
                                 if (options.type == "BOCM")
-                                    var url = options.url + '_Seccion_BOCM/' + Sumario.substr(7, 4) + "/" + Sumario.substr(11, 2) + "/" + Sumario.substr(13, 2) + "/" + options.type + Sumario.substr(6,9) + ".PDF"
+                                    var url = options.url + '_Boletin_BOCM/' + Sumario.substr(7, 4) + "/" + Sumario.substr(11, 2) + "/" + Sumario.substr(13, 2) + "/" + options.type + Sumario.substr(6,9) + ".PDF"
                             //
                             //Cargamos y analizamos las secciones con el parseador concreto de cada TYPE de documento
                             //BOE,BOCM,BORME......etc
@@ -93,8 +93,8 @@
                         if (data.e < data._list.length - 1) {
                             if (!repeat) {
                                 data.e++
-                            } else {
-                                debugger
+                           // } else {
+                           //     debugger
                             }
                             _this.NEW(options, data, analizer, callback)
                         } else {
