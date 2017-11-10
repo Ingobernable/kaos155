@@ -93,8 +93,8 @@ String.prototype.lastIndexOfRegex = function (regex) {
 var App = {
     update: myArgs[2],
     anyo: !isNaN(myArgs[1]) ? myArgs[1] : date.getFullYear(),
-    TypeBoletines: ["BORME", "BOE", "BOCM"],
-    Mins: { BOE: 1995, BOCM: 2010, BORME: 2009 },
+    TypeBoletines: ["BOE", "BOCM"],
+    Mins: { BOE: 1995, BOCM: 2010 },
     timeDelay: 1500,
     drop: false,
     SqlIP: null, //'192.168.0.3',
@@ -140,44 +140,40 @@ var App = {
         _this = this
         return require('./node_app/func_common.js')(app)
     },
+    //punto de entrada
+    // 
     init: function (app, cb) {
-
+        //cb funcion  a ejecutar cuando acabe de cargar (sql_common.js)
 
         this.pdftotext = require('./node_app/pdftotext.js')
         require('./node_app/sql_common.js')(app, function (SQL) {
+           
+            // app.commonSQL.db = la base de datos
             app.commonSQL = SQL
 
+
             cb({
-                BOCM: function (dataFile) {
-                    // require('./node_app/parser/borme.js')(app, false, dataFile, function (options) {
-                    //app.Borme = options
-                    require('./node_app/parser/bocm.js')(app, function (options) {
-                        app.getCounter(app, options, 'BOCM', function (options) {
-                            options._common.Actualize(options, 'BOCM', { desde: app._xData.Sumario.BOCM.SUMARIO_NEXT.substr(7, 8), type: "BOCM", hasta: new Date() })
-                        })
-                    })
-                    //})
-                },
                 BOE: function (dataFile) {
-                    //require('./node_app/parser/borme.js')(app, false, dataFile, function (Borme) {
-                    //app.Borme = options
-                    require('./node_app/parser/boe.js')(app, function (options) {
-                        app.BOE = options
-                        //options.Borme = Borme
+                    //cargamos la rutina de escrapeo específica del tipo de BOLETIN
+                    //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
+                    //el retorno es el objeto encargado del escrapeo                 
+                    require('./node_app/scrap_boletin/boe.js')(app, function (options) {
+                        //options = objeto que realiza el escrapeo
+                        //app.BOE = options
+                        //cargamos los contadores para poder continuar donde se dejó
                         app.getCounter(app, options, 'BOE', function (options) {
+                            //realizamos el proceso de escrapeo
                             options._common.Actualize(options, 'BOE', { desde: app._xData.Sumario.BOE.SUMARIO_NEXT.substr(6, 8), type: "BOE", Secciones: "5A", hasta: new Date() })
                         })
                     })
-                    //})
                 },
                 BORME: function (dataFile) {
-                    require('./node_app/parser/borme.js')(app, dataFile, function (options) {
+                    require('./node_app/scrap_boletin/borme.js')(app, dataFile, function (options) {
                         app.getCounter(app, options, 'BORME', function (options) {
                             console.log('actualización de contadores OK')
                             options._common.Actualize(options, 'BORME', { desde: app._xData.Sumario.BORME.SUMARIO_NEXT.substr(8, 8), into: app._xData.Sumario.BORME.ID_LAST, type: "BORME", hasta: new Date() })
                         })
                     })
-                    //})
                 },
                 CREATE: function (datafile) {
                     app.commonSQL.init({ SQL: { db: null } }, 'CREATE', function () {
@@ -203,7 +199,7 @@ var App = {
         }
 
         if (app.TypeBoletines.indexOf(myArgs[0]) == -1) {
-            console.log('parametros no validos falta BOCM,BOE,BORME')
+            console.log('parametros no validos falta BOCM,BOE')
             process.exit(1)
         }
 
@@ -238,3 +234,31 @@ var App = {
     }
 
 }
+
+//
+//Punto de entrada de la aplicacion
+//
+// App.parameters normaliza los parametros de entrada devolviendo app como objeto aplicación,
+//
+App.parameters(App, myArgs, function (app) {
+    if (myArgs[0] == 'BOCM' && app.Mins[myArgs[0]] == app.anyo) {
+        myArgs[1] = (date.getFullYear() + '').pad(4) + '0212'
+    } else {
+        myArgs[1] = (date.getFullYear() + '').pad(4) + (date.getMonth() + 1 + '').pad(2) + (date.getDate() + '').pad(2)
+    }
+
+    if (app.Mins[myArgs[0]] <= app.anyo) {
+        app.initDate = myArgs[1]
+        console.log('MySQL IP:' + app.SqlIP)
+        console.log('PROCESS:' + app.Type)
+        console.log('DELETE DATA:' + app.drop)
+
+        //Punto de entrada del proceso
+        // in-> app y una funcion que ejecutara myArgs[0]() = BOE() BOCM()
+        //
+        app.init(app, function (_f) { _f[app.Type]([]) })
+        
+    } else {
+        console.log('no se puede analizar ' + myArgs[0] + ' con fecha anterior a ' + app.Mins[myArgs[0]])
+    }
+})
