@@ -41,3 +41,16 @@ git clone https://github.com/Ingobernable/kaos155
 cd kaos155
 ```
 
+### Arch
+
+```
+git clone https://github.com/Ingobernable/kaos155
+cd kaos155
+```
+
+### ParrotSec
+
+```
+git clone https://github.com/Ingobernable/kaos155
+cd kaos155
+```
