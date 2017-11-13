@@ -28,14 +28,21 @@ Recomendable montar Kaos155 en una debian 9 recien instalada.
 Paso 0: Actualizar repositorios y sistema:
 
 ```
-apt-get update && apt-get upgrade
+# apt-get update && apt-get upgrade
 ```
 
 Paso 1: Instalar dependencias:
 
 ```
-apt-get install git
+# apt-get install git curl software-properties-common gnupg2
 ```
 
-Seguimos documentando el proceso estos días. 
+Paso 2: Instalar nodejs y npm
+
+```
+# curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
+# apt-get install nodejs
+```
+
+
 
