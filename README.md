@@ -34,7 +34,7 @@ Paso 0: Actualizar repositorios y sistema:
 Paso 1: Instalar dependencias:
 
 ```
-# apt-get install git wget curl software-properties-common gnupg2 man
+# apt-get install git wget curl software-properties-common gnupg2 man nano
 ```
 
 Paso 2: Instalar nodejs y npm
@@ -68,6 +68,50 @@ Paso 4: Descargar e instalar xpdf tools 4.0
 # cp -pRv doc/*.1 /usr/local/man/man1/
 # cp -pRv doc/*.5 /usr/local/man/man5/
 ```
+
+Paso 5: Clonamos el repositorio Kaos155
+
+```
+# git clone https://github.com/Ingobernable/kaos155
+# cd kaos155
+```
+
+Paso 6: Creamos la base de datos y el usuario/password 
+
+Para ello accederemos como root a mysql. Por ejemplo así: mysql -u root -p (en el caso de no tener password para el usuario root simplemente mysql -u root)
+
+Una vez dentro de la consola de MySQL los comandos son los siguientes:
+
+```
+mysql> CREATE DATABASE bbdb_kaos155;
+mysql> GRANT ALL ON bbdb_kaos155.* TO 'kaosuser'@'localhost' IDENTIFIED BY 'kaospassword';
+```
+
+Con control+D podemos salir de la consola MySQL.
+
+Paso 7: Anotamos el usuario y password creados en el archivo ACCESO_mysql.json
+
+```
+cd sqlfiles/
+nano ACCESO_mysql.json
+```
+
+Por defecto encontraremos un texto como el siguiente:
+
+```
+{"mySQL":{"host":"127.0.0.1","user":"root","password":"$TakeThePower_2007"}}
+```
+
+Dejaremos uno como el siguiente por ejemplo basado en los datos de esta documentación (si tu has puesto otro user y password pues es el momento de anotarlos aquí):
+
+```
+{"mySQL":{"host":"127.0.0.1","user":"kaosuser","password":"kaospassword"}}
+```
+
+Para guardar los cambios con el editor nano usaremos Control+o y para salir Control+x
+
+
+
 
 
 
