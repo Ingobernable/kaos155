@@ -34,7 +34,7 @@ Paso 0: Actualizar repositorios y sistema:
 Paso 1: Instalar dependencias:
 
 ```
-# apt-get install git wget curl software-properties-common gnupg2
+# apt-get install git wget curl software-properties-common gnupg2 man
 ```
 
 Paso 2: Instalar nodejs y npm
@@ -56,12 +56,19 @@ Paso 3: Instalar MySQL 5.7
 # apt-get install mysql-server
 ```
 
-Paso 4: Instalar xpdf tools 4.0
+Paso 4: Descargar e instalar xpdf tools 4.0
 
 
 ```
-
+# wget http://www.xpdfreader.com/dl/xpdf-tools-linux-4.00.tar.gz
+# tar xfvz xpdf-tools-linux-4.00.tar.gz
+# cd xpdf-tools-linux-4.00
+# cp -pRv bin64/* /usr/local/bin/
+# mkdir /usr/local/man/man1 /usr/local/man/man5
+# cp -pRv doc/*.1 /usr/local/man/man1/
+# cp -pRv doc/*.5 /usr/local/man/man5/
 ```
+
 
 
 
