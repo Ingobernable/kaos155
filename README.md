@@ -91,18 +91,15 @@ Con control+D podemos salir de la consola MySQL.
 
 Paso 7: Anotamos el usuario y password creados en el archivo ACCESO_mysql.json
 
+Encontraremos uno llamado ACCESO_mysql-example.json en el directorio sqlfiles que renombraremos a ACCESO_mysql.json
+
 ```
 cd sqlfiles/
+mv ACCESO_mysql-example.json
 nano ACCESO_mysql.json
 ```
 
-Por defecto encontraremos un texto como el siguiente:
-
-```
-{"mySQL":{"host":"127.0.0.1","user":"root","password":"$TakeThePower_2007"}}
-```
-
-Dejaremos uno como el siguiente por ejemplo basado en los datos de esta documentación (si tu has puesto otro user y password pues es el momento de anotarlos aquí):
+Anotaremos los cambios (usuario y password) en el archivo tal que así:
 
 ```
 {"mySQL":{"host":"127.0.0.1","user":"kaosuser","password":"kaospassword"}}
