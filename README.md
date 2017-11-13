@@ -111,6 +111,15 @@ Dejaremos uno como el siguiente por ejemplo basado en los datos de esta document
 Para guardar los cambios con el editor nano usaremos Control+o y para salir Control+x
 
 
+Paso 8: Importamos las tablas del archivo CREATE_COMPLETO.sql
+
+```
+# mysql -u root -p bbdb_kaos155 < CREATE_COMPLETO.sql
+```
+
+Paso 9:
+
+
 
 
 
