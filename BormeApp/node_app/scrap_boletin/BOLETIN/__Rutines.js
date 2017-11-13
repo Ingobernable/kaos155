@@ -584,7 +584,7 @@
                                 callback(sdata, list)
                             } else {
 
-                                console.log('file local:->' + _file)
+                                //console.log('file local:->' + _file)
                                 var pdf = new app.pdftotext(_file)
                                 pdf.add_options(options.pdfOpc);
 
@@ -596,7 +596,7 @@
 
 
                                         var _fileText = _file.split(".pdf")[0] + ".txt"
-                                        console.log(_fileText)
+                                        //console.log(_fileText)
                                         app.fs.readFile(_fileText, 'utf8', function (err, text) {
                                             app.fs.unlink(_fileText, function (err) {
                                                 app.fs.unlink(_file, function (err) {
@@ -621,7 +621,7 @@
                                                             }
                                                         }
                                                     }
-                                                    _callback({ _arr: _arr, _extra: _json!=null?_this.extra(_json.documento.analisis):null })
+                                                    _callback({ _arr: _arr, _extra: _json != null ? _this.extra(_json.documento.analisis) : null })
                                                 })
                                             })
                                         })

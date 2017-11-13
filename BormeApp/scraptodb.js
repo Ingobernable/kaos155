@@ -4,9 +4,9 @@ console.log('loading Scrap - version -' + Version)
 var myArgs = process.argv.slice(2);
 
 if (myArgs.length == 0)
-    myArgs = ['BOE', '2016'] //, 'BOE-B-2003-31017' ]
+    myArgs = ['BOCM', '2012'] //, 'BOE-B-2003-31017' ]
 
-if (myArgs[0] != 'BORME') {
+if (myArgs[0] != 'BOCM') {
 
     var date = new Date(myArgs[1].substr(0, 4), 0, 1) //myArgs[1])
 
@@ -91,10 +91,12 @@ String.prototype.lastIndexOfRegex = function (regex) {
 // app
 
 var App = {
+    _fileCredenciales: 'ACCESO_mysql_TEXT',
     update: myArgs[2],
     anyo: !isNaN(myArgs[1]) ? myArgs[1] : date.getFullYear(),
-    TypeBoletines: ["BOE", "BOCM"],
-    Mins: { BOE: 1995, BOCM: 2010 },
+    TypeBoletines: ["BOE", "BOCM", "BORME"],
+    Mins: { BOE: 1995, BORME: 2009, BOCM: 2010 },
+    _lb: { BOCM: 5, BOE: 6, BORME: 8 },
     timeDelay: 1500,
     drop: false,
     SqlIP: null, //'192.168.0.3',
@@ -110,6 +112,7 @@ var App = {
     path: require('path'),
     fs: require("fs"),
     http: require('http'),
+    moment: require('moment'),
     _xData: {
         VisualCif: {
             Ranking: {
@@ -126,9 +129,9 @@ var App = {
             BOCM: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOCM-S-20100212' }
         },
         TSUMARIOS: {
-            BOE: {},
-            BORME: {},
-            BOCM: {}
+            BOE: 0,
+            BORME: 0,
+            BOCM: 0
         },
         TBOE: 0,
         TBORME: 0,
@@ -153,25 +156,19 @@ var App = {
 
 
             cb({
-                BOE: function (dataFile) {
+                SCRAP: function (type) {
+                    
                     //cargamos la rutina de escrapeo específica del tipo de BOLETIN
                     //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
                     //el retorno es el objeto encargado del escrapeo                 
-                    require('./node_app/scrap_boletin/boe.js')(app, function (options) {
+                    require('./node_app/scrap_boletin/' + type.toLowerCase() + '_text.js')(app, function (options) {
                         //options = objeto que realiza el escrapeo
-                        //app.BOE = options
+                        //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
+                        app.BOLETIN = options
                         //cargamos los contadores para poder continuar donde se dejó
-                        app.getCounter(app, options, 'BOE', function (options) {
+                        app.commonSQL.SQL.getCounter(app, options, type, function (options) {
                             //realizamos el proceso de escrapeo
-                            options._common.Actualize(options, 'BOE', { desde: app._xData.Sumario.BOE.SUMARIO_NEXT.substr(6, 8), type: "BOE", Secciones: "5A", hasta: new Date() })
-                        })
-                    })
-                },
-                BORME: function (dataFile) {
-                    require('./node_app/scrap_boletin/borme.js')(app, dataFile, function (options) {
-                        app.getCounter(app, options, 'BORME', function (options) {
-                            console.log('actualización de contadores OK')
-                            options._common.Actualize(options, 'BORME', { desde: app._xData.Sumario.BORME.SUMARIO_NEXT.substr(8, 8), into: app._xData.Sumario.BORME.ID_LAST, type: "BORME", hasta: new Date() })
+                            options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), type: type , Secciones: "5A", hasta: new Date() })
                         })
                     })
                 },
@@ -205,32 +202,7 @@ var App = {
 
         app.Type = myArgs[0]
         callback(app)
-    },
-    getCounter: function (app, _options, type, callback) {
-        _cadsql = "SELECT * FROM lastread WHERE Type = '" + type + "' AND Anyo = " + app.anyo
-        _options.SQL.db.query(_cadsql, function (err, Record) {
-            if (err)
-                debugger
-            if (Record.length == 0) {
-                _cadsql = "INSERT INTO lastread (Type, Anyo, SUMARIO_NEXT) VALUES ('" + type + "'," + app.anyo + ",'" + type + "-S-" + app.initDate + "')"  //2001
-                _options.SQL.db.query(_cadsql, function (err, _data) {
-                    app._xData.Sumario[type] = { SUMARIO_LAST: '', SUMARIO_NEXT: type + '-S-' + app.initDate }
-                })
-            } else {
-                app._xData.Sumario[type] = Record[0]
-            }
-            var _cadsql = "SELECT count(*) FROM sumarios WHERE Type='" + type + "'"
-            _options.SQL.db.query(_cadsql, function (err, Record) {
-                if (err)
-                    app._xData.TSUMARIOS[type] = Record[0]["count(*)"]
-
-                _cadsql = "SELECT count(*) FROM boletin where Type='" + type + "'"
-                _options.SQL.db.query(_cadsql, function (err, Record) {
-                    app._xData['T' + type] = Record[0]["count(*)"]
-                    callback(_options)
-                })
-            })
-        })
+    
     }
 
 }
@@ -256,7 +228,7 @@ App.parameters(App, myArgs, function (app) {
         //Punto de entrada del proceso
         // in-> app y una funcion que ejecutara myArgs[0]() = BOE() BOCM()
         //
-        app.init(app, function (_f) { _f[app.Type]([]) })
+        app.init(app, function (_f) { _f.SCRAP(app.Type) })
         
     } else {
         console.log('no se puede analizar ' + myArgs[0] + ' con fecha anterior a ' + app.Mins[myArgs[0]])

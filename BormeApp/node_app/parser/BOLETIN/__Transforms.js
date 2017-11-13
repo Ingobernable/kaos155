@@ -169,7 +169,7 @@ module.exports = function (app) {
                     ['F', { f: _this.executeIF }, function (string) {
                         return string.indexOf('SA.') > -1 || string.indexOf('SL.') > -1
                     }, [
-                            ['R', new RegExp(/"/, "g"), ""],
+                            ['R', new RegExp(/\"/, "g"), ""],
                             ['R', new RegExp(/\.\.\./, "g"), ""],
                             ['R', new RegExp(/\.\./, "g"), "."],
                             ['R', new RegExp(/\L\./, "g"), "L"],

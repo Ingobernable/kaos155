@@ -282,6 +282,6 @@
     }
 
 
-   app.commonSQL.init(options, 'BOE', callback)
+    app.commonSQL.init(options, 'BOE', app._fileCredenciales, callback)
 
 }

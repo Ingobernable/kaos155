@@ -17,32 +17,33 @@
         pdfOpc: ['-raw', '-nopgbrk', '-enc UTF-8'],
         get: {
             principal: function($) {
-                //console.log($('analisis modalidad').html())
-                //if ($('analisis modalidad').html() == "Formalización contrato")
-                //    debugger
+
                 return {
                     modalidad: $('analisis modalidad').html(),
                     id: $('analisis tipo').attr('codigo'),
                     text: $('analisis tipo').html(),
-                    urlPdf: $('metadatos url_pdf').html()
+                    urlPdf: $('metadatos url_pdf').html(),
+                    importe: $('analisis importe').html(),
+                    ambito_geografico: $('analisis ambito_geografico').html(),
+                    materias_cpv: $('analisis materias_cpv').html(),
                 }
             },
             data: function(options, data) {
-                try {
+
                     return {
                         _BOLETIN: data._list[data.e],
                         _cod: data.codigo.id,
                         _modalidad: data.codigo.modalidad,
                         _type: data.codigo.text,
                         _tramitacion: '',
+                        _importe: data.codigo.importe,
+                        _ambito_geografico: data.codigo.ambito_geografico,
+                        _materias_cpv: data.codigo.materias_cpv,
                         urlPdf: data.codigo.urlPdf,
-                        urlXml: options.url + data._list[data.e].split("-")[0].toLowerCase() + "/xml.php?id=" + data._list[data.e],
-                        Contratista: [],
-                        Importe: []
+                        urlXml: options.url  + data._list[data.e],
+                        //Contratista: [],
+                        //Importe: []
                     }
-                } catch (err) {
-                    debugger
-                }
             },
             extra: function (_json) {
                 var splitfunc = ['materias', 'materias_cpv' ]
@@ -51,8 +52,6 @@
                 for (i in _json) {
                     var _r = ""
                     if (i.indexOf('#') == -1 && i.indexOf('fecha_') == -1) {
-
-
                         if (_json[i]['#text'] != null)
                             _r = _json[i]['#text']
 
@@ -60,18 +59,16 @@
                         if (p > -1 && _r.length > 0) {
                             var table = _r.split(/\n/g)
                             var keys = p<2?_r.match(/\d{3,9}/g):null
-                            //if (p == 2) {
-                            //    debugger
-                            //}
-                            for (n in table) {
-                                cadsql = "call insertInTable_Aux(?,?,?)"
-                                var _data_aux = [p, keys == null ? '' : keys[n], table[n].substr(keys == null ? 0 : keys[n].length + 1, table[n].length)]
-                                console.log(_data_aux)
-                                app.BOE.SQL.db.query(cadsql, _data_aux, function (err_aux) {
-                                    if (err_aux != null)
-                                        debugger
-                                })
-                            }
+
+                           // for (n in table) {
+                           //     cadsql = "call insertInTable_Aux(?,?,?)"
+                           //     var _data_aux = [p, keys == null ? '' : keys[n], table[n].substr(keys == null ? 0 : keys[n].length + 1, table[n].length)]
+                                //console.log(_data_aux)
+                           //     app.BOLETIN.SQL.db.query(cadsql, _data_aux, function (err_aux) {
+                           //         if (err_aux != null)
+                            ///            debugger
+                            //    })
+                           // }
                             _r = keys ==null? table[0]:keys.join(';')
                         }
                         _ret[i] = _r
@@ -336,7 +333,7 @@
                                 var _c = _arrayText[i].match(/"([^"]*)"|'([^']*)'|“[^]*”/g) || []
                                 var _pesetas = _arrayText[i].match(/\d{1,3}(?:\.\d{3})* pesetas/g) || []
                                 var _euros = _arrayText[i].match(/\d{1,3}(?:\.\d{3})* euros/g) || []
-                                if (_c.length > 0 ) {
+                                if (_pesetas.length > 0 || _euros.length > 0) {
                                     for (_n in _c) {
                                         if (_pesetas.length == _c.length || _euros.length == _c.length) {
                                             if (_pesetas.length > 0 && _pesetas.length>_n)
@@ -566,7 +563,7 @@
             return string
         },
         getTextFromPdf: function (options, pdf, _arr, charEnd, _callback, _json ,_this ) {
-            app.Rutines(app).askToServer(app, { encoding: null, method: "GET", uri: pdf }, {}, function (app, body, data) {
+            app.Rutines(app).askToServer(app, { encoding: null, method: "GET", uri: pdf }, _arr, function (app, body, data) {
                 var xcadsql = null
                 var turl = pdf.split("/")
 
@@ -584,7 +581,7 @@
                                 callback(sdata, list)
                             } else {
 
-                                console.log('file local:->' + _file)
+                                //console.log('file local:->' + _file)
                                 var pdf = new app.pdftotext(_file)
                                 pdf.add_options(options.pdfOpc);
 
@@ -596,7 +593,7 @@
 
 
                                         var _fileText = _file.split(".pdf")[0] + ".txt"
-                                        console.log(_fileText)
+                                        //console.log(_fileText)
                                         app.fs.readFile(_fileText, 'utf8', function (err, text) {
                                             app.fs.unlink(_fileText, function (err) {
                                                 app.fs.unlink(_file, function (err) {

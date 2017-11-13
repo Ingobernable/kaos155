@@ -47,7 +47,7 @@
                 //        params.idEmpresa = recordEmpresa.length>0 ? recordEmpresa[0].id : 0
                 //}
                 data.extra.materias = data.extra.materias + (data.extra.materias_cpv.length > 0 && data.extra.materias.length > 0 ? ";" : '') + data.extra.materias_cpv
-                options.SQL.db.query('Call Insert_Data_BOE(' + data.textExtend.length + ',' + data.contratista.split(';').length + ',' + data.extra.materias.split(';').length + ",'" + data.type + "',?,?,?,?,?,?,?,?,?,?,?,?" + _ing + ')', params, function (err, record) {
+                options.SQL.db.query('Call Insert_Data_BOLETIN(' + data.textExtend.length + ',' + data.contratista.split(';').length + ',' + data.extra.materias.split(';').length + ",'" + data.type + "',?,?,?,?,?,?,?,?,?,?,?,?" + _ing + ')', params, function (err, record) {
                     if (err != null) {
                         //debugger
                         cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
@@ -379,7 +379,7 @@
                                 _analisis.importe = _imp
                                 if (_analisis.importe == 0) {
                                     _analisis.importe = ""
-                                    for (_l in data.contratista.split(";")) {
+                                    for (_l in _analisis.contratista.split(";")) {
                                         _analisis.importe = _analisis.importe + (_analisis.importe.length > 0 ? ";" : "") + isNaN(_analisis.presupuesto) ? "0.00" : data.presupuesto
                                     }
                                 }
@@ -504,7 +504,7 @@
 
    // app.commonSQL.getConnect({ SQL: { db: null } }, false, 'RELACIONES', function (_options) {
     options.vConnect = app.VisualCif
-    app.commonSQL.init(options, 'BOCM', callback)
+    app.commonSQL.init(options, 'BOCM', app._fileCredenciales, callback)
     //})
 
 }

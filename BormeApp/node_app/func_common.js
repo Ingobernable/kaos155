@@ -9,8 +9,9 @@
                
                 this.lastupdate = Date.now()
                 var _d = new Date()
-
-                console.log("\n" + app.moment().format('MMM D, HH:MM:SS') + "->" + requestOptions.uri)
+                var _bolet = requestOptions.uri.split("/")[requestOptions.uri.split("/").length-1].split(".")[0]
+                var _boletin =  data._analisis!=null ? data._analisis.length>0 ? data._analisis[data.e][data.type].trim(): _bolet: _bolet // data.type+"-"+data.desde
+                //console.log("\n" + app.moment().format('MMM D, HH:MM:SS') + "->" + requestOptions.uri)
                 //leemos el documento SUMARIO
                 app.request.get(requestOptions, function (req, res, body) {
                     if (body != null) {
@@ -23,14 +24,17 @@
                                     callback(options, _this.iconv.decode(new Buffer(body), _this.Rutines().ISO(body.toString())), data)
                                 } else {
                                     debugger
-                                    console.log("ERROR " + requestOptions.uri + 'response sin encoding valido')
+                                    console.log("ERROR " + requestOptions.uri + ' response sin encoding valido')
                                     callback(_this, null, data)
                                 }
                             }
                         } else {
-                            debugger
-                            console.log("ERROR " + requestOptions.uri + 'response sin contenido')
-                            callback(_this, null, data)
+                             //requestOptions.uri.split("/")[requestOptions.uri.split("/").length-1].split(".")
+                            cadsql = "INSERT INTO errores (BOLETIN, SqlMensaje, SqlError) VALUES ('" + _boletin + "','PDF VACIO','" + requestOptions.uri + "')"
+                            app.BOLETIN.SQL.db.query(cadsql, function(err,rec){
+                                process.stdout.write("xxx")
+                                callback(_this, null, data)
+                            })
                         }
                     } else {
                         //debugger

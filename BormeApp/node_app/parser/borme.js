@@ -423,6 +423,6 @@
         }
     }
     options.Rutines.cargos = dataCargos
-    app.commonSQL.init(options, 'BORME', callback)
+    app.commonSQL.init(options, 'BORME', app._fileCredenciales, callback)
 
 }

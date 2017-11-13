@@ -31,7 +31,7 @@ function pdftotext(filename, options) {
 
         self.add_options([filename]);
         var _command = 'pdftotext ' + self.options.additional.join(' ')
-        console.log(_command)
+        //console.log(_command)
         exec(_command, cb);
     }
 
