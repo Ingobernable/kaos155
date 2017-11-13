@@ -34,7 +34,7 @@ Paso 0: Actualizar repositorios y sistema:
 Paso 1: Instalar dependencias:
 
 ```
-# apt-get install git curl software-properties-common gnupg2
+# apt-get install git wget curl software-properties-common gnupg2
 ```
 
 Paso 2: Instalar nodejs y npm
@@ -42,6 +42,25 @@ Paso 2: Instalar nodejs y npm
 ```
 # curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
 # apt-get install nodejs
+```
+
+Paso 3: Instalar MySQL 5.7
+
+```
+# wget -O /tmp/RPM-GPG-KEY-mysql https://repo.mysql.com/RPM-GPG-KEY-mysql
+# apt-key add /tmp/RPM-GPG-KEY-mysql
+# apt-get update
+# wget https://dev.mysql.com/get/mysql-apt-config_0.8.9-1_all.deb
+# dpkg -i mysql-apt-config_0.8.9-1_all.deb 
+# apt-get update
+# apt-get install mysql-server
+```
+
+Paso 4: Instalar xpdf tools 4.0
+
+
+```
+
 ```
 
 
