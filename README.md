@@ -83,8 +83,8 @@ Para ello accederemos como root a mysql. Por ejemplo así: mysql -u root -p (en 
 Una vez dentro de la consola de MySQL los comandos son los siguientes:
 
 ```
-mysql> CREATE DATABASE bbdb_kaos155;
-mysql> GRANT ALL ON bbdb_kaos155.* TO 'kaosuser'@'localhost' IDENTIFIED BY 'kaospassword';
+mysql> CREATE DATABASE bbdd_kaos155;
+mysql> GRANT ALL ON bbdd_kaos155.* TO 'kaosuser'@'localhost' IDENTIFIED BY 'kaospassword';
 ```
 
 Con control+D podemos salir de la consola MySQL.
@@ -111,10 +111,22 @@ Para guardar los cambios con el editor nano usaremos Control+o y para salir Cont
 Paso 8: Importamos las tablas del archivo CREATE_COMPLETO.sql
 
 ```
-# mysql -u root -p bbdb_kaos155 < CREATE_COMPLETO.sql
+# mysql -u root -p bbdd_kaos155 < CREATE_COMPLETO.sql
 ```
 
-Paso 9:
+Paso 9: Comenzar con el scraping
+
+```
+# cd ..
+# chown -R root:root *
+# cd BormeApp
+# npm upgrade
+# node app BOE 2001
+# node app BORME 2009
+# node app BOCM 2010
+```
+
+Actualmente se lanza así para cada año y tipo pero en unos días esto cambiará y se realizará ejecutando un script en bash.
 
 
 
