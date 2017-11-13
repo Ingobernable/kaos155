@@ -1,5 +1,7 @@
 sqlfiles/ACCESO_mysql.sql
+sqlfiles/ACCESO_mysql.json
 Datafiles/
+
 .vs/
 *.suo
 *.sln
