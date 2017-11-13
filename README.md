@@ -22,22 +22,20 @@ https://listas.ingobernable.net/cgi-bin/mailman/listinfo/kaos
 
 ### Debian 9
 
-```
-git clone https://github.com/Ingobernable/kaos155
-cd kaos155
-```
+Para instalar Kaos155 en Debian GNU/Linux 9 podemos seguir los siguientes pasos.
+Recomendable montar Kaos155 en una debian 9 recien instalada.
 
-### Gentoo
+Paso 0: Actualizar repositorios y sistema:
 
 ```
-git clone https://github.com/Ingobernable/kaos155
-cd kaos155
+apt-get update && apt-get upgrade
 ```
 
-### Ubuntu
+Paso 1: Instalar dependencias:
 
 ```
-git clone https://github.com/Ingobernable/kaos155
-cd kaos155
+apt-get install git
 ```
+
+Seguimos documentando el proceso estos días. 
 
