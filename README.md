@@ -97,7 +97,7 @@ Encontraremos uno llamado ACCESO_mysql-example.json en el directorio sqlfiles qu
 
 ```
 cd sqlfiles/
-mv ACCESO_mysql-example.json
+mv ACCESO_mysql-example.json ACCESO_mysql.json
 nano ACCESO_mysql.json
 ```
 
