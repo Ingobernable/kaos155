@@ -45,7 +45,7 @@
                         //Importe: []
                     }
             },
-            extra: function (_json) {
+            extra: function (_json,scrap) {
                 var splitfunc = ['materias', 'materias_cpv' ]
                 var _regex = [/\d{3}/g, new RegExp('/([0-9])\w+/g')]
                 var _ret = {}
@@ -59,16 +59,16 @@
                         if (p > -1 && _r.length > 0) {
                             var table = _r.split(/\n/g)
                             var keys = p<2?_r.match(/\d{3,9}/g):null
-
-                           // for (n in table) {
-                           //     cadsql = "call insertInTable_Aux(?,?,?)"
-                           //     var _data_aux = [p, keys == null ? '' : keys[n], table[n].substr(keys == null ? 0 : keys[n].length + 1, table[n].length)]
-                                //console.log(_data_aux)
-                           //     app.BOLETIN.SQL.db.query(cadsql, _data_aux, function (err_aux) {
-                           //         if (err_aux != null)
-                            ///            debugger
-                            //    })
-                           // }
+                            if(!scrap)
+                                for (n in table) {
+                                    cadsql = "call insertInTable_Aux(?,?,?)"
+                                    var _data_aux = [p, keys == null ? '' : keys[n], table[n].substr(keys == null ? 0 : keys[n].length + 1, table[n].length)]
+                                    //console.log(_data_aux)
+                                    app.BOLETIN.SQL.db.query(cadsql, _data_aux, function (err_aux) {
+                                        if (err_aux != null)
+                                            debugger
+                                    })
+                                }
                             _r = keys ==null? table[0]:keys.join(';')
                         }
                         _ret[i] = _r
@@ -76,7 +76,7 @@
                 }
                 return _ret
             },
-            p_parrafo: function (options, $, charEnd, body, _callback, urlDoc, __this) {
+            p_parrafo: function (options, $, charEnd, body, _callback, urlDoc, __this, onlyScrap) {
                 var _this = this
                 var _lastParragraf = true
                 var _arr = []
@@ -89,7 +89,7 @@
 
                 if (_json.documento.texto.dl != null) {
                     var pdf =  options.url  + _json.documento.metadatos.url_pdf["#text"]
-                    __this.getTextFromPdf(options, pdf, _arr, charEnd, _callback, _json, _this)
+                    __this.getTextFromPdf(options, pdf, _arr, charEnd, _callback, _json, _this, onlyScrap)
                 } else {
 
                     $('p.parrafo').each(function (p, _parraf) {
@@ -104,7 +104,7 @@
                         }
                     })
 
-                    _callback({ _arr: _arr, _extra: this.extra(_json.documento.analisis) })
+                    _callback({ _arr: _arr, _extra: this.extra(_json.documento.analisis, onlyScrap) })
                 }
             },
             importes: function (data, options, patterns) {
@@ -562,7 +562,7 @@
                 string = string.substr(0, string.length - 2)
             return string
         },
-        getTextFromPdf: function (options, pdf, _arr, charEnd, _callback, _json ,_this ) {
+        getTextFromPdf: function (options, pdf, _arr, charEnd, _callback, _json, _this, onlyScrap) {
             app.Rutines(app).askToServer(app, { encoding: null, method: "GET", uri: pdf }, _arr, function (app, body, data) {
                 var xcadsql = null
                 var turl = pdf.split("/")
@@ -618,7 +618,7 @@
                                                             }
                                                         }
                                                     }
-                                                    _callback({ _arr: _arr, _extra: _json!=null?_this.extra(_json.documento.analisis):null })
+                                                    _callback({ _arr: _arr, _extra: _json != null ? _this.extra(_json.documento.analisis, onlyScrap) : null })
                                                 })
                                             })
                                         })

@@ -216,7 +216,12 @@ App.parameters(App, myArgs, function (app) {
     if (myArgs[0] == 'BOCM' && app.Mins[myArgs[0]] == app.anyo) {
         myArgs[1] = (date.getFullYear() + '').pad(4) + '0212'
     } else {
-        myArgs[1] = (date.getFullYear() + '').pad(4) + (date.getMonth() + 1 + '').pad(2) + (date.getDate() + '').pad(2)
+        if (myArgs[0] == 'BORME' && app.Mins[myArgs[0]] == app.anyo) {
+            myArgs[1] = (date.getFullYear() + '').pad(4) + "0102"
+        } else {
+            myArgs[1] = (date.getFullYear() + '').pad(4) + (date.getMonth() + 1 + '').pad(2) + (date.getDate() + '').pad(2)
+
+        }
     }
 
     if (app.Mins[myArgs[0]] <= app.anyo) {

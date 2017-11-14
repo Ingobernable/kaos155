@@ -101,7 +101,7 @@
                                     } else {
                                         callback(data,true)
                                     }
-                                }, urlDoc, options.Rutines)
+                                }, urlDoc, options.Rutines, true )
                             } else {
                                 process.stdout.write('-')
                                 callback(data)

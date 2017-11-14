@@ -1,8 +1,8 @@
 ﻿module.exports = function (app, callback) { 
 
     options = {
-       
-        Rutines: require('../parser/BOLETIN/__Rutines')(app),
+        Rutines: require('../parser/BORME/Borme_Rutines')(app, require('../parser/BORME/Borme_Transforms')(app)),
+        //Rutines: require('../parser/BOLETIN/__Rutines')(app),
         _common: require('../parser_common')(app),
         pdfOpc: ['-nopgbrk', '-enc UTF-8'],
         url: app.urlBORME,
@@ -27,6 +27,7 @@
 
                             if ($('error').length > 0) {
                                 data._list = []
+                                data.SUMARIO_NEXT = app.moment(data.SUMARIO_NEXT, "YYYYMMDD").add(1, 'days').format('YYYYMMDD');
                                 callback(data)
                             } else {
                                 data.next = $('sumario meta fechaSig').html()
@@ -68,7 +69,13 @@
                                             })
                                     })
                                     data.id = url.uri.split('=')[1]
-                                    data._list = _reg
+
+                                    data._list = []
+                                    data._analisis = _reg
+                                    for (n in _reg) {
+                                        data._list[data._list.length] = _reg[n].pdf
+                                    }
+                                    //data._list = _reg
                                     //retornamos la lista del contenido del sumario
                                     callback(data)
                                 //})

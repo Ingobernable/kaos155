@@ -9,9 +9,13 @@
                
                 this.lastupdate = Date.now()
                 var _d = new Date()
-                var _bolet = requestOptions.uri.split("/")[requestOptions.uri.split("/").length-1].split(".")[0]
-                var _boletin =  data._analisis!=null ? data._analisis.length>0 ? data._analisis[data.e][data.type].trim(): _bolet: _bolet // data.type+"-"+data.desde
-                //console.log("\n" + app.moment().format('MMM D, HH:MM:SS') + "->" + requestOptions.uri)
+                var _bolet = requestOptions.uri.split("/")[requestOptions.uri.split("/").length - 1].split(".")[0]
+                if (data.type != "BORME") {
+                    var _boletin = data._analisis != null ? data._analisis.length > 0 ? data._analisis[data.e][data.type].trim() : _bolet : _bolet // data.type+"-"+data.desde
+                } else {
+                    var _boletin = requestOptions.uri.split("/")[requestOptions.uri.split("/").length - 1].split("=")[1]
+                }
+                    //console.log("\n" + app.moment().format('MMM D, HH:MM:SS') + "->" + requestOptions.uri)
                 //leemos el documento SUMARIO
                 app.request.get(requestOptions, function (req, res, body) {
                     if (body != null) {
