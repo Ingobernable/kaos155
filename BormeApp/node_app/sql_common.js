@@ -113,7 +113,7 @@
                         }
                     },
                     Sumario: function (options, _sumario, _boletin, callback) {
-                        var cadsql = "INSERT INTO sumarios (T_anual, Anyo, SUMARIO, BOLETIN, Type) VALUES ('" + (app._xData.TSUMARIOS[options.type] + 1) + "','" + app.anyo + "','" + _sumario + "', '" + _boletin + "','" + options.type + "')"
+                        var cadsql = "INSERT INTO sumarios (_counter, Anyo, SUMARIO, BOLETIN, Type) VALUES ('" + (app._xData.TSUMARIOS[options.type] + 1) + "','" + app.anyo + "','" + _sumario + "', '" + _boletin + "','" + options.type + "')"
                         options.SQL.db.query(cadsql, function (err, records) {
                             if (err) {
                                 x=cadsql
