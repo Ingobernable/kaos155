@@ -17,7 +17,7 @@
                                 }
                                 if (rows != null) {
                                     if (rows.length == 0) {
-                                        options.SQL.db.query("INSERT INTO sumarios (BOLETIN,SUMARIO_NEXT,Type) VALUES ( '" + data.id + "', '" + next + "','" + options.type + "')", function (err, records) {
+                                        options.SQL.db.query("INSERT INTO sumarios (BOLETIN,SUMARIO,Type) VALUES ( '" + data.id + "', '" + next + "','" + options.type + "')", function (err, records) {
                                             if (err) {
                                                 debugger
                                             }
