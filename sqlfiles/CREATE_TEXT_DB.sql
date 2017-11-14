@@ -32,7 +32,6 @@ CREATE TABLE `_bocm_text` (
   `BOLETIN` varchar(18) DEFAULT NULL,
   `texto` mediumtext,
   `analisis` mediumtext,
-  `Type` varchar(10) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
@@ -73,7 +72,6 @@ CREATE TABLE `_borme_text` (
   `anyo` varchar(4) DEFAULT NULL,
   `BOLETIN` varchar(18) DEFAULT NULL,
   `texto` mediumtext,
-
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -142,7 +140,7 @@ CREATE TABLE `sumarios` (
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Text_BOLETIN_Contrato`(
 	
@@ -190,8 +188,7 @@ BEGIN
 				mes,
 				anyo,  
 				TEXTO, 
-				analisis,
-				importe) VALUES ( 
+				analisis) VALUES ( 
 
 				_BOLETIN, 
 				_Dia,
@@ -223,7 +220,7 @@ BEGIN
 				SELECT last_insert_id() as ID;
 		END IF;
     END IF;
-    UPDATE lastread SET ID_LAST = _BOLETIN WHERE Type='BOE' AND Anyo=_Anyo;
+    UPDATE lastread SET ID_LAST = _BOLETIN WHERE Type= _Type AND Anyo=_Anyo;
     UPDATE sumarios SET Tipo_contenido=1 WHERE BOLETIN=_BOLETIN;
 END ;;
 DELIMITER ;
@@ -241,4 +238,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-14  9:11:08
+-- Dump completed on 2017-11-14 14:05:54
