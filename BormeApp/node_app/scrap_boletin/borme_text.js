@@ -361,34 +361,11 @@
                                                     if (_lines.data.length == 0){
                                                         callback(data, null)
                                                     } else {
-                                                        var params = [
-                                                             data.desde.substr(6, 2),                                      //Dia
-                                                             data.desde.substr(4, 2),                                      //Mes
-                                                             data.desde.substr(0, 4),                                       //Anyo
-                                                            'BORME',
-                                                            data.id,
-                                                            _lines.BORME,
-                                                            _lines.PROVINCIA,
-                                                            urlDoc
-                                                        ]
 
-                                                        options.SQL.db.query('CALL Insert_Data_BORME( ?,?,?,?,?,?,?,? ) ', params , function (err, DataRecord) {
-
-                                                            var _avanza = true
-                                                            if (err)
-                                                                if (err.code = 'ER_DUP_ENTRY') {
-                                                                    _avanza = true
-                                                                } else {
-                                                                    debugger
-                                                                }
-
-                                                            var _counter = 0
-                                                            if (_avanza) {
-                                                                options.parser.saveLinesDeMovimientos(0, _lines,data, callback)
-                                                            } else {
-                                                                callback(data, null)
-                                                            }
+                                                        app.commonSQL.SQL.commands.insert.Boletin.text(options, _lines, data, function (data) {
+                                                            callback(data)
                                                         })
+
                                                     }
                                                 
                                                 } else {
