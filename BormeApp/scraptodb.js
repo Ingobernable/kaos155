@@ -4,7 +4,7 @@ console.log('loading Scrap - version -' + Version)
 var myArgs = process.argv.slice(2);
 
 if (myArgs.length == 0)
-    myArgs = ['BORME', '2009'] //, 'BOE-B-2003-31017' ]
+    myArgs = ['BOCM', '2010'] //, 'BOE-B-2003-31017' ]
 
 if (myArgs[0] != 'BOCM') {
 

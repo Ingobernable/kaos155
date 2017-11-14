@@ -87,104 +87,40 @@
                                                             app.fs.unlink(_file, function (err) {
                                                                 //app.fs.unlink(_file)
                                                                 var _lines = []
-                                                                t = text.replace(/"/g, "").split('\n')
-
-
-
-                                                                //t = text.split(String.fromCharCode(8212))
-                                                                if (t < 2)
-                                                                    debugger
-
-                                                                //console.log(t)
-                                                                //debugger
-
+                                                                var _t = text.replace(/"/g, "").split('\n\r')
                                                                 var inContrato = false
-                                                                var _text = ""
-                                                                var _tittle = ""
-                                                                var xsep = ""
-                                                                var _reg = []
-                                                                var i = 0
-                                                                for (i in t) {
-                                                                    t[i] = ''.Trim(t[i].replace(/  /g, " "))
+                                                                var t = []
+                                                                var _recolect = ""
+                                                                var map = ['Adjudicación contrato', 'Formalización contrato','Contratación. Contrato:']
 
-                                                                    if (t[i].length > 1) {
-                                                                        if (!inContrato) {
-                                                                            var map = ['Adjudicación contrato', 'Formalización contrato'] //, 'Concesión subvenciones']
-                                                                            for (_c in map) {
-                                                                                if (t[i].indexOf(map[_c]) > -1) {
-                                                                                    _tittle = map[_c]
-                                                                                    inContrato = true
-                                                                                    //debugger
-                                                                                    //_text = map[_c].length == ''.Trim(t[i]) ? "" : ''.Trim(t[i])
-                                                                                }
-
+                                                                for (n in _t) {
+                                                                    if (!inContrato)
+                                                                        for (_c in map) {
+                                                                            if (_t[n].indexOf(map[_c]) > -1) {
+                                                                                _tittle = map[_c]
+                                                                                inContrato = true
                                                                             }
                                                                         }
-                                                                        //if (!inContrato)
-                                                                        //    if (map.indexOf(t[i].replace("\n","")) > -1 || t[i].indexOf('Formalización contrato') > -1 || t[i].indexOf('Concesión subvenciones') > -1)
-                                                                        //        //inContrato=true
-
-                                                                        if (inContrato && (t[i].indexOf(_tittle) == -1 || t[i].indexOfRegex(/BOCM-\d\d\d\d\d\d\d\d[-]/) > -1)) {
-                                                                            
-
-                                                                            if (t[i].charCodeAt(0) == 8212 || t[i].charCodeAt(1) == 32) {
-                                                                                var pi = 2
-                                                                                t[i] = ''.Trim(t[i].substr(pi, t[i].length - pi))
-                                                                                //debugger
-                                                                            }
-
-                                                                            if (t[i].lastIndexOf("-") == t[i].length - 1) {
-                                                                                _text = ''.Trim(_text) + (_text.length > 0 ? " " : "") + ''.Trim(t[i].substr(0, t[i].length - 1))
-                                                                                xsep = ""
-                                                                            } else {
-
-
-                                                                                //debugger
-                                                                                _text = ''.Trim(_text) + xsep + ''.Trim(t[i].replace(/(\s\s\W)/g, ""))
-                                                                                xsep = " "
-                                                                                //debugger
-
-                                                                                var p = _text.indexOfRegex(/BOCM-\d\d\d\d\d\d\d\d[-]/)
-                                                                                if (p > -1) {
-
-                                                                                    _key = ''.Trim(_text.substr(p, _text.length - p))
-                                                                                    if (_key.length > 20)
-                                                                                        _key = _key.substr(0, 19)
-
-                                                                                    while (_key.charCodeAt(_key.length - 1) > 57) {
-                                                                                        _key = _key.substr(0, _key.length - 1)
-                                                                                    }
-                                                                                    _text = ''.Trim(_text.substr(0, p))
-                                                                                    //debugger
-                                                                                    while (_text.substr(_text.length - 1, 1) == ".") {
-                                                                                        _text = _text.substr(0, _text.length - 1)
-                                                                                    }
-
-                                                                                    if (app._xData.Sumario.BOCM.ID_LAST != null) {
-                                                                                        if (app._xData.Sumario.BOCM.ID_LAST.split("#")[1] == _key)
-                                                                                            app._xData.Sumario.BOCM.ID_LAST == null
-                                                                                    } else {
-                                                                                        var _ok = true
-                                                                                    }
-                                                                                    if (_ok){
-                                                                                        var Sumario = app._xData.Sumario.BOCM.SUMARIO_NEXT
-                                                                                        process.stdout.write("+")
-                                                                                    } else {
-                                                                                        process.stdout.write("-")
-                                                                                    }
-                                                                                    _reg[_reg.length] = { BOCM: _key, title: _tittle, concepto: _text, pdf: options.url + '_Orden_BOCM/' + Sumario.substr(7, 4) + "/" + Sumario.substr(11, 2) + "/" + Sumario.substr(13, 2) + "/" + _key + ".PDF" }
-                                                                                    inContrato = false
-                                                                                    _text = ""
-
-                                                                                }
+                                                                    if (_t[n].length > 1) {
+                                                                        if (inContrato) {
+                                                                            if (_t[n].indexOfRegex(/BOCM-\d{8}[-]\d{1,4}/) > 0) {
+                                                                                BOCM = _t[n].match(/BOCM-\d{8}[-]\d{1,4}/g)[0]
+                                                                                t[t.length] = { BOCM:BOCM, pdf: options.url + "_Orden_BOCM/" + BOCM.substr(5, 4) + "/" + BOCM.substr(9, 2) + "/" + BOCM.substr(11, 2) + "/" + BOCM + ".PDF" }
+                                                                                inContrato = false
                                                                             }
                                                                         } else {
-                                                                            //process.stdout.write("-")
+                                                                            if (_t[n].indexOfRegex(/BOCM-\d{8}[-]\d{1,4}/) > 0) {
+                                                                                process.stdout.write('-')
+                                                                            }
                                                                         }
                                                                     }
-
                                                                 }
-                                                                _exit(_reg, callback)
+
+                                                                //t = text.split(String.fromCharCode(8212))
+                                                                //if (t < 2)
+                                                                //    debugger
+                                                                _exit(t , callback)
+
                                                             })
                                                         })
                                                     })

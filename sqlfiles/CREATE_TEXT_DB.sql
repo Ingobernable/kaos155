@@ -33,7 +33,6 @@ CREATE TABLE `_bocm_text` (
   `texto` mediumtext,
   `analisis` mediumtext,
   `Type` varchar(10) DEFAULT NULL,
-  `importe` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
@@ -54,7 +53,6 @@ CREATE TABLE `_boe_text` (
   `BOLETIN` varchar(18) DEFAULT NULL,
   `texto` mediumtext,
   `analisis` mediumtext,
-  `Type` varchar(10) DEFAULT NULL,
   `importe` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
@@ -75,9 +73,7 @@ CREATE TABLE `_borme_text` (
   `anyo` varchar(4) DEFAULT NULL,
   `BOLETIN` varchar(18) DEFAULT NULL,
   `texto` mediumtext,
-  `analisis` mediumtext,
-  `Type` varchar(10) DEFAULT NULL,
-  `importe` varchar(45) DEFAULT NULL,
+
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -166,7 +162,7 @@ BEGIN
 	IF _Type='BOE' THEN
 		SET _counter= ( SELECT count(*) FROM _boe_text WHERE BOLETIN = _BOLETIN ); 
 		IF _counter = 0 THEN
-				INSERT INTO _boe_text ( Type,
+				INSERT INTO _boe_text ( 
 				BOLETIN, 
 				dia,
 				mes,
@@ -174,7 +170,7 @@ BEGIN
 				TEXTO, 
 				analisis,
 				importe) VALUES ( 
-				_Type,
+
 				_BOLETIN, 
 				_Dia,
 				_Mes,
@@ -188,7 +184,7 @@ BEGIN
 	IF _Type='BOCM' THEN
 		SET _counter= ( SELECT count(*) FROM _bocm_text WHERE BOLETIN = _BOLETIN ); 
 		IF _counter = 0 THEN
-				INSERT INTO _bocm_text ( Type,
+				INSERT INTO _bocm_text ( 
 				BOLETIN, 
 				dia,
 				mes,
@@ -196,21 +192,20 @@ BEGIN
 				TEXTO, 
 				analisis,
 				importe) VALUES ( 
-				_Type,
+
 				_BOLETIN, 
 				_Dia,
 				_Mes,
 				_Anyo,  
 				_TEXTO, 
-				_analisis,
-				_importe );
+				_analisis);
 				SELECT last_insert_id() as ID;
 		END IF;
     END IF; 
     IF _Type='BORME' THEN
 		SET _counter= ( SELECT count(*) FROM _borme_text WHERE BOLETIN = _BOLETIN ); 
 		IF _counter = 0 THEN
-				INSERT INTO _borme_text ( Type,
+				INSERT INTO _borme_text ( 
 				BOLETIN, 
 				dia,
 				mes,
@@ -218,14 +213,13 @@ BEGIN
 				TEXTO, 
 				analisis,
 				importe) VALUES ( 
-				_Type,
+
 				_BOLETIN, 
 				_Dia,
 				_Mes,
 				_Anyo,  
 				_TEXTO, 
-				_analisis,
-				_importe );
+				_analisis );
 				SELECT last_insert_id() as ID;
 		END IF;
     END IF;
