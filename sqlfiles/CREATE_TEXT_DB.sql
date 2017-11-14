@@ -18,28 +18,6 @@ USE `bbdd_kaos155_text`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `__text_scrap_boletin`
---
-
-DROP TABLE IF EXISTS `__text_scrap_boletin`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `__text_scrap_boletin` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `dia` varchar(2) DEFAULT NULL,
-  `mes` varchar(2) DEFAULT NULL,
-  `anyo` varchar(4) DEFAULT NULL,
-  `BOLETIN` varchar(18) DEFAULT NULL,
-  `texto` mediumtext,
-  `analisis` mediumtext,
-  `Type` varchar(10) DEFAULT NULL,
-  `importe` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `_bocm_text`
 --
 
