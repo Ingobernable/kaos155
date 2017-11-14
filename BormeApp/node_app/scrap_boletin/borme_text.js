@@ -362,7 +362,7 @@
                                                         callback(data, null)
                                                     } else {
 
-                                                        app.commonSQL.SQL.commands.insert.Boletin.text(options, _lines, data, function (data) {
+                                                        app.commonSQL.SQL.commands.insert.Borme.text(options, _lines, data, function (data) {
                                                             callback(data)
                                                         })
 

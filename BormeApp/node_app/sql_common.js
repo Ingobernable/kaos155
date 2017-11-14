@@ -77,6 +77,34 @@
                     })
                 },
                 insert: {
+                    Borme: {
+                        text: function (options, _analisis, data, callback) {
+                            var params = [
+                                boletin.split("-")[0],                                                      //type
+                                fecha.substr(6, 2),                                                      //Dia
+                                fecha.substr(4, 2),                                                      //Mes
+                                fecha.substr(0, 4),                                                       //Anyo
+                                boletin,                                                                    //BOLETIN                                                                                                                   
+                                data.textExtend.join("<br>").replace(/\r/g, "").replace(/'/g, "\'"),        //Texto
+                                JSON.stringify(_analisis),                                                  //resultado del primer analisis
+                                _analisis._importe                                                          //importe accesible?
+                            ]
+                            options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?)', params, function (err, record) {
+                                process.stdout.write('+')
+                                if (err != null) {
+                                    //debugger
+                                    cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
+                                    options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
+                                        var x = err
+                                        var y = params
+                                        callback(data)
+                                    })
+                                } else {
+                                    callback(data)
+                                }
+                            })
+                        }
+                    },
                     Boletin: {
                         text: function (options, _analisis, data, callback) {
                             //var i = isNaN(data.importe * 1) ? 0 : data.importe * 1
