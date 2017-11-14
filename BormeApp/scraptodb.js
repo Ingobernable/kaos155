@@ -1,4 +1,4 @@
-﻿var Version = '0.0.1'
+﻿var Version = '0.0.1' 
 //debugger
 console.log('loading Scrap - version -' + Version)
 var myArgs = process.argv.slice(2);

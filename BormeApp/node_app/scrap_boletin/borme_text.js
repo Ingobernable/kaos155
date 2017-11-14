@@ -1,4 +1,4 @@
-﻿module.exports = function (app, callback) {
+﻿module.exports = function (app, callback) { 
 
     options = {
        
