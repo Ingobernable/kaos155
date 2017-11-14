@@ -24,36 +24,36 @@ Para instalar Kaos155 en Debian GNU/Linux 9 podemos seguir los siguientes pasos.
 
 Paso 0: Actualizar repositorios y sistema:
 
-# apt-get update && apt-get upgrade
+  # apt-get update && apt-get upgrade
 Paso 1: Instalar dependencias:
 
-# apt-get install git wget curl software-properties-common gnupg2 man nano
+  # apt-get install git wget curl software-properties-common gnupg2 man nano
 Paso 2: Instalar nodejs y npm
 
-# curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
-# apt-get install nodejs
+  # curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
+  # apt-get install nodejs
 Paso 3: Instalar MySQL 5.7
 
-# wget -O /tmp/RPM-GPG-KEY-mysql https://repo.mysql.com/RPM-GPG-KEY-mysql
-# apt-key add /tmp/RPM-GPG-KEY-mysql
-# apt-get update
-# wget https://dev.mysql.com/get/mysql-apt-config_0.8.9-1_all.deb
-# dpkg -i mysql-apt-config_0.8.9-1_all.deb 
-# apt-get update
-# apt-get install mysql-server
+  # wget -O /tmp/RPM-GPG-KEY-mysql https://repo.mysql.com/RPM-GPG-KEY-mysql
+  # apt-key add /tmp/RPM-GPG-KEY-mysql
+  # apt-get update
+  # wget https://dev.mysql.com/get/mysql-apt-config_0.8.9-1_all.deb
+  # dpkg -i mysql-apt-config_0.8.9-1_all.deb 
+  # apt-get update
+  # apt-get install mysql-server
 Paso 4: Descargar e instalar xpdf tools 4.0
 
-# wget http://www.xpdfreader.com/dl/xpdf-tools-linux-4.00.tar.gz
-# tar xfvz xpdf-tools-linux-4.00.tar.gz
-# cd xpdf-tools-linux-4.00
-# cp -pRv bin64/* /usr/local/bin/
-# mkdir /usr/local/man/man1 /usr/local/man/man5
-# cp -pRv doc/*.1 /usr/local/man/man1/
-# cp -pRv doc/*.5 /usr/local/man/man5/
+  # wget http://www.xpdfreader.com/dl/xpdf-tools-linux-4.00.tar.gz
+  # tar xfvz xpdf-tools-linux-4.00.tar.gz
+  # cd xpdf-tools-linux-4.00
+  # cp -pRv bin64/* /usr/local/bin/
+  # mkdir /usr/local/man/man1 /usr/local/man/man5
+  # cp -pRv doc/*.1 /usr/local/man/man1/
+  # cp -pRv doc/*.5 /usr/local/man/man5/
 Paso 5: Clonamos el repositorio Kaos155
 
-# git clone https://github.com/Ingobernable/kaos155
-# cd kaos155
+  # git clone https://github.com/Ingobernable/kaos155
+  # cd kaos155
 Paso 6: Creamos la base de datos y el usuario/password
 
 Para ello accederemos como root a mysql. Por ejemplo así: mysql -u root -p (en el caso de no tener password para el usuario root simplemente mysql -u root)
