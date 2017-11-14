@@ -62,9 +62,9 @@ CREATE TABLE `lastread` (
   `Type` varchar(6) CHARACTER SET utf8 NOT NULL,
   `Anyo` varchar(4) NOT NULL,
   `SUMARIO_LAST` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
+  `SUMARIO_NEXT` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
   `ID_LAST` varchar(145) DEFAULT NULL,
   `Read_Complete` bit(1) DEFAULT b'0',
-  PRIMARY KEY (`SUMARIO_NEXT`,`Type`,`Anyo`),
   UNIQUE KEY `_id_UNIQUE` (`_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -80,9 +80,10 @@ DROP TABLE IF EXISTS `sumarios`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sumarios` (
+  `_counter` int(11),
   `Type` varchar(6) CHARACTER SET utf8 DEFAULT NULL,
+  `Anyo` varchar(4) NOT NULL,
   `SUMARIO` varchar(16) CHARACTER SET utf8 NOT NULL,
-  `SUMARIO_NEXT` varchar(16) DEFAULT NULL,
   `BOLETIN` varchar(20) CHARACTER SET utf8 NOT NULL,
   `Tipo_contenido` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`BOLETIN`)
