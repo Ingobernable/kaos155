@@ -79,20 +79,26 @@
                 insert: {
                     Borme: {
                         text: function (options, _analisis, data, callback) {
+                            var _text = ""
+                            for (n in _analisis.data) {
+                                _text = _text + (_text.length>0?"#":"") + _analisis.data[n].original
+                            }
+
                             var params = [
-                                boletin.split("-")[0],                                                      //type
-                                fecha.substr(6, 2),                                                      //Dia
-                                fecha.substr(4, 2),                                                      //Mes
-                                fecha.substr(0, 4),                                                       //Anyo
-                                boletin,                                                                    //BOLETIN                                                                                                                   
-                                data.textExtend.join("<br>").replace(/\r/g, "").replace(/'/g, "\'"),        //Texto
-                                JSON.stringify(_analisis),                                                  //resultado del primer analisis
-                                _analisis._importe                                                          //importe accesible?
+                                _analisis.data.length,                                                      //type
+                                "BORME",
+                                data.desde.substr(6, 2),                                                      //Dia
+                                data.desde.substr(4, 2),                                                      //Mes
+                                data.desde.substr(0, 4),                                                       //Anyo
+                                _analisis.BORME,                                                                    //BOLETIN                                                                                                                   
+                                _text,                                                                      //Texto
+                                _analisis.PROVINCIA,                                                    //PROVINCIA
+                               0                                                                        
                             ]
-                            options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?)', params, function (err, record) {
+                            options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?)', params, function (err, record) {
                                 process.stdout.write('+')
                                 if (err != null) {
-                                    //debugger
+                                    x=_text.length
                                     cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
                                     options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                         var x = err

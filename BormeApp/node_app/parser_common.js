@@ -30,7 +30,7 @@
                                         })
                                     } else {
                                         process.stdout.write('#')
-                                        callback(data)
+                                        callback(data,true)
                                         //console.log(err, sumariosql)
                                         //callback({ error: true, SUMARIO_NEXT: rows[0].SUMARIO_NEXT })
                                     }
@@ -84,25 +84,29 @@
             return {
                 NEW: function (options, data, analizer, callback) {
                     var __this = this
-                    _this.SQL.commands.Sumario.insert(options, data, function (data) {
-                        if (data._analisis != null) {
-                            var turl = data._analisis[data.e].pdf != null ? data._analisis[data.e].pdf : data._list[data.e] //: //.split("/")
-                        } else {
-                            var turl = data._list[data.e]
-                        }
-                        __this.Search(options, turl, data, analizer, function (data, repeat) {
-                            if (data.e < data._list.length - 1) {
-                                if (!repeat) {
-                                    data.e++
-                                    // } else {
-                                    //     debugger
-                                }
-                                __this.NEW(options, data, analizer, callback)
+                    _this.SQL.commands.Sumario.insert(options, data, function (data, isrepeat) {
+                        if (!isrepeat) {
+                            if (data._analisis != null) {
+                                var turl = data._analisis[data.e].pdf != null ? data._analisis[data.e].pdf : data._list[data.e] //: //.split("/")
                             } else {
-                                callback(data)
+                                var turl = data._list[data.e]
                             }
-                            //})
-                        })
+                            __this.Search(options, turl, data, analizer, function (data, repeat) {
+                                if (data.e < data._list.length - 1) {
+                                    if (!repeat) {
+                                        data.e++
+                                        // } else {
+                                        //     debugger
+                                    }
+                                    __this.NEW(options, data, analizer, callback)
+                                } else {
+                                    callback(data)
+                                }
+                                //})
+                            })
+                        } else { 
+                           callback(data)
+                        }
                     })
                 },
                 Search: function (options, doc, sdata, analizer, callback) {
