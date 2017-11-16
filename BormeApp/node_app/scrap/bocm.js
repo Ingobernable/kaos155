@@ -1,6 +1,7 @@
 ﻿module.exports = function (app, callback) { 
 
     var options = {
+        Command: app.command,
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
         pdfOpc: ['-raw', '-enc UTF-8'],
         //pdftotext : require('../pdftotext'),
@@ -196,7 +197,7 @@
 
    // app.commonSQL.getConnect({ SQL: { db: null } }, false, 'RELACIONES', function (_options) {
     //options.vConnect = app.VisualCif
-    app.commonSQL.init(options, 'BOCM', app._fileCredenciales, callback)
+    app.commonSQL.init(options, 'BOCM', app._fileCredenciales + options.Command , callback)
     //})
 
 }

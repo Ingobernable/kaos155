@@ -105,7 +105,16 @@
                                 //})
                             })
                         } else { 
-                           callback(data)
+                            if (data.e < data._list.length - 1) {
+                                //if (!repeat) {
+                                    data.e++
+                                    // } else {
+                                    //     debugger
+                                //}
+                                __this.NEW(options, data, analizer, callback)
+                            } else {
+                                callback(data)
+                            }
                         }
                     })
                 },

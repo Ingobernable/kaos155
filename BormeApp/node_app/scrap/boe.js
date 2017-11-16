@@ -1,6 +1,7 @@
 ﻿module.exports = function (app, callback) { 
 
     var options = {
+        Command: app.command,
         url: app.urlBOE,
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
         pdfOpc: ['-raw', '-nopgbrk', '-enc UTF-8'],
@@ -122,6 +123,6 @@
     }
 
    //creamos la conexión a la DB
-    app.commonSQL.init(options, 'BOE', app._fileCredenciales, callback)
+    app.commonSQL.init(options, 'BOE', app._fileCredenciales + options.Command, callback)
 
 }

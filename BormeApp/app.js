@@ -4,18 +4,18 @@ console.log('loading App - version -' + Version)
 var myArgs = process.argv.slice(2);
  
 if (myArgs.length == 0)
-    myArgs = ['BOCM', '2012'] //, 'BOE-B-2003-31017' ]
+    myArgs = ['PARSER','BORME', '2012'] //, 'BOE-B-2003-31017' ]
 
-if (myArgs[0] != 'BORME') {
+if (myArgs[1] != 'BORME') {
 
-    var date = new Date(myArgs[1].substr(0, 4), 0, 1) //myArgs[1])
+    var date = new Date(myArgs[2].substr(0, 4), 0, 1) //myArgs[2])
 
     if (date.getDay() == 0) {
         date.setDate(date.getDate() + 1)
     }
 } else {
 
-    var date = new Date(myArgs[1].substr(0, 4), 0, 2) //myArgs[1])
+    var date = new Date(myArgs[2].substr(0, 4), 0, 2) //myArgs[2])
     if (date.getDay() == 6) {
         date.setDate(date.getDate() + 1)
 
@@ -26,16 +26,22 @@ if (myArgs[0] != 'BORME') {
     }
 }
 
-//myArgs[1] = myArgs[1].substr(2, myArgs[2].length - 2)
+//myArgs[2] = myArgs[2].substr(2, myArgs[3].length - 2)
 
 //console.log(myArgs)
 //process.exit(1)
 
 var App = {
-    _fileCredenciales: 'ACCESO_mysql',
-    update: myArgs[2] ,
-    anyo: !isNaN(myArgs[1]) ? myArgs[1] : date.getFullYear(),
-    TypeBoletines:["BORME" ,"BOE" ,"BOCM"],
+    command : myArgs[0],
+    Commands: ['SCRAP', 'PARSER'],
+    _fileCredenciales:'ACCESO_mysql_' ,
+    
+    TypeBoletines: ["BORME", "BOE", "BOCM"],
+
+    update: myArgs[3] ,
+    anyo: !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
+    Command: myArgs[0],
+
     Mins: { BOE: 1995, BOCM: 2010, BORME: 2009 },
     _lb: { BOCM: 5, BOE: 6, BORME: 8 },
     timeDelay: 1500,
@@ -87,9 +93,7 @@ var App = {
     },
     init: function (app, cb) {
         //app._io = require('./node_www/IO.js')(app)
-        require('./node_app/elasticIO.js')(app).init( function (options) {
-            app.io = { elasticIO: options }
-        })
+
                 //= app._io.listen(require('socket.io').listen(80), require('./node_app/elasticIO.js')(app))
 
         this.pdftotext = require('./node_app/pdftotext.js')
@@ -97,19 +101,22 @@ var App = {
             app.commonSQL = SQL
             
             cb({
-                onFly: function (type) {
-
-                    //cargamos la rutina de escrapeo específica del tipo de BOLETIN
-                    //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
-                    //el retorno es el objeto encargado del escrapeo                 
-                    require('./node_app/parser/' + type.toLowerCase() + '.js')(app, function (options) {
-                        //options = objeto que realiza el escrapeo
-                        //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
-                        app.BOLETIN = options
-                        //cargamos los contadores para poder continuar donde se dejó
-                        app.commonSQL.SQL.getCounter(app, options, type, function (options) {
-                            //realizamos el proceso de escrapeo
-                            options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), type: type, Secciones: "5A", hasta: new Date() })
+                EXEC: function (type) {
+                    require('./node_app/elasticIO.js')(app).init(function (options) {
+                        app.io = { elasticIO: options }
+                   
+                        //cargamos la rutina de escrapeo específica del tipo de BOLETIN
+                        //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
+                        //el retorno es el objeto encargado del escrapeo                 
+                        require('./node_app/' + app.Command.toLowerCase() + '/' + type.toLowerCase() + '.js')(app, function (options) {
+                            //options = objeto que realiza el escrapeo
+                            //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
+                            app.BOLETIN = options
+                            //cargamos los contadores para poder continuar donde se dejó
+                            app.commonSQL.SQL.getCounter(app, options, type, function (options) {
+                                //realizamos el proceso de escrapeo
+                                options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
+                            })
                         })
                     })
                 },
@@ -124,10 +131,14 @@ var App = {
         })
     },
     parameters: function (app, myArgs,callback) {
- 
+        logStop = function (i, text) {
+            console.log( i +'.-'+text)
+            console.log('SISTEMA DETENIDO')
+            process.exit(i)
+        }
 
-        var arg = myArgs[2]
-        //app.SqlIP = myArgs[0]
+        var arg = myArgs[3]
+        //app.SqlIP = myArgs[1]
         if (app.SqlIP != null && app.SqlIP != 'localhost') {
             if (app.SqlIP.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g).length != 1) {
                 app.SqlIP = 'localhost'
@@ -136,12 +147,17 @@ var App = {
             app.SqlIP = 'localhost'
         }
 
-        if (app.TypeBoletines.indexOf(myArgs[0])==-1) {
-            console.log('parametros no validos falta BOCM,BOE,BORME')
-            process.exit(1)
+        if (app.Commands.indexOf(myArgs[0]) == -1) {
+            logStop(1,'comando no valido falta SCRAP PARSE BORME')
+           
+        } else {
+
+            if (app.TypeBoletines.indexOf(myArgs[1]) == -1) {
+                logStop(2, 'parametros no validos falta BOCM BOE BORME')
+            }
         }
-        
-        app.Type = myArgs[0]
+
+        app.Type = myArgs[1]
         callback(app)
     },
     getCounter: function (app, _options, type, callback) {
@@ -224,22 +240,37 @@ String.prototype.lastIndexOfRegex = function (regex) {
 }
 
 App.parameters(App, myArgs, function (app) {
-    if (myArgs[0] == 'BOCM' && app.Mins[myArgs[0]] == app.anyo) {
-        myArgs[1] = (date.getFullYear() + '').pad(4) + '0212'
+   // if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {
+    //    myArgs[2] = (date.getFullYear() + '').pad(4) + '0212'
+    //} else {
+    //    myArgs[2] = (date.getFullYear() + '').pad(4) + (date.getMonth() + 1 + '').pad(2) + (date.getDate() + '').pad(2)
+    //}
+
+    if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {
+        myArgs[2] = (date.getFullYear() + '').pad(4) + '0212'
     } else {
-        myArgs[1] = (date.getFullYear() + '').pad(4) + (date.getMonth() + 1 + '').pad(2) + (date.getDate() + '').pad(2)
+        if (myArgs[1] == 'BORME' && app.Mins[myArgs[0]] == app.anyo) {
+            myArgs[2] = (date.getFullYear() + '').pad(4) + "0102"
+        } else {
+            myArgs[2] = (date.getFullYear() + '').pad(4) + (date.getMonth() + 1 + '').pad(2) + (date.getDate() + '').pad(2)
+
+        }
     }
+
+
     //debugger
-    if (app.Mins[myArgs[0]] <= app.anyo) {
-        app.initDate = myArgs[1]
+    if (app.Mins[myArgs[1]] <= app.anyo) {
+        app.initDate = myArgs[2]
         console.log('MySQL IP:' + app.SqlIP)
         console.log('PROCESS:' + app.Type)
-        console.log('DELETE DATA:' + app.drop)
+
+        //console.log('DELETE DATA:' + app.drop)
         // app.fs.readFile(app.path.normalize('../DataFiles/cargos.json'), 'utf-8', function (err, dataFile) {
         //     console.log(JSON.parse(dataFile))
-        app.init(app, function (_f) { _f.onFly(app.Type) })
+
+        app.init(app, function (_f) { _f.EXEC(app.Type) })
         //})
     } else {
-        console.log( 'no se puede analizar ' + myArgs[0] + ' con fecha anterior a ' + app.Mins[myArgs[0]] )
+        console.log( 'no se puede analizar ' + myArgs[1] + ' con fecha anterior a ' + app.Mins[myArgs[1]] )
     }
 })

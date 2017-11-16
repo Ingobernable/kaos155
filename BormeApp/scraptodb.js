@@ -4,7 +4,7 @@ console.log('loading Scrap - version -' + Version)
 var myArgs = process.argv.slice(2);
 
 if (myArgs.length == 0)
-    myArgs = ['BORME', '2009'] //, 'BOE-B-2003-31017' ]
+    myArgs = ['BOCM', '2017'] //, 'BOE-B-2003-31017' ]
 
 if (myArgs[0] != 'BOCM') {
 
@@ -168,7 +168,7 @@ var App = {
                         //cargamos los contadores para poder continuar donde se dejó
                         app.commonSQL.SQL.getCounter(app, options, type, function (options) {
                             //realizamos el proceso de escrapeo
-                            options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), type: type , Secciones: "5A", hasta: new Date() })
+                            options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
                         })
                     })
                 },

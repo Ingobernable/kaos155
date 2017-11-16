@@ -80,8 +80,10 @@
                     Borme: {
                         text: function (options, _analisis, data, callback) {
                             var _text = ""
+                            var _id = ""
                             for (n in _analisis.data) {
-                                _text = _text + (_text.length>0?"#":"") + _analisis.data[n].original
+                                _text = _text + (_text.length > 0 ? "#" : "") + _analisis.data[n].original
+                                _id = _id + (_id.length > 0 ? "#" : "") + _analisis.data[n].id
                             }
 
                             var params = [
@@ -93,7 +95,7 @@
                                 _analisis.BORME,                                                                    //BOLETIN                                                                                                                   
                                 _text,                                                                      //Texto
                                 _analisis.PROVINCIA,                                                    //PROVINCIA
-                               0                                                                        
+                                _id                                                                       
                             ]
                             options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?)', params, function (err, record) {
                                 process.stdout.write('+')
@@ -119,6 +121,7 @@
                             var fecha = boletin.split("-").length == 2 ? boletin.split("-")[1] : data.desde
 
                             var params = [
+                                data.textExtend.length,
                                 boletin.split("-")[0],                                                      //type
                                 fecha.substr(6, 2),                                                      //Dia
                                 fecha.substr(4, 2),                                                      //Mes
@@ -129,7 +132,7 @@
                                 _analisis._importe                                                          //importe accesible?
                             ]
 
-                            options.SQL.db.query('Call Insert_Text_BOLETIN_Contrato(?,?,?,?,?,?,?,?)', params, function (err, record) {
+                            options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?)', params, function (err, record) {
                                 process.stdout.write('+')
                                 if (err != null) {
                                     //debugger

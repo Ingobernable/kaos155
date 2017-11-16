@@ -1,7 +1,7 @@
-﻿module.exports = function (app, dataCargos, callback) {
+﻿module.exports = function (app,  callback) {
 
     options = {
-       
+        Command: app.command,
         Rutines: require('./BORME/Borme_Rutines')(app, require('./BORME/Borme_Transforms')(app)),
         pdfOpc: ['-nopgbrk', '-enc UTF-8'],
         keyMap: [
@@ -37,67 +37,67 @@
                 app.Rutines(app).askToServer(options, url, data, function (options, body, data) {
                     //debugger
                     //try {
-                        if (body != null) {
-                            var $ = app.cheerio.load(body, {
-                                withDomLvl1: true,
-                                normalizeWhitespace: true,
-                                xmlMode: true,
-                                decodeEntities: false
-                            })
+                    if (body != null) {
+                        var $ = app.cheerio.load(body, {
+                            withDomLvl1: true,
+                            normalizeWhitespace: true,
+                            xmlMode: true,
+                            decodeEntities: false
+                        })
 
-                            if ($('error').length > 0) {
-                                var _r = { error: true, descripcion: $('error descripcion').html() }
-                                callback(data)
-                            } else {
-                                data.next = $('sumario meta fechaSig').html()
-                                data.Fdate = $('sumario meta pubDate').html() // = $('sumario meta fechaSig').html()
-                                data.SUMARIO_LAST = app._xData.Sumario.BORME.SUMARIO_NEXT
-                                data.SUMARIO_NEXT = "BORME-S-" + data.next.substr(6, 4) + data.next.substr(3, 2) + data.next.substr(0, 2)
-                                //debugger
-                               // options._common.SQL.commands.Sumario.update(options, data, function (options, data) {
-                                
-                                var _into = data.into==null?null: data.into.split("#")[1] // * 1
-
-                                    if (data.Idate == null) {
-                                        data.Idate = $('sumario meta pubDate').html()
-                                    }
-                                    var _reg = []
-                                    //var _Sections = data.Secciones.split(",")
-                                    $('diario seccion').each(function (i, item) {
-                                        seccion = { code: item.attribs.num, name: item.attribs.nombre }
-                                        //if (_Sections.indexOf(item.attribs.num) > -1)
-                                        if (seccion.code == "A")
-                                            $(item).find('emisor').each(function (b, borme) {
-                                                //emisor = borme.attribs.nombre
-                                                $(borme).find('item').each(function (b, lst) {
-                                                    //// id = lst.attribs.id
-                                                    var pdf = $(lst).find("urlPdf")[0].children[0].data
-                                                    var titulo = $(lst).find("titulo")[0].children[0].data
-                                                    if(titulo.indexOf('ARABA')>-1) titulo="ÁLABA"
-                                                    //$(lst).find("titulo").each(function (b, titular) {
-                                                    if (titulo.indexOf('DE SOCIEDADES') == -1)
-                                                        if (_into == null) {
-                                                            _reg[_reg.length] = { BORME: lst.attribs.id, pdf: pdf, titulo: titulo }
-                                                        } else {
-                                                            if (_into == lst.attribs.id) {
-                                                                _reg[_reg.length] = { BORME: lst.attribs.id, pdf: pdf, titulo: titulo }
-                                                                _into=null
-                                                            }
-                                                        }
-
-                                               })
-                                            })
-                                    })
-                                    data.id = url.uri.split('=')[1]
-                                    data._list = _reg
-                                    //retornamos la lista del contenido del sumario
-                                    callback(data)
-                                //})
-                            }
+                        if ($('error').length > 0) {
+                            var _r = { error: true, descripcion: $('error descripcion').html() }
+                            callback(data)
                         } else {
-                            debugger
-                            callback(data,true)
+                            data.next = $('sumario meta fechaSig').html()
+                            data.Fdate = $('sumario meta pubDate').html() // = $('sumario meta fechaSig').html()
+                            data.SUMARIO_LAST = app._xData.Sumario.BORME.SUMARIO_NEXT
+                            data.SUMARIO_NEXT = "BORME-S-" + data.next.substr(6, 4) + data.next.substr(3, 2) + data.next.substr(0, 2)
+                            //debugger
+                            // options._common.SQL.commands.Sumario.update(options, data, function (options, data) {
+                                
+                            var _into = data.into==null?null: data.into.split("#")[1] // * 1
+
+                            if (data.Idate == null) {
+                                data.Idate = $('sumario meta pubDate').html()
+                            }
+                            var _reg = []
+                            //var _Sections = data.Secciones.split(",")
+                            $('diario seccion').each(function (i, item) {
+                                seccion = { code: item.attribs.num, name: item.attribs.nombre }
+                                //if (_Sections.indexOf(item.attribs.num) > -1)
+                                if (seccion.code == "A")
+                                    $(item).find('emisor').each(function (b, borme) {
+                                        //emisor = borme.attribs.nombre
+                                        $(borme).find('item').each(function (b, lst) {
+                                            //// id = lst.attribs.id
+                                            var pdf = $(lst).find("urlPdf")[0].children[0].data
+                                            var titulo = $(lst).find("titulo")[0].children[0].data
+                                            if(titulo.indexOf('ARABA')>-1) titulo="ÁLABA"
+                                            //$(lst).find("titulo").each(function (b, titular) {
+                                            if (titulo.indexOf('DE SOCIEDADES') == -1)
+                                                if (_into == null) {
+                                                    _reg[_reg.length] = { BORME: lst.attribs.id, pdf: pdf, titulo: titulo }
+                                                } else {
+                                                    if (_into == lst.attribs.id) {
+                                                        _reg[_reg.length] = { BORME: lst.attribs.id, pdf: pdf, titulo: titulo }
+                                                        _into=null
+                                                    }
+                                                }
+
+                                        })
+                                    })
+                            })
+                            data.id = url.uri.split('=')[1]
+                            data._list = _reg
+                            //retornamos la lista del contenido del sumario
+                            callback(data)
+                            //})
                         }
+                    } else {
+                        debugger
+                        callback(data,true)
+                    }
                     //}
                     //catch (err) {
                     //    debugger
@@ -211,34 +211,34 @@
                 if (data.into != null) {
                     if (data.into.split('#').length > 1) {
                         //if (data.into.split('#')[2] * 1 == _linea.id * 1) {
-                            //debugger
+                        //debugger
                         //} else {
-                            if (data.into.split('#')[2] * 1 < _linea.id * 1) {
-                                data.into = null
-                                _ok(options, _l, _lines)
+                        if (data.into.split('#')[2] * 1 < _linea.id * 1) {
+                            data.into = null
+                            _ok(options, _l, _lines)
 
-                            } else {
-                                cadSQl = "SELECT Id,Name," + _linea.id+" as i FROM borme_empresa WHERE Name='" + _linea._empresa.replaceAll("'","\\'") + "'"
+                        } else {
+                            cadSQl = "SELECT Id,Name," + _linea.id+" as i FROM borme_empresa WHERE Name='" + _linea._empresa.replaceAll("'","\\'") + "'"
 
-                                options.SQL.db.query(cadSQl, function (err, _rec) {
-                                    if (err != null) {
-                                        debugger
-                                    } else {
-                                        if (_rec.length > 0) {
-                                            options.DirEmpresas[_rec[0].i] = _rec[0]
-                                        }
-
-                                        if (_l == _lines.data.length - 1) {
-                                            app._xData.TBORME++
-                                            options.parser.saveDiarioMovimientos(0, _lines, data, _cb)
-                                        } else {
-                                            _l++
-                                            options.parser.saveLinesDeMovimientos(_l, _lines, data, _cb)
-                                        }
-                                       
+                            options.SQL.db.query(cadSQl, function (err, _rec) {
+                                if (err != null) {
+                                    debugger
+                                } else {
+                                    if (_rec.length > 0) {
+                                        options.DirEmpresas[_rec[0].i] = _rec[0]
                                     }
-                                })
-                            }
+
+                                    if (_l == _lines.data.length - 1) {
+                                        app._xData.TBORME++
+                                        options.parser.saveDiarioMovimientos(0, _lines, data, _cb)
+                                    } else {
+                                        _l++
+                                        options.parser.saveLinesDeMovimientos(_l, _lines, data, _cb)
+                                    }
+                                       
+                                }
+                            })
+                        }
                         //}
                     } else {
                         _ok(options,_l,_lines)
@@ -314,15 +314,15 @@
                     if (line.contenido.length > 0) {
                         saveLineContenido( e, 0, _lines, _data, function (e, _line) {
                             //for (_e in line.contenido) {
-                                if (e < _lines.data.length-1) {
-                                    e++
-                                    //if (_lines.data[e].Id == null)
-                                    //    debugger
-                                    _this.saveDiarioMovimientos(e, _lines, _data, _ret)
+                            if (e < _lines.data.length-1) {
+                                e++
+                                //if (_lines.data[e].Id == null)
+                                //    debugger
+                                _this.saveDiarioMovimientos(e, _lines, _data, _ret)
 
-                                }else{
-                                    _ret(_data)
-                                }
+                            }else{
+                                _ret(_data)
+                            }
                             //}
                         })
                     } else {
@@ -422,7 +422,12 @@
             }
         }
     }
-    options.Rutines.cargos = dataCargos
-    app.commonSQL.init(options, 'BORME', app._fileCredenciales, callback)
+    options.Rutines.cargos = [] //dataCargos
+    app.commonSQL.init(options, 'PARSER', app._fileCredenciales + options.Command , function(options){
+        app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
+            options.SQL.scrapDb = scrapdb
+            callback(options)
+        })
+    })
 
 }

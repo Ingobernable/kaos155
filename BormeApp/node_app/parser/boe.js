@@ -1,6 +1,7 @@
 ﻿module.exports = function (app, callback) {
 
     var options = {
+        Command : app.command,
         url: app.urlBOE,
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
         pdfOpc: ['-raw', '-nopgbrk', '-enc UTF-8'],
@@ -282,6 +283,11 @@
     }
 
 
-    app.commonSQL.init(options, 'BOE', app._fileCredenciales, callback)
+    app.commonSQL.init(options, 'PARSER', app._fileCredenciales + options.Command, function (options) {
+        app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
+            options.SQL.scrapDb = scrapdb
+            callback(options)
+        })
+    })
 
 }
