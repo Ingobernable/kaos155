@@ -129,7 +129,7 @@
                 }
             }
         },
-        Actualize: function (options, type, data) {
+        Actualize: function ( options, type, data) {
             //var _r = { BOCM: 5, BOE: 6, BORME: 8 }
             var _this = this
             //var type = this.type

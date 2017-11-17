@@ -77,6 +77,14 @@
                     })
                 },
                 insert: {
+                    AnyoRead: function (options, db, type, callback) {
+                        db.query('call InsertAnyo(?,?)', [options.Type, app.anyo], function (err, record) {
+                            if (record[0][0][type.toLowerCase()]>0)
+                                app.logStop(3, 'el ' + type + ' del año ' + app.anyo + ' ya se ha completado')
+
+                            callback(options)
+                        })
+                    },
                     Borme: {
                         text: function (options, _analisis, data, callback) {
                             var _text = ""

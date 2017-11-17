@@ -1,6 +1,7 @@
 ﻿module.exports = function (app, callback) { 
 
     options = {
+        Type : 'BORME',
         Command: app.command,
         Rutines: require('../parser/BORME/Borme_Rutines')(app, require('../parser/BORME/Borme_Transforms')(app)),
         //Rutines: require('../parser/BOLETIN/__Rutines')(app),
@@ -93,9 +94,73 @@
                     //    callback(data)
                     //}
                 })
+            },
+            Preceptos: function (options, urlDoc, body, data, callback) {
+                var _this = this
+                var _lines = []
+                var xcadsql = null
+
+                var _file = app.PDFStore + urlDoc.split("/")[urlDoc.split("/").length - 1]
+                //var bocm = turl[turl.length - 1].split(".")[0]
+
+                //punto de guardado del PDF precepto
+                if (body != null) {
+                    app.mkdirp(app.PDFStore, function (err) {
+                        app.fs.writeFile(_file, body, function (err) {
+                            var pdf = new app.pdftotext(_file)
+                            pdf.add_options(options.pdfOpc);
+
+                            pdf.getText(function (err, text, cmd) {
+                                //
+                                if (err) {
+                                    debugger
+                                    console.error(err);
+                                } else {
+                                    //debugger
+
+                                    var _fileText =  _file.split(".pdf")[0] + ".txt"
+                                    //console.log(_fileText)
+                                    app.fs.readFile( _fileText , 'utf8', function (err, text) {
+                                        app.fs.unlink(_fileText, function (err) { 
+                                            app.fs.unlink(_file,function(err){
+
+                                                options.DirEmpresas = []
+                                                lines = text.replace(/"/g, "").split('\n')
+
+                                                _lines = options.Rutines.getDataFromMap(options.Rutines, lines, options.Rutines.maps)
+                                                //debugger
+                                                if (_lines != null) {
+                                                    if (_lines.data.length == 0){
+                                                        callback(data, null)
+                                                    } else {
+
+                                                        app.commonSQL.SQL.commands.insert.Borme.text(options, _lines, data, function (data) {
+                                                            callback(data)
+                                                        })
+
+                                                    }
+                                                
+                                                } else {
+                                                    debugger
+                                                    callback(data, null)
+                                                }
+                                            })
+                                        })
+                                    })
+                                }
+                            })
+                        })
+                    })
+                } else {
+                    callback(data,true)
+                }
             }
         }
     }
-    app.commonSQL.init(options, 'BORME', app._fileCredenciales + options.Command , callback)
 
+    app.commonSQL.init(options, options.Type , app._fileCredenciales + options.Command, function (options) {
+        app.commonSQL.SQL.commands.insert.AnyoRead(options, options.SQL.db, app.command , function (options) {
+           callback(options)
+        })        
+    })
 }

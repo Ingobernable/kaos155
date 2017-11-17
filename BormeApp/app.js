@@ -4,7 +4,7 @@ console.log('loading App - version -' + Version)
 var myArgs = process.argv.slice(2);
  
 if (myArgs.length == 0)
-    myArgs = ['PARSER','BORME', '2012'] //, 'BOE-B-2003-31017' ]
+    myArgs = ['SCRAP','BORME', '2012'] //, 'BOE-B-2003-31017' ]
 
 if (myArgs[1] != 'BORME') {
 
@@ -108,7 +108,8 @@ var App = {
                         //cargamos la rutina de escrapeo específica del tipo de BOLETIN
                         //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
                         //el retorno es el objeto encargado del escrapeo                 
-                        require('./node_app/' + app.Command.toLowerCase() + '/' + type.toLowerCase() + '.js')(app, function (options) {
+                        var prefix = app.command.substr(0,3).toLowerCase() + "_"
+                        require('./node_app/' + app.Command.toLowerCase() + '/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
                             //options = objeto que realiza el escrapeo
                             //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
                             app.BOLETIN = options
@@ -129,13 +130,14 @@ var App = {
             })
             //})
         })
-    },
-    parameters: function (app, myArgs,callback) {
-        logStop = function (i, text) {
+    },        
+    logStop : function (i, text) {
             console.log( i +'.-'+text)
             console.log('SISTEMA DETENIDO')
             process.exit(i)
-        }
+    },
+    parameters: function (app, myArgs,callback) {
+
 
         var arg = myArgs[3]
         //app.SqlIP = myArgs[1]
@@ -148,12 +150,12 @@ var App = {
         }
 
         if (app.Commands.indexOf(myArgs[0]) == -1) {
-            logStop(1,'comando no valido falta SCRAP PARSE BORME')
+            app.logStop(1,'comando no valido falta SCRAP PARSE BORME')
            
         } else {
 
             if (app.TypeBoletines.indexOf(myArgs[1]) == -1) {
-                logStop(2, 'parametros no validos falta BOCM BOE BORME')
+                app.logStop(2, 'parametros no validos falta BOCM BOE BORME')
             }
         }
 
