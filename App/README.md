@@ -12,5 +12,5 @@ Tarea a realizar:
 		node app.js BOCM	2010		-> recolección de datos del BOCM al año 2010
 
 	existen unos años iniciales
-		Mins: { BOE: 1995, BOCM: 2010, BORME: 2009 },
+		Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
 	
