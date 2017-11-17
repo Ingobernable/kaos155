@@ -26,7 +26,7 @@ pm2_apps:
   - --presets
   - react,es2015
   - src/server.js
-  extra_opts:
+  extra_opts: []
 ## following are optional, only for npm_tasks if pm2_npm_tasks is enabled
 # npm_global: no
 # npm_registry: http://registry

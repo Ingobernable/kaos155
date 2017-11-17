@@ -1,5 +1,5 @@
-mariadb_bind_address: 0.0.0.0
-mariadb_max_connections: 50
+mariadb_bind_address: 127.0.0.1
+mariadb_max_connections: 200
 mariadb_append_privs: yes
 mariadb_databases:
 - name: bbdd_kaos155

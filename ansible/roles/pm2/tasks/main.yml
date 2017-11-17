@@ -1,11 +1,12 @@
 - name: install/update node
   include: install_node.yml
   when: (ansible_distribution_release == "jessie") or
+        (ansible_distribution_release == "stretch") or
         (ansible_distribution_release == "xenial") or
         (ansible_distribution_release == "trusty")
 
-- include: move-node-modules.yml
-  when: develop
+# - include: move-node-modules.yml
+#   when: develop
 
 - name: clone project
   include: pm2_git_project.yml

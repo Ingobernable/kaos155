@@ -15,7 +15,7 @@
 - name: add repo
   when: mariadb_install_mode == "repo"
   apt_repository:
-    repo: "deb [arch=amd64] http://ams2.mirrors.digitalocean.com/mariadb/repo/{{ mariadb_version }}/ubuntu {{ ansible_distribution_release }} main"
+    repo: "deb [arch=amd64] http://mariadb.mirrors.ovh.net/MariaDB/repo/{{ mariadb_version }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} main"
     state: present
 
 - name: install packages

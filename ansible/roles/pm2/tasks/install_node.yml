@@ -1,3 +1,8 @@
+- name: install dependencies
+  apt:
+    name: apt-transport-https
+    state: installed
+
 - name: Add nodesource apt key in old debian
   become: yes
   shell: curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -

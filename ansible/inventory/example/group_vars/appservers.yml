@@ -1,9 +1,8 @@
 # target and year are defined in vagrant
-node_target: ""
-node_year: ""
+node_target: "BOE"
+node_year: "2011"
 
-develop: yes
-pm2_user: vagrant
+pm2_user: root
 pm2_npm_tasks: yes
 pm2_apps:
 - name: kaos-scraper
