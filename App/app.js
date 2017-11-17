@@ -161,27 +161,30 @@ var App = {
     getCounter: function (app, _options, type, callback) {
         _cadsql = "SELECT * FROM lastread WHERE Type = '" + type + "' AND Anyo = " + app.anyo
         _options.SQL.db.query(_cadsql, function (err, Record) {
-            if (err)
+            if (err) {
+                console.log(err)
                 debugger
-            if (Record.length == 0) {
-                _cadsql = "INSERT INTO lastread (Type, Anyo, SUMARIO_NEXT) VALUES ('" + type + "'," + app.anyo + ",'" + type + "-S-" + app.initDate + "')"  //2001
-                _options.SQL.db.query(_cadsql, function (err, _data) {
-                    app._xData.Sumario[type] = { SUMARIO_LAST: '', SUMARIO_NEXT: type + '-S-' + app.initDate }
-                })
             } else {
-                app._xData.Sumario[type] = Record[0]
-            }
-            var _cadsql = "SELECT count(*) FROM sumarios WHERE Type='" + type + "'"
-            _options.SQL.db.query(_cadsql, function (err, Record) {
-                if (err)
-                    app._xData.TSUMARIOS[type] = Record[0]["count(*)"]
-
-                _cadsql = "SELECT count(*) FROM boletin where Type='" + type + "'"
+                if (Record.length == 0) {
+                    _cadsql = "INSERT INTO lastread (Type, Anyo, SUMARIO_NEXT) VALUES ('" + type + "'," + app.anyo + ",'" + type + "-S-" + app.initDate + "')"  //2001
+                    _options.SQL.db.query(_cadsql, function (err, _data) {
+                        app._xData.Sumario[type] = { SUMARIO_LAST: '', SUMARIO_NEXT: type + '-S-' + app.initDate }
+                    })
+                } else {
+                    app._xData.Sumario[type] = Record[0]
+                }
+                var _cadsql = "SELECT count(*) FROM sumarios WHERE Type='" + type + "'"
                 _options.SQL.db.query(_cadsql, function (err, Record) {
-                    app._xData['T'+type] = Record[0]["count(*)"]
-                    callback(_options)
+                    if (err)
+                        app._xData.TSUMARIOS[type] = Record[0]["count(*)"]
+
+                    _cadsql = "SELECT count(*) FROM boletin where Type='" + type + "'"
+                    _options.SQL.db.query(_cadsql, function (err, Record) {
+                        app._xData['T' + type] = Record[0]["count(*)"]
+                        callback(_options)
+                    })
                 })
-            })
+            }
         })
     }
 
