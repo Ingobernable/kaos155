@@ -13,7 +13,11 @@
                 if (data.type != "BORME") {
                     var _boletin = data._analisis != null ? data._analisis.length > 0 ? data._analisis[data.e][data.type].trim() : _bolet : _bolet // data.type+"-"+data.desde
                 } else {
-                    var _boletin = requestOptions.uri.split("/")[requestOptions.uri.split("/").length - 1].split("=")[1]
+                    if (requestOptions.uri.split("/")[requestOptions.uri.split("/").length - 1].indexOf("=") > 0) {
+                        var _boletin = requestOptions.uri.split("/")[requestOptions.uri.split("/").length - 1].split("=")[1]
+                    } else {
+                        var _boletin = requestOptions.uri.split("/")[requestOptions.uri.split("/").length - 1].split(".")[0]
+                    }
                 }
                     //console.log("\n" + app.moment().format('MMM D, HH:MM:SS') + "->" + requestOptions.uri)
                 //leemos el documento SUMARIO
