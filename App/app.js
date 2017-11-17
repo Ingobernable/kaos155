@@ -4,7 +4,7 @@ console.log('loading App - version -' + Version)
 var myArgs = process.argv.slice(2);
  
 if (myArgs.length == 0)
-    myArgs = ['SCRAP','BORME', '2012'] //, 'BOE-B-2003-31017' ]
+    myArgs = ['SCRAP','BORME', '2009'] //, 'BOE-B-2003-31017' ]
 
 if (myArgs[1] != 'BORME') {
 
