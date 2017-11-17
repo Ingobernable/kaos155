@@ -1,2 +1,0 @@
-D:\BBDD.ovh\kaos_borme\BormeApp\obj\Debug\BormeApp.njsprojResolveAssemblyReference.cache
-D:\BBDD.ovh\kaos_borme\BormeApp\bin\Microsoft.NodejsTools.WebRole.dll
