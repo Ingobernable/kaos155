@@ -1,0 +1,31 @@
+- name: Add nodesource apt key in old debian
+  become: yes
+  shell: curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+  when: ansible_distribution_release == "trusty"
+
+- name: add apt key
+  apt_key:
+    url: 'https://deb.nodesource.com/gpgkey/nodesource.gpg.key'
+  when: not ansible_distribution_release == "trusty"
+
+- name: add nodesource repo
+  apt_repository:
+    repo: 'deb https://deb.nodesource.com/node_{{node_version}}.x {{ansible_distribution_release}} main'
+    state: present
+
+- name: install package
+  apt:
+    name: nodejs
+    update_cache: yes
+    state: latest
+  notify: restart pm2
+
+- name: install extra packages
+  apt:
+    name: "{{ item }}"
+    cache_valid_time: 86400
+    update_cache: yes
+    state: latest
+  notify: restart pm2
+  with_items:
+  - "{{ pm2_extra_apt_packages }}"

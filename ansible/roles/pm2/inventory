@@ -1,0 +1,1 @@
+testing-pm2 ansible_host=testing-pm2 ansible_connection=lxd ansible_become=yes

@@ -1,0 +1,14 @@
+- name: restart pm2
+  service:
+    name: "pm2-{{pm2_user}}"
+    state: restarted
+
+- name: reload pm2
+  service:
+    name: "pm2-{{pm2_user}}"
+    state: reloaded
+
+- name: start pm2
+  service:
+    name: "pm2-{{pm2_user}}"
+    state: started

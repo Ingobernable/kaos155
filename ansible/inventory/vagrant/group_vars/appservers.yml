@@ -1,0 +1,18 @@
+# target and year are defined in vagrant
+node_target: ""
+node_year: ""
+
+develop: yes
+pm2_user: vagrant
+pm2_npm_tasks: yes
+pm2_apps:
+- name: kaos-scraper
+  script: 'app.js'
+  instances: 1
+  mode: fork
+  path: /vagrant
+  args:
+  - "{{ node_target }}"
+  - "{{ node_year }}"
+  env:
+    PORT: 3009

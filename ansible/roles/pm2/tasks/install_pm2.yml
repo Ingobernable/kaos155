@@ -1,0 +1,22 @@
+- name: install pm2
+  npm:
+    name: pm2
+    global: yes
+    state: latest
+  notify: restart pm2
+
+- name: configure pm2
+  include: configure_pm2.yml
+
+- name: start pm2
+  become: yes
+  become_user: "{{ pm2_user }}"
+  command: "pm2 start {{pm2_config_path}}/{{pm2_config_file}}"
+
+- name: save pm2
+  become: es
+  become_user: "{{ pm2_user }}"
+  command: "pm2 dump"
+
+- name: configure startup
+  shell: pm2 startup -u {{pm2_user}} --hp {{pm2_user_home}}

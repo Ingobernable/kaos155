@@ -1,0 +1,26 @@
+apps:
+{% for item in pm2_apps %}
+  - name: {{ item.name }}
+    script: {{ item.script }}
+{% if item.interpreter is defined and item.interpreter != ""  %}
+    interpreter:
+{% endif %}
+{% if item.args is defined %}
+    args:
+{% for arg in item.args %}
+      - {{arg}}
+{% endfor %}
+{% endif %}
+    instances: {{ item.instances }}
+    exec_mode: {{ item.mode }}
+    cwd: {{ item.path }}
+    error_file: {{pm2_logpath}}/pm2_{{item.name}}_error.log
+    out_file: {{pm2_logpath}}/pm2_{{item.name}}.log
+{% if item.env is defined %}
+    env:
+{% for key, value in item.env.iteritems() %}
+      {{ key }}: {{ value }}
+{% endfor %}
+{% endif %}
+    {{ item.extra_opts }}
+{% endfor %}

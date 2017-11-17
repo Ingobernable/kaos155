@@ -1,0 +1,7 @@
+- hosts: appservers
+  roles:
+  - pm2
+
+- hosts: databases
+  roles:
+  - mariadb

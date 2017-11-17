@@ -1,0 +1,45 @@
+# An example for creating a Ubuntu container and install python
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Create and start container
+      lxd_container:
+        name: kaos155
+        state: started
+        # remember: if you want mount folders, you must have map uid/gid
+        # printf "lxd:$(id -u):1\nroot:$(id -u):1\n" | sudo tee -a /etc/subuid /etc/subgid
+        config:
+          raw.idmap: "both 1000 1000"
+        devices:
+          data:
+            source: "/home/alex/repos/github-aib/kaos155"
+            path: "/src"
+            type: "disk"
+          eth0:
+            ipv4.address: 10.10.10.31
+            nictype: bridged
+            parent: lxdbr0
+            type: nic
+        source:
+          type: image
+          server: https://cloud-images.ubuntu.com/releases
+          protocol: simplestreams
+          alias: "16.04"
+        profiles: ["default"]
+        wait_for_ipv4_addresses: true
+        timeout: 600
+- hosts: single
+  connection: lxd
+  gather_facts: no
+  tasks:
+    - name: check python is installed in container
+      raw: dpkg -s python
+      register: python_install_check
+      failed_when: python_install_check.rc not in [0, 1]
+      changed_when: false
+
+    - name: install python in container
+      raw: apt-get install -y python
+      when: python_install_check.rc == 1
+
+- include: site.yml

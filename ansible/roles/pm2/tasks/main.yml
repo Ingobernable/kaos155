@@ -1,0 +1,23 @@
+- name: install/update node
+  include: install_node.yml
+  when: (ansible_distribution_release == "jessie") or
+        (ansible_distribution_release == "xenial") or
+        (ansible_distribution_release == "trusty")
+
+- include: move-node-modules.yml
+  when: develop
+
+- name: clone project
+  include: pm2_git_project.yml
+  when: production and pm2_code_mode == "git"
+
+- name: run npm installs
+  include: npm_tasks.yml
+  when: pm2_npm_tasks
+
+- name: deploy artifact
+  include: pm2_deploy_artifact.yml
+  when: production and pm2_code_mode == "artifact"
+
+- name: install pm2
+  include: install_pm2.yml

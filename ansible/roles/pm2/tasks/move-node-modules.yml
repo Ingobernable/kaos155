@@ -1,0 +1,20 @@
+- name: ensure local node_modules folder
+  file:
+    path: "{{ pm2_user_home }}/lib/{{ item.name }}/node_modules"
+    state: directory
+    owner: "{{ pm2_user }}"
+  with_items:
+  - "{{ pm2_apps }}"
+
+- name: ensure shared node_modules folder
+  file:
+    path: "{{ item.path }}/node_modules"
+    state: directory
+    owner: "{{ pm2_user }}"
+  with_items:
+  - "{{ pm2_apps }}"
+
+- name: mount node_modules folder
+  shell: mount --bind {{ pm2_user_home }}/lib/{{ item.name }}/node_modules {{ item.path }}/node_modules
+  with_items:
+  - "{{ pm2_apps }}"

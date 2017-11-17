@@ -1,0 +1,11 @@
+- name: run npm tasks
+  with_items: "{{ pm2_apps }}"
+  notify: restart pm2
+  become: yes
+  become_user: "{{ pm2_user }}"
+  npm:
+    path: "{{ item.path }}"
+    executable: "{{ item.npm_node_bin | default(omit) }}"
+    registry: "{{ item.npm_registry | default(omit) }}"
+    global: "{{ item.npm_global | default(omit) }}"
+    state: "{{ item.npm_node_state | default(omit) }}"
