@@ -2,9 +2,6 @@
      
     var options = {
         Command : app.command,
-        url: app.urlBOE,
-        opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
-        pdfOpc: ['-raw', '-nopgbrk', '-enc UTF-8'],
         Rutines: require('./BOLETIN/__Rutines')(app),
         transforms: require('./BOLETIN/__Transforms')(app),
         _common: require('../parser_common')(app),
@@ -75,8 +72,7 @@
 
 
 
-            },
-            
+            },            
         },
         parser: {
             Preceptos: function (type) {
@@ -88,7 +84,7 @@
 
                 consulta(type, function (record) {
                     if (record.length > 0) {
-                        data = { codigo: record[0][0].BOLETIN, textExtend: record[0][0].texto.split("<br>") }
+                        data = { codigo: record[0][0].BOLETIN, textExtend: record[0][0].texto.split("<br>") , extra:{} }
                         _analisis = JSON.parse(record[0][0].analisis)
 
 
