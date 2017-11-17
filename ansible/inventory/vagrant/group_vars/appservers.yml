@@ -10,7 +10,7 @@ pm2_apps:
   script: 'app.js'
   instances: 1
   mode: fork
-  path: /vagrant
+  path: /vagrant/app
   args:
   - "{{ node_target }}"
   - "{{ node_year }}"
