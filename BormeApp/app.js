@@ -32,6 +32,7 @@ if (myArgs[0] != 'BORME') {
 //process.exit(1)
 
 var App = {
+    command:'PARSER',
     update: myArgs[2] ,
     anyo: !isNaN(myArgs[1]) ? myArgs[1] : date.getFullYear(),
     TypeBoletines:["BORME" ,"BOE" ,"BOCM"],
