@@ -7,14 +7,14 @@
             var _exit = function (options, type, callback) {
                 callback(options)
             }
-            if (this.poolSql[ type ] != null) {
+            if (this.poolSql[ app.command ] != null) {
                 if (options.SQL.db == null) {
-                    this.poolSql[ type].getConnection(function (err, connection) {
+                    this.poolSql[ app.command].getConnection(function (err, connection) {
                         // connected! (unless `err` is set)
                         if (err == null) {
-                            console.log('new connection ' + type + ' mysql OK')
+                            console.log('new connection ' + app.command + ' mysql OK')
                             options.SQL.db = connection // _this.connection[type] = connection
-                            _exit(options, type, callback)
+                            _exit(options, app.command, callback)
                         } else {
                             console.log(err)
                             process.exit(1);
@@ -30,23 +30,38 @@
         },
         init: function (options, type, _file , callback) {
             var _this = this
-            app.fs.readFile(app.path.normalize('../sqlfiles/'+ _file + '.json'), function (err, _JSON) {
-                if (err) {
-                    console.log('faltan Credenciales mysql, sistema detenido')
-                    process.exit(1)
-                } else {  
-                    try {
-                        var _sql = JSON.parse(_JSON.toString())
-                        sqlPss = _sql.mySQL.password
-                    }
-                    catch (e) {
-                        console.log('error en el fichero de Credenciales mysql, json no valido, sistema detenido',e)
-                        process.exit(1)
-                    }
-                    
-                    if (_this.poolSql[ type ] == null) {
 
-                            _this.poolSql[ type ] = app.mysql.createPool({
+            if (process.env['KAOS_MYSQL_' + app.command + '_PASS']) {
+                
+                _this.poolSql[ app.command ] = app.mysql.createPool({
+                    host: process.env['KAOS_MYSQL_' + app.command + '_HOST'], //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
+                    user: process.env['KAOS_MYSQL_' + app.command + '_USER'], // _sql.mySQL.user,
+                    password: process.env['KAOS_MYSQL_' + app.command + '_PASS'], // _sql.mySQL.password,
+                    database: process.env['KAOS_MYSQL_' + app.command + '_DB'], // _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                    multipleStatements: true,
+                    waitForConnection: true,
+                })
+
+                _this.getConnect(options, type, callback)
+
+            }else{
+                app.fs.readFile(app.path.normalize('../sqlfiles/'+ _file + '.json'), function (err, _JSON) {
+                    if (err) {
+                        console.log('faltan Credenciales mysql, sistema detenido')
+                        process.exit(1)
+                    } else {  
+                        try {
+                            var _sql = JSON.parse(_JSON.toString())
+                            sqlPss = _sql.mySQL.password
+                        }
+                        catch (e) {
+                            console.log('error en el fichero de Credenciales mysql, json no valido, sistema detenido',e)
+                            process.exit(1)
+                        }
+                    
+                        if (_this.poolSql[ app.command ] == null) {
+
+                            _this.poolSql[ app.command ] = app.mysql.createPool({
                                 host: _sql.mySQL.host, //, //'localhost', //'66.70.184.214',
                                 user: _sql.mySQL.user,
                                 password: _sql.mySQL.password,
@@ -57,11 +72,13 @@
 
                             _this.getConnect(options, type, callback)
                         
-                    } else {
-                        callback(options)
+                        } else {
+                            callback(options)
+                        }
                     }
-                }
-            })
+                
+                })
+            }
             //return options
         },
         SQL: {

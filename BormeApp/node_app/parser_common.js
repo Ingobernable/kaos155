@@ -163,8 +163,11 @@
                 } else {
                     cadsql = "UPDATE lastread SET Read_Complete = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo
                     options.SQL.db.query(cadsql, function (err, record) {
-                        console.log('obtención de datos ' + type + ' del año ' + app.anyo + ' terminó')
-                        process.exit(0)
+                        cadsql = "UPDATE anyosread SET " + options.Command.toLowerCase() + " = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo
+                        options.SQL.db.query(cadsql, function (err, record) {
+                            console.log('obtención de datos ' + type + ' del año ' + app.anyo + ' terminó')
+                            process.exit(0)
+                        })
                     })
                 }
             } else {
