@@ -1,6 +1,0 @@
-D:\BBDD.ovh\kaos155_v2.0\BormeApp\obj\Debug\KaosAppServer.njsprojResolveAssemblyReference.cache
-D:\BBDD.ovh\kaos155_v2.0\BormeApp\bin\Microsoft.NodejsTools.WebRole.dll
-D:\BBDD.ovh\kaos155_v2.0\BormeApp\obj\Debug\KaosAppServer.njsproj.CoreCompileInputs.cache
-D:\BBDD.ovh\kaos_ingoberlab\BormeApp\obj\Debug\KaosAppServer.njsprojResolveAssemblyReference.cache
-D:\BBDD.ovh\kaos_ingoberlab\BormeApp\obj\Debug\KaosAppServer.njsproj.CoreCompileInputs.cache
-D:\BBDD.ovh\kaos_ingoberlab\BormeApp\bin\Microsoft.NodejsTools.WebRole.dll
