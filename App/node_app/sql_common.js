@@ -7,14 +7,14 @@
             var _exit = function (options, type, callback) {
                 callback(options)
             }
-            if (this.poolSql[ app.command ] != null) {
+            if (this.poolSql[type] != null) {
                 if (options.SQL.db == null) {
-                    this.poolSql[ app.command].getConnection(function (err, connection) {
+                    this.poolSql[type].getConnection(function (err, connection) {
                         // connected! (unless `err` is set)
                         if (err == null) {
-                            console.log('new connection ' + app.command + ' mysql OK')
+                            console.log('new connection ' + type + ' mysql OK')
                             options.SQL.db = connection // _this.connection[type] = connection
-                            _exit(options, app.command, callback)
+                            _exit(options, type, callback)
                         } else {
                             console.log(err)
                             process.exit(1);
@@ -31,13 +31,13 @@
         init: function (options, type, _file , callback) {
             var _this = this
 
-            if (process.env['KAOS_MYSQL_' + app.command + '_PASS']) {
+            if (process.env['KAOS_MYSQL_' + type + '_PASS']) {
                 
-                _this.poolSql[ app.command ] = app.mysql.createPool({
-                    host: process.env['KAOS_MYSQL_' + app.command + '_HOST'], //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
-                    user: process.env['KAOS_MYSQL_' + app.command + '_USER'], // _sql.mySQL.user,
-                    password: process.env['KAOS_MYSQL_' + app.command + '_PASS'], // _sql.mySQL.password,
-                    database: process.env['KAOS_MYSQL_' + app.command + '_DB'], // _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                _this.poolSql[type] = app.mysql.createPool({
+                    host: process.env['KAOS_MYSQL_' + type + '_HOST'], //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
+                    user: process.env['KAOS_MYSQL_' + type + '_USER'], // _sql.mySQL.user,
+                    password: process.env['KAOS_MYSQL_' + type + '_PASS'], // _sql.mySQL.password,
+                    database: process.env['KAOS_MYSQL_' + type + '_DB'], // _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
                     multipleStatements: true,
                     waitForConnection: true,
                 })
@@ -59,9 +59,9 @@
                             process.exit(1)
                         }
                     
-                        if (_this.poolSql[ app.command ] == null) {
+                        if (_this.poolSql[type] == null) {
 
-                            _this.poolSql[ app.command ] = app.mysql.createPool({
+                            _this.poolSql[type] = app.mysql.createPool({
                                 host: _sql.mySQL.host, //, //'localhost', //'66.70.184.214',
                                 user: _sql.mySQL.user,
                                 password: _sql.mySQL.password,

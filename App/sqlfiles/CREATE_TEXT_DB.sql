@@ -57,7 +57,7 @@ CREATE TABLE `_boe_text` (
   `_p` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=03 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -78,7 +78,7 @@ CREATE TABLE `_borme_text` (
   `provincia` varchar(55) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=083 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=07 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,6 +98,25 @@ CREATE TABLE `anyosread` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `borme_auditor`
+--
+
+DROP TABLE IF EXISTS `borme_auditor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `borme_auditor` (
+  `Id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Type` int(11) NOT NULL DEFAULT '0',
+  `Name` varchar(232) CHARACTER SET utf8 NOT NULL,
+  `ActiveRelations` int(11) DEFAULT NULL,
+  `coorp` int(11) DEFAULT NULL,
+  `Mark` varchar(1) DEFAULT NULL,
+  `_l` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `errores`
 --
 
@@ -111,6 +130,27 @@ CREATE TABLE `errores` (
   PRIMARY KEY (`BOLETIN`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Temporary view structure for view `getdata_boe_parsersumarioanual`
+--
+
+DROP TABLE IF EXISTS `getdata_boe_parsersumarioanual`;
+/*!50001 DROP VIEW IF EXISTS `getdata_boe_parsersumarioanual`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `getdata_boe_parsersumarioanual` AS SELECT 
+ 1 AS `SUMARIO`,
+ 1 AS `id`,
+ 1 AS `dia`,
+ 1 AS `mes`,
+ 1 AS `anyo`,
+ 1 AS `BOLETIN`,
+ 1 AS `texto`,
+ 1 AS `analisis`,
+ 1 AS `importe`,
+ 1 AS `_p`*/;
+SET character_set_client = @saved_cs_client;
 
 --
 -- Table structure for table `lastread`
@@ -239,26 +279,32 @@ BEGIN
     DECLARE _ID_Borme int;
     
 	IF _Type='BOE' THEN
-		SET _counter= ( SELECT count(*) FROM _boe_text WHERE BOLETIN = _BOLETIN ); 
-		IF _counter = 0 THEN
-				INSERT INTO _boe_text (
-                _p,
-				BOLETIN, 
-				dia,
-				mes,
-				anyo,  
-				TEXTO, 
-				analisis,
-				importe) VALUES ( 
-				_COUNT_LINES,
-				_BOLETIN, 
-				_Dia,
-				_Mes,
-				_Anyo,  
-				_TEXTO, 
-				_analisis,
-				_importe );
-				SELECT last_insert_id() as ID;
+		IF _p<8 THEN
+			INSERT INTO errores (BOLETIN,SqlError) VALUES(_BOLETIN,'CONTENIDO NO STANDART');
+		ELSE
+	
+			SET _counter= ( SELECT count(*) FROM _boe_text WHERE BOLETIN = _BOLETIN ); 
+			IF _counter = 0 THEN
+					INSERT INTO _boe_text (
+					_p,
+					BOLETIN, 
+					dia,
+					mes,
+					anyo,  
+					TEXTO, 
+					analisis,
+					importe) VALUES ( 
+					_COUNT_LINES,
+					_BOLETIN, 
+					_Dia,
+					_Mes,
+					_Anyo,  
+					_TEXTO, 
+					_analisis,
+					_importe );
+					SELECT last_insert_id() as ID;
+                    UPDATE sumarios SET Tipo_contenido=1 WHERE BOLETIN=_BOLETIN;
+			END IF;
 		END IF;
     END IF;
 	IF _Type='BOCM' THEN
@@ -280,6 +326,7 @@ BEGIN
 				_TEXTO, 
 				_analisis);
 				SELECT last_insert_id() as ID;
+                UPDATE sumarios SET Tipo_contenido=1 WHERE BOLETIN=_BOLETIN;
 		END IF;
     END IF;
     
@@ -308,18 +355,36 @@ BEGIN
 					_LINE, 
 					_analisis);
 					
-
+			UPDATE sumarios SET Tipo_contenido=2 WHERE BOLETIN=_BOLETIN;
 		 END WHILE;
 
     END IF;
     UPDATE lastread SET ID_LAST = _BOLETIN WHERE Type= _Type AND Anyo=_Anyo;
-    UPDATE sumarios SET Tipo_contenido=1 WHERE BOLETIN=_BOLETIN;
+    
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Final view structure for view `getdata_boe_parsersumarioanual`
+--
+
+/*!50001 DROP VIEW IF EXISTS `getdata_boe_parsersumarioanual`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `getdata_boe_parsersumarioanual` AS select `sumarios`.`SUMARIO` AS `SUMARIO`,`_boe_text`.`id` AS `id`,`_boe_text`.`dia` AS `dia`,`_boe_text`.`mes` AS `mes`,`_boe_text`.`anyo` AS `anyo`,`_boe_text`.`BOLETIN` AS `BOLETIN`,`_boe_text`.`texto` AS `texto`,`_boe_text`.`analisis` AS `analisis`,`_boe_text`.`importe` AS `importe`,`_boe_text`.`_p` AS `_p` from (`sumarios` join `_boe_text` on((`sumarios`.`BOLETIN` = `_boe_text`.`BOLETIN`))) where ((`sumarios`.`parser` = 0) and (`_boe_text`.`_p` > 7) and (`sumarios`.`Tipo_contenido` = 1)) order by `_boe_text`.`id` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -330,4 +395,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-17 11:38:18
+-- Dump completed on 2017-11-17 20:03:23

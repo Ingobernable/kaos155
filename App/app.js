@@ -4,7 +4,7 @@ console.log('loading App - version -' + Version)
 var myArgs = process.argv.slice(2);
  
 if (myArgs.length == 0)
-    myArgs = ['SCRAP','BORME', '2009'] //, 'BOE-B-2003-31017' ]
+    myArgs = ['PARSER','BOE', '2001'] //, 'BOE-B-2003-31017' ]
 
 if (myArgs[1] != 'BORME') {
 
@@ -60,7 +60,6 @@ var App = {
     fs: require("fs"),
     http: require('http'),
     moment:require("moment"),
-    curl: require('./node_app/_curl.js'),
     _xData: {
         VisualCif: {
             Ranking: {
@@ -114,10 +113,10 @@ var App = {
                             //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
                             app.BOLETIN = options
                             //cargamos los contadores para poder continuar donde se dejó
-                            app.commonSQL.SQL.getCounter(app, options, type, function (options) {
-                                //realizamos el proceso de escrapeo
-                                options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
-                            })
+                            //app.commonSQL.SQL.getCounter(app, options, type, function (options) {
+                            //realizamos el proceso de escrapeo                               
+                            options._common.Actualize(options, type, null)
+                            //})
                         })
                     })
                 },
@@ -165,27 +164,29 @@ var App = {
     getCounter: function (app, _options, type, callback) {
         _cadsql = "SELECT * FROM lastread WHERE Type = '" + type + "' AND Anyo = " + app.anyo
         _options.SQL.db.query(_cadsql, function (err, Record) {
-            if (err)
+            if (err) {
                 debugger
-            if (Record.length == 0) {
-                _cadsql = "INSERT INTO lastread (Type, Anyo, SUMARIO_NEXT) VALUES ('" + type + "'," + app.anyo + ",'" + type + "-S-" + app.initDate + "')"  //2001
-                _options.SQL.db.query(_cadsql, function (err, _data) {
-                    app._xData.Sumario[type] = { SUMARIO_LAST: '', SUMARIO_NEXT: type + '-S-' + app.initDate }
-                })
             } else {
-                app._xData.Sumario[type] = Record[0]
-            }
-            var _cadsql = "SELECT count(*) FROM sumarios WHERE Type='" + type + "'"
-            _options.SQL.db.query(_cadsql, function (err, Record) {
-                //if (err)
+                if (Record.length == 0) {
+                    _cadsql = "INSERT INTO lastread (Type, Anyo, SUMARIO_NEXT) VALUES ('" + type + "'," + app.anyo + ",'" + type + "-S-" + app.initDate + "')"  //2001
+                    _options.SQL.db.query(_cadsql, function (err, _data) {
+                        app._xData.Sumario[type] = { SUMARIO_LAST: '', SUMARIO_NEXT: type + '-S-' + app.initDate }
+                    })
+                } else {
+                    app._xData.Sumario[type] = Record[0]
+                }
+                var _cadsql = "SELECT count(*) FROM sumarios WHERE Type='" + type + "'"
+                _options.SQL.db.query(_cadsql, function (err, Record) {
+                    //if (err)
                     app._xData.TSUMARIOS[type] = Record[0]["count(*)"]
 
-                _cadsql = "SELECT count(*) FROM boletin where Type='" + type + "'"
-                _options.SQL.db.query(_cadsql, function (err, Record) {
-                    app._xData['T'+type] = Record[0]["count(*)"]
-                    callback(_options)
+                    _cadsql = "SELECT count(*) FROM boletin where Type='" + type + "'"
+                    _options.SQL.db.query(_cadsql, function (err, Record) {
+                        app._xData['T' + type] = Record[0]["count(*)"]
+                        callback(_options)
+                    })
                 })
-            })
+            }
         })
     }
 

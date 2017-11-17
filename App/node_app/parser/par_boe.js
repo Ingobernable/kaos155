@@ -1,5 +1,5 @@
 ﻿module.exports = function (app, callback) {
-
+     
     var options = {
         Command : app.command,
         url: app.urlBOE,
@@ -79,68 +79,115 @@
             
         },
         parser: {
-            Secciones: function (options, url, data, callback) {
-                //cargamos el documento con una rutina comun de extracción
-                app.Rutines(app).askToServer(app, { encoding: 'UTF-8', method: "GET", uri: url.uri, agent: false }, data, function (app, body, data) {
-                    //try {
-                    if (body != null) {
+            Preceptos: function (type) {
+                var consulta =function(type, callback){
+                    options.SQL.scrapDb.query('call GetNextTextParser(?)', [type], function (err, record) {
+                        callback(record)
+                    })
+                }
 
-                        //pasamos el XML a formato "JQUERY de node"
-                        var $ = app.Rutines(app).XmlToDom(body)
-                        if ($('error').length > 0) {
-                            //var _r = { error: true, descripcion: $('error descripcion').html() }
-                            callback(data)
-                        } else {
-                            data.next = $('sumario meta fechaSig').html()
-                            data.Fdate = $('sumario meta pubDate').html() // = $('sumario meta fechaSig').html()
-                            data.SUMARIO_LAST = app._xData.Sumario.BOE.SUMARIO_NEXT
-                            data.SUMARIO_NEXT = "BOE-S-" + data.next.substr(6, 4) + data.next.substr(3, 2) + data.next.substr(0, 2)
-                            //debugger
-                            //options._common.SQL.commands.Sumario.update(options, data, function (options, data) {
-                            if (data.Idate == null) {
-                                data.Idate = $('sumario meta pubDate').html()
-                            }
-                            var _reg = []
-                            var _Sections = data.Secciones.split(",")
+                consulta(type, function (record) {
+                    if (record.length > 0) {
+                        data = { codigo: record[0][0].BOLETIN, textExtend: record[0][0].texto.split("<br>") }
+                        _analisis = JSON.parse(record[0][0].analisis)
 
-                            //para todas las secciones del sumario
-                            $('diario seccion').each(function (i, item) {
-                                //creamos una lista con aquellas que son de nuestro interes (especificado en el parametro de entrras de Actualize()
-                                if (_Sections.indexOf(item.attribs.num) > -1)
 
-                                    $(item.children).find('departamento item').each(function (b, boe) {
-                                        var _ok=false
-                                        if (app._xData.Sumario.BOE.ID_LAST != null) {
-                                            if(app._xData.Sumario.BOE.ID_LAST==boe.attribs.id)
-                                                app._xData.Sumario.BOE.ID_LAST = null
-                                        }else{
-                                            _ok=true
+
+                        if (data.textExtend.length > 0) {
+                            var patterns = options.transforms.getPatern(options.transforms)
+                            data.contratista = options.Rutines.extract(data.textExtend, 'contratista',
+
+                                options.transforms.ADD(
+                                    [patterns.General,
+                                    patterns.Contratista,
+                                    patterns.especialChars,
+                                    patterns.exoticChars,
+                                    patterns.specialContratista,
+                                    [["F", { f: options.transforms.removeFirstChar }, ' '], ['R', new RegExp(/\./, "g"), ""]],
+
+                                    ]))
+                            if (data.contratista.length > 0) {
+                                data.extra.adjudicador = options.Rutines.extract(data.textExtend, 'Organismo',
+                                    options.transforms.ADD(
+                                        [patterns.General,
+                                        patterns.Contratista,
+                                        [["F", { f: options.transforms.removeFirstChar }, ' ']]
+                                        ]), true)
+
+                                data.presupuesto = options.Rutines.extract(data.textExtend, 'Presupuesto base de licitación',
+                                    options.transforms.ADD(
+                                        [patterns.General,
+                                        patterns.Importes,
+                                        [["F", { f: options.transforms.removeFirstChar }, ' ']]
+                                        ]), true)
+
+                                //data.presupuesto = options.Rutines.get.adaptImportes(data.presupuesto ,data)
+
+                                for (_i in data.textExtend) {
+                                    //console.log(_arrayText[i])
+                                    if (data.textExtend[_i].toLowerCase() != null) {
+                                        if (data.textExtend[_i].indexOf('.-') > -1) {
+                                            data.extra.cargo = data.textExtend[_i].split(".-")[1].split(',')[0].replace(/\"/g, "")
+                                            data.extra.firma = data.textExtend[_i].split(".-")[1].split(',').length > 1 ? ''.Trim(data.textExtend[_i].split(".-")[1].split(',')[1]) : ''
                                         }
-                                        if(_ok)
-                                            _reg[_reg.length] = '/diario_boe/xml.php?id=' + boe.attribs.id
-                                    })
+                                    }
+                                }
+                                if (data.contratista.indexOf("#") == -1) {
+                                    var _imp = options.Rutines.get.importes(data, options, patterns)
+                                    data.importe = _imp
+                                    if (data.importe == 0) {
+                                        data.importe = ""
+                                        for (_l in data.contratista.split(";")) {
+                                            data.importe = data.importe + (data.importe.length > 0 ? ";" : "") + isNaN(data.presupuesto) ? "0.00" : data.presupuesto
+                                        }
+                                    }
+                                } else {
+                                    data.importe = ""
+                                    var _e = data.contratista.split(";")
+                                    data.contratista = ""
 
-                            })
-                            data.id = url.uri.split('=')[1]
-                            data._list = _reg
-                        //retornamos una lista con los resultados
+                                    for (_l in _e) {
+                                        data.importe = data.importe + (data.importe.length > 0 ? ";" : "") + _e[_l].split("#")[1]
+                                        data.contratista = data.contratista + (data.contratista.length > 0 ? ";" : "") + _e[_l].split("#")[0]
+                                    }
+                                }
+                                _analisis._tramitacion = ''.Trim(options.Rutines.extract(data.textExtend, 'Tramitación', options.transforms.General, true)).split(" ")[0]
+                                _analisis._objeto = ''.Trim(options.Rutines.extract(data.textExtend, 'Descripción del objeto:', options.transforms.General, true))
+
+                                //if(data.contratista.indexOf(' S')==-1)
+                                //    debugger
+
+
+                                if (data.contratista != null) {
+                                    if (data.contratista.length > 0) {
+                                            options.SQL.insert(options, _analisis, data, function (data) {
+                                                callback(data)
+                                            })                                        
+                                    } else {
+                                        callback(data)
+                                    }
+                                } else {
+                                    callback(data)
+                                }
+                            } else {
+                                callback(data)
+                            }
+
+                        } else {
                             callback(data)
-                        //})
                         }
                     } else {
-                        //debugger
-                        console.log('error de lectura de SUMARIO url ' + url)
-                        callback(data)
+                        setTimeout(function () {
+                            debugger
+                        }, 5000)
                     }
-
                 })
-            },
-            Preceptos: function (options, urlDoc, body, data, callback) {
                 //app.Rutines(app).askToServer(app, { encoding: 'UTF-8', method: "GET", uri: options.url + urlDoc, agent: false }, data, function (app, body, data) {
-                    //var xcadsql = null
+                //var xcadsql = null
+                contratos = function () {
                     var contratos = []
                     if (body != null) {
-                        
+
                         var $ = app.Rutines(app).XmlToDom(body)                 // convertimos el texto xml en objetos DOM
                         if ($('error').length == 0) {
                             data.codigo = options.Rutines.get.principal($)      // rescatamos las variables directas
@@ -260,24 +307,25 @@
                                             callback(data)
                                         }
                                     } else {
-                                        callback(data,true)
+                                        callback(data, true)
                                     }
                                 }, urlDoc, options.Rutines)
                             } else {
-                                
+
                                 callback(data)
                             }
-                         
 
-                        
+
+
                         } else {
                             callback(data)
                         }
 
                     } else {
                         console.log('Body - NULL reload True')
-                        callback(data,true)
+                        callback(data, true)
                     }
+                }
             }
         }
     }
@@ -285,7 +333,7 @@
 
     app.commonSQL.init(options, 'PARSER', app._fileCredenciales + options.Command, function (options) {
         app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
-            options.SQL.scrapDb = scrapdb
+            options.SQL.scrapDb = scrapdb.SQL.db
             callback(options)
         })
     })

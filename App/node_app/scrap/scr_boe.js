@@ -1,6 +1,7 @@
 ﻿module.exports = function (app, callback) { 
-
+     
     var options = {
+        Type: 'BOE',
         Command: app.command,
         url: app.urlBOE,
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
@@ -11,7 +12,7 @@
         SQL: {
             db: null           
         },
-        parser: {
+        scrap: {
             Secciones: function (options, url, data, callback) {
                 //cargamos el documento con una rutina comun de extracción
                 app.Rutines(app).askToServer(app, { encoding: 'UTF-8', method: "GET", uri: url.uri, agent: false }, data, function (app, body, data) {

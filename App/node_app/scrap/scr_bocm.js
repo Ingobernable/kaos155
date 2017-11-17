@@ -1,6 +1,7 @@
 ﻿module.exports = function (app, callback) { 
 
     var options = {
+        Type: 'BOCM',
         Command: app.command,
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
         pdfOpc: ['-raw', '-enc UTF-8'],
@@ -9,9 +10,9 @@
         _common: require('../parser_common')(app),
         url: app.urlBOCM,
         SQL: {
-            db: null
+            db: null 
         },
-        parser: {
+        scrap: {
             Secciones: function (options, url, data, callback) {
                 var _this = this
                 var _ret = []

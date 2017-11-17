@@ -59,7 +59,7 @@
                         //Cargamos y analizamos las secciones con el parseador concreto de cada TYPE de documento
                         //BOE,BOCM,BORME......etc
                             
-                        options.parser.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
+                        options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
                             callback(data, repeat)
                         })
                         //})
@@ -129,64 +129,67 @@
                 }
             }
         },
-        Actualize: function ( options, type, data) {
+        Actualize: function ( options, type, data, callback) {
             //var _r = { BOCM: 5, BOE: 6, BORME: 8 }
             var _this = this
-            //var type = this.type
-            var iyear = data.desde.substr(0, 4)
-            var imonth = data.desde.substr(4, 2)
-            var iday = data.desde.substr(6, 2)
-            var _DATE = new Date(imonth + "/" + iday + "/" + iyear)
-            if (app.update == null) {
-                if (iyear == app.anyo) { //data.hasta) {
-                    options.type = type.toUpperCase()
-                    options.Sumario = data.type.toUpperCase() + "-"+(type!="BOCM"?"S-":"") + iyear + imonth + iday
-                    //
-                    //Punto en el que llama a analiza un sumario correspondiente a un dia, con multiples subdocumentos
-                    //
-                    _this.SQL.commands.Sumario.get(options, data, function (data) {
-                        if (data._list.length > 0) {
-                            data.e = 0
-                            _this.parser(app).NEW(options, data, options.parser.Preceptos, function (data) {
+            if (options.Command == app.Commands[0]) {
+                var iyear = data.desde.substr(0, 4)
+                var imonth = data.desde.substr(4, 2)
+                var iday = data.desde.substr(6, 2)
+                var _DATE = new Date(imonth + "/" + iday + "/" + iyear)
+                if (app.update == null) {
+                    if (iyear == app.anyo) { //data.hasta) {
+                        options.type = type.toUpperCase()
+                        options.Sumario = data.type.toUpperCase() + "-" + (type != "BOCM" ? "S-" : "") + iyear + imonth + iday
+                        //
+                        //Punto en el que llama a analiza un sumario correspondiente a un dia, con multiples subdocumentos
+                        //
+                        _this.SQL.commands.Sumario.get(options, data, function (data) {
+                            if (data._list.length > 0) {
+                                data.e = 0
+                                _this.parser(app).NEW(options, data, options.scrap.Preceptos, function (data) {
+                                    options._common.SQL.commands.Sumario.update(options, data, function () {
+                                        data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
+                                        _this.Actualize(options, type, data)
+                                    })
+                                })
+                            } else {
                                 options._common.SQL.commands.Sumario.update(options, data, function () {
                                     data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
                                     _this.Actualize(options, type, data)
                                 })
+                            }
+                        })
+                    } else {
+                        cadsql = "UPDATE lastread SET Read_Complete = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo
+                        options.SQL.db.query(cadsql, function (err, record) {
+                            cadsql = "UPDATE anyosread SET " + options.Command.toLowerCase() + " = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo
+                            options.SQL.db.query(cadsql, function (err, record) {
+                                console.log('obtención de datos ' + type + ' del año ' + app.anyo + ' terminó')
+                                process.exit(0)
                             })
+                        })
+                    }
+                } else {
+                    cadsql = "SELECT Read_Complete,SUMARIO FROM boletin LEFT JOIN lastread on boletin.anyo=lastread.anyo AND boletin.type=lastread.type WHERE boletin.BOLETIN='" + app.update + "'"
+                    //cadsql = "SELECT * FROM boletin WHERE BOLETIN='" + app.update + "'"
+                    options.SQL.db.query(cadsql, function (err, record) {
+                        if (record.length > 0) {
+                            if (record[0].Read_Complete = 1) {
+                                debugger
+                            } else {
+                                console.log('el escrapeo ' + type + ' del año ' + app.anyo + ' no ha concluido')
+                                process.exit(0)
+                            }
                         } else {
-                            options._common.SQL.commands.Sumario.update(options, data, function () {
-                                data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
-                                _this.Actualize(options, type, data)
-                            })
+                            console.log('documento ' + app.update + ' del año ' + app.anyo + ' no encontrado')
+                            process.exit(0)
                         }
                     })
-                } else {
-                    cadsql = "UPDATE lastread SET Read_Complete = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo
-                    options.SQL.db.query(cadsql, function (err, record) {
-                        cadsql = "UPDATE anyosread SET " + options.Command.toLowerCase() + " = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo
-                        options.SQL.db.query(cadsql, function (err, record) {
-                            console.log('obtención de datos ' + type + ' del año ' + app.anyo + ' terminó')
-                            process.exit(0)
-                        })
-                    })
+
                 }
             } else {
-                cadsql = "SELECT Read_Complete,SUMARIO FROM boletin LEFT JOIN lastread on boletin.anyo=lastread.anyo AND boletin.type=lastread.type WHERE boletin.BOLETIN='" + app.update + "'"
-                //cadsql = "SELECT * FROM boletin WHERE BOLETIN='" + app.update + "'"
-                options.SQL.db.query(cadsql, function (err, record) {
-                    if (record.length > 0){
-                        if (record[0].Read_Complete = 1) {
-                            debugger
-                        } else {
-                            console.log('el escrapeo ' + type + ' del año ' + app.anyo + ' no ha concluido')
-                            process.exit(0)
-                        }
-                    } else {
-                        console.log('documento ' + app.update + ' del año ' + app.anyo + ' no encontrado')
-                        process.exit(0)
-                    }
-                })
-
+                options.parser.Preceptos(type)
             }
         }
     }

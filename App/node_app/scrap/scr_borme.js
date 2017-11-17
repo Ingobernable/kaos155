@@ -10,8 +10,7 @@
         url: app.urlBORME,
         
         SQL: { db: null },
-        DirEmpresas: [],
-        parser: {
+        scrap: {
             Secciones: function (options, url, data, callback) {
                 app.Rutines(app).askToServer(options, url, data, function (options, body, data) {
                     //debugger
@@ -88,11 +87,6 @@
                             debugger
                             callback(data,true)
                         }
-                    //}
-                    //catch (err) {
-                    //    debugger
-                    //    callback(data)
-                    //}
                 })
             },
             Preceptos: function (options, urlDoc, body, data, callback) {
