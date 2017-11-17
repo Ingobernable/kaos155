@@ -19,7 +19,7 @@ sudo apt-get install -y python-dev python-pip libssl-dev libffi-dev
 
 
 ```sh
-pip install ansible
+sudo pip install ansible
 ```
 ####  macos
 puedes instalar pip mediante brew (antes debes tener instalado brew)
@@ -44,11 +44,12 @@ Aun así puedes instalar ansible siguiendo las instrucciones que se detallan aqu
 https://ericsysmin.com/2016/07/28/install-ansible-on-windows/
 
 
-### instalacion de vagrant y virtiualbox
+### instalacion de vagrant y virtualbox
 
 Vagrant y virtualbox tienen paquetes para todas las plataformas, puedes descargarlos aqui:
 
 https://www.vagrantup.com/downloads.html
+
 https://www.virtualbox.org/wiki/Downloads
 
 ### ejecución
