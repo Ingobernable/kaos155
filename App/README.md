@@ -1,4 +1,4 @@
-﻿# BormeApp
+﻿# App
 
 Tarea a realizar:
 	recolección de datos
