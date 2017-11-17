@@ -91,7 +91,7 @@
                             if (_analisis._type.indexOf('Adjudicación') > -1 || _analisis._modalidad == "Formalización contrato") {
                                 options.Rutines.get.p_parrafo(options, $, '.', body, function (_data) {
                                     if (_data != null) {
-                                        //data.extra = _data._extra
+                                        data.extra = _data._extra
                                         data.textExtend = _data._arr
 
                                         app.commonSQL.SQL.commands.insert.Boletin.text(options, _analisis, data, function (data) {
