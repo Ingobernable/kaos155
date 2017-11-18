@@ -1,5 +1,5 @@
 CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `bbdd_kaos155`;
+USE `bbdd_kaos155`; 
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: localhost    Database: bbdd_kaos155
