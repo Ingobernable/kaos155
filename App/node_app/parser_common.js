@@ -5,6 +5,11 @@
         SQL: {
             commands: {
                 Sumario: {
+                    SetScrapLabel: function (options, data, callback) {
+                        app.commonSQL.SQL.commands.update.ScrapLabel(options, data, function (err, rows) {
+                            callback(data)
+                        })
+                    },
                     insert: function (options, data, callback) {
                         var next = data.SUMARIO_NEXT //options.type + (options.type=="BOCM"?"":"-S-") + data.next.substr(6, 4) + data.next.substr(3, 2) + data.next.substr(0, 2)
                         if (data._analisis == null) {
@@ -14,6 +19,9 @@
                                 var _boletin = data._list[data.e][data.type].split("=")[1]
                             }
                         } else {
+                            if (data._analisis[data.e]==null)
+                                debugger
+
                             var _boletin = data._analisis[data.e][data.type] == null ? data._list[data.e].split("=")[1] : data._analisis[data.e][data.type]
                         }
                         if (data._list.length > 0) {
@@ -29,8 +37,13 @@
                                             callback(data)
                                         })
                                     } else {
-                                        process.stdout.write('#')
-                                        callback(data,true)
+                                        if (rows[0].scrap == 1) {
+                                            process.stdout.write('#')
+                                            callback(data, true)
+                                        } else {
+                                            process.stdout.write('%')
+                                            callback(data)
+                                        }
                                         //console.log(err, sumariosql)
                                         //callback({ error: true, SUMARIO_NEXT: rows[0].SUMARIO_NEXT })
                                     }
@@ -91,26 +104,32 @@
                             } else {
                                 var turl = data._list[data.e]
                             }
-                            __this.Search(options, turl, data, analizer, function (data, repeat) {
-                                if (data.e < data._list.length - 1) {
-                                    if (!repeat) {
-                                        data.e++
-                                        // } else {
-                                        //     debugger
-                                    }
-                                    __this.NEW(options, data, analizer, callback)
+                            __this.Search(options, turl, data, analizer, function (data, repeat, fail) {
+                                if (fail) {
+                                    _this.SQL.commands.Sumario.SetScrapLabel(options, data, function (data) {
+                                        if (data.e < data._list.length - 1) {
+                                            data.e++
+                                            __this.NEW(options, data, analizer, callback)
+                                        } else {
+                                            callback(data)
+                                        }
+                                    })
                                 } else {
-                                    callback(data)
+                                    if (data.e < data._list.length - 1) {
+                                        if (!repeat) {
+                                            data.e++
+                                        }
+                                        __this.NEW(options, data, analizer, callback)
+
+                                    } else {
+                                        callback(data)
+                                    }
                                 }
                                 //})
                             })
                         } else { 
                             if (data.e < data._list.length - 1) {
-                                //if (!repeat) {
-                                    data.e++
-                                    // } else {
-                                    //     debugger
-                                //}
+                               data.e++
                                 __this.NEW(options, data, analizer, callback)
                             } else {
                                 callback(data)
@@ -163,7 +182,7 @@
                     } else {
                         cadsql = "UPDATE lastread SET Read_Complete = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo
                         options.SQL.db.query(cadsql, function (err, record) {
-                            cadsql = "UPDATE anyosread SET " + options.Command.toLowerCase() + " = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo
+                            cadsql = "UPDATE anyosread SET " + options.Command.toLowerCase() + " = 1 WHERE Type='" + options.Type + "' AND Anyo = " + app.anyo
                             options.SQL.db.query(cadsql, function (err, record) {
                                 console.log('obtención de datos ' + type + ' del año ' + app.anyo + ' terminó')
                                 process.exit(0)

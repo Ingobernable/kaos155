@@ -1,5 +1,5 @@
 ﻿module.exports = function (app, callback) {
-     
+    
     var options = {
         Command : app.command,
         Rutines: require('./BOLETIN/__Rutines')(app),

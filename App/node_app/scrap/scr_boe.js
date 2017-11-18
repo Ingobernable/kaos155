@@ -84,16 +84,17 @@
                             var _analisis = options.Rutines.get.data(options, data)      //creamos la estructura con los datos principales
                             if (_analisis._type == null)
                                 debugger
-
                             //if (["BOE-B-2001-3002"].indexOf(_analisis._BOLETIN.split("=")[1]) > -1)
                             //    debugger
 
                             if (_analisis._type.indexOf('Adjudicación') > -1 || _analisis._modalidad == "Formalización contrato") {
                                 options.Rutines.get.p_parrafo(options, $, '.', body, function (_data) {
                                     if (_data != null) {
-                                        data.extra = _data._extra
+                                        //if (_data._arr.length < 8)
+                                        //    debugger
+                                        _analisis.extra = _data._extra
                                         data.textExtend = _data._arr
-
+                                        data.err = _data._err
                                         app.commonSQL.SQL.commands.insert.Boletin.text(options, _analisis, data, function (data) {
                                             callback(data)
                                         })
@@ -106,7 +107,7 @@
                                 }, urlDoc, options.Rutines, true )
                             } else {
                                 process.stdout.write('-')
-                                callback(data)
+                                callback(data,false,true)
                             }
                          
 

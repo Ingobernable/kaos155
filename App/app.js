@@ -4,7 +4,7 @@ console.log('loading App - version -' + Version)
 var myArgs = process.argv.slice(2);
  
 if (myArgs.length == 0)
-    myArgs = ['PARSER','BOE', '2001'] //, 'BOE-B-2003-31017' ]
+    myArgs = ['SCRAP','BORME', '2009'] //, 'BOE-B-2003-31017' ]
 
 if (myArgs[1] != 'BORME') {
 
@@ -113,13 +113,13 @@ var App = {
                             //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
                             app.BOLETIN = options
                             //cargamos los contadores para poder continuar donde se dejó
-                            //app.commonSQL.SQL.getCounter(app, options, type, function (options) {
+                            app.commonSQL.SQL.getCounter(app, options, type, function (options) {
                             //realizamos el proceso de escrapeo  
 
 
-                            options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
+                                options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
                             //options._common.Actualize(options, type, null)
-                            //})
+                            })
                         })
                     })
                 },

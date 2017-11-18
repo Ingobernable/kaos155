@@ -1,5 +1,5 @@
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
---
+-- 
 -- Host: localhost    Database: bbdd_kaos155
 -- ------------------------------------------------------
 -- Server version	5.7.19-log

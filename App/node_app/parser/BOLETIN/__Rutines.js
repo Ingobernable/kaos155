@@ -59,17 +59,19 @@
                         if (p > -1 && _r.length > 0) {
                             var table = _r.split(/\n/g)
                             var keys = p<2?_r.match(/\d{3,9}/g):null
-                            if(!scrap)
-                                for (n in table) {
-                                    cadsql = "call insertInTable_Aux(?,?,?)"
+                            if (!scrap) {
+                                for (n in table) { 
                                     var _data_aux = [p, keys == null ? '' : keys[n], table[n].substr(keys == null ? 0 : keys[n].length + 1, table[n].length)]
                                     //console.log(_data_aux)
-                                    app.BOLETIN.SQL.db.query(cadsql, _data_aux, function (err_aux) {
+                                    app.BOLETIN.SQL.db.query("call insertInTable_Aux(?,?,?)", _data_aux, function (err_aux) {
                                         if (err_aux != null)
                                             debugger
                                     })
                                 }
-                            _r = keys ==null? table[0]:keys.join(';')
+                                _r = keys == null ? table[0] : keys.join(';')
+                            } else {
+                                _r = table.join(';')
+                            }
                         }
                         _ret[i] = _r
                     }
@@ -86,6 +88,7 @@
                 var _json = app.Rutines().xmlToJson(xml)
                 var _areas = []
                 var _content = []
+                var err = null
 
                 if (_json.documento.texto.dl != null) {
                     var pdf =  options.url  + _json.documento.metadatos.url_pdf["#text"]
@@ -98,18 +101,29 @@
                             if ((_t.indexOf(')') == 1 || _t.indexOf('.') == 1) && _t.substr(2,1)==" " ){ // || _lastParragraf) {
                                 _arr[_arr.length] = _t
                             } else {
-                                _arr[_arr.length - 1] = _arr[_arr.length - 1] + ' ' + _t
+                                if (_arr.length > 0) {
+                                    if (err!=null) {
+                                        _arr[_arr.length - 1] = _arr[_arr.length - 1] + ' ' + _t
+                                    } else {
+                                        _arr[_arr.length ] = _t
+                                    }
+                                } else {
+                                    err = "CONTENIDO NO STANDART"
+                                    _arr[0] = _t
+                                }
                             }
                             //_lastParragraf = (_t.lastIndexOf(charEnd) == _t.length - 2)
                         }
                     })
-
-                    _callback({ _arr: _arr, _extra: this.extra(_json.documento.analisis, onlyScrap) })
+                    var _extra = {
+                        _a: this.extra(_json.documento.analisis, onlyScrap),
+                        _m: this.extra(_json.documento.metadatos, onlyScrap)
+                    }
+                    _callback({ _arr: _arr, _extra: _extra ,_err:err })
                 }
             },
             importes: function (data, options, patterns) {
 
-               
                 var importe = "*" + options.Rutines.extract(data.textExtend, 'Importe de la adjudicación:', options.transforms.ADD(
                         [patterns.General,
                         patterns.Importes]
@@ -618,7 +632,13 @@
                                                             }
                                                         }
                                                     }
-                                                    _callback({ _arr: _arr, _extra: _json != null ? _this.extra(_json.documento.analisis, onlyScrap) : null })
+
+                                                    var _extra = {
+                                                        _a: _this.extra(_json.documento.analisis, onlyScrap),
+                                                        _m: _this.extra(_json.documento.metadatos, onlyScrap)
+                                                    }
+
+                                                    _callback({ _arr: _arr, _extra: _json != null ? _extra : null })
                                                 })
                                             })
                                         })

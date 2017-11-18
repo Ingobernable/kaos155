@@ -64,7 +64,7 @@
                                                                 _reg[_reg.length] = { BORME: lst.attribs.id, pdf: pdf, titulo: titulo }
                                                                 _into=null
                                                             } else {
-                                                                process.stdout.write('.')
+                                                                process.stdout.write('S ')
                                                             }
                                                         }
 
@@ -151,7 +151,6 @@
             }
         }
     }
-
     app.commonSQL.init(options, options.Type , app._fileCredenciales + options.Command, function (options) {
         app.commonSQL.SQL.commands.insert.AnyoRead(options, options.SQL.db, app.command , function (options) {
            callback(options)
