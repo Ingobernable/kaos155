@@ -1,0 +1,8 @@
+- name: run npm install
+  with_items: "{{ pm2_apps }}"
+  notify: restart pm2
+  become: yes
+  become_user: "{{ pm2_user }}"
+  shell: npm install
+  args:
+    chdir: "{{ item.path }}"

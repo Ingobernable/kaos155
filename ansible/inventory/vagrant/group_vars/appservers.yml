@@ -1,0 +1,22 @@
+# target and year are defined in vagrant
+node_target: ""
+node_year: ""
+
+develop: yes
+pm2_user: vagrant
+pm2_npm_tasks: yes
+pm2_apps:
+- name: kaos-scraper
+  extra_opts:
+  script: 'app.js'
+  instances: 1
+  mode: fork
+  path: /vagrant/app
+  args:
+  - "{{ node_target }}"
+  - "{{ node_year }}"
+  env:
+    KAOS_MYSQL_PARSER_PASS: password
+    KAOS_MYSQL_PARSER_USER: kaos
+    KAOS_MYSQL_PARSER_HOST: localhost
+    KAOS_MYSQL_PARSER_DB: bbdd_kaos155

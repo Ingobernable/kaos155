@@ -1,0 +1,31 @@
+- name: install common packages
+  apt:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+  - software-properties-common
+  - python-mysqldb
+
+- name: add repo key
+  when: mariadb_install_mode == "repo"
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: '0xF1656F24C74CD1D8'
+
+- name: add repo
+  when: mariadb_install_mode == "repo"
+  apt_repository:
+    repo: "deb [arch=amd64] http://mariadb.mirrors.ovh.net/MariaDB/repo/{{ mariadb_version }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} main"
+    state: present
+
+- name: install packages
+  apt:
+    update_cache: yes
+    name: mariadb-server
+    state: latest
+
+- name: enable service
+  service:
+    name: mariadb
+    state: started
+    enabled: yes

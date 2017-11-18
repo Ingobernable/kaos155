@@ -1,0 +1,21 @@
+{{ pm2_logpath }}/*.log {
+{% if pm2_logrorate_missingok %}
+missingok
+{% endif %}
+{% if pm2_logrotate_freq %}
+{{ pm2_logrotate_freq }}
+{% endif %}
+{% if pm2_logrorate_maxsize %}
+maxsize {{ pm2_logrorate_maxsize }}
+{% endif %}
+{% if pm2_logrorate_truncate %}
+copytruncate
+{% endif %}
+{% if pm2_logrotate_amount %}
+rotate {{ pm2_logrotate_amount }}
+{% endif %}
+compress
+{% if pm2_logrotate_custom_opts %}
+{{ pm2_logrotate_custom_opts }}
+{% endif %}
+}

@@ -1,0 +1,20 @@
+all:
+  hosts:
+     ovh:
+       ansible_user: root
+       ansible_ssh_host: "ip of ovh"
+  children:
+    databases:
+      hosts:
+        ovh:
+    appservers:
+      hosts:
+        ovh:
+    webservers:
+      hosts:
+        ovh:
+    kaos:
+      children:
+        databases:
+        appservers:
+        webservers:

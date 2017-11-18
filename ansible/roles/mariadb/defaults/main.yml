@@ -1,0 +1,26 @@
+# can be "system" or "repo"
+mariadb_install_mode: repo
+mariadb_version: "10.2"
+mariadb_root_password: password
+
+mariadb_databases:
+- name: default
+  collation: utf8_general_ci
+  encoding: utf8
+
+mariadb_users:
+- name: project
+  password: password
+  priv: "{{db_name}}.*:ALL"
+
+mariadb_max_connections: 200
+# {{ (ansible_memtotal_mb * 0.8) | int }} for use all
+mariadb_innodb_buffer_pool_size: 256M
+mariadb_bind_address: 127.0.0.1
+mariadb_max_allowed_packet: "64M"
+
+mariadb_slow_query_time: "2"
+mariadb_query_cache_limit: "1M"
+mariadb_query_cache_size: "64M"
+
+mariadb_custom_config: |
