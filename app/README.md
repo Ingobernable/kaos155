@@ -12,7 +12,7 @@ Tarea a realizar:
 		TIPO:	BOE		boletin oficial del estado
 				BORME	boletin del registro mercantil
 				BOCM	boletin de la comunidad de madrid
-
+		
 	ejemplos
 		
 		node app.js SCRAP BOE 	2001		-> recolección de datos del BOE el año	2001
@@ -22,3 +22,4 @@ Tarea a realizar:
 	existen unos años iniciales
 		Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
 	
+	se pueden lanzar simultaneamente distintos años y distintos tipos
