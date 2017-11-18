@@ -177,9 +177,9 @@ El BOE desde el 2001, el BORME desde el 2009 y el BOCM desde 2010.
 # chown -R root:root *
 # cd BormeApp
 # npm upgrade
-# node app BOE 2001
-# node app BORME 2009
-# node app BOCM 2010
+# node app SCRAP BOE 2001
+# node app SCRAP BORME 2009
+# node app SCRAP BOCM 2010
 ```
 
 
