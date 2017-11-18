@@ -1,5 +1,3 @@
-
-SET GLOBAL log_bin_trust_function_creators = 1;
 CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `bbdd_kaos155`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
@@ -38,7 +36,7 @@ CREATE TABLE `__text_scrap_boletin` (
   `importe` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2909 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -56,7 +54,7 @@ CREATE TABLE `_adjudicador_aux` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `codigo_UNIQUE` (`codigo`)
-) ENGINE=InnoDB AUTO_INCREMENT=921 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -75,7 +73,7 @@ CREATE TABLE `_ambito_geografico_aux` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `codigo_UNIQUE` (`codigo`)
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,7 +91,7 @@ CREATE TABLE `_cargo_adjudicador_aux` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `codigo_UNIQUE` (`codigo`)
-) ENGINE=InnoDB AUTO_INCREMENT=1586 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -125,7 +123,7 @@ CREATE TABLE `_respons_adjudicador_aux` (
   `descripcion` varchar(255) DEFAULT NULL,
   `longitud` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1083 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -143,7 +141,7 @@ CREATE TABLE `_tabla_precio_contrato_aux` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `codigo_UNIQUE` (`codigo`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -161,7 +159,7 @@ CREATE TABLE `_tipo_contrato_aux` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `codigo_UNIQUE` (`codigo`)
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -179,7 +177,7 @@ CREATE TABLE `_tipo_modalidad_aux` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `codigo_UNIQUE` (`codigo`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -197,7 +195,7 @@ CREATE TABLE `_tipo_procedimiento_aux` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `codigo_UNIQUE` (`codigo`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -215,7 +213,7 @@ CREATE TABLE `_tipo_tramitacion_aux` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `codigo_UNIQUE` (`codigo`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -237,7 +235,7 @@ CREATE TABLE `boletin` (
   `_p` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `BOLETIN` (`BOLETIN`)
-) ENGINE=InnoDB AUTO_INCREMENT=4170 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -260,7 +258,7 @@ CREATE TABLE `boletin_aux` (
   `Responsable_ADJUDICADOR` varchar(6) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `BOLETIN` (`BOLETIN`)
-) ENGINE=InnoDB AUTO_INCREMENT=4170 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -279,7 +277,7 @@ CREATE TABLE `boletin_contratos` (
   `importe` decimal(12,2) DEFAULT '0.00',
   PRIMARY KEY (`id`),
   KEY `BOLETIN` (`BOLETIN`)
-) ENGINE=InnoDB AUTO_INCREMENT=3004 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -314,6 +312,25 @@ CREATE TABLE `boletin_textos` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `borme_auditor`
+--
+
+DROP TABLE IF EXISTS `borme_auditor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `borme_auditor` (
+  `Id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Type` int(11) NOT NULL DEFAULT '0',
+  `Name` varchar(232) CHARACTER SET utf8 NOT NULL,
+  `ActiveRelations` int(11) DEFAULT NULL,
+  `coorp` int(11) DEFAULT NULL,
+  `Mark` varchar(1) DEFAULT NULL,
+  `_l` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `borme_diario`
 --
 
@@ -339,7 +356,7 @@ CREATE TABLE `borme_diario` (
   KEY `Empresa_Id` (`Empresa_Id`),
   KEY `Directivo_id` (`Relation_Id`),
   FULLTEXT KEY `_keys` (`_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=383323 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=03 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -358,7 +375,7 @@ CREATE TABLE `borme_directivo` (
   `Mark` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`Id`),
   UNIQUE KEY `Id_UNIQUE` (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=143131 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=01 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -380,7 +397,7 @@ CREATE TABLE `borme_empresa` (
   `_l` int(11) DEFAULT NULL,
   `JuridicId` int(11) DEFAULT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=124887 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=07 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -406,7 +423,7 @@ CREATE TABLE `borme_relaciones` (
   UNIQUE KEY `Diario_Id_UNIQUE` (`Diario_Id`),
   KEY `Empresa` (`Empresa_id`),
   KEY `Directivo` (`Relation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=263046 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=06 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -442,7 +459,7 @@ CREATE TABLE `lastread` (
   `SCR_ID_LAST` varchar(145) DEFAULT NULL,
   PRIMARY KEY (`SUMARIO_NEXT`,`Type`,`Anyo`),
   UNIQUE KEY `_id_UNIQUE` (`_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -543,7 +560,7 @@ BEGIN
         IF i > n THEN
             RETURN NULL ;
         ELSE
-            RETURN SUBSTRING_INDEX(SUBSTRING_INDEX(s, del, i) , del , -1 ) ;
+            RETURN SUBSTRING_INDEX(SUBSTRING_INDEX(s, del, i) , del , -1 ) ;        
         END IF;
 
     END ;;
@@ -563,34 +580,34 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` FUNCTION `UC_Words`( str VARCHAR(255) ) RETURNS varchar(255) CHARSET utf8
-BEGIN
-  DECLARE c CHAR(1);
-  DECLARE s VARCHAR(255);
-  DECLARE i INT DEFAULT 1;
-  DECLARE bool INT DEFAULT 1;
-  DECLARE punct CHAR(17) DEFAULT ' ()[]{},.-_!@;:?/';
-  SET s = LCASE( str );
-  WHILE i < LENGTH( str ) DO
-     BEGIN
-       SET c = SUBSTRING( s, i, 1 );
-       IF LOCATE( c, punct ) > 0 THEN
-        SET bool = 1;
-      ELSEIF bool=1 THEN
-        BEGIN
-          IF c >= 'a' AND c <= 'z' THEN
-             BEGIN
-               SET s = CONCAT(LEFT(s,i-1),UCASE(c),SUBSTRING(s,i+1));
-               SET bool = 0;
-             END;
-           ELSEIF c >= '0' AND c <= '9' THEN
-            SET bool = 0;
-          END IF;
-        END;
-      END IF;
-      SET i = i+1;
-    END;
-  END WHILE;
-  RETURN s;
+BEGIN  
+  DECLARE c CHAR(1);  
+  DECLARE s VARCHAR(255);  
+  DECLARE i INT DEFAULT 1;  
+  DECLARE bool INT DEFAULT 1;  
+  DECLARE punct CHAR(17) DEFAULT ' ()[]{},.-_!@;:?/';  
+  SET s = LCASE( str );  
+  WHILE i < LENGTH( str ) DO  
+     BEGIN  
+       SET c = SUBSTRING( s, i, 1 );  
+       IF LOCATE( c, punct ) > 0 THEN  
+        SET bool = 1;  
+      ELSEIF bool=1 THEN  
+        BEGIN  
+          IF c >= 'a' AND c <= 'z' THEN  
+             BEGIN  
+               SET s = CONCAT(LEFT(s,i-1),UCASE(c),SUBSTRING(s,i+1));  
+               SET bool = 0;  
+             END;  
+           ELSEIF c >= '0' AND c <= '9' THEN  
+            SET bool = 0;  
+          END IF;  
+        END;  
+      END IF;  
+      SET i = i+1;  
+    END;  
+  END WHILE;  
+  RETURN s;  
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -610,30 +627,30 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `getLST_Aux`( in _type nvarchar(5), IN _key nvarchar(255))
 BEGIN
 	IF LENGTH(_key)=0 THEN
-
-		SELECT DISTINCT boletin.Tipo_Boletin as code, _tipo_contrato_aux.descripcion FROM boletin
-			RIGHT JOIN _tipo_contrato_aux ON boletin.Tipo_Boletin = _tipo_contrato_aux.codigo
+    
+		SELECT DISTINCT boletin.Tipo_Boletin as code, _tipo_contrato_aux.descripcion FROM boletin 
+			RIGHT JOIN _tipo_contrato_aux ON boletin.Tipo_Boletin = _tipo_contrato_aux.codigo 
 		WHERE boletin.Type = _type;
-
-        SELECT DISTINCT boletin.Tipo_Tramite as code, _tipo_tramitacion_aux.descripcion FROM boletin
-			RIGHT JOIN  _tipo_tramitacion_aux ON boletin.Tipo_Tramite = _tipo_tramitacion_aux.codigo
+        
+        SELECT DISTINCT boletin.Tipo_Tramite as code, _tipo_tramitacion_aux.descripcion FROM boletin 
+			RIGHT JOIN  _tipo_tramitacion_aux ON boletin.Tipo_Tramite = _tipo_tramitacion_aux.codigo 
 		WHERE boletin.Type= _type;
-
+ 
 		SELECT DISTINCT boletin.Tipo_Adjudicador as code, _adjudicador_aux.descripcion FROM boletin
-			RIGHT JOIN  _adjudicador_aux ON boletin.Tipo_Adjudicador = _adjudicador_aux.codigo
+			RIGHT JOIN  _adjudicador_aux ON boletin.Tipo_Adjudicador = _adjudicador_aux.codigo 
 		WHERE boletin.Type= _type;
-
+        
         SELECT DISTINCT boletin.COD_Ambito_Geografico as code, _ambito_geografico_aux.descripcion FROM boletin
 			INNER JOIN  _ambito_geografico_aux ON boletin.COD_Ambito_Geografico = _ambito_geografico_aux.codigo
-    	WHERE boletin.Type= _type;
-
+    	WHERE boletin.Type= _type;  
+        
         SELECT DISTINCT boletin.COD_Tabla_Precio as code, _tabla_precio_contrato_aux.descripcion FROM boletin
 			INNER JOIN  _tabla_precio_contrato_aux ON boletin.COD_Tabla_Precio = _tabla_precio_contrato_aux.codigo
-		WHERE boletin.Type= _type;
-
-
+		WHERE boletin.Type= _type;  
+ 
+ 
     END IF;
-
+    
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -655,13 +672,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetRelations`(
     IN _Id BIGINT
 )
 BEGIN
-	IF _type= 'Empresa' THEN
+	IF _type= 'Empresa' THEN 
 		SELECT  *	FROM relations_empresa WHERE idEmpresa = _Id;
     END IF;
-
-	IF _type= 'Directivo' THEN
+    
+	IF _type= 'Directivo' THEN 
 		SELECT  *	FROM relations_directivo WHERE idDirectivo = _Id;
-    END IF;
+    END IF;    
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -683,13 +700,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetSearchLst`(
 )
 BEGIN
 	DECLARE _xsearchEmpresa nvarchar(255);
-
+    
     SET _xsearchEmpresa=CONCAT('%', UCASE(_search) , '%');
-
-
+    
+     
 	SELECT  Id,name, ActiveRelations, nBOE, nBOCM, Mark , Id as CompanyId, 0 as PersonId,1 as type	FROM empresa WHERE Name Like _xsearchEmpresa LIMIT 20;
 
-
+    
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -709,10 +726,10 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_boletin`( IN Boletin nvarchar(20) )
 BEGIN
 
-SELECT boletin.id, BOLETIN,dia,mes,anyo,objeto_contrato,_tipo_contrato_aux.descripcion,_tipo_tramitacion_aux.descripcion,_adjudicador_aux.descripcion,_ambito_geografico_aux.descripcion,PDF,TEXTO,observaciones FROM boletin
-	INNER JOIN _tipo_contrato_aux ON boletin.Tipo_Boletin = _tipo_contrato_aux.codigo
-	INNER JOIN  _tipo_tramitacion_aux ON boletin.Tipo_Tramite = _tipo_tramitacion_aux.codigo
-	INNER JOIN  _adjudicador_aux ON boletin.Tipo_Adjudicador = _adjudicador_aux.codigo
+SELECT boletin.id, BOLETIN,dia,mes,anyo,objeto_contrato,_tipo_contrato_aux.descripcion,_tipo_tramitacion_aux.descripcion,_adjudicador_aux.descripcion,_ambito_geografico_aux.descripcion,PDF,TEXTO,observaciones FROM boletin 
+	INNER JOIN _tipo_contrato_aux ON boletin.Tipo_Boletin = _tipo_contrato_aux.codigo 
+	INNER JOIN  _tipo_tramitacion_aux ON boletin.Tipo_Tramite = _tipo_tramitacion_aux.codigo 
+	INNER JOIN  _adjudicador_aux ON boletin.Tipo_Adjudicador = _adjudicador_aux.codigo 
 	INNER JOIN  _ambito_geografico_aux ON boletin.COD_Ambito_Geografico = _ambito_geografico_aux.codigo
 	INNER JOIN  _tabla_precio_contrato_aux ON boletin.COD_Tabla_Precio = _tabla_precio_contrato_aux.codigo
 
@@ -739,17 +756,17 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `insertInTable_Aux`(
 	IN _type nvarchar(24),
 	IN _Code nvarchar(18),
-	IN _Descripcion nvarchar(255)
+	IN _Descripcion nvarchar(255)  
 )
 BEGIN
 	DECLARE _counter int;
     IF _type <2 THEN
 		SET _counter=( SELECT count(*) FROM _materias_aux where codigo = _Code );
 		IF _counter = 0 THEN
-			INSERT INTO _materias_aux (codigo, descripcion) VALUES (_Code, TRIM(_Descripcion) );
+			INSERT INTO _materias_aux (codigo, descripcion) VALUES (_Code, TRIM(_Descripcion) );    
 		END IF;
     END IF;
-
+    
     IF _type=2 THEN
 		SET _counter= ( SELECT count(*) FROM _ambito_geografico_aux where descripcion = _Descripcion);
         IF _counter=0 THEN
@@ -776,7 +793,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data`(
-
+	
     IN _COUNT_CONTRATISTAS INT,
     IN _COUNT_MATERIAS INT,
     IN _Type nvarchar(18),
@@ -784,16 +801,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data`(
     IN _Mes CHAR(2),
     IN _Anyo CHAR(4),
 	IN _SUMARIO nvarchar(18),
-	IN _BOLETIN nvarchar(18),
+	IN _BOLETIN nvarchar(18), 
     IN _Tipo_BOLETIN nvarchar(255),
 	IN _Tipo_TRAMITE nvarchar(255),
-    IN _Objeto TEXT,
-	IN _PDF nvarchar(255),
+    IN _Objeto TEXT, 
+	IN _PDF nvarchar(255), 
 	IN _TEXTO TEXT,
 
 	IN _Lst_empresas nvarchar(255),
 	IN _Importe FLOAT,
-
+    
 	IN _modalidad nvarchar(255),
 	IN _tipo nvarchar(255),
 	IN _tramitacion nvarchar(255),
@@ -804,9 +821,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data`(
 	IN _materias nvarchar(255),
 	IN _materias_cpv nvarchar(255),
 	IN _observaciones nvarchar(255),
-	IN _adjudicador  nvarchar(255)
-
-
+	IN _adjudicador  nvarchar(255)   
+    
+    
 )
 BEGIN
 	DECLARE _Contador int;
@@ -822,7 +839,7 @@ BEGIN
     DECLARE code_procedimiento_contrato nvarchar(3);
     DECLARE code_tramitacion_contrato nvarchar(3);
     DECLARE code_modalidad_contrato nvarchar(3);
-
+    
 	DECLARE L_adjudicador int;
 	DECLARE L_ambito_geografico int;
  	DECLARE L_precio int;
@@ -830,15 +847,15 @@ BEGIN
 	DECLARE L_modalidad int;
  	DECLARE L_Tipo_TRAMITE int;
 	DECLARE L_procedimiento int;
-
+    
     SET L_adjudicador = LENGTH(_adjudicador);
-    SET L_ambito_geografico= LENGTH(_ambito_geografico);
-    SET L_precio= LENGTH(_precio);
-    SET L_tipo= LENGTH(_tipo);
+    SET L_ambito_geografico= LENGTH(_ambito_geografico);    
+    SET L_precio= LENGTH(_precio);     
+    SET L_tipo= LENGTH(_tipo);    
     SET L_modalidad= LENGTH(_modalidad);
-    SET L_Tipo_TRAMITE= LENGTH(_Tipo_TRAMITE);
+    SET L_Tipo_TRAMITE= LENGTH(_Tipo_TRAMITE);      
     SET L_procedimiento= LENGTH(_procedimiento);
-
+    
 
 	IF LENGTH(_adjudicador)>0 THEN
 		SET _counter= ( SELECT count(*) FROM _adjudicador_aux where descripcion = _adjudicador);
@@ -850,7 +867,7 @@ BEGIN
 	   END IF;
 	   SET code_adjudicador = (SELECT codigo FROM _adjudicador_aux where Descripcion = _adjudicador);
    END IF;
-
+   
    IF LENGTH(_ambito_geografico)>0 THEN
 	   SET _counter= ( SELECT count(*) FROM _ambito_geografico_aux where descripcion = _ambito_geografico);
 	   IF _counter=0 THEN
@@ -861,7 +878,7 @@ BEGIN
 	   END IF;
 	   SET code_geografico = (SELECT codigo FROM _ambito_geografico_aux where Descripcion = _ambito_geografico);
    END IF;
-
+   
    IF LENGTH(_precio)>0 THEN
 	   SET _counter= ( SELECT count(*) FROM _tabla_precio_contrato_aux where descripcion = _precio);
 	   IF _counter=0 THEN
@@ -872,8 +889,8 @@ BEGIN
 	   END IF;
 	   SET code_tabla_precio_contrato_aux = (SELECT codigo FROM _tabla_precio_contrato_aux where Descripcion = _precio);
 	END IF;
-
-   IF LENGTH(_Tipo_BOLETIN)>0 THEN
+	
+   IF LENGTH(_Tipo_BOLETIN)>0 THEN 
 	   SET _counter= ( SELECT count(*) FROM _tipo_contrato_aux where descripcion = _Tipo_BOLETIN);
 	   IF _counter=0 THEN
 			INSERT INTO _tipo_contrato_aux (descripcion,longitud) values (_tipo,L_tipo);
@@ -883,8 +900,8 @@ BEGIN
 	   END IF;
 	   SET code_tipo_contrato = (SELECT codigo FROM _tipo_contrato_aux where Descripcion = _Tipo_BOLETIN);
 	END IF;
-
-	IF LENGTH(_modalidad)>0 THEN
+	
+	IF LENGTH(_modalidad)>0 THEN 
 	   SET _counter= ( SELECT count(*) FROM _tipo_modalidad_aux where descripcion = _modalidad);
 	   IF _counter=0 THEN
 			INSERT INTO _tipo_modalidad_aux (descripcion,longitud) values (_modalidad,L_modalidad);
@@ -894,8 +911,8 @@ BEGIN
 	   END IF;
 	   SET code_modalidad_contrato = (SELECT codigo FROM _tipo_modalidad_aux where Descripcion = _modalidad);
 	END IF;
-
-	  IF LENGTH(_Tipo_TRAMITE)>0 THEN
+        
+	  IF LENGTH(_Tipo_TRAMITE)>0 THEN   
 		  SET _counter= ( SELECT count(*) FROM _tipo_tramitacion_aux where descripcion = _Tipo_TRAMITE);
 		   IF _counter=0 THEN
 				INSERT INTO _tipo_tramitacion_aux (descripcion,longitud) values (_Tipo_TRAMITE,L_Tipo_TRAMITE);
@@ -905,8 +922,8 @@ BEGIN
 		   END IF;
 		   SET code_tramitacion_contrato = (SELECT codigo FROM _tipo_tramitacion_aux where Descripcion = _Tipo_TRAMITE);
 		END IF;
-
-		IF LENGTH(_procedimiento)>0 THEN
+        
+		IF LENGTH(_procedimiento)>0 THEN  
 		  SET _counter= ( SELECT count(*) FROM _tipo_procedimiento_aux where descripcion = _procedimiento);
 		   IF _counter=0 THEN
 				INSERT INTO _tipo_procedimiento_aux (descripcion,longitud) values (_procedimiento,L_procedimiento);
@@ -919,9 +936,9 @@ BEGIN
 
 
 
-    SET _Contador = 0;
+    SET _Contador = 0;    
     while _Contador < _COUNT_CONTRATISTAS do
-
+    
 		SET _UTE = (SELECT LOCATE("UTE",_Lst_empresas));
         IF _UTE > 0 THEN
 			SET _Empresa = (SELECT SPLIT_STR(_Lst_empresas, ';', _Contador+1));
@@ -929,57 +946,57 @@ BEGIN
 			SET _Empresa = (SELECT _Lst_empresas);
         END IF;
         SET _Contador = _Contador + 1;
-
+        
         SET _counter=( SELECT count(*) FROM boletin_contratos where BOLETIN = _BOLETIN AND Empresa = _Empresa);
 		IF _counter = 0 THEN
 			INSERT INTO boletin_contratos (
-				Empresa,
+				Empresa, 
 				BOLETIN,
 				counter,
-				importe) VALUES (
+				importe) VALUES ( 
 				_Empresa ,
-				_BOLETIN,
+				_BOLETIN, 
 				_Contador,
-				_importe);
+				_importe); 
 		END IF;
 
     END WHILE;
-
-	SET _Contador = 0;
-	while _Contador < _COUNT_MATERIAS do
+    
+	SET _Contador = 0;    
+	while _Contador < _COUNT_MATERIAS do	
 		SET _Materia = (SELECT SPLIT_STR(_materias, ';', _Contador+1));
 		INSERT INTO boletin_materias (BOLETIN,COD_Materia) VALUES(_BOLETIN,_Materia);
 		SET _Contador = _Contador + 1;
-	END WHILE;
-
+	END WHILE;   
+        
 	SET _counter=( SELECT count(*) FROM strings where BOLETIN = _BOLETIN );
 	IF _counter = 0 THEN
-		INSERT INTO strings (BOLETIN, _keys, Importes) VALUES (_BOLETIN, _Empresa, _Importe)	;
+		INSERT INTO strings (BOLETIN, _keys, Importes) VALUES (_BOLETIN, _Empresa, _Importe)	; 
 	END IF;
 
 
 	UPDATE lastread SET ID_LAST = _BOLETIN WHERE Type='BOE';
 
-	SET _counter=( SELECT count(*) FROM boletin where BOLETIN = _BOLETIN );
+	SET _counter=( SELECT count(*) FROM boletin where BOLETIN = _BOLETIN ); 
 	IF _counter = 0 THEN
 			INSERT INTO boletin ( Type,
-			SUMARIO,
-			BOLETIN,
-			Tipo_BOLETIN,
+			SUMARIO, 
+			BOLETIN, 
+			Tipo_BOLETIN, 
 			Tipo_TRAMITE,
 			Tipo_ADJUDICADOR,
 			COD_Ambito_Geografico,
-			COD_Tabla_Precio,
+			COD_Tabla_Precio, 
 			Objeto_Contrato,
 			dia,
 			mes,
-			anyo,
-			PDF,
-			TEXTO) VALUES (
+			anyo, 
+			PDF, 
+			TEXTO) VALUES ( 
 			_Type,
-			_SUMARIO,
-			_BOLETIN,
-			code_tipo_contrato,
+			_SUMARIO, 
+			_BOLETIN, 
+			code_tipo_contrato, 
 			code_tramitacion_contrato,
 			code_adjudicador,
 			code_geografico,
@@ -987,11 +1004,11 @@ BEGIN
 			_objeto,
 			_Dia,
 			_Mes,
-			_Anyo,
-			_PDF,
+			_Anyo, 
+			_PDF, 
 			_TEXTO)	;
             SELECT last_insert_id() as ID;
-	END IF;
+	END IF;        
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1008,16 +1025,16 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BOCM`(
-
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BOCM`(	
+	
     IN _COUNT_CONTRATISTAS INT,
     IN _Dia CHAR(2),
     IN _Mes CHAR(2),
     IN _Anyo CHAR(4),
     IN _SUMARIO nvarchar(18),
-	IN _BOLETIN nvarchar(18),
-	IN _Tipo_TRAMITE nvarchar(255),
-	IN _PDF nvarchar(255),
+	IN _BOLETIN nvarchar(18), 
+	IN _Tipo_TRAMITE nvarchar(255), 
+	IN _PDF nvarchar(255), 
 	IN _TEXTO TEXT,
 
 	IN _Lst_empresas nvarchar(255),
@@ -1034,11 +1051,11 @@ BEGIN
 
     DECLARE code_tramitacion_contrato nvarchar(3);
 
-
+    
     SET _counter=( SELECT count(*) FROM boletin where BOLETIN = _BOCM AND Type='BOCM');
-
+     
     IF _counter = 0 THEN
-		IF LENGTH(_Tipo_TRAMITE)>0 THEN
+		IF LENGTH(_Tipo_TRAMITE)>0 THEN   
 		  SET _counter= ( SELECT count(*) FROM _tipo_tramitacion_aux where descripcion = _Tipo_TRAMITE);
 		   IF _counter=0 THEN
 				INSERT INTO _tipo_tramitacion_aux (descripcion,longitud) values (_Tipo_TRAMITE,L_Tipo_TRAMITE);
@@ -1050,14 +1067,14 @@ BEGIN
 		END IF;
 	END IF;
 
-    SET _Contador = 0;
+    SET _Contador = 0;    
     while _Contador < _COUNT_CONTRATISTAS do
-
+    
 		SET _UTE = (SELECT LOCATE("UTE",_Lst_empresas));
         IF _UTE>0 THEN
 			SET _UTE = 1;
             SET _Lst_empresas = REPLACE(_Lst_empresas,'UTE','');
-        END IF;
+        END IF;    
         IF LOCATE(";",_Lst_Empresas) > 0 THEN
 			SET _Empresa = (SELECT SPLIT_STR(_Lst_empresas, ';', _Contador+1));
             IF LOCATE(";",_importe) > 0 THEN
@@ -1070,68 +1087,68 @@ BEGIN
             SET __IMPORTE = _importe ;
         END IF;
         SET _Contador = _Contador + 1;
-
+        
         SET _counter=( SELECT count(*) FROM boletin_contratos where BOLETIN = _BOLETIN AND Empresa = _Empresa);
 		IF _counter = 0 THEN
 /*			SET _ID_EMPRESA = (SELECT ID From borme_empresa WHERE Name= _Empresa );
             IF NOT ISNULL(_ID_EMPRESA) THEN
-				UPDATE borme_empresa SET nBOE = nBOE + 1 WHERE Id =_ID_EMPRESA;
+				UPDATE borme_empresa SET nBOE = nBOE + 1 WHERE Id =_ID_EMPRESA;  
             END IF;
-*/
+*/            
 			INSERT INTO boletin_contratos (
 				Id_Empresa,
-				Empresa,
+				Empresa, 
 				BOLETIN,
 				counter,
-				importe) VALUES (_ID_EMPRESA,
+				importe) VALUES (_ID_EMPRESA, 
 				_Empresa ,
-				_BOLETIN,
+				_BOLETIN, 
 				_Contador,
-				CAST(__IMPORTE as DECIMAL(12,2)) );
+				CAST(__IMPORTE as DECIMAL(12,2)) ); 
 		END IF;
 
     END WHILE;
 
 	UPDATE lastread SET ID_LAST = _BOLETIN WHERE Type='BOE' AND Anyo=_Anyo;
 
-	SET _counter=( SELECT count(*) FROM boletin where BOLETIN = _BOLETIN );
+	SET _counter=( SELECT count(*) FROM boletin where BOLETIN = _BOLETIN ); 
 	IF _counter = 0 THEN
 			INSERT INTO boletin_textos (BOLETIN,PDF,Objeto_Contrato,TEXTO,observaciones) VALUES (_BOLETIN,_PDF,_objeto,_TEXTO,_observaciones);
-
+            
 			INSERT INTO boletin ( Type,
-			SUMARIO,
-			BOLETIN,
+			SUMARIO, 
+			BOLETIN, 
             UTE,
             _P,
 
 			dia,
 			mes,
-			anyo) VALUES (
+			anyo) VALUES ( 
 			_Type,
-			_SUMARIO,
-			_BOLETIN,
+			_SUMARIO, 
+			_BOLETIN, 
             _UTE,
             _COUNT_PARRAFOS,
 
-
+			
 			_Dia,
 			_Mes,
 			_Anyo)	;
-
+            
             SET _counter= last_insert_id() ;
-
+            
             INSERT INTO boletin_aux (BOLETIN,
 
 				Tipo_TRAMITE) VALUES (_BOLETIN,
 
-				code_tramitacion_contrato);
-
-            SELECT _counter as ID;
+				code_tramitacion_contrato);  
+            
+            SELECT _counter as ID;	
 	END IF;
- /*
+ /*   
     SET _counter=( SELECT count(*) FROM strings where BOLETIN = _BOCM );
     IF _counter = 0 THEN
-		INSERT INTO strings (Type, BOLETIN, _keys, Importes) VALUES ('BOCM', _BOCM, _Empresa, _Importe)	;
+		INSERT INTO strings (Type, BOLETIN, _keys, Importes) VALUES ('BOCM', _BOCM, _Empresa, _Importe)	;    
 	END IF;
     UPDATE lastread SET ID_LAST = _BOCM WHERE Type= 'BOCM';
 */
@@ -1152,7 +1169,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BOE`(
-
+	
     IN _COUNT_PARRAFOS INT,
     IN _COUNT_CONTRATISTAS INT,
     IN _COUNT_MATERIAS INT,
@@ -1161,16 +1178,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BOE`(
     IN _Mes CHAR(2),
     IN _Anyo CHAR(4),
 	IN _SUMARIO nvarchar(18),
-	IN _BOLETIN nvarchar(18),
+	IN _BOLETIN nvarchar(18), 
     IN _Tipo_BOLETIN nvarchar(255),
 	IN _Tipo_TRAMITE nvarchar(255),
-    IN _Objeto TEXT,
-	IN _PDF nvarchar(255),
+    IN _Objeto TEXT, 
+	IN _PDF nvarchar(255), 
 	IN _TEXTO TEXT,
 
 	IN _Lst_empresas text,
 	IN _Importe text,
-
+    
 	IN _modalidad nvarchar(255),
 	IN _tipo nvarchar(255),
 	IN _tramitacion nvarchar(255),
@@ -1181,10 +1198,10 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BOE`(
 	IN _materias nvarchar(255),
 	IN _materias_cpv nvarchar(255),
 	IN _observaciones nvarchar(255),
-	IN _adjudicador  nvarchar(255),
+	IN _adjudicador  nvarchar(255),   
     IN _cargo nvarchar(255),
     IN _responsable nvarchar(255)
-
+    
 )
 BEGIN
 	DECLARE _Contador int;
@@ -1195,38 +1212,38 @@ BEGIN
 	DECLARE _counter int;
     DECLARE __IMPORTE float;
     DECLARE code_geografico nvarchar(3);
-
+    
     DECLARE code_adjudicador nvarchar(5);
     DECLARE code_cargo nvarchar(6);
     DECLARE code_responsable nvarchar(6);
-
+    
     DECLARE code_tipo_contrato nvarchar(3);
     DECLARE code_tabla_precio_contrato_aux nvarchar(2);
     DECLARE code_procedimiento_contrato nvarchar(3);
     DECLARE code_tramitacion_contrato nvarchar(3);
     DECLARE code_modalidad_contrato nvarchar(3);
-
+    
 	DECLARE L_cargo int;
     DECLARE L_responsable int;
 	DECLARE L_adjudicador int;
-
+    
 	DECLARE L_ambito_geografico int;
  	DECLARE L_precio int;
 	DECLARE L_tipo int;
 	DECLARE L_modalidad int;
  	DECLARE L_Tipo_TRAMITE int;
 	DECLARE L_procedimiento int;
-
+    
     SET L_cargo = LENGTH(_cargo);
     SET L_responsable = LENGTH(_responsable);
     SET L_adjudicador = LENGTH(_adjudicador);
-    SET L_ambito_geografico= LENGTH(_ambito_geografico);
-    SET L_precio= LENGTH(_precio);
-    SET L_tipo= LENGTH(_tipo);
+    SET L_ambito_geografico= LENGTH(_ambito_geografico);    
+    SET L_precio= LENGTH(_precio);     
+    SET L_tipo= LENGTH(_tipo);    
     SET L_modalidad= LENGTH(_modalidad);
-    SET L_Tipo_TRAMITE= LENGTH(_Tipo_TRAMITE);
+    SET L_Tipo_TRAMITE= LENGTH(_Tipo_TRAMITE);      
     SET L_procedimiento= LENGTH(_procedimiento);
-
+    
 
 	IF LENGTH(_responsable)>0 THEN
 		SET _counter= ( SELECT count(*) FROM _respons_adjudicador_aux where descripcion = _responsable);
@@ -1250,7 +1267,7 @@ BEGIN
 	   END IF;
 	   SET code_cargo = (SELECT codigo FROM _cargo_adjudicador_aux where Descripcion = _cargo);
    END IF;
-
+ 
  	IF LENGTH(_adjudicador)>0 THEN
 		SET _counter= ( SELECT count(*) FROM _adjudicador_aux where descripcion = _adjudicador);
 		IF _counter=0 THEN
@@ -1261,9 +1278,9 @@ BEGIN
 	   END IF;
 	   SET code_adjudicador = (SELECT codigo FROM _adjudicador_aux where Descripcion = _adjudicador);
    END IF;
-
-
-
+ 
+ 
+ 
    IF LENGTH(_ambito_geografico)>0 THEN
 	   SET _counter= ( SELECT count(*) FROM _ambito_geografico_aux where descripcion = _ambito_geografico);
 	   IF _counter=0 THEN
@@ -1273,7 +1290,7 @@ BEGIN
 	   END IF;
 	   SET code_geografico = (SELECT codigo FROM _ambito_geografico_aux where Descripcion = _ambito_geografico);
    END IF;
-
+   
    IF LENGTH(_precio)>0 THEN
 	   SET _counter= ( SELECT count(*) FROM _tabla_precio_contrato_aux where descripcion = _precio);
 	   IF _counter=0 THEN
@@ -1284,8 +1301,8 @@ BEGIN
 	   END IF;
 	   SET code_tabla_precio_contrato_aux = (SELECT codigo FROM _tabla_precio_contrato_aux where Descripcion = _precio);
 	END IF;
-
-   IF LENGTH(_Tipo_BOLETIN)>0 THEN
+	
+   IF LENGTH(_Tipo_BOLETIN)>0 THEN 
 	   SET _counter= ( SELECT count(*) FROM _tipo_contrato_aux where descripcion = _Tipo_BOLETIN);
 	   IF _counter=0 THEN
 			INSERT INTO _tipo_contrato_aux (descripcion,longitud) values (_tipo,L_tipo);
@@ -1295,8 +1312,8 @@ BEGIN
 	   END IF;
 	   SET code_tipo_contrato = (SELECT codigo FROM _tipo_contrato_aux where Descripcion = _Tipo_BOLETIN);
 	END IF;
-
-	IF LENGTH(_modalidad)>0 THEN
+	
+	IF LENGTH(_modalidad)>0 THEN 
 	   SET _counter= ( SELECT count(*) FROM _tipo_modalidad_aux where descripcion = _modalidad);
 	   IF _counter=0 THEN
 			INSERT INTO _tipo_modalidad_aux (descripcion,longitud) values (_modalidad,L_modalidad);
@@ -1306,8 +1323,8 @@ BEGIN
 	   END IF;
 	   SET code_modalidad_contrato = (SELECT codigo FROM _tipo_modalidad_aux where Descripcion = _modalidad);
 	END IF;
-
-	  IF LENGTH(_Tipo_TRAMITE)>0 THEN
+        
+	  IF LENGTH(_Tipo_TRAMITE)>0 THEN   
 		  SET _counter= ( SELECT count(*) FROM _tipo_tramitacion_aux where descripcion = _Tipo_TRAMITE);
 		   IF _counter=0 THEN
 				INSERT INTO _tipo_tramitacion_aux (descripcion,longitud) values (_Tipo_TRAMITE,L_Tipo_TRAMITE);
@@ -1317,8 +1334,8 @@ BEGIN
 		   END IF;
 		   SET code_tramitacion_contrato = (SELECT codigo FROM _tipo_tramitacion_aux where Descripcion = _Tipo_TRAMITE);
 		END IF;
-
-		IF LENGTH(_procedimiento)>0 THEN
+        
+		IF LENGTH(_procedimiento)>0 THEN  
 		  SET _counter= ( SELECT count(*) FROM _tipo_procedimiento_aux where descripcion = _procedimiento);
 		   IF _counter=0 THEN
 				INSERT INTO _tipo_procedimiento_aux (descripcion,longitud) values (_procedimiento,L_procedimiento);
@@ -1331,14 +1348,14 @@ BEGIN
 
 
 
-    SET _Contador = 0;
+    SET _Contador = 0;    
     while _Contador < _COUNT_CONTRATISTAS do
-
+    
 		SET _UTE = (SELECT LOCATE("UTE",_Lst_empresas));
         IF _UTE>0 THEN
 			SET _UTE = 1;
             SET _Lst_empresas = REPLACE(_Lst_empresas,'UTE','');
-        END IF;
+        END IF;    
         IF LOCATE(";",_Lst_Empresas) > 0 THEN
 			SET _Empresa = (SELECT SPLIT_STR(_Lst_empresas, ';', _Contador+1));
             IF LOCATE(";",_importe) > 0 THEN
@@ -1351,95 +1368,95 @@ BEGIN
             SET __IMPORTE = _importe ;
         END IF;
         SET _Contador = _Contador + 1;
-
+        
         SET _counter=( SELECT count(*) FROM boletin_contratos where BOLETIN = _BOLETIN AND Empresa = _Empresa);
 		IF _counter = 0 THEN
 /*			SET _ID_EMPRESA = (SELECT ID From borme_empresa WHERE Name= _Empresa );
             IF NOT ISNULL(_ID_EMPRESA) THEN
-				UPDATE borme_empresa SET nBOE = nBOE + 1 WHERE Id =_ID_EMPRESA;
+				UPDATE borme_empresa SET nBOE = nBOE + 1 WHERE Id =_ID_EMPRESA;  
             END IF;
-*/
+*/            
 			INSERT INTO boletin_contratos (
 				Id_Empresa,
-				Empresa,
+				Empresa, 
 				BOLETIN,
 				counter,
-				importe) VALUES (_ID_EMPRESA,
+				importe) VALUES (_ID_EMPRESA, 
 				_Empresa ,
-				_BOLETIN,
+				_BOLETIN, 
 				_Contador,
-				CAST(__IMPORTE as DECIMAL(12,2)) );
+				CAST(__IMPORTE as DECIMAL(12,2)) ); 
 		END IF;
 
     END WHILE;
-
-	SET _Contador = 0;
-	while _Contador < _COUNT_MATERIAS do
+    
+	SET _Contador = 0;    
+	while _Contador < _COUNT_MATERIAS do	
 		SET _Materia = (SELECT SPLIT_STR(_materias, ';', _Contador+1));
 		INSERT INTO boletin_materias (BOLETIN,COD_Materia) VALUES(_BOLETIN,_Materia);
 		SET _Contador = _Contador + 1;
-	END WHILE;
-/*
+	END WHILE;   
+/*        
 	SET _counter=( SELECT count(*) FROM strings where BOLETIN = _BOLETIN );
 	IF _counter = 0 THEN
-		INSERT INTO strings (Type, BOLETIN, _keys, Importes) VALUES ('BOE', _BOLETIN, _Empresa, _Importe)	;
+		INSERT INTO strings (Type, BOLETIN, _keys, Importes) VALUES ('BOE', _BOLETIN, _Empresa, _Importe)	; 
 	END IF;
-*/
-
+*/    
+    
 	UPDATE lastread SET ID_LAST = _BOLETIN WHERE Type='BOE' AND Anyo=_Anyo;
 
-	SET _counter=( SELECT count(*) FROM boletin where BOLETIN = _BOLETIN );
+	SET _counter=( SELECT count(*) FROM boletin where BOLETIN = _BOLETIN ); 
 	IF _counter = 0 THEN
 			INSERT INTO boletin_textos (BOLETIN,PDF,Objeto_Contrato,TEXTO,observaciones) VALUES (_BOLETIN,_PDF,_objeto,_TEXTO,_observaciones);
-
+            
 			INSERT INTO boletin ( Type,
-			SUMARIO,
-			BOLETIN,
+			SUMARIO, 
+			BOLETIN, 
             UTE,
             _P,
 
 			dia,
 			mes,
-			anyo) VALUES (
+			anyo) VALUES ( 
 			_Type,
-			_SUMARIO,
-			_BOLETIN,
+			_SUMARIO, 
+			_BOLETIN, 
             _UTE,
             _COUNT_PARRAFOS,
 
-
+			
 			_Dia,
 			_Mes,
 			_Anyo)	;
-
+            
             SET _counter= last_insert_id() ;
-
+            
             INSERT INTO boletin_aux (BOLETIN,
-				Tipo_BOLETIN,
+				Tipo_BOLETIN, 
 				Tipo_TRAMITE,
                 Tipo_PROCEDIMIENTO,
 				Tipo_ADJUDICADOR,
-
+				
 				Code_ADJUDICADOR,
 				Responsable_ADJUDICADOR,
-
+				
 				COD_Ambito_Geografico,
 				COD_Tabla_Precio) VALUES (_BOLETIN,
-
-				code_tipo_contrato,
+                
+				code_tipo_contrato, 
 				code_tramitacion_contrato,
 				code_procedimiento_contrato,
-
+                
 				code_adjudicador,
 				code_cargo,
 				code_responsable,
-
+				
 				code_geografico,
-				code_tabla_precio_contrato_aux
-			);
-
+				code_tabla_precio_contrato_aux               
+			);  
+            
             SELECT _counter as ID;
-	END IF;
+	END IF;        
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1457,7 +1474,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME`(
-
+	
     IN _Dia CHAR(2),
     IN _Mes CHAR(2),
     IN _Anyo CHAR(4),
@@ -1465,17 +1482,17 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME`(
 	IN _SUMARIO nvarchar(18),
 	IN _BOLETIN nvarchar(18),
     IN _ambito_geografico nvarchar(255),
-	IN _PDF nvarchar(255)
-
+	IN _PDF nvarchar(255) 
+	   
 )
 BEGIN
 
 	DECLARE _counter int;
     DECLARE code_geografico nvarchar(3);
 	DECLARE L_ambito_geografico int;
-
-    SET L_ambito_geografico= LENGTH(_ambito_geografico);
-
+    
+    SET L_ambito_geografico= LENGTH(_ambito_geografico);    
+    
    IF LENGTH(_ambito_geografico)>0 THEN
 	   SET _counter= ( SELECT count(*) FROM _ambito_geografico_aux where descripcion = _ambito_geografico);
 	   IF _counter=0 THEN
@@ -1488,40 +1505,40 @@ BEGIN
    END IF;
 
 	/*UPDATE lastread SET ID_LAST = _BOLETIN WHERE Type='BORME' AND Anyo=_Anyo;*/
-
+    
 
 	SET _counter=( SELECT count(*) FROM boletin_textos where BOLETIN = _BOLETIN );
 	IF _counter = 0 THEN
 		INSERT INTO boletin_textos (BOLETIN,PDF) VALUES (_BOLETIN,_PDF);
 	End If;
-
-	SET _counter=( SELECT count(*) FROM boletin where BOLETIN = _BOLETIN );
+            
+	SET _counter=( SELECT count(*) FROM boletin where BOLETIN = _BOLETIN ); 
 	IF _counter = 0 THEN
-			INSERT INTO boletin (
+			INSERT INTO boletin ( 
             Type,
-			SUMARIO,
-			BOLETIN,
+			SUMARIO, 
+			BOLETIN, 
 			dia,
 			mes,
-			anyo ) VALUES (
+			anyo ) VALUES ( 
 			_Type,
-			_SUMARIO,
-			_BOLETIN,
+			_SUMARIO, 
+			_BOLETIN, 
 			_Dia,
 			_Mes,
 			_Anyo );
-
+            
             SET _counter= last_insert_id() ;
-
+            
             INSERT INTO boletin_aux (BOLETIN,
 				COD_Ambito_Geografico
 				) VALUES (_BOLETIN,
-
-
-
-				code_geografico
-			);
-	END IF;
+                
+			
+				
+				code_geografico        
+			); 
+	END IF;        
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1549,19 +1566,19 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Diario`(
     IN _Relacion_Id INT,
     IN _T_Relacion INT,
     IN _Activo int,
-    IN _type nvarchar(100),
+    IN _type nvarchar(100), 
     IN _key nvarchar(100),
     IN _value text
-
+    
 )
 BEGIN
 	DECLARE _counter int;
     DECLARE _IdDiario INT;
-
-    INSERT INTO borme_diario (BOLETIN,BOLETIN_Id,Dia,Mes,Anyo,Provincia,Empresa_Id, Relation_Id,T_Relation,Type,_key,_value)
+		
+    INSERT INTO borme_diario (BOLETIN,BOLETIN_Id,Dia,Mes,Anyo,Provincia,Empresa_Id, Relation_Id,T_Relation,Type,_key,_value) 
             VALUES ( _BOLETIN,_BOLETIN_ID,_Dia,_Mes,_Anyo,_Provincia,_Empresa_Id,_Relacion_Id,_T_Relacion,_type,_key,_value);
 	SET _IdDiario = (SELECT last_insert_id() as Id );
-
+            
 	IF _Empresa_Id>0 AND _Relacion_Id>0 THEN
 		SET _counter = (SELECT count(*) FROM borme_relaciones WHERE Diario_Id= _IdDiario);
 		IF _counter=0 THEN
@@ -1574,7 +1591,7 @@ BEGIN
                 ELSE
 					UPDATE borme_empresa SET ActiveRelations = ActiveRelations+1 WHERE id = _Relacion_Id;
                 END IF;
-			ELSE
+			ELSE 
 				IF _key = 'Auditor' THEN
 					UPDATE borme_directivo SET ActiveRelations = ActiveRelations+1, JuridicId=1 WHERE id = _Relacion_Id;
                 ELSE
@@ -1583,7 +1600,7 @@ BEGIN
             END IF;
 		END IF;
 	END IF;
-
+        
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1604,17 +1621,17 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Na
 BEGIN
 	DECLARE _counter int;
     SET _counter=(SELECT count(*) FROM borme_directivo where Name = _Name);
-
+    
     IF _counter = 0 THEN
 		BEGIN
 			INSERT INTO borme_directivo  (Name) VALUES (_Name);
 			SELECT last_insert_id() as Id , i as i , _Name as Name;
         END;
-	ELSE
+	ELSE 
 		SELECT Id , Name, i as i FROM borme_directivo WHERE Name=_Name;
 	END IF;
-
-
+	
+    
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1637,29 +1654,29 @@ BEGIN
     DECLARE _xBOE  INT;
     DECLARE _xBOCM  INT;
     DECLARE ID_empresa INT;
-
+    
     SET _counter=(SELECT count(*) FROM borme_empresa where Name = _Name);
-
+    
     IF _counter = 0 THEN
 		BEGIN
 			INSERT INTO borme_empresa  (Name) VALUES (_Name);
 			SELECT last_insert_id() as Id , i as i , _Name as Name;
             SET ID_empresa= last_insert_id();
-
+            
             SET _xBOE = (SELECT Count(*) FROM boletin_contratos INNER JOIN boletin ON boletin_contratos.BOLETIN=boletin.BOLETIN WHERE boletin_contratos.Empresa = _Name AND boletin.Type='BOE');
 			SET _xBOCM = (SELECT Count(*) FROM boletin_contratos INNER JOIN boletin ON boletin_contratos.BOLETIN=boletin.BOLETIN WHERE boletin_contratos.Empresa = _Name AND boletin.Type='BOCM');
-
+			
 			UPDATE boletin_contratos SET Id_Empresa = ID_empresa WHERE Empresa = _Name;
 			UPDATE borme_empresa SET nBOE =_xBOE, nBOCM=_xBOCM WHERE Id=ID_empresa;
         END;
-	ELSE
+	ELSE 
 		SET ID_empresa= (SELECT Id FROM borme_empresa WHERE Name=_Name);
 	END IF;
+    
 
-
-
+    
     SELECT Id , Name, i as i FROM borme_empresa WHERE Id=ID_empresa;
-
+    
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1677,7 +1694,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_xxxxxxxxxxxxx`(
-
+	
     IN _COUNT_CONTRATISTAS INT,
     IN _COUNT_MATERIAS INT,
     IN _Type nvarchar(18),
@@ -1685,16 +1702,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_xxxxxxxxxxxxx`(
     IN _Mes CHAR(2),
     IN _Anyo CHAR(4),
 	IN _SUMARIO nvarchar(18),
-	IN _BOLETIN nvarchar(18),
+	IN _BOLETIN nvarchar(18), 
     IN _Tipo_BOLETIN nvarchar(255),
 	IN _Tipo_TRAMITE nvarchar(255),
-    IN _Objeto TEXT,
-	IN _PDF nvarchar(255),
+    IN _Objeto TEXT, 
+	IN _PDF nvarchar(255), 
 	IN _TEXTO TEXT,
 
 	IN _Lst_empresas nvarchar(255),
 	IN _Importe FLOAT,
-
+    
 	IN _modalidad nvarchar(255),
 	IN _tipo nvarchar(255),
 	IN _tramitacion nvarchar(255),
@@ -1705,9 +1722,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_xxxxxxxxxxxxx`(
 	IN _materias nvarchar(255),
 	IN _materias_cpv nvarchar(255),
 	IN _observaciones nvarchar(255),
-	IN _adjudicador  nvarchar(255)
-
-
+	IN _adjudicador  nvarchar(255)   
+    
+    
 )
 BEGIN
 	DECLARE _Contador int;
@@ -1723,7 +1740,7 @@ BEGIN
     DECLARE code_procedimiento_contrato nvarchar(3);
     DECLARE code_tramitacion_contrato nvarchar(3);
     DECLARE code_modalidad_contrato nvarchar(3);
-
+    
 	DECLARE L_adjudicador int;
 	DECLARE L_ambito_geografico int;
  	DECLARE L_precio int;
@@ -1731,15 +1748,15 @@ BEGIN
 	DECLARE L_modalidad int;
  	DECLARE L_Tipo_TRAMITE int;
 	DECLARE L_procedimiento int;
-
+    
     SET L_adjudicador = LENGTH(_adjudicador);
-    SET L_ambito_geografico= LENGTH(_ambito_geografico);
-    SET L_precio= LENGTH(_precio);
-    SET L_tipo= LENGTH(_tipo);
+    SET L_ambito_geografico= LENGTH(_ambito_geografico);    
+    SET L_precio= LENGTH(_precio);     
+    SET L_tipo= LENGTH(_tipo);    
     SET L_modalidad= LENGTH(_modalidad);
-    SET L_Tipo_TRAMITE= LENGTH(_Tipo_TRAMITE);
+    SET L_Tipo_TRAMITE= LENGTH(_Tipo_TRAMITE);      
     SET L_procedimiento= LENGTH(_procedimiento);
-
+    
 
 	IF LENGTH(_adjudicador)>0 THEN
 		SET _counter= ( SELECT count(*) FROM _adjudicador_aux where descripcion = _adjudicador);
@@ -1751,7 +1768,7 @@ BEGIN
 	   END IF;
 	   SET code_adjudicador = (SELECT codigo FROM _adjudicador_aux where Descripcion = _adjudicador);
    END IF;
-
+   
    IF LENGTH(_ambito_geografico)>0 THEN
 	   SET _counter= ( SELECT count(*) FROM _ambito_geografico_aux where descripcion = _ambito_geografico);
 	   IF _counter=0 THEN
@@ -1762,7 +1779,7 @@ BEGIN
 	   END IF;
 	   SET code_geografico = (SELECT codigo FROM _ambito_geografico_aux where Descripcion = _ambito_geografico);
    END IF;
-
+   
    IF LENGTH(_precio)>0 THEN
 	   SET _counter= ( SELECT count(*) FROM _tabla_precio_contrato_aux where descripcion = _precio);
 	   IF _counter=0 THEN
@@ -1773,8 +1790,8 @@ BEGIN
 	   END IF;
 	   SET code_tabla_precio_contrato_aux = (SELECT codigo FROM _tabla_precio_contrato_aux where Descripcion = _precio);
 	END IF;
-
-   IF LENGTH(_Tipo_BOLETIN)>0 THEN
+	
+   IF LENGTH(_Tipo_BOLETIN)>0 THEN 
 	   SET _counter= ( SELECT count(*) FROM _tipo_contrato_aux where descripcion = _Tipo_BOLETIN);
 	   IF _counter=0 THEN
 			INSERT INTO _tipo_contrato_aux (descripcion,longitud) values (_tipo,L_tipo);
@@ -1784,8 +1801,8 @@ BEGIN
 	   END IF;
 	   SET code_tipo_contrato = (SELECT codigo FROM _tipo_contrato_aux where Descripcion = _Tipo_BOLETIN);
 	END IF;
-
-	IF LENGTH(_modalidad)>0 THEN
+	
+	IF LENGTH(_modalidad)>0 THEN 
 	   SET _counter= ( SELECT count(*) FROM _tipo_modalidad_aux where descripcion = _modalidad);
 	   IF _counter=0 THEN
 			INSERT INTO _tipo_modalidad_aux (descripcion,longitud) values (_modalidad,L_modalidad);
@@ -1795,8 +1812,8 @@ BEGIN
 	   END IF;
 	   SET code_modalidad_contrato = (SELECT codigo FROM _tipo_modalidad_aux where Descripcion = _modalidad);
 	END IF;
-
-	  IF LENGTH(_Tipo_TRAMITE)>0 THEN
+        
+	  IF LENGTH(_Tipo_TRAMITE)>0 THEN   
 		  SET _counter= ( SELECT count(*) FROM _tipo_tramitacion_aux where descripcion = _Tipo_TRAMITE);
 		   IF _counter=0 THEN
 				INSERT INTO _tipo_tramitacion_aux (descripcion,longitud) values (_Tipo_TRAMITE,L_Tipo_TRAMITE);
@@ -1806,8 +1823,8 @@ BEGIN
 		   END IF;
 		   SET code_tramitacion_contrato = (SELECT codigo FROM _tipo_tramitacion_aux where Descripcion = _Tipo_TRAMITE);
 		END IF;
-
-		IF LENGTH(_procedimiento)>0 THEN
+        
+		IF LENGTH(_procedimiento)>0 THEN  
 		  SET _counter= ( SELECT count(*) FROM _tipo_procedimiento_aux where descripcion = _procedimiento);
 		   IF _counter=0 THEN
 				INSERT INTO _tipo_procedimiento_aux (descripcion,longitud) values (_procedimiento,L_procedimiento);
@@ -1820,9 +1837,9 @@ BEGIN
 
 
 
-    SET _Contador = 0;
+    SET _Contador = 0;    
     while _Contador < _COUNT_CONTRATISTAS do
-
+    
 		SET _UTE = (SELECT LOCATE("UTE",_Lst_empresas));
         IF _UTE > 0 THEN
 			SET _Empresa = (SELECT SPLIT_STR(_Lst_empresas, ';', _Contador+1));
@@ -1830,57 +1847,57 @@ BEGIN
 			SET _Empresa = (SELECT _Lst_empresas);
         END IF;
         SET _Contador = _Contador + 1;
-
+        
         SET _counter=( SELECT count(*) FROM boletin_contratos where BOLETIN = _BOLETIN AND Empresa = _Empresa);
 		IF _counter = 0 THEN
 			INSERT INTO boletin_contratos (
-				Empresa,
+				Empresa, 
 				BOLETIN,
 				counter,
-				importe) VALUES (
+				importe) VALUES ( 
 				_Empresa ,
-				_BOLETIN,
+				_BOLETIN, 
 				_Contador,
-				_importe);
+				_importe); 
 		END IF;
 
     END WHILE;
-
-	SET _Contador = 0;
-	while _Contador < _COUNT_MATERIAS do
+    
+	SET _Contador = 0;    
+	while _Contador < _COUNT_MATERIAS do	
 		SET _Materia = (SELECT SPLIT_STR(_materias, ';', _Contador+1));
 		INSERT INTO boletin_materias (BOLETIN,COD_Materia) VALUES(_BOLETIN,_Materia);
 		SET _Contador = _Contador + 1;
-	END WHILE;
-
+	END WHILE;   
+        
 	SET _counter=( SELECT count(*) FROM strings where BOLETIN = _BOLETIN );
 	IF _counter = 0 THEN
-		INSERT INTO strings (BOLETIN, _keys, Importes) VALUES (_BOLETIN, _Empresa, _Importe)	;
+		INSERT INTO strings (BOLETIN, _keys, Importes) VALUES (_BOLETIN, _Empresa, _Importe)	; 
 	END IF;
 
 
 	UPDATE lastread SET ID_LAST = _BOLETIN WHERE Type='BOE';
 
-	SET _counter=( SELECT count(*) FROM boletin where BOLETIN = _BOLETIN );
+	SET _counter=( SELECT count(*) FROM boletin where BOLETIN = _BOLETIN ); 
 	IF _counter = 0 THEN
 			INSERT INTO boletin ( Type,
-			SUMARIO,
-			BOLETIN,
-			Tipo_BOLETIN,
+			SUMARIO, 
+			BOLETIN, 
+			Tipo_BOLETIN, 
 			Tipo_TRAMITE,
 			Tipo_ADJUDICADOR,
 			COD_Ambito_Geografico,
-			COD_Tabla_Precio,
+			COD_Tabla_Precio, 
 			Objeto_Contrato,
 			dia,
 			mes,
-			anyo,
-			PDF,
-			TEXTO) VALUES (
+			anyo, 
+			PDF, 
+			TEXTO) VALUES ( 
 			_Type,
-			_SUMARIO,
-			_BOLETIN,
-			code_tipo_contrato,
+			_SUMARIO, 
+			_BOLETIN, 
+			code_tipo_contrato, 
 			code_tramitacion_contrato,
 			code_adjudicador,
 			code_geografico,
@@ -1888,11 +1905,11 @@ BEGIN
 			_objeto,
 			_Dia,
 			_Mes,
-			_Anyo,
-			_PDF,
+			_Anyo, 
+			_PDF, 
 			_TEXTO)	;
             SELECT last_insert_id() as ID;
-	END IF;
+	END IF;        
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1910,13 +1927,13 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Text_BOLETIN`(
-
+	
     IN _Type nvarchar(18),
     IN _Dia CHAR(2),
     IN _Mes CHAR(2),
     IN _Anyo CHAR(4),
 	IN _BOLETIN nvarchar(18),
-
+    
 	IN _TEXTO TEXT,
 	IN _analisis TEXT,
     IN _importe nvarchar(55)
@@ -1925,22 +1942,22 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Text_BOLETIN`(
 BEGIN
 	DECLARE _counter INT;
 
-	SET _counter= ( SELECT count(*) FROM __text_scrap_boletin WHERE BOLETIN = _BOLETIN );
+	SET _counter= ( SELECT count(*) FROM __text_scrap_boletin WHERE BOLETIN = _BOLETIN ); 
 	IF _counter = 0 THEN
 			INSERT INTO __text_scrap_boletin ( Type,
-			BOLETIN,
+			BOLETIN, 
 			dia,
 			mes,
-			anyo,
-			TEXTO,
+			anyo,  
+			TEXTO, 
             analisis,
-            importe) VALUES (
+            importe) VALUES ( 
 			_Type,
-			_BOLETIN,
+			_BOLETIN, 
 			_Dia,
 			_Mes,
-			_Anyo,
-			_TEXTO,
+			_Anyo,  
+			_TEXTO, 
             _analisis,
             _importe );
             SELECT last_insert_id() as ID;
@@ -1962,4 +1979,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-14 23:24:49
+-- Dump completed on 2017-11-18 20:44:13
