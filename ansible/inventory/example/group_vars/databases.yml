@@ -1,0 +1,20 @@
+mariadb_bind_address: 127.0.0.1
+mariadb_max_connections: 200
+mariadb_append_privs: yes
+mariadb_databases:
+- name: bbdd_kaos155
+  collation: utf8_general_ci
+  encoding: utf8
+- name: bbdd_kaos155_text
+  collation: utf8_general_ci
+  encoding: utf8
+
+
+
+mariadb_users:
+- name: kaos
+  password: password
+  priv: "bbdd_kaos155_text.*:ALL"
+- name: kaos
+  password: password
+  priv: "bbdd_kaos155.*:ALL"

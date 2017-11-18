@@ -1,0 +1,59 @@
+production: false
+develop: false
+
+node_version: 8
+
+pm2_user: ubuntu
+pm2_user_home: "/home/{{ pm2_user }}"
+pm2_config_path: /etc/pm2
+pm2_config_file: apps.yml
+pm2_logpath: "/var/log/pm2"
+## set to "git" or "artifact"
+pm2_code_mode: git
+pm2_npm_tasks: no
+pm2_extra_apt_packages: []
+
+pm2_apps:
+- name: test
+  script: 'test.js'
+#  interpreter:
+  instances: 1
+  mode: cluster
+  path: /var/www/
+  env:
+    PORT: 3009
+  args:
+  - --presets
+  - react,es2015
+  - src/server.js
+  extra_opts: []
+## following are optional, only for npm_tasks if pm2_npm_tasks is enabled
+# npm_global: no
+# npm_registry: http://registry
+# npm_node_bin: /other/path
+# npm_node_state: absent
+
+pm2_logrotate_freq: weekly
+pm2_logrotate_amount: 8
+pm2_logrorate_missingok: yes
+pm2_logrorate_truncate: yes
+pm2_logrorate_maxsize: no
+pm2_logrotate_custom_opts: ""
+
+
+pm2_artifacts:
+- url: ""
+  path: "/front"
+  owner: "{{ pm2_user }}"
+  mode: "ug+rw,o-w"
+  auth_enable: "yes"
+  auth_user: "deploy"
+  auth_pass: "password"
+
+pm2_git_projects:
+- git_repo_key_path: "/home/{{pm2_user}}/.ssh/id_rsa"
+  git_deployment_key: no
+  git_repo_url: ""
+  git_repo_version: master
+  git_path: /src
+  git_owner: "{{pm2_user}}"

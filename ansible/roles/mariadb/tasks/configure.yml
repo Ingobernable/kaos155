@@ -1,0 +1,62 @@
+- name: Configure user root
+  mysql_user:
+    user: root
+    host: "{{ item }}"
+    password: "{{ mariadb_root_password }}"
+    priv: "*.*:ALL,GRANT"
+  with_items:
+   - 127.0.0.1
+   - ::1
+   - localhost
+  ignore_errors: yes
+
+- name: generate root credentials
+  template:
+    src: root-my.cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Generate configuration file
+  template:
+    src: my.cnf.j2
+    dest: /etc/mysql/my.cnf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart mariadb
+
+- name: Create databases
+  with_items:
+  - "{{ mariadb_databases }}"
+  mysql_db:
+    name: "{{ item.name }}"
+    collation: "{{ item.collation | default('utf8_general_ci') }}"
+    encoding: "{{ item.encoding | default('utf8') }}"
+    state: present
+
+- name: configure users
+  mysql_user:
+    append_privs: "{{ mariadb_append_privs | default('no')}}"
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    priv: "{{ item.priv }}"
+    state: present
+    host: "{{ item.host | default('localhost') }}"
+  with_items:
+  - "{{ mariadb_users }}"
+
+- name: flush privileges
+  command: 'mysql -u root -p{{ mariadb_root_password }} -e "FLUSH PRIVILEGES;"'
+
+- name: Remove anonymous user
+  mysql_user:
+    name: ""
+    state: absent
+
+- name: Remove test database
+  mysql_db:
+    name: test
+    state: absent

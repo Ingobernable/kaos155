@@ -1,0 +1,34 @@
+- name: create temporal folder
+  file:
+    path: /tmp/pm2_artifacts
+    state: directory
+
+- name: download artifacts
+  with_items: "{{ pm2_artifacts }}"
+  command: >
+    curl -L -o /tmp/pm2_artifacts/{{ item.url | basename }} \
+    {% if item.auth_enable %}
+    --user "{{ item.auth_user }}:{{ item.auth_pass }}" \
+    {% endif %}
+    "{{ item.url }}"
+
+- name: delete source code folder
+  with_items: "{{ pm2_artifacts }}"
+  file:
+    path: "{{ item.path }}"
+    state: absent
+
+- name: deploy artifacts
+  notify: restart pm2
+  with_items: "{{ pm2_artifacts }}"
+  unarchive:
+    src: "/tmp/pm2_artifacts/{{ item.url | basename }}"
+    dest: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    mode: "{{ item.mode }}"
+    remote_src: True
+
+- name: delete artifacts folder
+  file:
+    path: "/tmp/pm2_artifacts"
+    state: absent

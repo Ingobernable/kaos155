@@ -1,0 +1,27 @@
+- name: ensure config path
+  file:
+    path: "{{ pm2_config_path }}"
+    state: directory
+    mode: 0755
+
+- name: ensure logs path
+  file:
+    path: "{{ pm2_logpath }}"
+    state: directory
+    owner: root
+    group: "{{pm2_user}}"
+    mode: 0775
+
+- name: generate config file
+  template:
+    src: pm2-app.j2
+    dest: "{{ pm2_config_path }}/{{ pm2_config_file }}"
+  notify:
+  - restart pm2
+
+- name: generate logrotates
+  template:
+    src: logrotate.j2
+    dest: "/etc/logrotate.d/{{ item.name }}"
+  with_items:
+  - "{{ pm2_apps }}"

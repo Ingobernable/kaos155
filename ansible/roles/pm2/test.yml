@@ -1,0 +1,37 @@
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Create and start container
+      lxd_container:
+        name: testing-pm2
+        state: started
+        devices:
+          eth0:
+            ipv4.address: 10.10.10.100
+            nictype: bridged
+            parent: lxdbr0
+            type: nic
+        source:
+          type: image
+          server: https://cloud-images.ubuntu.com/releases
+          protocol: simplestreams
+          alias: "16.04"
+        profiles: ["default"]
+        wait_for_ipv4_addresses: true
+        timeout: 600
+- hosts: testing-pm2
+  gather_facts: no
+  tasks:
+    - name: check python is installed in container
+      raw: dpkg -s python
+      register: python_install_check
+      failed_when: python_install_check.rc not in [0, 1]
+      changed_when: false
+
+    - name: install python in container
+      raw: apt-get install -y python
+      when: python_install_check.rc == 1
+
+- hosts: testing-pm2
+  roles:
+  - .

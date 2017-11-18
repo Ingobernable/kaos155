@@ -1,0 +1,18 @@
+- name: create temp folder
+  file:
+    path: /tmp/xpdf
+    state: directory
+
+- name: get xpdf tools
+  unarchive:
+    src: "http://www.xpdfreader.com/dl/xpdf-tools-linux-4.00.tar.gz"
+    dest: "/tmp/xpdf"
+    remote_src: yes
+
+- name: install xpdf tools
+  shell: cp -pr /tmp/xpdf/xpdf-tools-linux-4.00/bin64/* /usr/local/bin
+
+- name: delete temp folder
+  file:
+    path: /tmp/xpdf
+    state: absent

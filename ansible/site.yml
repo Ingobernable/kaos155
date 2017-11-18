@@ -1,0 +1,22 @@
+- hosts: databases
+  roles:
+  - mariadb
+  tasks:
+  - name: check if database is provisioned
+    shell: mysql -u root -e "select * from bbdd_kaos155.boletin;"
+    register: checkdb
+    failed_when: no
+  - name: provision database
+    shell: mysql -u root bbdd_kaos155 < /vagrant/sqlfiles/CREATE_COMPLETO.sql
+    when: checkdb|failed
+
+- hosts: appservers
+  roles:
+  - pm2
+  tasks:
+  - name: check if xpdf tools is installed
+    stat:
+      path: /usr/local/bin/pdftohtml
+    register: checkxpdf
+  - include: "{{ playbook_dir }}/pdf.yml"
+    when: not checkxpdf.stat.exists

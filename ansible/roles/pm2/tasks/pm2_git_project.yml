@@ -1,0 +1,37 @@
+- name: ensure package is installed
+  apt:
+    name: git
+    state: latest
+    update_cache: yes
+    cache_valid_time: 86400
+
+- name: Ensure deployment key installed
+  copy:
+    owner: "{{pm2_user}}"
+    src: "{{ item.git_deployment_key.src }}"
+    dest: "{{ item.git_deployment_key.dest }}"
+    mode: 0600
+  when: item.git_deployment_key
+  with_items: "{{pm2_git_projects}}"
+
+- name: Ensure source code folder
+  file:
+    path: "{{item.git_path}}"
+    state: directory
+    owner: "{{item.git_owner}}"
+  with_items: "{{pm2_git_projects}}"
+
+- name: Install git project
+  become: yes
+  become_user: "{{item.git_owner}}"
+  git: repo={{ item.git_repo_url }}
+       dest={{ item.git_path }}
+       accept_hostkey=yes
+       key_file={{ item.git_repo_key_path }}
+       force=yes
+       version={{ item.git_repo_version }}
+  retries: 3
+  delay: 5
+  with_items: "{{pm2_git_projects}}"
+  notify:
+  - restart pm2
