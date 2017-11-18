@@ -633,10 +633,10 @@
                                                         }
                                                     }
 
-                                                    var _extra = {
+                                                    var _extra = _json!=null ? {
                                                         _a: _this.extra(_json.documento.analisis, onlyScrap),
                                                         _m: _this.extra(_json.documento.metadatos, onlyScrap)
-                                                    }
+                                                    } : null
 
                                                     _callback({ _arr: _arr, _extra: _json != null ? _extra : null })
                                                 })

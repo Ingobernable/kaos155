@@ -4,7 +4,7 @@ console.log('loading App - version -' + Version)
 var myArgs = process.argv.slice(2);
  
 if (myArgs.length == 0)
-    myArgs = ['SCRAP','BORME', '2009'] //, 'BOE-B-2003-31017' ]
+    myArgs = ['SCRAP','BOCM', '2010'] //, 'BOE-B-2003-31017' ]
 
 if (myArgs[1] != 'BORME') {
 
@@ -269,7 +269,7 @@ App.parameters(App, myArgs, function (app) {
         app.initDate = myArgs[2]
         console.log('MySQL IP:' + app.SqlIP)
         console.log('PROCESS:' + app.Type)
-
+        console.log('Año:' + app.anyo)
         //console.log('DELETE DATA:' + app.drop)
         // app.fs.readFile(app.path.normalize('../DataFiles/cargos.json'), 'utf-8', function (err, dataFile) {
         //     console.log(JSON.parse(dataFile))
