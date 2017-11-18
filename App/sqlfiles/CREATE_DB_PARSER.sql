@@ -1,5 +1,7 @@
+CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `bbdd_kaos155`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
--- 
+--
 -- Host: localhost    Database: bbdd_kaos155
 -- ------------------------------------------------------
 -- Server version	5.7.19-log
@@ -15,7 +17,29 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
--- 
+--
+-- Table structure for table `__text_scrap_boletin`
+--
+
+DROP TABLE IF EXISTS `__text_scrap_boletin`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `__text_scrap_boletin` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `dia` varchar(2) DEFAULT NULL,
+  `mes` varchar(2) DEFAULT NULL,
+  `anyo` varchar(4) DEFAULT NULL,
+  `BOLETIN` varchar(18) DEFAULT NULL,
+  `texto` mediumtext,
+  `analisis` mediumtext,
+  `Type` varchar(10) DEFAULT NULL,
+  `importe` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `_adjudicador_aux`
 --
 
@@ -288,6 +312,25 @@ CREATE TABLE `boletin_textos` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `borme_auditor`
+--
+
+DROP TABLE IF EXISTS `borme_auditor`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `borme_auditor` (
+  `Id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Type` int(11) NOT NULL DEFAULT '0',
+  `Name` varchar(232) CHARACTER SET utf8 NOT NULL,
+  `ActiveRelations` int(11) DEFAULT NULL,
+  `coorp` int(11) DEFAULT NULL,
+  `Mark` varchar(1) DEFAULT NULL,
+  `_l` int(11) DEFAULT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `borme_diario`
 --
 
@@ -313,7 +356,7 @@ CREATE TABLE `borme_diario` (
   KEY `Empresa_Id` (`Empresa_Id`),
   KEY `Directivo_id` (`Relation_Id`),
   FULLTEXT KEY `_keys` (`_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=03 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -332,7 +375,7 @@ CREATE TABLE `borme_directivo` (
   `Mark` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`Id`),
   UNIQUE KEY `Id_UNIQUE` (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=01 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -354,7 +397,7 @@ CREATE TABLE `borme_empresa` (
   `_l` int(11) DEFAULT NULL,
   `JuridicId` int(11) DEFAULT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=07 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -380,7 +423,7 @@ CREATE TABLE `borme_relaciones` (
   UNIQUE KEY `Diario_Id_UNIQUE` (`Diario_Id`),
   KEY `Empresa` (`Empresa_id`),
   KEY `Directivo` (`Relation_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=06 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -413,6 +456,7 @@ CREATE TABLE `lastread` (
   `SUMARIO_NEXT` varchar(16) CHARACTER SET utf8 NOT NULL,
   `ID_LAST` varchar(145) DEFAULT NULL,
   `Read_Complete` bit(1) DEFAULT b'0',
+  `SCR_ID_LAST` varchar(145) DEFAULT NULL,
   PRIMARY KEY (`SUMARIO_NEXT`,`Type`,`Anyo`),
   UNIQUE KEY `_id_UNIQUE` (`_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
@@ -434,7 +478,7 @@ CREATE TABLE `strings` (
   PRIMARY KEY (`BOLETIN`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   FULLTEXT KEY `_keys` (`_keys`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -445,11 +489,50 @@ DROP TABLE IF EXISTS `sumarios`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sumarios` (
+  `T_anual` int(11) DEFAULT NULL,
+  `Anyo` varchar(4) DEFAULT NULL,
   `Type` varchar(6) CHARACTER SET utf8 DEFAULT NULL,
+  `SUMARIO` varchar(16) CHARACTER SET utf8 NOT NULL,
   `BOLETIN` varchar(20) CHARACTER SET utf8 NOT NULL,
-  `SUMARIO_NEXT` varchar(16) CHARACTER SET utf8 NOT NULL,
+  `Tipo_contenido` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`BOLETIN`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `tramas_de_corrupcion`
+--
+
+DROP TABLE IF EXISTS `tramas_de_corrupcion`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tramas_de_corrupcion` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `Codigo` varchar(4) DEFAULT NULL,
+  `Titulo` varchar(45) DEFAULT NULL,
+  `Sumario` varchar(45) DEFAULT NULL,
+  `Juzgado` varchar(45) DEFAULT NULL,
+  `Fecha` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `tramas_empresas_empresarios`
+--
+
+DROP TABLE IF EXISTS `tramas_empresas_empresarios`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tramas_empresas_empresarios` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_empresa` int(11) DEFAULT NULL,
+  `id_directivo` int(11) DEFAULT NULL,
+  `COD_Trama` varchar(4) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1102,8 +1185,8 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BOE`(
 	IN _PDF nvarchar(255), 
 	IN _TEXTO TEXT,
 
-	IN _Lst_empresas nvarchar(255),
-	IN _Importe nvarchar(255),
+	IN _Lst_empresas text,
+	IN _Importe text,
     
 	IN _modalidad nvarchar(255),
 	IN _tipo nvarchar(255),
@@ -1833,6 +1916,59 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Text_BOLETIN` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Text_BOLETIN`(
+	
+    IN _Type nvarchar(18),
+    IN _Dia CHAR(2),
+    IN _Mes CHAR(2),
+    IN _Anyo CHAR(4),
+	IN _BOLETIN nvarchar(18),
+    
+	IN _TEXTO TEXT,
+	IN _analisis TEXT,
+    IN _importe nvarchar(55)
+
+)
+BEGIN
+	DECLARE _counter INT;
+
+	SET _counter= ( SELECT count(*) FROM __text_scrap_boletin WHERE BOLETIN = _BOLETIN ); 
+	IF _counter = 0 THEN
+			INSERT INTO __text_scrap_boletin ( Type,
+			BOLETIN, 
+			dia,
+			mes,
+			anyo,  
+			TEXTO, 
+            analisis,
+            importe) VALUES ( 
+			_Type,
+			_BOLETIN, 
+			_Dia,
+			_Mes,
+			_Anyo,  
+			_TEXTO, 
+            _analisis,
+            _importe );
+            SELECT last_insert_id() as ID;
+	END IF;
+    UPDATE lastread SET SCR_ID_LAST = _BOLETIN WHERE Type='BOE' AND Anyo=_Anyo;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1843,4 +1979,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-09  9:53:38
+-- Dump completed on 2017-11-18 20:44:13
