@@ -615,6 +615,7 @@
                                                     lines = text.replace(/"/g, "").split('\r\n')
                                                     var cadena = ""
                                                     var puntoUno = false
+                                                    var _lastParragraf = false
 
                                                     for (_n in lines) {
                                                         var _t = lines[_n]
