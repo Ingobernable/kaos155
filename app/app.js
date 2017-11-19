@@ -32,6 +32,7 @@ if (myArgs[1] != 'BORME') {
 //process.exit(1)
 
 var App = {
+    inquirer : require('inquirer'),
     command : myArgs[0],
     Commands: ['SCRAP', 'PARSER'],
     _fileCredenciales:'ACCESO_mysql_' ,
@@ -269,7 +270,7 @@ App.parameters(App, myArgs, function (app) {
         app.initDate = myArgs[2]
         console.log('MySQL IP:' + app.SqlIP)
         console.log('PROCESS:' + app.Type)
-        console.log('Año:' + app.anyo)
+        console.log('Anyo:' + app.anyo)
         //console.log('DELETE DATA:' + app.drop)
         // app.fs.readFile(app.path.normalize('../DataFiles/cargos.json'), 'utf-8', function (err, dataFile) {
         //     console.log(JSON.parse(dataFile))
