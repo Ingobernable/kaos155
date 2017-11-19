@@ -168,11 +168,12 @@
                                     callback(data)
                                 }
                             } else {
-                                debugger
+                                
                                 callback(data)
                             }
 
                         } else {
+                            //debugger
                             callback(data)
                         }
                     } else {

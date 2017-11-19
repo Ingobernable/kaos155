@@ -612,7 +612,7 @@
                                             app.fs.unlink(_fileText, function (err) {
                                                 app.fs.unlink(_file, function (err) {
                                                     var _lines = []
-                                                    lines = text.replace(/"/g, "").split('\r\n')
+                                                    lines = text.replace(/"/g, "").replace(/\r/g, "").split('\n')
                                                     var cadena = ""
                                                     var puntoUno = false
                                                     var _lastParragraf = false
@@ -638,6 +638,9 @@
                                                         _a: _this.extra(_json.documento.analisis, onlyScrap),
                                                         _m: _this.extra(_json.documento.metadatos, onlyScrap)
                                                     } : null
+
+                                                    if (_arr.length < 0)
+                                                        debugger
 
                                                     _callback({ _arr: _arr, _extra: _json != null ? _extra : null })
                                                 })
