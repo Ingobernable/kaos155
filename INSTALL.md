@@ -167,16 +167,22 @@ Paso 8: Importamos las tablas del archivo CREATE_COMPLETO.sql
 # mysql -u root -p bbdd_kaos155 < CREATE_COMPLETO.sql
 ```
 
-Paso 9: Comenzar con el scraping
+Paso 9: cargar los plugins externos
+
+```
+# cd ..
+# chown -R root:root *
+# cd app
+# npm upgrade
+```
+
+Paso 10: Comenzar con el scraping
 
 Hemos de tener en cuenta que dependiendo del boletín que se va a scrapear hemos de saber desde cuando.
 El BOE desde el 2001, el BORME desde el 2009 y el BOCM desde 2010.
 
 ```
-# cd ..
-# chown -R root:root *
-# cd BormeApp
-# npm upgrade
+
 # node app SCRAP BOE 2001
 # node app SCRAP BORME 2009
 # node app SCRAP BOCM 2010
