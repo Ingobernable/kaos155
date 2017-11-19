@@ -9,6 +9,8 @@
             db: null,
             insert: function (options, _analisis, data, callback) {
                 var i = isNaN(data.importe * 1) ? 0 : data.importe * 1
+
+
                 var params = [
                         
                         data.id.substr(12, 2),                                      //Dia
@@ -46,7 +48,7 @@
                 data.extra.materias = data.extra.materias + (data.extra.materias_cpv.length > 0 && data.extra.materias.length > 0  ? ";" : '') + data.extra.materias_cpv
                 options.SQL.db.query('Call Insert_Data_BOE(' + data.textExtend.length + ',' + data.contratista.split(';').length + ','  + data.extra.materias.split(';').length + ",'" + data.type + "',?,?,?,?,?,?,?,?,?,?,?,?" + _ing + ')', params, function (err, record) {
                     if (err != null) {
-                            //debugger
+                            debugger
                             cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
                             options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                 var x = err
@@ -300,6 +302,7 @@
                                             }
 
                                         } else {
+                                            debugger
                                             callback(data)
                                         }
                                     } else {
