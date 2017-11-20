@@ -274,7 +274,7 @@ BEGIN
             SET @ID_Borme= (SELECT SPLIT_STR( _importe, '#', _counter+1) * 1 );
 
 			IF @counter=0 THEN
-				SET @s = CONCAT('INSERT INTO _', LOWER(_Type) ,'_text_', _Anyo , ' (_p,BOLETIN,dia,mes,anyo,TEXTO,provincia,ID_Borme,_err) VALUES (@CountLines,@BOLETIN,@Dia,@Mes,@Anyo,@LINE,@analisis,@ID_Borme,@err);'); 
+				SET @s = CONCAT('INSERT INTO _', LOWER(_Type) ,'_text_', _Anyo , ' (BOLETIN,dia,mes,anyo,TEXTO,provincia,ID_Borme,_err) VALUES (@BOLETIN,@Dia,@Mes,@Anyo,@LINE,@analisis,@ID_Borme,@err);'); 
 				PREPARE stmt1 FROM @s;
 				EXECUTE stmt1;  
 				DEALLOCATE PREPARE stmt1;            
