@@ -137,7 +137,7 @@
                     } else {  
                         try {
                             var _sql = JSON.parse(_JSON.toString())
-                            sqlPss = _sql.mySQL.password
+                            sqlPss = _sql.password
                         }
                         catch (e) {
                             console.log('error en el fichero de Credenciales mysql, json no valido, sistema detenido',e)
@@ -147,10 +147,10 @@
                         if (_this.poolSql[type] == null) {
 
                             _this.poolSql[type] = app.mysql.createPool({
-                                host: _sql.mySQL.host, //, //'localhost', //'66.70.184.214',
-                                user: _sql.mySQL.user,
-                                password: _sql.mySQL.password,
-                                database: _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                                host: _sql.host, //, //'localhost', //'66.70.184.214',
+                                user: _sql.user,
+                                password: _this.encryptor.decrypt(_sql.password),
+                                database: _sql.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
                                 multipleStatements: true,
                                 waitForConnection: true,
                             })

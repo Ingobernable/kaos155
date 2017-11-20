@@ -119,7 +119,7 @@
                     _l: _l
                 }
 
-                process.stdout.write('.') //console.log(_p.Empresa+"->"+_p.Empresa_Id)
+                process.stdout.write('\x1b[33m','.','\x1b[0m') //console.log(_p.Empresa+"->"+_p.Empresa_Id)
                 //cadsql = "UPDATE lastread SET ID_LAST="+_p.BORME_Id +";"
                 options.SQL.db.query("UPDATE lastread SET ID_LAST='"+ ID_Sumario + "#" + _p.BOLETIN+ '#' + _p.BORME_Id + "' WHERE Type='BORME' and Anyo=" + app.anyo + "; SELECT "+_l+" as _l;", function (err, Diario) {
                     if (err) {
