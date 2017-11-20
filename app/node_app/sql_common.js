@@ -130,7 +130,7 @@
                                 if (err != null) {
                                     x=_text.length
                                     cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
-                                    options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
+                                    options.SQL.db.query(cadSql, [_analisis.BORME, err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                         var x = err
                                         var y = params
                                         callback(data)
