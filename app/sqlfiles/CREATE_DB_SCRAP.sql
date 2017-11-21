@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_text` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `bbdd_kaos155_text`; 
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: localhost    Database: bbdd_kaos155_text
@@ -182,7 +180,7 @@ BEGIN
 			SET _cmp = "`analisis` mediumtext, `_p` int(11) DEFAULT NULL,";
         END IF;
 
-		SET @s= CONCAT('CREATE TABLE IF NOT EXISTS `_', LOWER(_type) ,'_text_' , _anyo ,'` ( `id` int(11) NOT NULL AUTO_INCREMENT, `dia` varchar(2) DEFAULT NULL, `mes` varchar(2) DEFAULT NULL, `anyo` varchar(4) DEFAULT NULL,`BOLETIN` varchar(18) DEFAULT NULL,`texto` mediumtext,', _cmp ,' `_err` VARCHAR(25), PRIMARY KEY (`id`) ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;');
+		SET @s= CONCAT('CREATE TABLE IF NOT EXISTS `_', LOWER(_type) ,'_text_' , _anyo ,'` ( `id` int(11) NOT NULL AUTO_INCREMENT, `dia` varchar(2) DEFAULT NULL, `mes` varchar(2) DEFAULT NULL, `anyo` varchar(4) DEFAULT NULL,`BOLETIN` varchar(22) DEFAULT NULL,`texto` mediumtext,', _cmp ,' `_err` VARCHAR(25), PRIMARY KEY (`id`) ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;');
 
 		PREPARE stmt1 FROM @s;
 		EXECUTE stmt1;  
@@ -214,7 +212,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Text_BOLETIN`(
     IN _Dia CHAR(2),
     IN _Mes CHAR(2),
     IN _Anyo CHAR(4),
-	IN _BOLETIN nvarchar(18),
+	IN _BOLETIN nvarchar(22),
     
 	IN _TEXTO MEDIUMTEXT,
 	IN _analisis MEDIUMTEXT,
@@ -259,7 +257,7 @@ BEGIN
 	IF _Type='BOCM' THEN
     
     	IF @counter=0 THEN
-			SET @s = CONCAT('INSERT INTO _', LOWER(_Type) ,'_text_', _Anyo , ' (_p,BOLETIN,dia,mes,anyo,TEXTO,analisis,_err) VALUES (@CountLines,@BOLETIN,@Dia,@Mes,@Anyo, @TEXTO, @analisis,@err);'); 
+			SET @s = CONCAT('INSERT INTO _', LOWER(_Type) ,'_text_', _Anyo , ' (BOLETIN,dia,mes,anyo,TEXTO,analisis,_err) VALUES (@BOLETIN,@Dia,@Mes,@Anyo, @TEXTO, @analisis,@err);'); 
 			PREPARE stmt1 FROM @s;
 			EXECUTE stmt1;  
 			DEALLOCATE PREPARE stmt1;            

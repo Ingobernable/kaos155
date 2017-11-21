@@ -363,3 +363,4 @@ __pycache__/
 
 # End of https://www.gitignore.io/api/node,visualstudio
 /app/package-lock.json
+*.json

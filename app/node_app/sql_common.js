@@ -1,11 +1,14 @@
 ﻿module.exports = function (app , callback) {
     callback({
+        
         poolSql: [],
-        //connection:[],
-        getConnect: function (options, type, callback, SqlIP, sqlPss) {
+       // createfistConnect: function (options, type, callback, test) {
+       //     debugger
+       // },
+        getConnect: function (options, type, callback,test) {
             _this = this
-            var _exit = function (options, type, callback) {
-                callback(options)
+            var _exit = function (options, type, callback,test) {
+                callback(options,test)
             }
             if (this.poolSql[type] != null) {
                 if (options.SQL.db == null) {
@@ -16,8 +19,12 @@
                             options.SQL.db = connection // _this.connection[type] = connection
                             _exit(options, type, callback)
                         } else {
-                            console.log(err)
-                            process.exit(1);
+                            if (test==null) {
+                                console.log(err)
+                                process.exit(1);
+                            } else {
+                                _exit(options, type, callback,test)
+                            }
                         }
                     })
                 } else {
@@ -30,14 +37,15 @@
         },
         init: function (options, type, _file , callback) {
             var _this = this
+            _this.encryptor = require('simple-encryptor')("bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : ''))
 
             if (process.env['KAOS_MYSQL_' + type + '_PASS']) {
                 
                 _this.poolSql[type] = app.mysql.createPool({
-                    host: process.env['KAOS_MYSQL_' + type + '_HOST'], //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
-                    user: process.env['KAOS_MYSQL_' + type + '_USER'], // _sql.mySQL.user,
-                    password: process.env['KAOS_MYSQL_' + type + '_PASS'], // _sql.mySQL.password,
-                    database: process.env['KAOS_MYSQL_' + type + '_DB'], // _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                    host: process.env['KAOS_MYSQL_' + options.Command + '_HOST'], //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
+                    user: process.env['KAOS_MYSQL_' + options.Command + '_USER'], // _sql.mySQL.user,
+                    password: process.env['KAOS_MYSQL_' + options.Command + '_PASS'], // _sql.mySQL.password,
+                    database: process.env['KAOS_MYSQL_' + options.Command + '_DB'], // _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
                     multipleStatements: true,
                     waitForConnection: true,
                 })
@@ -45,14 +53,91 @@
                 _this.getConnect(options, type, callback)
 
             }else{
-                app.fs.readFile(app.path.normalize('sqlfiles/'+ _file + '.json'), function (err, _JSON) {
+                app.fs.readFile(app.path.normalize('sqlfiles/x_'+ _file + '.json'), function (err, _JSON) {
                     if (err) {
-                        console.log('faltan Credenciales mysql, sistema detenido')
-                        process.exit(1)
+                        testIp = function (testIp,callback) {
+                            app.inquirer.prompt([
+                                        { type: 'input', name: 'host', message: 'mysql ' + options.Command + ' IP', default: 'localhost' },
+                                        { type: 'input', name: 'user', message: 'mysql ' + options.Command + ' user', default: 'root' },
+                                        { type: 'password', name: 'password', message: 'mysql ' + options.Command + ' password' }
+                                         
+                            ]).then(function (resp) {
+                                //_this.createfistConnect(resp, function (fail) {
+                                var db = "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : '')
+
+                                var con = app.mysql.createConnection({
+                                    host: resp.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
+                                    user: resp.user, // _sql.mySQL.user,
+                                    password: resp.password, // _sql.mySQL.password,
+                                    multipleStatements: true
+                                })
+
+                                var encryptor = require('simple-encryptor')(db);
+                                var _credenciales = {
+                                    host: resp.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
+                                    user: resp.user, // _sql.mySQL.user,
+                                    password: _this.encryptor.encrypt(resp.password) , // _sql.mySQL.password,
+                                    database: db, // _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                                    multipleStatements: true,
+                                    waitForConnection: true,
+                                }
+
+                                con.connect(function (err) {
+                                    if (err) {
+                                        //console.log(err)
+                                        console.log('\x1b[31m las credenciales no parecen validas, vuelve a intentarlo \x1b[0m')
+                                        testIp(testIp)
+                                    } else {
+                                        console.log("\x1b[32m Conectado a mysql OK \x1b[0m");
+                                        
+                                        con.query("SHOW Databases LIKE '" + db + "'", function (err, record) {
+                                            if (record.length == 0) {
+                                                con.query("CREATE DATABASE IF NOT EXIST " + db, function (err, result) {
+                                                    if (err) throw err;
+                                                    console.log("Database " + db + " created");
+
+                                                    const cp = require('child_process');
+                                                    cp.exec('mysql -u' + resp.user + ' -p ' + resp.password + ' < ' + app.path.normalize('sqlfiles/CREATE_DB_' + options.Command + '.sql') , (error, stdout, stderr) => {
+                                                        if (error) throw error;
+                                                        console.log(`stdout: ${stdout}`);
+                                                        console.log(`stderr: ${stderr}`);
+                                                        console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
+                                                        con.end()
+                                                        app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify({ mySQL: _credenciales} ), function (err, _JSON) {
+                                                            callback(_credenciales)
+                                                        })
+                                                    });
+                                                })
+                                            } else {
+                                                console.log('\x1b[32m la DB ' + db + ' ya existe, continuamos ..... \x1b[0m')
+                                                con.end()
+                                                app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
+                                                    callback(_credenciales)
+                                                })
+                                            }
+                                            
+                                        })
+                                    }
+                                });
+                            })
+                        }
+                        testIp(testIp, function (credenciales) {
+
+                            _this.poolSql[type] = app.mysql.createPool({
+                                host: credenciales.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
+                                user: credenciales.user, // _sql.mySQL.user,
+                                password: _this.encryptor.decrypt(credenciales.password),  // _sql.mySQL.password,
+                                database: credenciales.database, // _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                                multipleStatements: true,
+                                waitForConnection: true,
+                            })
+                            _this.getConnect(options, type, callback)
+
+                        })
                     } else {  
                         try {
                             var _sql = JSON.parse(_JSON.toString())
-                            sqlPss = _sql.mySQL.password
+                            sqlPss = _sql.password
                         }
                         catch (e) {
                             console.log('error en el fichero de Credenciales mysql, json no valido, sistema detenido',e)
@@ -62,10 +147,10 @@
                         if (_this.poolSql[type] == null) {
 
                             _this.poolSql[type] = app.mysql.createPool({
-                                host: _sql.mySQL.host, //, //'localhost', //'66.70.184.214',
-                                user: _sql.mySQL.user,
-                                password: _sql.mySQL.password,
-                                database: _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                                host: _sql.host, //, //'localhost', //'66.70.184.214',
+                                user: _sql.user,
+                                password: _this.encryptor.decrypt(_sql.password),
+                                database: _sql.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
                                 multipleStatements: true,
                                 waitForConnection: true,
                             })
