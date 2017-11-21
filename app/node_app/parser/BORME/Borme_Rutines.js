@@ -701,7 +701,7 @@
             getDataFromMap: function (_this, lines, map) {
                 if (lines.length == 0)
                     debugger
-                var exclusion = ['Núm. ', 'Actos inscritos', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'SECCIÓN', 'Empresarios', 'BOLETÍN OFICIAL DEL REGISTRO MERCANTIL', 'Pág.', 'http://', 'D.L.:']
+                var exclusion = ['Núm. ', 'Actos inscritos', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'SECCIÓN', 'Empresarios', 'BOLETÍN OFICIAL DEL REGISTRO MERCANTIL', 'Pág.', 'http://www.boe.es', 'D.L.:']
                 var inclusion = ['cve:', 'A CORUÑA', 'LA CORUÑA', 'ARABA/ÁLAVA', 'ÁLAVA', 'ALBACETE', 'ALICANTE', 'ALMERÍA', 'ASTURIAS', 'ÁVILA', 'BADAJOZ', 'BARCELONA', 'BIZKAIA', 'BURGOS', 'CÁCERES', 'CÁDIZ', 'CANTABRIA', 'CASTELLÓN', 'CIUDAD REAL', 'CÓRDOBA', 'CUENCA', 'CEUTA', 'GIRONA', 'GRANADA', 'GUADALAJARA', 'GUIPÚZCOA', 'GIPUZKOA', 'HUELVA', 'HUESCA', 'ILLES BALEARS', 'ISLAS BALEARES', 'JAÉN', 'LA RIOJA', 'LAS PALMAS', 'LEÓN', 'LLEIDA', 'LUGO', 'MADRID', 'MÁLAGA', 'MELILLA', 'MURCIA', 'NAVARRA', 'ORENSE', 'OURENSE', 'PALENCIA', 'PONTEVEDRA', 'SALAMANCA', 'SEGOVIA', 'SEVILLA', 'SORIA', 'TARRAGONA', 'SANTA CRUZ DE TENERIFE', 'TERUEL', 'TOLEDO', 'VALENCIA', 'VALLADOLID', 'VIZCAYA', 'ZAMORA', 'ZARAGOZA']
                 var sinonimos = ['A CORUÑA#LA CORUÑA', 'ALABAÁLABA#ÁLAVA', 'ARABA/ÁLAVA#ÁLAVA', 'GUIPÚZCOA#GIPUZKOA', 'ILLES BALEARS#ISLAS BALEARES', 'OURENSE#ORENSE', 'BIZKAIA#VIZCAYA']
                 isNumeric = function (n) {
