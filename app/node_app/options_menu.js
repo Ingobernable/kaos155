@@ -34,7 +34,7 @@
                     if (command == 'SCRAP') {
                         var anyos = []
                         var date = new Date()
-                        for (n = app.Mins[type]; n < date.getFullYear() ; n++) {
+                        for (n = app.Mins[type]; n <= date.getFullYear() ; n++) {
                             var ok=true
                             for(p in record){
                                 if (record[p].Anyo == n) {

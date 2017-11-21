@@ -85,6 +85,7 @@
                             }
                         } else {
                             debugger
+                            data._list =[]
                             callback(data,true)
                         }
                 })
@@ -124,7 +125,8 @@
                                                 _lines = options.Rutines.getDataFromMap(options.Rutines, lines, options.Rutines.maps)
                                                 //debugger
                                                 if (_lines != null) {
-                                                    if (_lines.data.length == 0){
+                                                    if (_lines.data.length == 0) {
+                                                        debugger
                                                         callback(data, null)
                                                     } else {
 
