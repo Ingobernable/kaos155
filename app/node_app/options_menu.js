@@ -78,7 +78,7 @@
             
     } else {
         require('./sql_common.js')(app, function (SQL) {
-            exit(app, SQL, myArgs, callback)
+            exit(myArgs, callback)
         })
     }
 
