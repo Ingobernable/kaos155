@@ -64,7 +64,7 @@ CREATE TABLE `lastread` (
   `ID_LAST` varchar(145) DEFAULT NULL,
   `Read_Complete` bit(1) DEFAULT b'0',
   UNIQUE KEY `_id_UNIQUE` (`_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -83,7 +83,9 @@ CREATE TABLE `sumarios` (
   `Contrato` tinyint(4) DEFAULT '0',
   `parser` tinyint(4) DEFAULT '0',
   `scrap` tinyint(4) DEFAULT '0',
-  PRIMARY KEY (`BOLETIN`)
+  PRIMARY KEY (`BOLETIN`),
+  UNIQUE KEY `_Boletin` (`BOLETIN`),
+  KEY `_Type` (`Type`,`Anyo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -376,4 +378,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-22  8:36:17
+-- Dump completed on 2017-11-22  8:50:32
