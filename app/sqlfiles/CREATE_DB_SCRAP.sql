@@ -214,15 +214,18 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertAnyo`(_type nvarchar(5), _any
 BEGIN
 	DECLARE _counter int;
     DECLARE _cmp nvarchar(255);
+    DECLARE _kprovincia nvarchar(255) DEFAULT '';
+    DECLARE _ki nvarchar(255) DEFAULT '';
     
     SET _counter = (SELECT Count(*) FROM anyosread WHERE Type=_type AND Anyo=_anyo );
     IF _counter=0 THEN
 		IF _type='BOE' THEN
 			SET _cmp = "`analisis` mediumtext,`importe` varchar(45) DEFAULT NULL, `_p` int(11) DEFAULT NULL,";
+            
 		END IF;
-
 		IF _type='BORME' THEN
 			SET _cmp = "`ID_BORME` int(11) DEFAULT '0', `provincia` varchar(55) DEFAULT NULL,";
+            SET _ki = '.KEY `prov` (`provincia`),KEY `prov_mes` (`provincia`,`mes`) ';
         END IF;
 
 		IF _type='BOCM' THEN
@@ -230,7 +233,7 @@ BEGIN
 			SET _cmp = "`analisis` mediumtext, `_p` int(11) DEFAULT NULL,";
         END IF;
 
-		SET @s= CONCAT('CREATE TABLE IF NOT EXISTS `_', LOWER(_type) ,'_text_' , _anyo ,'` ( `id` int(11) NOT NULL AUTO_INCREMENT, `dia` varchar(2) DEFAULT NULL, `mes` varchar(2) DEFAULT NULL,`BOLETIN` varchar(22) DEFAULT NULL,`texto` mediumtext,', _cmp ,' `_err` VARCHAR(25), PRIMARY KEY (`id`),KEY `prov` (`provincia`),KEY `prov_mes` (`provincia`,`mes`) ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;');
+		SET @s= CONCAT('CREATE TABLE IF NOT EXISTS `_', LOWER(_type) ,'_text_' , _anyo ,'` ( `id` int(11) NOT NULL AUTO_INCREMENT, `dia` varchar(2) DEFAULT NULL, `mes` varchar(2) DEFAULT NULL,`BOLETIN` varchar(22) DEFAULT NULL,`texto` mediumtext,', _cmp ,' `_err` VARCHAR(25), PRIMARY KEY (`id`)' , _ki ,') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;');
 
 		PREPARE stmt1 FROM @s;
 		EXECUTE stmt1;  
