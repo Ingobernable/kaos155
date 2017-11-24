@@ -3,7 +3,6 @@ Herramienta para la obtención de datos de Contratación con la administración 
 
 Es una herramienta de software libre bajo los terminos de la licencia GPL 3 (ver archivo LICENSE para más detalles).
 
-
 ## Formas de contactar
 
 Puedes contactar con nosotros/as de varias formas ya sea para sumarte al proyecto, participar puntualmente, realizarnos preguntas, ...
@@ -17,4 +16,8 @@ La Ingobernable es un centro social que se encuentra en Madrid, en la calle Gobe
 ### Unirse a la lista de correo
 
 Puedes subscribirte a la lista de correo ( kaos@listas.ingobernable.net ) desde aquí:
-https://listas.ingobernable.net/cgi-bin/mailman/listinfo/kaos
+http://listas.ingobernable.net/cgi-bin/mailman/listinfo/kaos
+
+## Documentación para instalar Kaos155
+
+Puedes consultar las formas de instalar Kaos155 en los archivos .md dentro del directorio doc del proyecto.
