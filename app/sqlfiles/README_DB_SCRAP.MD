@@ -3,7 +3,7 @@
 DB de almacenamiento de Textos
 detalles correspondientes : https://github.com/Ingobernable/kaos155/blob/master/app/sqlfiles/CREATE_DB_SCRAP.sql
 tablas donde almacenamos datos generales del parseo
-
+```
 # mysql> SHOW TABLES FROM bbdd_kaos155_text WHERE Tables_in_bbdd_kaos155_text NOT ' at line 1
 # mysql> +-----------------------------+
 #     -> | Tables_in_bbdd_kaos155_text |
@@ -14,9 +14,9 @@ tablas donde almacenamos datos generales del parseo
 #     -> | sumarios                    |
 #     -> +-----------------------------+
 #     -> 4 rows in set (0.00 sec)
-
+```
 estas tablas se iran creando a medida que vamos SCRAPEANDO años y contienen los TEXTOS en bruto de los boletines
-
+```
 # mysql> SHOW TABLES FROM bbdd_kaos155_text WHERE Tables_in_bbdd_kaos155_text REGEXP  '_';                                                                        +-----------------------------+
 # | Tables_in_bbdd_kaos155_text |
 # +-----------------------------+
@@ -54,8 +54,9 @@ estas tablas se iran creando a medida que vamos SCRAPEANDO años y contienen los
 # | _borme_text_2017            |
 # +-----------------------------+
 # 32 rows in set (0.00 sec)
-
+```
 tabla donde se guardan los años ESCRAPEADOS
+```
 # mysql> use bbdd_kaos155_text
 # Database changed
 # mysql> SHOW COLUMNS FROM anyosread;
@@ -68,9 +69,9 @@ tabla donde se guardan los años ESCRAPEADOS
 # | parser | tinyint(4) | YES  |     | 0       |       |
 # +--------+------------+------+-----+---------+-------+
 # 4 rows in set (0.00 sec)
-
+```
 tabla donde se guardan los SUMARIOS y BOLETINES, asi como los cheks de control
-
+```
 # mysql> SHOW COLUMNS FROM sumarios;
 # +----------+-------------+------+-----+---------+-------+
 # | Field    | Type        | Null | Key | Default | Extra |
@@ -85,8 +86,9 @@ tabla donde se guardan los SUMARIOS y BOLETINES, asi como los cheks de control
 # | scrap    | tinyint(4)  | YES  |     | 0       |       |
 # +----------+-------------+------+-----+---------+-------+
 # 8 rows in set (0.00 sec)
-
+```
 tabla con el último SCRAP realizado
+```
 # mysql> SHOW COLUMNS FROM lastread;
 # +---------------+--------------+------+-----+---------+----------------+
 # | Field         | Type         | Null | Key | Default | Extra          |
@@ -100,7 +102,9 @@ tabla con el último SCRAP realizado
 # | Read_Complete | bit(1)       | YES  |     | b'0'    |                |
 # +---------------+--------------+------+-----+---------+----------------+
 # 7 rows in set (0.00 sec)
-
+```
+tabla para capturar errores
+```
 # mysql> SHOW COLUMNS FROM errores;
 # +------------+-------------+------+-----+---------+-------+
 # | Field      | Type        | Null | Key | Default | Extra |
@@ -110,9 +114,9 @@ tabla con el último SCRAP realizado
 # | SqlError   | text        | YES  |     | NULL    |       |
 # +------------+-------------+------+-----+---------+-------+
 # 3 rows in set (0.00 sec)
-
+```
 para ayudar a la db se han creado unos procedimientos almacenados
-
+```
 # mysql> SHOW PROCEDURE STATUS
 #     -> WHERE Db = DATABASE() AND Type = 'PROCEDURE';
 # +-------------------+---------------------+-----------+----------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
@@ -131,8 +135,9 @@ GetNextTextParser  : obtener el siguiente elemento a PARSEAR
 InsertAnyo	       : inserta un nuevo año y crea la tabla correspondiente
 Insert_Text_BOLETIN: rutina única para escojer textos
 listBorme_prov	   : listado con la cuenta de elementos del BORME (movimientos de empresas) por provincia y año
-
+```
 tambien tenemos una funcion
+```
 # mysql SHOW FUNCTION STATUS  WHERE Db = DATABASE() AND Type = 'FUNCTION';
 # mysql+-------------------+-----------+----------+----------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
 # mysql| Db                | Name      | Type     | Definer        | Modified            | Created             | Security_type | Comment | character_set_client | collation_connection | Database Collation |
@@ -140,6 +145,6 @@ tambien tenemos una funcion
 # mysql| bbdd_kaos155_text | SPLIT_STR | FUNCTION | root@localhost | 2017-11-23 02:31:49 | 2017-11-23 02:31:49 | DEFINER       |         | utf8                 | utf8_general_ci      | utf8_general_ci    |
 # mysql+-------------------+-----------+----------+----------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
 # mysql1 row in set (0.00 sec)
-
+```
 SPLIT_STR : permite extraer de una cadena un elemento de una lista con los elementos separados por un caracter determinado 
 
