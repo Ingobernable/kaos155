@@ -129,7 +129,7 @@ Paso 5: Clonamos el repositorio Kaos155
 # cd kaos155
 ```
 
-Paso 6: Creamos la base de datos y el usuario/password
+Paso 6: Creamos las base de datos y el/los usuarios/password
 
 Para ello accederemos como root a mysql. Por ejemplo así: mysql -u root -p (en el caso de no tener password para el usuario root simplemente mysql -u root)
 
@@ -138,36 +138,21 @@ Una vez dentro de la consola de MySQL los comandos son los siguientes:
 ```
 mysql> CREATE DATABASE bbdd_kaos155;
 mysql> GRANT ALL ON bbdd_kaos155.* TO 'kaosuser'@'localhost' IDENTIFIED BY 'kaospassword';
+mysql> CREATE DATABASE bbdd_kaos155_text;
+mysql> GRANT ALL ON bbdd_kaos155_text.* TO 'kaosuser'@'localhost' IDENTIFIED BY 'kaospassword';
 ```
 
 Con control+D podemos salir de la consola MySQL.
+Anotamos el usuario y password.
 
-Paso 7: Anotamos el usuario y password creados en el archivo ACCESO_mysql.json
-
-Encontraremos uno llamado ACCESO_mysql-example.json en el directorio sqlfiles que renombraremos a ACCESO_mysql.json
-
-```
-cd sqlfiles/
-mv ACCESO_mysql-example.json ACCESO_mysql.json
-nano ACCESO_mysql.json
-```
-
-Anotaremos los cambios (usuario y password) en el archivo tal que así:
+Paso 7: Importamos las tablas del archivo CREATE_DB_SCRAP.sql y  CREATE_DB_PARSER.sql
 
 ```
-{"mySQL":{"host":"127.0.0.1","user":"kaosuser","password":"kaospassword"}}
+# mysql -u root -p bbdd_kaos155 < CREATE_DB_SCRAP.sql
+# mysql -u root -p bbdd_kaos155 < CREATE_DB_PARSER.sql
 ```
 
-Para guardar los cambios con el editor nano usaremos Control+o y para salir Control+x
-
-
-Paso 8: Importamos las tablas del archivo CREATE_COMPLETO.sql
-
-```
-# mysql -u root -p bbdd_kaos155 < CREATE_COMPLETO.sql
-```
-
-Paso 9: cargar los plugins externos
+Paso 8: cargar los plugins/dependencias externas de NODE JS
 
 ```
 # cd ..
@@ -175,6 +160,20 @@ Paso 9: cargar los plugins externos
 # cd app
 # npm upgrade
 ```
+Paso 9: arrancar la aplicación y proporcionarle las credenciales de acceso a las DB mysql
+```
+# node app
+    SCRAP
+    PARSER
+    DELETE
+    EXIT
+    --------------
+    mysql IP?
+    mysql user?
+    mysql passw?
+
+```
+seleccionar del menu la opción SCRAP y pedirá credenciales para la DB de textos(bbdd_kaos155_text), la opcion PARSER pedira credenciales para la DB de resultados(bbdd_kaos155)
 
 Paso 10: Comenzar con el scraping
 
@@ -187,6 +186,7 @@ El BOE desde el 2001, el BORME desde el 2009 y el BOCM desde 2010.
 # node app SCRAP BORME 2009
 # node app SCRAP BOCM 2010
 ```
+se deben de lanzar simultaneamente todos los años de cada tipo, el proceso de SCRAPEO completo dura en torno a 8 horas dependiendo este factor de la capacidad de procesamiento, el tamaño final de la DB de textos es de 3.4 GB
 
 
 # VIA ANSIBLE
