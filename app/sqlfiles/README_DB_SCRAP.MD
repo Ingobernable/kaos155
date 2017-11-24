@@ -129,6 +129,8 @@ para ayudar a la db se han creado unos procedimientos almacenados
 # | bbdd_kaos155_text | listBorme_prov      | PROCEDURE | root@localhost | 2017-11-23 02:31:57 | 2017-11-23 02:31:57 | DEFINER       |         | utf8                 | utf8_general_ci      | utf8_general_ci    |
 # +-------------------+---------------------+-----------+----------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
 # 5 rows in set (0.00 sec)
+```
+para ayudar a la db se han creado unos procedimientos almacenados
 
 DropTextFromYear   : borrar los datos de años especificos
 GetNextTextParser  : obtener el siguiente elemento a PARSEAR
