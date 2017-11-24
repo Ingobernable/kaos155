@@ -71,7 +71,10 @@ Anotamos el usuario y password.
 
 Paso 7: Importamos las tablas del archivo CREATE_DB_SCRAP.sql y  CREATE_DB_PARSER.sql
 
+Para ello hemos de acceder al directorio app/sqlfiles y luego importarlo con mysql
+
 ```
+# cd app/sqlfiles
 # mysql -u root -p bbdd_kaos155 < CREATE_DB_SCRAP.sql
 # mysql -u root -p bbdd_kaos155 < CREATE_DB_PARSER.sql
 ```
@@ -81,10 +84,11 @@ Paso 8: cargar los plugins/dependencias externas de NODE JS
 ```
 # cd ..
 # chown -R root:root *
-# cd app
 # npm upgrade
 ```
+
 Paso 9: arrancar la aplicación y proporcionarle las credenciales de acceso a las DB mysql
+
 ```
 # node app
     SCRAP
@@ -105,7 +109,6 @@ Hemos de tener en cuenta que dependiendo del boletín que se va a scrapear hemos
 El BOE desde el 2001, el BORME desde el 2009 y el BOCM desde 2010.
 
 ```
-
 # node app SCRAP BOE 2001
 # node app SCRAP BORME 2009
 # node app SCRAP BOCM 2010
@@ -118,6 +121,3 @@ se deben de lanzar simultaneamente todos los años de cada tipo, el proceso de S
 Los datos de ansible estan separados de la lógica en las variables del inventario. Puedes crear un inventario personalizado que instale y configure kaos155 en cualquier maquina[s] (siempre que sea sistema operativo debian-like ) No es requisito pero si recomendable que añadas una relacion de confianza entre las maquinas para la session ssh (importar tu clave publica)
 Para mas informacion consulta al equipo de kaos o la documentacion oficial de ansible.
 
-
-# VIA DOCKER
-Pendiente de hacer
