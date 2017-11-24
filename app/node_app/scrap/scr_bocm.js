@@ -89,7 +89,7 @@
                                                             app.fs.unlink(_file, function (err) {
                                                                 //app.fs.unlink(_file)
                                                                 var _lines = []
-                                                                var _t = text.replace(/"/g, "").split('\n\r')
+                                                                var _t = text.replace(/"/g, "").split('\n')
                                                                 var inContrato = false
                                                                 var t = []
                                                                 var _recolect = ""
@@ -181,6 +181,7 @@
                                 })
                             }
                         } else {
+                            process.stdout.write("fff")
                             callback(data)
                         }
                         //options.SQL.insert(options, _analisis, data, function (data) {
