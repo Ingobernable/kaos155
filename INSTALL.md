@@ -126,7 +126,8 @@ Paso 5: Clonamos el repositorio Kaos155
 
 ```
 # git clone https://github.com/Ingobernable/kaos155
-# cd kaos155
+# cd kaos155\app
+# npm upgrade
 ```
 
 Paso 6: Creamos la base de datos y el usuario/password
