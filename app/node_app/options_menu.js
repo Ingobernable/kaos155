@@ -77,8 +77,8 @@
                })
             
     } else {
-        require('./node_app/sql_common.js')(app, function (SQL) {
-            exit(app, SQL, myArgs, callback)
+        require('./sql_common.js')(app, function (SQL) {
+            exit(myArgs, callback)
         })
     }
 

@@ -591,7 +591,7 @@
                         app.fs.writeFile(_file, body, function (err) {
                             if (err) {
                                 console.log(err)
-                                debugger
+                                
                                 callback(sdata, list)
                             } else {
 
@@ -601,8 +601,12 @@
 
                                 pdf.getText(function (err, text, cmd) {
                                     if (err) {
-                                        debugger
-                                        console.error(err);
+                                        //debugger
+                                        app.commonSQL.SQL.commands.insert.errores(options, turl[turl.length - 1], err.cmd,err.message,function(err,record){
+                                            //console.error(err);
+                                            _callback(null)
+                                        })
+                                    
                                     } else {
 
 

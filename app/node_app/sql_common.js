@@ -92,7 +92,7 @@
                                         
                                         con.query("SHOW Databases LIKE '" + db + "'", function (err, record) {
                                             if (record.length == 0) {
-                                                con.query("CREATE DATABASE IF NOT EXIST " + db, function (err, result) {
+                                                con.query("CREATE DATABASE IF NOT EXISTS " + db, function (err, result) {
                                                     if (err) throw err;
                                                     console.log("Database " + db + " created");
 
