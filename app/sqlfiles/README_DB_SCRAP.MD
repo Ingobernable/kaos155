@@ -1,7 +1,7 @@
 ﻿Estructura de las bases de datos
 
 DB de almacenamiento de Textos
-
+detalles correspondientes : https://github.com/Ingobernable/kaos155/blob/master/app/sqlfiles/CREATE_DB_SCRAP.sql
 tablas donde almacenamos datos generales del parseo
 
 # mysql> SHOW TABLES FROM bbdd_kaos155_text WHERE Tables_in_bbdd_kaos155_text NOT ' at line 1
@@ -141,4 +141,5 @@ tambien tenemos una funcion
 # mysql+-------------------+-----------+----------+----------------+---------------------+---------------------+---------------+---------+----------------------+----------------------+--------------------+
 # mysql1 row in set (0.00 sec)
 
-SPLIT_STR : permite partir cadenas por un carcter determinado SPLIT()
+SPLIT_STR : permite extraer de una cadena un elemento de una lista con los elementos separados por un caracter determinado 
+
