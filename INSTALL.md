@@ -152,7 +152,7 @@ Paso 7: Importamos las tablas del archivo CREATE_DB_SCRAP.sql y  CREATE_DB_PARSE
 # mysql -u root -p bbdd_kaos155 < CREATE_DB_PARSER.sql
 ```
 
-Paso 8: cargar los plugins externos
+Paso 8: cargar los plugins/dependencias externas de NODE JS
 
 ```
 # cd ..
