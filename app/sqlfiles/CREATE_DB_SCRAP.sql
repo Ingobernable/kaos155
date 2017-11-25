@@ -225,7 +225,7 @@ BEGIN
 		END IF;
 		IF _type='BORME' THEN
 			SET _cmp = "`ID_BORME` int(11) DEFAULT '0', `provincia` varchar(55) DEFAULT NULL,";
-            SET _ki = '.KEY `prov` (`provincia`),KEY `prov_mes` (`provincia`,`mes`) ';
+            SET _ki = ',KEY `prov` (`provincia`),KEY `prov_mes` (`provincia`,`mes`) ';
         END IF;
 
 		IF _type='BOCM' THEN
