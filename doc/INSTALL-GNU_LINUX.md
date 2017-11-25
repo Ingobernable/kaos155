@@ -1,4 +1,4 @@
-# VIA INSTALACION MANUAL EN GNU/Linux
+# INSTALACION MANUAL DE KAOS155 EN GNU/Linux
 
 ### Debian 9
 
@@ -114,10 +114,3 @@ El BOE desde el 2001, el BORME desde el 2009 y el BOCM desde 2010.
 # node app SCRAP BOCM 2010
 ```
 se deben de lanzar simultaneamente todos los años de cada tipo, el proceso de SCRAPEO completo dura en torno a 8 horas dependiendo este factor de la capacidad de procesamiento, el tamaño final de la DB de textos es de 3.4 GB
-
-
-# VIA ANSIBLE
-
-Los datos de ansible estan separados de la lógica en las variables del inventario. Puedes crear un inventario personalizado que instale y configure kaos155 en cualquier maquina[s] (siempre que sea sistema operativo debian-like ) No es requisito pero si recomendable que añadas una relacion de confianza entre las maquinas para la session ssh (importar tu clave publica)
-Para mas informacion consulta al equipo de kaos o la documentacion oficial de ansible.
-

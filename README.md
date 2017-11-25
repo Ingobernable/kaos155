@@ -32,6 +32,6 @@ http://listas.ingobernable.net/cgi-bin/mailman/listinfo/kaos
 
 Puedes consultar las formas de instalar Kaos155 en los archivos .md dentro del directorio [doc](https://github.com/Ingobernable/kaos155/blob/master/doc/) del proyecto.
 
-Instalar Kaos155 sobre GNU/Linux Debian 9: [INSTALL-GNU_LINUX.md](https://github.com/Ingobernable/kaos155/blob/master/doc/INSTALL-GNU_LINUX.md)
-
+* Instalar Kaos155 sobre GNU/Linux Debian 9: [INSTALL-GNU_LINUX.md](https://github.com/Ingobernable/kaos155/blob/master/doc/INSTALL-GNU_LINUX.md)
+* Instalar Kaos155 vía Vagrant Ansible: [INSTALL-VAGRANT_ANSIBLE.md](https://github.com/Ingobernable/kaos155/blob/master/doc/INSTALL-VAGRANT_ANSIBLE.md)
 

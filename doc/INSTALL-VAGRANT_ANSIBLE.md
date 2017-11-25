@@ -74,3 +74,11 @@ Puedes experimentar y destrozar la maquina virtual sin consecuencias. Para regen
 vagrant destroy -f && vagrant up
 ```
 Puedes editar cualquier fichero del repo, el contenido de la carpeta kaos155 que has clonado, corresponde a la carpeta "/vagrant" dentro de la maquina virtual
+
+
+# VIA ANSIBLE
+
+Los datos de ansible estan separados de la lógica en las variables del inventario. Puedes crear un inventario personalizado que instale y configure kaos155 en cualquier maquina[s] (siempre que sea sistema operativo debian-like ) No es requisito pero si recomendable que añadas una relacion de confianza entre las maquinas para la session ssh (importar tu clave publica)
+Para mas informacion consulta al equipo de kaos o la documentacion oficial de ansible.
+
+
