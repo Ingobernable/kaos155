@@ -11,7 +11,7 @@ Herramienta para la obtención de datos de Contratación con la administración 
 \_| \_/\__,_|\___/|___/\___/\____/\____/ 
 ```                                         
 
-Es una herramienta de software libre bajo los terminos de la licencia GPL 3 (ver archivo LICENSE para más detalles).
+Es una herramienta de software libre bajo los terminos de la licencia GPL 3. (ver archivo [LICENSE](https://github.com/Ingobernable/kaos155/blob/master/LICENSE) para más detalles).
 
 ## Formas de contactar
 
@@ -30,4 +30,8 @@ http://listas.ingobernable.net/cgi-bin/mailman/listinfo/kaos
 
 ## Documentación para instalar Kaos155
 
-Puedes consultar las formas de instalar Kaos155 en los archivos .md dentro del directorio doc del proyecto.
+Puedes consultar las formas de instalar Kaos155 en los archivos .md dentro del directorio [doc](https://github.com/Ingobernable/kaos155/blob/master/doc/) del proyecto.
+
+Instalar Kaos155 sobre GNU/Linux Debian 9: [INSTALL-GNU_LINUX.md](https://github.com/Ingobernable/kaos155/blob/master/doc/INSTALL-GNU_LINUX.md)
+
+
