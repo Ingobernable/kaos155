@@ -8,7 +8,7 @@ var App = {
     //datos generales
     _fileCredenciales: 'ACCESO_mysql_',
     TypeBoletines: ["BORME", "BOE", "BOCM"],
-    Commands: ['SCRAP', 'PARSER', 'DELETE', 'EXIT'],
+    Commands: ['SCRAP', 'DELETE', 'EXIT'],
     Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
 
     //Plugins
