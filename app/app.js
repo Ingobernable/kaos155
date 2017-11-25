@@ -9,7 +9,7 @@ var App = {
     _fileCredenciales: 'ACCESO_mysql_',
     TypeBoletines: ["BORME", "BOE", "BOCM"],
     Commands: ['SCRAP', 'PARSER', 'DELETE', 'EXIT'],
-    Mins: { BOE: 1995, BOCM: 2010, BORME: 2009 },
+    Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
 
     //Plugins
     mysql: require('mysql'),
