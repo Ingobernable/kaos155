@@ -42,10 +42,10 @@
             if (process.env['KAOS_MYSQL_' + type + '_PASS']) {
                 
                 _this.poolSql[type] = app.mysql.createPool({
-                    host: process.env['KAOS_MYSQL_' + options.Command + '_HOST'], //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
-                    user: process.env['KAOS_MYSQL_' + options.Command + '_USER'], // _sql.mySQL.user,
-                    password: process.env['KAOS_MYSQL_' + options.Command + '_PASS'], // _sql.mySQL.password,
-                    database: process.env['KAOS_MYSQL_' + options.Command + '_DB'], // _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                    host: process.env['KAOS_MYSQL_' + options.Command + '_HOST'], 
+                    user: process.env['KAOS_MYSQL_' + options.Command + '_USER'],
+                    password: process.env['KAOS_MYSQL_' + options.Command + '_PASS'], 
+                    database: process.env['KAOS_MYSQL_' + options.Command + '_DB'], 
                     multipleStatements: true,
                     waitForConnection: true,
                 })
@@ -62,29 +62,28 @@
                                         { type: 'password', name: 'password', message: 'mysql ' + options.Command + ' password' }
                                          
                             ]).then(function (resp) {
-                                //_this.createfistConnect(resp, function (fail) {
+
                                 var db = "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : '')
 
                                 var con = app.mysql.createConnection({
-                                    host: resp.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
-                                    user: resp.user, // _sql.mySQL.user,
-                                    password: resp.password, // _sql.mySQL.password,
+                                    host: resp.host, 
+                                    user: resp.user, 
+                                    password: resp.password, 
                                     multipleStatements: true
                                 })
 
                                 var encryptor = require('simple-encryptor')(db);
                                 var _credenciales = {
-                                    host: resp.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
-                                    user: resp.user, // _sql.mySQL.user,
-                                    password: _this.encryptor.encrypt(resp.password) , // _sql.mySQL.password,
-                                    database: db, // _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                                    host: resp.host, 
+                                    user: resp.user, 
+                                    password: _this.encryptor.encrypt(resp.password) , 
+                                    database: db,
                                     multipleStatements: true,
                                     waitForConnection: true,
                                 }
 
                                 con.connect(function (err) {
                                     if (err) {
-                                        //console.log(err)
                                         console.log('\x1b[31m las credenciales no parecen validas, vuelve a intentarlo \x1b[0m')
                                         testIp(testIp)
                                     } else {
@@ -126,8 +125,8 @@
                             _this.poolSql[type] = app.mysql.createPool({
                                 host: credenciales.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
                                 user: credenciales.user, // _sql.mySQL.user,
-                                password: _this.encryptor.decrypt(credenciales.password),  // _sql.mySQL.password,
-                                database: credenciales.database, // _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                                password: _this.encryptor.decrypt(credenciales.password),
+                                database: credenciales.database, 
                                 multipleStatements: true,
                                 waitForConnection: true,
                             })
@@ -147,10 +146,10 @@
                         if (_this.poolSql[type] == null) {
 
                             _this.poolSql[type] = app.mysql.createPool({
-                                host: _sql.host, //, //'localhost', //'66.70.184.214',
+                                host: _sql.host,
                                 user: _sql.user,
                                 password: _this.encryptor.decrypt(_sql.password),
-                                database: _sql.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                                database: _sql.database, 
                                 multipleStatements: true,
                                 waitForConnection: true,
                             })
@@ -199,12 +198,12 @@
                             var params = [
                                 _analisis.data.length,                                                      //type
                                 "BORME",
-                                data.desde.substr(6, 2),                                                      //Dia
-                                data.desde.substr(4, 2),                                                      //Mes
-                                data.desde.substr(0, 4),                                                       //Anyo
-                                _analisis.BORME,                                                                    //BOLETIN                                                                                                                   
+                                data.desde.substr(6, 2),                                                    //Dia
+                                data.desde.substr(4, 2),                                                    //Mes
+                                data.desde.substr(0, 4),                                                    //Anyo
+                                _analisis.BORME,                                                            //BOLETIN                                                                                                                   
                                 _text,                                                                      //Texto
-                                _analisis.PROVINCIA,                                                    //PROVINCIA
+                                _analisis.PROVINCIA,                                                        //PROVINCIA
                                 _id,
                                 ''
                             ]
@@ -228,21 +227,21 @@
                     },
                     Boletin: {
                         text: function (options, _analisis, data, callback) {
-                            //var i = isNaN(data.importe * 1) ? 0 : data.importe * 1
+
 
                             var boletin = _analisis._BOLETIN.split("=").length > 1 ? _analisis._BOLETIN.split("=")[1] : _analisis._BOLETIN
                             var fecha = boletin.split("-").length == 2 ? boletin.split("-")[1] : data.desde
 
                             var params = [
                                 data.textExtend.length ,
-                                boletin.split("-")[0],                                                      //type
+                                boletin.split("-")[0],                                                   //type
                                 fecha.substr(6, 2),                                                      //Dia
                                 fecha.substr(4, 2),                                                      //Mes
-                                fecha.substr(0, 4),                                                       //Anyo
-                                boletin,                                                                    //BOLETIN                                                                                                                   
-                                data.textExtend.join("<br>").replace(/\r/g, "").replace(/'/g, "\'"),        //Texto
-                                JSON.stringify(_analisis.extra),                                                  //resultado del primer analisis
-                                _analisis._importe,                                                          //importe accesible?
+                                fecha.substr(0, 4),                                                      //Anyo
+                                boletin,                                                                 //BOLETIN                                                                                                                   
+                                data.textExtend.join("<br>").replace(/\r/g, "").replace(/'/g, "\'"),     //Texto
+                                JSON.stringify(_analisis.extra),                                         //resultado del primer analisis
+                                _analisis._importe,                                                      //importe accesible?
                                 data.err==null?'':data.err
                             ]
 
@@ -315,14 +314,6 @@
                 CREATE: {
                     create: function (_this, db, callback) {
                         app.fs.readFile(app.path.normalize('../sqlfiles/CREATE.sql'), function (err, _sql) {
-                            //if (err) {
-                            //    console.log(err)
-                            //    debugger
-                            //} else {
-
-                            //_this.commands.create(_sql.toString(), db, function () {
-                            //console.log('tablas vacias creadas......')
-                            //app.fs.readFile(app.path.normalize('../sqlfiles/CREATE_Procs.sql'), function (err, _sql) {
                             if (err) {
                                 console.log(err)
                                 debugger
@@ -332,10 +323,6 @@
                                     callback()
                                 })
                             }
-                            //})
-
-                            //})
-                            //}
                         })
                     },
                 }

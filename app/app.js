@@ -96,15 +96,6 @@ String.prototype.lastIndexOfRegex = function (regex) {
             PDFStore: "../DataFiles/_almacen/PDF/",
 
             _xData: {
-                VisualCif: {
-                    Ranking: {
-                        Directivos: [],
-                        Empresas: []
-                    },
-                    Empresa: 0,
-                    Directivo: 0,
-                    counter: 1
-                },
                 Sumario: {
                     BOE: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOE-S-19950102' },
                     BORME: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BORME-S-20090102' },
@@ -125,33 +116,32 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 _this = this
                 return require('./node_app/func_common.js')(app)
             },
+            //rutina principal de entrada a la aplicacion
+            //entra la propia aplicación y la funcion a ejecutar
             init: function (app, cb) {
-                //app._io = require('./node_www/IO.js')(app)
-
-                //= app._io.listen(require('socket.io').listen(80), require('./node_app/elasticIO.js')(app))
-
+                //cargamos el plugin de conversion de PDF a TEXTO
                 this.pdftotext = require('./node_app/pdftotext.js')
+                //arrancamos el pugin general de intreracciones con la DB
                 require('./node_app/sql_common.js')(app, function (SQL) {
                     app.commonSQL = SQL
             
                     cb({
                         EXEC: function (type) {
+                            //futuras aplicaciones
                             require('./node_app/elasticIO.js')(app).init(function (options) {
                                 app.io = { elasticIO: options }
                    
                                 //cargamos la rutina de escrapeo específica del tipo de BOLETIN
                                 //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
-                                //el retorno es el objeto encargado del escrapeo                 
+                                //el retorno (options) es el objeto encargado del escrapeo         
                                 var prefix = app.command.substr(0,3).toLowerCase() + "_"
                                 require('./node_app/' + app.Command.toLowerCase() + '/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
                                     //options = objeto que realiza el escrapeo
-                                    //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
+                                    //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas de app
                                     app.BOLETIN = options
                                     //cargamos los contadores para poder continuar donde se dejó
                                     app.commonSQL.SQL.getCounter(app, options, type, function (options) {
                                         //realizamos el proceso de escrapeo  
-
-
                                         options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
                                         //options._common.Actualize(options, type, null)
                                     })
@@ -165,7 +155,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
 
                         }
                     })
-                    //})
+
                 })
             },        
             logStop : function (i, text) {
@@ -173,11 +163,10 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 console.log('SISTEMA DETENIDO')
                 process.exit(i)
             },
+            //normalización de parametros de entrada
             parameters: function (app, myArgs,callback) {
-
-
                 var arg = myArgs[3]
-                //app.SqlIP = myArgs[1]
+
                 if (app.SqlIP != null && app.SqlIP != 'localhost') {
                     if (app.SqlIP.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g).length != 1) {
                         app.SqlIP = 'localhost'
@@ -199,6 +188,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 app.Type = myArgs[1]
                 callback(app)
             },
+            //rutina para obtener los contadores de inicio de SCRAPEO
             getCounter: function (app, _options, type, callback) {
                 _cadsql = "SELECT * FROM lastread WHERE Type = '" + type + "' AND Anyo = " + app.anyo
                 _options.SQL.db.query(_cadsql, function (err, Record) {
@@ -231,7 +221,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
         })
         
 
-
+        // standarizamos los parametros
         App.parameters(App, myArgs, function (app) {
             if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {
                 myArgs[2] = (date.getFullYear() + '').pad(4) + '0212'
@@ -245,18 +235,14 @@ String.prototype.lastIndexOfRegex = function (regex) {
             }
 
 
-            //debugger
+            //comprobamos si el año es superior al minimo del type
             if (app.Mins[myArgs[1]] <= app.anyo) {
                 app.initDate = myArgs[2]
                 console.log('MySQL IP:' + app.SqlIP)
                 console.log('PROCESS:' + app.Type)
                 console.log('Anyo:' + app.anyo)
-                //console.log('DELETE DATA:' + app.drop)
-                // app.fs.readFile(app.path.normalize('../DataFiles/cargos.json'), 'utf-8', function (err, dataFile) {
-                //     console.log(JSON.parse(dataFile))
-
+                //debugger                                              //antes de inicar la aplicacion en sí
                 app.init(app, function (_f) { _f.EXEC(app.Type) })
-                //})
             } else {
                 console.log( 'no se puede analizar ' + myArgs[1] + ' con fecha anterior a ' + app.Mins[myArgs[1]] )
             }

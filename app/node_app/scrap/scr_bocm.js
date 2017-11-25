@@ -197,10 +197,6 @@
         }
     }
 
-   // app.commonSQL.getConnect({ SQL: { db: null } }, false, 'RELACIONES', function (_options) {
-    //options.vConnect = app.VisualCif
-    //app.commonSQL.init(options, 'BOCM', app._fileCredenciales + options.Command , callback)
-    //})
     app.commonSQL.init(options, options.Type, app._fileCredenciales + options.Command, function (options) {
         app.commonSQL.SQL.commands.insert.AnyoRead(options, options.SQL.db, app.command, function (options) {
             callback(options)

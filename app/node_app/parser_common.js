@@ -11,7 +11,7 @@
                         })
                     },
                     insert: function (options, data, callback) {
-                        var next = data.SUMARIO_NEXT //options.type + (options.type=="BOCM"?"":"-S-") + data.next.substr(6, 4) + data.next.substr(3, 2) + data.next.substr(0, 2)
+                        var next = data.SUMARIO_NEXT
                         if (data._analisis == null) {
                             if (data._list[data.e][data.type] == null) {
                                 var _boletin = data._list[data.e].split("=")[1]
@@ -44,8 +44,7 @@
                                             process.stdout.write('%')
                                             callback(data)
                                         }
-                                        //console.log(err, sumariosql)
-                                        //callback({ error: true, SUMARIO_NEXT: rows[0].SUMARIO_NEXT })
+
                                     }
                                 } else {
                                     debugger
@@ -75,7 +74,7 @@
                         options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
                             callback(data, repeat)
                         })
-                        //})
+
 
                         
                     },
@@ -138,7 +137,6 @@
                     })
                 },
                 Search: function (options, doc, sdata, analizer, callback) {
-                    //var _this = this
                     if (doc[options.type] != null)
                         doc = [options.type]
 
@@ -149,7 +147,6 @@
             }
         },
         Actualize: function ( options, type, data, callback) {
-            //var _r = { BOCM: 5, BOE: 6, BORME: 8 }
             var _this = this
             if (options.Command == app.Commands[0]) {
                 var iyear = data.desde.substr(0, 4)
@@ -157,7 +154,7 @@
                 var iday = data.desde.substr(6, 2)
                 var _DATE = new Date(imonth + "/" + iday + "/" + iyear)
                 if (app.update == null) {
-                    if (iyear == app.anyo) { //data.hasta) {
+                    if (iyear == app.anyo) { 
                         options.type = type.toUpperCase()
                         options.Sumario = data.type.toUpperCase() + "-" + (type != "BOCM" ? "S-" : "") + iyear + imonth + iday
                         //
@@ -191,7 +188,6 @@
                     }
                 } else {
                     cadsql = "SELECT Read_Complete,SUMARIO FROM boletin LEFT JOIN lastread on boletin.anyo=lastread.anyo AND boletin.type=lastread.type WHERE boletin.BOLETIN='" + app.update + "'"
-                    //cadsql = "SELECT * FROM boletin WHERE BOLETIN='" + app.update + "'"
                     options.SQL.db.query(cadsql, function (err, record) {
                         if (record.length > 0) {
                             if (record[0].Read_Complete = 1) {
