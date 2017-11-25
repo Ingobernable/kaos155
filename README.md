@@ -1,5 +1,15 @@
 # kaos155
+
 Herramienta para la obtención de datos de Contratación con la administración pública y relaciones societarias en España.
+
+```
+ _   __                 __   _____ _____ 
+| | / /                /  | |  ___|  ___|
+| |/ /  __ _  ___  ___ `| | |___ \|___ \ 
+|    \ / _` |/ _ \/ __| | |     \ \   \ \
+| |\  \ (_| | (_) \__ \_| |_/\__/ /\__/ /
+\_| \_/\__,_|\___/|___/\___/\____/\____/ 
+```                                         
 
 Es una herramienta de software libre bajo los terminos de la licencia GPL 3 (ver archivo LICENSE para más detalles).
 
