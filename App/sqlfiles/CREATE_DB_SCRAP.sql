@@ -81,7 +81,6 @@ CREATE TABLE `sumarios` (
   `SUMARIO` varchar(16) CHARACTER SET utf8 NOT NULL,
   `BOLETIN` varchar(20) CHARACTER SET utf8 NOT NULL,
   `Contrato` tinyint(4) DEFAULT '0',
-  `parser` tinyint(4) DEFAULT '0',
   `scrap` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`BOLETIN`),
   UNIQUE KEY `_Boletin` (`BOLETIN`),
@@ -188,8 +187,8 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetNextTextParser`(_type nvarchar(5) , _anyo int)
 BEGIN
 
-		SET @s= CONCAT( 'SELECT `_', LOWER(_type) ,'_text_' , _anyo ,'`.* FROM (`sumarios` JOIN   `_', LOWER(_type) ,'_text_' , _anyo ,'` ON ((`sumarios`.`BOLETIN` =  `_', LOWER(_type) ,'_text_' , _anyo ,'`.`BOLETIN`))) WHERE (`sumarios`.`parser` = 0 ) ORDER BY `id` LIMIT 1;');
-
+		SET @s= CONCAT( 'SELECT * FROM `_', LOWER(_type) ,'_text_' , _anyo ,'` WHERE ( `parser` = 0 ) ORDER BY `id` LIMIT 1;');
+		      
 		PREPARE stmt1 FROM @s;
 		EXECUTE stmt1;  
 		DEALLOCATE PREPARE stmt1;
@@ -220,17 +219,16 @@ BEGIN
     SET _counter = (SELECT Count(*) FROM anyosread WHERE Type=_type AND Anyo=_anyo );
     IF _counter=0 THEN
 		IF _type='BOE' THEN
-			SET _cmp = "`analisis` mediumtext,`importe` varchar(45) DEFAULT NULL, `_p` int(11) DEFAULT NULL,";
-            
+			SET _cmp = "`analisis` mediumtext,`importe` varchar(45) DEFAULT NULL, `_p` int(11) DEFAULT NULL , `parser` int DEFAULT 0,";
 		END IF;
 		IF _type='BORME' THEN
-			SET _cmp = "`ID_BORME` int(11) DEFAULT '0', `provincia` varchar(55) DEFAULT NULL,";
+			SET _cmp = "`ID_BORME` int(11) DEFAULT '0', `provincia` varchar(55) DEFAULT NULL, `parser` int DEFAULT 0,";
             SET _ki = ',KEY `prov` (`provincia`),KEY `prov_mes` (`provincia`,`mes`) ';
         END IF;
 
 		IF _type='BOCM' THEN
           
-			SET _cmp = "`analisis` mediumtext, `_p` int(11) DEFAULT NULL,";
+			SET _cmp = "`analisis` mediumtext, `_p` int(11) DEFAULT NULL, `parser` int DEFAULT 0,";
         END IF;
 
 		SET @s= CONCAT('CREATE TABLE IF NOT EXISTS `_', LOWER(_type) ,'_text_' , _anyo ,'` ( `id` int(11) NOT NULL AUTO_INCREMENT, `dia` varchar(2) DEFAULT NULL, `mes` varchar(2) DEFAULT NULL,`BOLETIN` varchar(22) DEFAULT NULL,`texto` mediumtext,', _cmp ,' `_err` VARCHAR(25), PRIMARY KEY (`id`)' , _ki ,') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;');

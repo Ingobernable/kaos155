@@ -6,7 +6,7 @@
         url: app.urlBOE,
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
         pdfOpc: ['-raw', '-nopgbrk', '-enc UTF-8'],
-        Rutines: require('../parser/BOLETIN/__Rutines')(app),
+        Rutines: require('../parser/CONTRATOS/__Rutines')(app),
         //transforms: require('./BOLETIN/__Transforms')(app),
         _common: require('../parser_common')(app),
         SQL: {
