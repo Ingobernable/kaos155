@@ -231,7 +231,8 @@ BEGIN
 			SET _cmp = "`analisis` mediumtext, `_p` int(11) DEFAULT NULL, `parser` int DEFAULT 0,";
         END IF;
 
-		SET @s= CONCAT('CREATE TABLE IF NOT EXISTS `_', LOWER(_type) ,'_text_' , _anyo ,'` ( `id` int(11) NOT NULL AUTO_INCREMENT, `dia` varchar(2) DEFAULT NULL, `mes` varchar(2) DEFAULT NULL,`BOLETIN` varchar(22) DEFAULT NULL,`texto` mediumtext,', _cmp ,' `_err` VARCHAR(25), PRIMARY KEY (`id`)' , _ki ,') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;');
+		SET @s= CONCAT('CREATE TABLE IF NOT EXISTS `_', LOWER(_type) ,'_text_' , _anyo ,'` ( `id` int(11) NOT NULL AUTO_INCREMENT, `dia` varchar(2) DEFAULT NULL, `mes` varchar(2) DEFAULT NULL,`BOLETIN` varchar(22) DEFAULT NULL,`texto` mediumtext,', _cmp ,' `_err` VARCHAR(25), PRIMARY KEY (`id`),KEY `parser` (`parser`)' , _ki ,') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;');
+
 
 		PREPARE stmt1 FROM @s;
 		EXECUTE stmt1;  
