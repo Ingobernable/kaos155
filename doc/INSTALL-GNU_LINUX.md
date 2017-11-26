@@ -112,18 +112,18 @@ Irá realizandose el scrapeo por cada año que indiquemos.
 
 Los caracteres que salen en el SCRAP tienen significado. En el caso de BOE/BOCM:
 
-.   = BOLETIN leyendo
-xxx = BOLETIN fallido 
-%   = BOLETIN ya analizado
-S   = SUMARIO leyendo
-fff = SUMARIO no encontrado
-#   = SUMARIO duplicado
-+   = CONTRATO anotando
--   = NO CONTRATO anotando
+* .   = BOLETIN leyendo
+* xxx = BOLETIN fallido 
+* %   = BOLETIN ya analizado
+* S   = SUMARIO leyendo
+* fff = SUMARIO no encontrado
+* #   = SUMARIO duplicado
+* +   = CONTRATO anotando
+* -   = NO CONTRATO anotando
 
 En el caso de BORME veremos el nombre de la Provincia y el indicativo de leyendo:
 
-.   = BOLETIN leyendo 
+* .   = BOLETIN leyendo 
 
 En resumen: 
 
