@@ -1,5 +1,8 @@
 # INSTALACION MANUAL DE KAOS155 EN GNU/Linux
 
+Estos pasos son para montar la versión "Cospedal" de kaos155. La versión "Cospedal" solamente contempla la parte de SCRAP.
+Futuras versiones contemplarán la parte PARSER y WEB. Por el momento "Cospedal" es solo para SCRAP de datos.
+
 ### Debian 9
 
 Paso 0: Actualizar repositorios y sistema:
@@ -60,14 +63,12 @@ Para ello accederemos como root a mysql. Por ejemplo así: mysql -u root -p (en 
 Una vez dentro de la consola de MySQL los comandos son los siguientes:
 
 ```
-mysql> CREATE DATABASE bbdd_kaos155;
-mysql> GRANT ALL ON bbdd_kaos155.* TO 'kaosuser'@'localhost' IDENTIFIED BY 'kaospassword';
 mysql> CREATE DATABASE bbdd_kaos155_text;
 mysql> GRANT ALL ON bbdd_kaos155_text.* TO 'kaosuser'@'localhost' IDENTIFIED BY 'kaospassword';
 ```
 
 Con control+D podemos salir de la consola MySQL.
-Anotamos el usuario y password.
+Anotamos el usuario y password ya que luego lo tendremos que meter.
 
 Paso 7: Importamos las tablas del archivo CREATE_DB_SCRAP.sql y  CREATE_DB_PARSER.sql
 
@@ -76,7 +77,6 @@ Para ello hemos de acceder al directorio app/sqlfiles y luego importarlo con mys
 ```
 # cd app/sqlfiles
 # mysql -u root -p bbdd_kaos155 < CREATE_DB_SCRAP.sql
-# mysql -u root -p bbdd_kaos155 < CREATE_DB_PARSER.sql
 ```
 
 Paso 8: cargar los plugins/dependencias externas de NODE JS
@@ -92,7 +92,6 @@ Paso 9: arrancar la aplicación y proporcionarle las credenciales de acceso a la
 ```
 # node app
     SCRAP
-    PARSER
     DELETE
     EXIT
     --------------
@@ -108,9 +107,33 @@ Paso 10: Comenzar con el scraping
 Hemos de tener en cuenta que dependiendo del boletín que se va a scrapear hemos de saber desde cuando.
 El BOE desde el 2001, el BORME desde el 2009 y el BOCM desde 2010.
 
+Con "node app" ejecutaremos Kaos155 "Cospedal" para poder realizar scrapeo de BOE, BORME y BOCM.
+Irá realizandose el scrapeo por cada año que indiquemos. 
+
+Los caracteres que salen en el SCRAP tienen significado. En el caso de BOE/BOCM:
+
 ```
-# node app SCRAP BOE 2001
-# node app SCRAP BORME 2009
-# node app SCRAP BOCM 2010
+.   = BOLETIN leyendo
+xxx = BOLETIN fallido 
+%   = BOLETIN ya analizado
+S   = SUMARIO leyendo
+fff = SUMARIO no encontrado
+#   = SUMARIO duplicado
++   = CONTRATO anotando
+-   = NO CONTRATO anotando
 ```
-se deben de lanzar simultaneamente todos los años de cada tipo, el proceso de SCRAPEO completo dura en torno a 8 horas dependiendo este factor de la capacidad de procesamiento, el tamaño final de la DB de textos es de 3.4 GB
+
+En el caso de BORME veremos el nombre de la Provincia y el indicativo de leyendo:
+
+```
+.   = BOLETIN leyendo 
+```
+
+En resumen: 
+
+BOE BOCM = Contratos
+BORME = Temas de empresas, altas, bajas, quiebras, cargos, cambios de dirección, etc ...
+
+Para realizar el SCRAP de golpe existen unos script en bash que pueden ejecutarse para que se realice del tirón.
+
+Se deben de lanzar simultaneamente todos los años de cada tipo, el proceso de SCRAPEO completo dura en torno a 8 horas dependiendo este factor de la capacidad de procesamiento, el tamaño final de la DB de textos es de 3.4 GB
