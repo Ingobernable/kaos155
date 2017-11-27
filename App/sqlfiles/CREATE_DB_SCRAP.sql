@@ -63,7 +63,7 @@ CREATE TABLE `lastread` (
   `SUMARIO_NEXT` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
   `ID_LAST` varchar(145) DEFAULT NULL,
   `Read_Complete` bit(1) DEFAULT b'0',
-  `STOP` bit(1) DEFAULT b'0',
+  `STOP` boolean DEFAULT '0',
   UNIQUE KEY `_id_UNIQUE` (`_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
