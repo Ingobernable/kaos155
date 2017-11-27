@@ -96,7 +96,7 @@
                                                     console.log("Database " + db + " created");
 
                                                     const cp = require('child_process');
-                                                    cp.exec('mysql -u' + resp.user + ' -p ' + resp.password + ' < ' + app.path.normalize('sqlfiles/CREATE_DB_' + options.Command + '.sql') , (error, stdout, stderr) => {
+                                                    cp.exec('mysql -u' + resp.user + ' -p' + resp.password + ' < ' + app.path.normalize('sqlfiles/CREATE_DB_' + options.Command + '.sql') , (error, stdout, stderr) => {
                                                         if (error) throw error;
                                                         console.log(`stdout: ${stdout}`);
                                                         console.log(`stderr: ${stderr}`);
@@ -180,6 +180,7 @@
                 insert: {
                     AnyoRead: function (options, db, type, callback) {
                         db.query('call InsertAnyo(?,?)', [options.Type, app.anyo], function (err, record) {
+                            console.log(err)
                             if (record[0][0][type.toLowerCase()]>0)
                                 app.logStop(3, 'el ' + type + ' del año ' + app.anyo + ' ya se ha completado')
 

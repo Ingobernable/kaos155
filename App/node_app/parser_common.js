@@ -64,15 +64,30 @@
                         if (options.type == "BOCM")
                             if (Sumario.indexOf("-S-") == -1) {
                                 var url = options.url + '_Boletin_BOCM/' + Sumario.substr(5, 4) + "/" + Sumario.substr(9, 2) + "/" + Sumario.substr(11, 2) + "/" + Sumario + ".PDF"
-                            } else {
+                            } else {                               
                                 var url = options.url + '_Boletin_BOCM/' + Sumario.substr(7, 4) + "/" + Sumario.substr(11, 2) + "/" + Sumario.substr(13, 2) + "/" + options.type + Sumario.substr(6, 9) + ".PDF"
                             }
                         //
                         //Cargamos y analizamos las secciones con el parseador concreto de cada TYPE de documento
                         //BOE,BOCM,BORME......etc
-                            
-                        options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
-                            callback(data, repeat)
+                        // si el campo STOP estuviera a 1
+                        //salimos del proceso
+
+                        cadsql = "SELECT STOP FROM lastread WHERE Type='" + options.type + "' AND anyo = " + data.desde.substr(0, 4)
+                        options.SQL.db.query(cadsql, function (err, record) {
+                            console.log(err)
+                            debugger
+                            if (record[0].STOP == 0) {
+                                options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
+                                    callback(data, repeat)
+                                })
+                            } else {
+                                cadsql = "UPDATE lastread set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + data.desde.substr(0, 4)
+                                options.SQL.db.query(cadsql, function (err,record) {
+                                    console.log('proceso obligado a parar')
+                                    process.exit(1)
+                                })
+                            }
                         })
 
 
