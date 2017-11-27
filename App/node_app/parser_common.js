@@ -82,6 +82,7 @@
                             } else {
                                 cadsql = "UPDATE LastRead set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + Sumario.substr(5, 4)
                                 options.SQL.db.query(cadsql, function (err,record) {
+                                    console.log('proceso obligado a parar')
                                     process.exit(1)
                                 })
                             }
