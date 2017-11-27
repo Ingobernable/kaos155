@@ -180,6 +180,7 @@
                 insert: {
                     AnyoRead: function (options, db, type, callback) {
                         db.query('call InsertAnyo(?,?)', [options.Type, app.anyo], function (err, record) {
+                            console.log(err)
                             if (record[0][0][type.toLowerCase()]>0)
                                 app.logStop(3, 'el ' + type + ' del año ' + app.anyo + ' ya se ha completado')
 
