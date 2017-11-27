@@ -75,6 +75,7 @@
 
                         cadsql = "SELECT STOP FROM LastRead WHERE Type='" + options.type + "' AND anyo = " + Sumario.substr(5, 4)
                         options.SQL.db.query(cadsql, function (err, record) {
+                            debugger
                             if (record[0].STOP == 0) {
                                 options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
                                     callback(data, repeat)
