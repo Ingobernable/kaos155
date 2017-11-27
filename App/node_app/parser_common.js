@@ -82,7 +82,11 @@
                                     callback(data, repeat)
                                 })
                             } else {
-                                process.exit(1)
+                                cadsql = "UPDATE lastread set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + data.desde.substr(0, 4)
+                                options.SQL.db.query(cadsql, function (err,record) {
+                                    console.log('proceso obligado a parar')
+                                    process.exit(1)
+                                })
                             }
                         })
 
