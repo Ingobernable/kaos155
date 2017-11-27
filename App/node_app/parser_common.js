@@ -70,6 +70,9 @@
                         //
                         //Cargamos y analizamos las secciones con el parseador concreto de cada TYPE de documento
                         //BOE,BOCM,BORME......etc
+                        // si el campo STOP estuviera a 1
+                        //salimos del proceso
+
                         cadsql = "SELECT STOP FROM LastRead WHERE Type='" + options.type + "' AND anyo = " + Sumario.substr(5, 4)
                         options.SQL.db.query(cadsql, function (err, record) {
                             if (record[0].STOP == 0) {
