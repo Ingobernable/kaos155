@@ -22,4 +22,6 @@ Tarea a realizar:
 	existen unos años iniciales
 		Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
 	
-	se pueden lanzar simultaneamente distintos años y distintos tipos
+	Se pueden lanzar simultaneamente distintos años y distintos tipos
+
+	Puedes usar el script scraping.sh para lanzarlos todos.
