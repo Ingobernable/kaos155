@@ -102,8 +102,8 @@ if [[ $1 == "--monitor" ]]; then
 	# MONITOR
 	while :
 	do
-		mysql -u"kaosuser" -p"kaospassword" -h"localhost" bbdd_kaos155_text -e "SELECT Type,Anyo,SUMARIO_LAST FROM lastread WHERE Type='BOE' AND stop='0';" | grep -v "SUMARIO_LAST" | awk '{ print $2 $3 }' | sed 's/BOE-S-20[0-9][0-9]/-/g' | rev | cut -c 3-10 | rev | tr "-" " " | awk '{ print $1 , "[" , $2 , "/ 12 ]  " }' | sed 's/ //g' > /tmp/boe.tmp ; clear
-		mysql -u"kaosuser" -p"kaospassword" -h"localhost" bbdd_kaos155_text -e "SELECT Type,Anyo,SUMARIO_LAST FROM lastread WHERE Type='BORME' AND stop='0';" | grep -v "SUMARIO_LAST" | awk '{ print $2 $3 }' | sed 's/BORME-S-20[0-9][0-9]/-/g' | rev | cut -c 3-10 | rev | tr "-" " " | awk '{ print $1 , "[" , $2 , "/ 12 ]  " }' | sed 's/ //g' > /tmp/borme.tmp ; clear
+		mysql -u"$dbu" -p"$dbp" -h"$dbh" bbdd_kaos155_text -e "SELECT Type,Anyo,SUMARIO_LAST FROM lastread WHERE Type='BOE' AND stop='0';" | grep -v "SUMARIO_LAST" | awk '{ print $2 $3 }' | sed 's/BOE-S-20[0-9][0-9]/-/g' | rev | cut -c 3-10 | rev | tr "-" " " | awk '{ print $1 , "[" , $2 , "/ 12 ]  " }' | sed 's/ //g' > /tmp/boe.tmp ; clear
+		mysql -u"$dbu" -p"$dbp" -h"$dbh" bbdd_kaos155_text -e "SELECT Type,Anyo,SUMARIO_LAST FROM lastread WHERE Type='BORME' AND stop='0';" | grep -v "SUMARIO_LAST" | awk '{ print $2 $3 }' | sed 's/BORME-S-20[0-9][0-9]/-/g' | rev | cut -c 3-10 | rev | tr "-" " " | awk '{ print $1 , "[" , $2 , "/ 12 ]  " }' | sed 's/ //g' > /tmp/borme.tmp ; clear
 
 		echo "BOE: "
 		for lineaboe in `cat /tmp/boe.tmp`
