@@ -1,9 +1,9 @@
 var Version = '0.1.3'
 
 //para propositos de testeo//
-//process.argv.push('SCRAP')
-//process.argv.push('BOE')
-//process.argv.push('2001')
+process.argv.push('SCRAP')
+process.argv.push('BOCM')
+process.argv.push('2010')
 /////////////////////////////
 
 console.log('kaos155 App - version -' + Version+'.' )
@@ -130,7 +130,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
             //entra la propia aplicación y la funcion a ejecutar
             init: function (app, cb) {
                 //cargamos el plugin de conversion de PDF a TEXTO
-                this.pdftotext = require('./node_app/pdftotext.js')
+                this.pdftotext = require('./node_app/_utils/pdftotext.js')
                 //arrancamos el pugin general de intreracciones con la DB
                 require('./node_app/sql_common.js')(app, function (SQL) {
                     app.commonSQL = SQL

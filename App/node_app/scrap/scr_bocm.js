@@ -7,7 +7,7 @@
         pdfOpc: ['-raw', '-enc UTF-8'],
         //pdftotext : require('../pdftotext'),
         Rutines: require('../_utils/CONTRATOS/__Rutines')(app),
-        _common: require('../_commons')(app),
+        _common: require('../_common')(app),
         url: app.urlBOCM,
         SQL: {
             db: null 

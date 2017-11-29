@@ -8,7 +8,7 @@
         pdfOpc: ['-raw', '-nopgbrk', '-enc UTF-8'],
         Rutines: require('../_utils/CONTRATOS/__Rutines')(app),
         //transforms: require('./BOLETIN/__Transforms')(app),
-        _common: require('../_commons')(app),
+        _common: require('../_common')(app),
         SQL: {
             db: null           
         },

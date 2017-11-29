@@ -5,7 +5,7 @@
         Command: app.command,
         Rutines: require('../_utils/BORME/Borme_Rutines')(app, require('../_utils/BORME/Borme_Transforms')(app)),
         //Rutines: require('../parser/BOLETIN/__Rutines')(app),
-        _common: require('../_commons')(app),
+        _common: require('../_common')(app),
         pdfOpc: ['-nopgbrk', '-enc UTF-8'],
         url: app.urlBORME,
         
