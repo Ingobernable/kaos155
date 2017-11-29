@@ -152,12 +152,6 @@ String.prototype.lastIndexOfRegex = function (regex) {
                                     })
                                 })
                             
-                        },
-                        CREATE: function (datafile) {
-                            app.commonSQL.init({ SQL: { db:null} }, 'CREATE', function () { 
-                                process.exit(1)
-                            })
-
                         }
                     })
 

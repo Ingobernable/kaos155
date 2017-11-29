@@ -15,7 +15,7 @@
                     this.poolSql[type].getConnection(function (err, connection) {
                         // connected! (unless `err` is set)
                         if (err == null) {
-                            console.log('new connection ' + type + ' mysql OK')
+                            console.log('new connection ' + options.Command + ' mysql OK')
                             options.SQL.db = connection // _this.connection[type] = connection
                             _exit(options, type, callback)
                         } else {
