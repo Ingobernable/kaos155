@@ -62,7 +62,7 @@ CREATE TABLE `lastread` (
   `SUMARIO_LAST` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
   `SUMARIO_NEXT` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
   `ID_LAST` varchar(145) DEFAULT NULL,
-  `Read_Complete` bit(1) DEFAULT b'0',
+  `Read_Complete` boolean DEFAULT '0',
   `STOP` boolean DEFAULT '0',
   UNIQUE KEY `_id_UNIQUE` (`_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
@@ -241,7 +241,7 @@ BEGIN
     
 		INSERT INTO anyosread (Type,Anyo) VALUES (_type,_anyo);
     END IF;
-    SELECT scrap, parser FROM anyosread WHERE Type=_type AND Anyo=_anyo;
+    SELECT scrap, parser,anyo FROM anyosread WHERE Type=_type AND Anyo=_anyo;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
