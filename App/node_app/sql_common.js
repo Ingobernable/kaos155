@@ -39,20 +39,21 @@
             var _this = this
             _this.encryptor = require('simple-encryptor')("bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : ''))
 
-            if (process.env['KAOS_MYSQL_' + type + '_PASS']) {
+            if (process.env['KAOS_MYSQL_' + options.Command + '_PASS']) {
                 
                 _this.poolSql[type] = app.mysql.createPool({
-                    host: process.env['KAOS_MYSQL_' + options.Command + '_HOST'], 
+                    host: process.env['KAOS_MYSQL_' + options.Command + '_HOST'],
                     user: process.env['KAOS_MYSQL_' + options.Command + '_USER'],
-                    password: process.env['KAOS_MYSQL_' + options.Command + '_PASS'], 
-                    database: process.env['KAOS_MYSQL_' + options.Command + '_DB'], 
+                    password: process.env['KAOS_MYSQL_' + options.Command + '_PASS'],
+                    database: process.env['KAOS_MYSQL_' + options.Command + '_DB'],
                     multipleStatements: true,
                     waitForConnection: true,
                 })
 
                 _this.getConnect(options, type, callback)
 
-            }else{
+            } else {
+
                 app.fs.readFile(app.path.normalize('sqlfiles/x_'+ _file + '.json'), function (err, _JSON) {
                     if (err) {
                         testIp = function (testIp,callback) {
@@ -180,11 +181,18 @@
                 insert: {
                     AnyoRead: function (options, db, type, callback) {
                         db.query('call InsertAnyo(?,?)', [options.Type, app.anyo], function (err, record) {
-                            console.log(err)
-                            if (record[0][0][type.toLowerCase()]>0)
-                                app.logStop(3, 'el ' + type + ' del año ' + app.anyo + ' ya se ha completado')
-
-                            callback(options)
+                            if (err) {
+                                console.log(err)
+                                process.exit(1)
+                            } else {
+                               
+                                if (record[0][0][type.toLowerCase()] > 0 && app.anyo < app.date.getFullYear() ) {
+                                    app.logStop(3, 'el ' + type + ' del año ' + app.anyo + ' ya se ha completado')
+                                    process.exit(1)
+                                } else {
+                                    callback(options)
+                                }
+                            }
                         })
                     },
                     Borme: {

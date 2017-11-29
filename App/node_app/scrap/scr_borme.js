@@ -96,8 +96,6 @@
                 var xcadsql = null
 
                 var _file = app.PDFStore + urlDoc.split("/")[urlDoc.split("/").length - 1]
-                //var bocm = turl[turl.length - 1].split(".")[0]
-
                 //punto de guardado del PDF precepto
                 if (body != null) {
                     app.mkdirp(app.PDFStore, function (err) {

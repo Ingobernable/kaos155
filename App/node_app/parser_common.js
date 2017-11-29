@@ -75,8 +75,10 @@
 
                         cadsql = "SELECT STOP FROM lastread WHERE Type='" + options.type + "' AND anyo = " + data.desde.substr(0, 4)
                         options.SQL.db.query(cadsql, function (err, record) {
-                            console.log(err)
-                            debugger
+                            if(err)
+                                console.log(err)
+
+                            //debugger
                             if (record[0].STOP == 0) {
                                 options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
                                     callback(data, repeat)
@@ -192,6 +194,7 @@
                             }
                         })
                     } else {
+                        
                         cadsql = "UPDATE lastread SET Read_Complete = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo
                         options.SQL.db.query(cadsql, function (err, record) {
                             cadsql = "UPDATE anyosread SET " + options.Command.toLowerCase() + " = 1 WHERE Type='" + options.Type + "' AND Anyo = " + app.anyo

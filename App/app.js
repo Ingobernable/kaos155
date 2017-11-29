@@ -1,5 +1,9 @@
 var Version = '0.1.3'
 
+process.argv.push('SCRAP')
+process.argv.push('BOE')
+process.argv.push('2001')
+
 
 console.log('kaos155 App - version -' + Version+'.' )
 
@@ -9,7 +13,7 @@ var App = {
     _fileCredenciales: 'ACCESO_mysql_',
 
     TypeBoletines: ["BORME", "BOE", "BOCM"],
-    Commands: ['SCRAP', 'DELETE', 'EXIT'],
+    Commands: ['SCRAP', 'EXIT'],
     Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
 
     //Plugins
@@ -76,11 +80,14 @@ String.prototype.lastIndexOfRegex = function (regex) {
 
 //
  require("./node_app/options_menu.js")(App, process.argv.slice(2), function (app, myArgs, date) {
+     if (myArgs[0]=='EXIT')
+         process.exit(1)
 
-        debugger
+     debugger
 
-        var App = app.merge(app,{           
-            command : myArgs[0],            
+     var App = app.merge(app, {
+             date:new Date(),
+             command: myArgs[0],
                
             update: myArgs[3] ,
             anyo: !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
@@ -128,10 +135,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
             
                     cb({
                         EXEC: function (type) {
-                            //futuras aplicaciones
-                            require('./node_app/elasticIO.js')(app).init(function (options) {
-                                app.io = { elasticIO: options }
-                   
+
                                 //cargamos la rutina de escrapeo específica del tipo de BOLETIN
                                 //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
                                 //el retorno (options) es el objeto encargado del escrapeo         
@@ -147,7 +151,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
                                         
                                     })
                                 })
-                            })
+                            
                         },
                         CREATE: function (datafile) {
                             app.commonSQL.init({ SQL: { db:null} }, 'CREATE', function () { 
