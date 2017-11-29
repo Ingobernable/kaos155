@@ -1,6 +1,8 @@
 #!/bin/bash
 # kaos155 bash script para lanzar el scrapeo
 
+cd App
+
 dbu="kaosuser"		# Usuario base de datos
 dbp="kaospassword"	# Password base de datos
 dbh="localhost"		# Host base de datos
