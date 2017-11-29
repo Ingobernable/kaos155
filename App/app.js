@@ -18,17 +18,18 @@ var App = {
     Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
 
     //Plugins
+    fs: require("fs"),
+    path:require('path'),
+    http: require('http'),
+    merge: require('merge'),
     mysql: require('mysql'),
     iconv: require('iconv-lite'),
-    request: require('request'),
+    moment: require("moment"),
     mkdirp: require('mkdirp'),
     cheerio: require('cheerio'),
-    path:require('path'),
-    fs: require("fs"),
-    http: require('http'),
-    moment: require("moment"),
-    merge: require('merge'),
-    inquirer: require('inquirer'),
+    request: require('request'),
+    inquirer: require('inquirer'),    
+    DOMParser: require('xmldom')
 }
 
 String.prototype.Trim = function Trim(x) {

@@ -164,7 +164,7 @@
                     var _lastParragraf = true
                     var _arr = []
 
-                    var DOMParser = require('xmldom').DOMParser
+                    var DOMParser = app.DOMParser
                     var xml = new DOMParser().parseFromString(body)
                     var _json = app.Rutines().xmlToJson(xml)
                     var _areas = []

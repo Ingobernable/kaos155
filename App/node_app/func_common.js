@@ -27,7 +27,6 @@
                             if (requestOptions.encoding == null) {
                                 callback(options, body, data)
                             } else {
-                                //var iconv = new app.Iconv('ISO-8859-1','UTF-8')
                                 if (body.toString().indexOf('encoding="') > -1 || body.toString().indexOf('meta charset') > -1) {
                                     callback(options, _this.iconv.decode(new Buffer(body), _this.Rutines().ISO(body.toString())), data)
                                 } else {

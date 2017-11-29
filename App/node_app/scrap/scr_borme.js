@@ -3,9 +3,9 @@
     options = {
         Type : 'BORME',
         Command: app.command,
-        Rutines: require('../parser/BORME/Borme_Rutines')(app, require('../parser/BORME/Borme_Transforms')(app)),
+        Rutines: require('../_utils/BORME/Borme_Rutines')(app, require('../_utils/BORME/Borme_Transforms')(app)),
         //Rutines: require('../parser/BOLETIN/__Rutines')(app),
-        _common: require('../parser_common')(app),
+        _common: require('../_commons')(app),
         pdfOpc: ['-nopgbrk', '-enc UTF-8'],
         url: app.urlBORME,
         
