@@ -27,8 +27,8 @@ DROP TABLE IF EXISTS `anyosread`;
 CREATE TABLE `anyosread` (
   `Type` varchar(5) NOT NULL,
   `Anyo` int(11) NOT NULL,
-  `scrap` tinyint(4) DEFAULT '0',
-  `parser` tinyint(4) DEFAULT '0',
+  `scrap` boolean DEFAULT '0',
+  `parser` boolean DEFAULT '0',
   PRIMARY KEY (`Type`,`Anyo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -81,8 +81,8 @@ CREATE TABLE `sumarios` (
   `Anyo` varchar(4) NOT NULL,
   `SUMARIO` varchar(16) CHARACTER SET utf8 NOT NULL,
   `BOLETIN` varchar(20) CHARACTER SET utf8 NOT NULL,
-  `Contrato` tinyint(4) DEFAULT '0',
-  `scrap` tinyint(4) DEFAULT '0',
+  `Contrato` boolean DEFAULT '0',,
+  `scrap` boolean DEFAULT '0',
   PRIMARY KEY (`BOLETIN`),
   UNIQUE KEY `_Boletin` (`BOLETIN`),
   KEY `_Type` (`Type`,`Anyo`)
