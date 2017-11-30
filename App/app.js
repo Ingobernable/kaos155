@@ -1,9 +1,9 @@
 var Version = '0.1.3'
 
 //para propositos de testeo//
-process.argv.push('SCRAP')
-process.argv.push('BORME')
-process.argv.push('2017')
+//process.argv.push('SCRAP')
+//process.argv.push('BORME')
+//process.argv.push('2017')
 /////////////////////////////
 
 console.log('kaos155 App - version -' + Version+'.' )
