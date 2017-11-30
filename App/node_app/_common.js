@@ -202,7 +202,7 @@
                             console.log('continuaremos el ' + date.toString())
 
                             app.schedule.scheduleJob(date, function (y) {
-                                console.log('despertando ... '+y+' ... empezando a analizar ' + type)
+                                console.log('despertando ... '+ y + ' ... empezando a analizar ' + type)
                                 _this.Actualize(options, type, data)
                             })
                         }
