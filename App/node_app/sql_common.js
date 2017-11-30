@@ -97,7 +97,7 @@
                                                     console.log("Database " + db + " created");
 
                                                     const cp = require('child_process');
-                                                    cp.exec('mysql -u' + resp.user + ' -p' + resp.password + ' < ' + app.path.normalize('sqlfiles/CREATE_DB_' + options.Command + '.sql') , (error, stdout, stderr) => {
+                                                    cp.exec('mysql -u' + resp.user + ' -p' + resp.password + ' -h' + resp.host + ' < ' + app.path.normalize('sqlfiles/CREATE_DB_' + options.Command + '.sql'), (error, stdout, stderr) => {
                                                         if (error) throw error;
                                                         console.log(`stdout: ${stdout}`);
                                                         console.log(`stderr: ${stderr}`);

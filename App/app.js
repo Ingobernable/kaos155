@@ -2,8 +2,8 @@ var Version = '0.1.3'
 
 //para propositos de testeo//
 process.argv.push('SCRAP')
-process.argv.push('BOCM')
-process.argv.push('2010')
+process.argv.push('BORME')
+process.argv.push('2017')
 /////////////////////////////
 
 console.log('kaos155 App - version -' + Version+'.' )
@@ -23,13 +23,13 @@ var App = {
     http: require('http'),
     merge: require('merge'),
     mysql: require('mysql'),
-    iconv: require('iconv-lite'),
     moment: require("moment"),
     mkdirp: require('mkdirp'),
     cheerio: require('cheerio'),
     request: require('request'),
     inquirer: require('inquirer'),    
-    DOMParser: require('xmldom')
+    DOMParser: require('xmldom'),
+    schedule: require('node-schedule')
 }
 
 String.prototype.Trim = function Trim(x) {

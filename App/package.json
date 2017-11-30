@@ -8,12 +8,12 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
-    "iconv-lite": "^0.4.19",
     "inquirer": "^4.0.0",
     "merge": "^1.2.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.18.1",
     "mysql": "^2.14.1",
+    "node-schedule": "^1.2.5",
     "request": "^2.83.0",
     "simple-encryptor": "^1.1.1",
     "xmldom": "^0.1.27"
