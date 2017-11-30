@@ -107,7 +107,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
 
             _xData: {
                 Sumario: {
-                    BOE: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOE-S-19950102' },
+                    BOE: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOE-S-20010102' },
                     BORME: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BORME-S-20090102' },
                     BOCM: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOCM-S-20100212' }
                 },
