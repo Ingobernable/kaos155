@@ -196,7 +196,7 @@
                                 }
                             })
                         } else {
-                            var date = new Date(iyear*1, (imonth*1)-1 , iday*1, 23, 39, 0);
+                            var date = new Date(iyear*1, (imonth*1)-1 , iday*1, 23, 0, 0);
                             
                             console.log('el año no ha acabado pero si los sumarios')
                             console.log('continuaremos el ' + date.toString())
