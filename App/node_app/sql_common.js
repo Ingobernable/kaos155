@@ -103,7 +103,7 @@
                                                         console.log(`stderr: ${stderr}`);
                                                         console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
                                                         con.end()
-                                                        app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify({ mySQL: _credenciales} ), function (err, _JSON) {
+                                                        app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
                                                             callback(_credenciales)
                                                         })
                                                     });

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "iconv-lite": "^0.4.19",
     "inquirer": "^4.0.0",
     "merge": "^1.2.0",
     "mkdirp": "^0.5.1",

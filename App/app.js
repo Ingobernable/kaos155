@@ -24,10 +24,13 @@ var App = {
     merge: require('merge'),
     mysql: require('mysql'),
     moment: require("moment"),
+
     mkdirp: require('mkdirp'),
     cheerio: require('cheerio'),
     request: require('request'),
-    inquirer: require('inquirer'),    
+
+    iconv: require('iconv-lite'),
+    inquirer: require('inquirer'),
     DOMParser: require('xmldom'),
     schedule: require('node-schedule')
 }

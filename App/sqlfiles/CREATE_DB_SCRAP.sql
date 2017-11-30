@@ -81,7 +81,7 @@ CREATE TABLE `sumarios` (
   `Anyo` varchar(4) NOT NULL,
   `SUMARIO` varchar(16) CHARACTER SET utf8 NOT NULL,
   `BOLETIN` varchar(20) CHARACTER SET utf8 NOT NULL,
-  `Contrato` boolean DEFAULT '0',,
+  `Contrato` boolean DEFAULT '0',
   `scrap` boolean DEFAULT '0',
   PRIMARY KEY (`BOLETIN`),
   UNIQUE KEY `_Boletin` (`BOLETIN`),
