@@ -84,7 +84,7 @@ module.exports = function (app, callback) {
                     })
                 }
 
-                consulta(type, function (record) {
+                consulta(type, function (err,record) {
                     if (record.length > 0) {
                         data = { codigo: record[0][0].BOLETIN, textExtend: record[0][0].texto.split("<br>"), extra: {} }
                         _analisis = JSON.parse(record[0][0].analisis)

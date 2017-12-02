@@ -8,7 +8,7 @@ USE `bbdd_kaos155_text`;
 
 -- Dumping routines for database 'bbdd_kaos155_text'
 --
-/*!50003 DROP FUNCTION IF EXISTS `SPLIT_STR` */;
+DROP FUNCTION IF EXISTS `SPLIT_STR`;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -39,7 +39,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `DropTextFromYear` */;
+DROP PROCEDURE IF EXISTS `DropTextFromYear`;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -90,8 +90,8 @@ DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `GetNextTextParser` */;
+/*!50003 SET collation_connection  = @saved_col_connection */ ; 
+DROP PROCEDURE IF EXISTS `GetNextTextParser`;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -104,11 +104,17 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetNextTextParser`(_type nvarchar(5) , _anyo int)
 BEGIN
 
-		SET @s= CONCAT( 'SELECT * FROM `_', LOWER(_type) ,'_text_' , _anyo ,'` WHERE ( `parser` = 0 ) ORDER BY `id` LIMIT 1;');
-
-		PREPARE stmt1 FROM @s;
-		EXECUTE stmt1;
-		DEALLOCATE PREPARE stmt1;
+		IF _type='BORME' THEN 
+			SET @s= CONCAT( 'SELECT * FROM `_', LOWER(_type) ,'_text_' , _anyo ,'` WHERE ( `parser` = 0 ) ORDER BY `id` LIMIT 1;');
+			PREPARE stmt1 FROM @s;
+			EXECUTE stmt1;  
+			DEALLOCATE PREPARE stmt1;
+		ELSE 
+        	SET @s= CONCAT( 'SELECT * FROM `_', LOWER(_type) ,'_text_' , _anyo ,'` WHERE ( `parser` = 0 and LENGTH(_err)=0 ) ORDER BY `id` LIMIT 1;');
+			PREPARE stmt1 FROM @s;
+			EXECUTE stmt1;  
+			DEALLOCATE PREPARE stmt1;
+        END IF;
 
 END ;;
 DELIMITER ;
@@ -116,7 +122,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `InsertAnyo` */;
+DROP PROCEDURE IF EXISTS `InsertAnyo`;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -164,7 +170,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `Insert_Text_BOLETIN` */;
+DROP PROCEDURE IF EXISTS `Insert_Text_BOLETIN`;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -261,7 +267,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `listBorme_prov` */;
+DROP PROCEDURE IF EXISTS `listBorme_prov`;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
