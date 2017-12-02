@@ -188,11 +188,17 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `GetNextTextParser`(_type nvarchar(5) , _anyo int)
 BEGIN
 
-		SET @s= CONCAT( 'SELECT * FROM `_', LOWER(_type) ,'_text_' , _anyo ,'` WHERE ( `parser` = 0 ) ORDER BY `id` LIMIT 1;');
-		      
-		PREPARE stmt1 FROM @s;
-		EXECUTE stmt1;  
-		DEALLOCATE PREPARE stmt1;
+		IF _type='BORME' THEN 
+			SET @s= CONCAT( 'SELECT * FROM `_', LOWER(_type) ,'_text_' , _anyo ,'` WHERE ( `parser` = 0 ) ORDER BY `id` LIMIT 1;');
+			PREPARE stmt1 FROM @s;
+			EXECUTE stmt1;  
+			DEALLOCATE PREPARE stmt1;
+		ELSE 
+        	SET @s= CONCAT( 'SELECT * FROM `_', LOWER(_type) ,'_text_' , _anyo ,'` WHERE ( `parser` = 0 and LEN(_err)=0 ) ORDER BY `id` LIMIT 1;');
+			PREPARE stmt1 FROM @s;
+			EXECUTE stmt1;  
+			DEALLOCATE PREPARE stmt1;
+        END IF;
 
 END ;;
 DELIMITER ;
