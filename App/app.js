@@ -1,37 +1,31 @@
-var Version = '0.1.3'
+var Version = '0.1.4'
 
-//para propositos de testeo//
-//process.argv.push('SCRAP')
-//process.argv.push('BORME')
-//process.argv.push('2017')
-/////////////////////////////
 
-console.log('kaos155 App - version -' + Version+'.' )
+
+console.log('kaos155 App - version -' + Version + '.')
 
 var App = {
     version: Version,
     //datos generales
     _fileCredenciales: 'ACCESO_mysql_',
-
     TypeBoletines: ["BORME", "BOE", "BOCM"],
-    Commands: ['SCRAP', 'EXIT'],
+    Commands: ['SCRAP', 'PARSER', 'EXIT'],
     Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
 
     //Plugins
-    fs: require("fs"),
-    path:require('path'),
-    http: require('http'),
-    merge: require('merge'),
     mysql: require('mysql'),
-    moment: require("moment"),
-
+    iconv: require('iconv-lite'),
+    request: require('request'),
     mkdirp: require('mkdirp'),
     cheerio: require('cheerio'),
-    request: require('request'),
-
-    iconv: require('iconv-lite'),
+    path: require('path'),
+    fs: require("fs"),
+    http: require('http'),
+    moment: require("moment"),
+    merge: require('merge'),
     inquirer: require('inquirer'),
-    DOMParser: require('xmldom'),
+    resolvePath: require('resolve-path'),
+    shorter: require('shorthash'),
     schedule: require('node-schedule')
 }
 
@@ -78,36 +72,33 @@ String.prototype.indexOfRegex = function (regex) {
     var match = this.match(regex);
     return match ? this.indexOf(match[0]) : -1;
 };
-String.prototype.lastIndexOfRegex = function (regex) {
+String.prototype.lastIndexOfRegex                   = function (regex) {
     var match = this.match(regex);
     return match ? this.lastIndexOf(match[match.length - 1]) : -1;
 };
 
-//
- require("./node_app/options_menu.js")(App, process.argv.slice(2), function (app, myArgs, date) {
-     if (myArgs[0]=='EXIT')
-         process.exit(1)
 
-     debugger
 
-     var App = app.merge(app, {
-             date:new Date(),
-             command: myArgs[0],
-               
-            update: myArgs[3] ,
+    require("./node_app/options_menu.js")(App, process.argv.slice(2), function (app, myArgs, date) {
+
+        debugger
+
+        var App = app.merge(app, {
+            command: myArgs[0],
+
+            update: myArgs[3],
             anyo: !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
             Command: myArgs[0],
 
-           
+
             _lb: { BOCM: 5, BOE: 6, BORME: 8 },
             timeDelay: 1500,
-            drop:false,
-            SqlIP:null,
+            drop: false,
+            SqlIP: null, //'192.168.0.3',
             urlBOE: 'http://81.89.32.200/',
             urlBORME: 'http://81.89.32.200/',
             urlBOCM: 'http://w3.bocm.es/boletin/CM',
             PDFStore: "../DataFiles/_almacen/PDF/",
-
             _xData: {
                 Sumario: {
                     BOE: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOE-S-20010102' },
@@ -129,48 +120,82 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 _this = this
                 return require('./node_app/func_common.js')(app)
             },
-            //rutina principal de entrada a la aplicacion
-            //entra la propia aplicación y la funcion a ejecutar
             init: function (app, cb) {
-                //cargamos el plugin de conversion de PDF a TEXTO
+                //app._io = require('./node_www/IO.js')(app)
+
+                //= app._io.listen(require('socket.io').listen(80), require('./node_app/elasticIO.js')(app))
+
                 this.pdftotext = require('./node_app/_utils/pdftotext.js')
-                //arrancamos el pugin general de intreracciones con la DB
                 require('./node_app/sql_common.js')(app, function (SQL) {
                     app.commonSQL = SQL
-            
+
                     cb({
-                        EXEC: function (type) {
+                        PARSER: function (type) {
+
+
 
                                 //cargamos la rutina de escrapeo específica del tipo de BOLETIN
                                 //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
-                                //el retorno (options) es el objeto encargado del escrapeo         
-                                var prefix = app.command.substr(0,3).toLowerCase() + "_"
-                                require('./node_app/' + app.Command.toLowerCase() + '/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
+                                //el retorno es el objeto encargado del escrapeo                 
+                                var prefix = app.command.substr(0, 3).toLowerCase() + "_"
+                                require('./node_app/PARSER/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
                                     //options = objeto que realiza el escrapeo
-                                    //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas de app
+                                    //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
+                                    app.BOLETIN = options
+                                    //cargamos los contadores para poder continuar donde se dejó
+                                    //app.commonSQL.SQL.getCounter(app, options, type, function (options) {
+                                        //realizamos el proceso de parseo  
+
+                                        options._common.Actualize(options, type) // { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
+                                        //options._common.Actualize(options, type, null)
+                                    //})
+                                })
+                            //})
+                        
+                        },
+                        SCRAP: function (type) {
+
+                            //require('./node_app/elasticIO.js')(app).init(function (options) {
+                                //app.io = { elasticIO: options }
+
+                                //cargamos la rutina de escrapeo específica del tipo de BOLETIN
+                                //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
+                                //el retorno es el objeto encargado del escrapeo                 
+                                var prefix = app.command.substr(0, 3).toLowerCase() + "_"
+                                require('./node_app/SCRAP/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
+                                    //options = objeto que realiza el escrapeo
+                                    //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
                                     app.BOLETIN = options
                                     //cargamos los contadores para poder continuar donde se dejó
                                     app.commonSQL.SQL.getCounter(app, options, type, function (options) {
-                                        //realizamos el proceso de escrapeo  en sí
+                                        //realizamos el proceso de escrapeo  
                                         options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
-                                        
+                                        //options._common.Actualize(options, type, null)
                                     })
                                 })
-                            
+                            //})
+
+                        },
+                        CREATE: function (datafile) {
+                            app.commonSQL.init({ SQL: { db: null } }, 'CREATE', function () {
+                                process.exit(1)
+                            })
+
                         }
                     })
-
+                    //})
                 })
-            },        
-            logStop : function (i, text) {
-                console.log( i +'.-'+text)
+            },
+            logStop: function (i, text) {
+                console.log(i + '.-' + text)
                 console.log('SISTEMA DETENIDO')
                 process.exit(i)
             },
-            //normalización de parametros de entrada
-            parameters: function (app, myArgs,callback) {
-                var arg = myArgs[3]
+            parameters: function (app, myArgs, callback) {
 
+
+                var arg = myArgs[3]
+                //app.SqlIP = myArgs[1]
                 if (app.SqlIP != null && app.SqlIP != 'localhost') {
                     if (app.SqlIP.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g).length != 1) {
                         app.SqlIP = 'localhost'
@@ -180,8 +205,8 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 }
 
                 if (app.Commands.indexOf(myArgs[0]) == -1) {
-                    app.logStop(1,'comando no valido falta SCRAP PARSE BORME')
-           
+                    app.logStop(1, 'comando no valido falta SCRAP PARSE BORME')
+
                 } else {
 
                     if (app.TypeBoletines.indexOf(myArgs[1]) == -1) {
@@ -192,7 +217,6 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 app.Type = myArgs[1]
                 callback(app)
             },
-            //rutina para obtener los contadores de inicio de SCRAPEO
             getCounter: function (app, _options, type, callback) {
                 _cadsql = "SELECT * FROM lastread WHERE Type = '" + type + "' AND Anyo = " + app.anyo
                 _options.SQL.db.query(_cadsql, function (err, Record) {
@@ -221,11 +245,9 @@ String.prototype.lastIndexOfRegex = function (regex) {
                     }
                 })
             }
- 
-        })
-        
 
-        // standarizamos los parametros
+        })
+
         App.parameters(App, myArgs, function (app) {
             if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {
                 myArgs[2] = (date.getFullYear() + '').pad(4) + '0212'
@@ -238,19 +260,22 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 }
             }
 
-
-            //comprobamos si el año es superior al minimo del type
+            //debugger
             if (app.Mins[myArgs[1]] <= app.anyo) {
                 app.initDate = myArgs[2]
                 console.log('MySQL IP:' + app.SqlIP)
                 console.log('PROCESS:' + app.Type)
                 console.log('Anyo:' + app.anyo)
-                //debugger                                              //antes de inicar la aplicacion en sí
-                app.init(app, function (_f) { _f.EXEC(app.Type) })
+                //console.log('DELETE DATA:' + app.drop)
+                // app.fs.readFile(app.path.normalize('../DataFiles/cargos.json'), 'utf-8', function (err, dataFile) {
+                //     console.log(JSON.parse(dataFile))
+
+                app.init(app, function (_f) { _f[myArgs[0]](app.Type) })
+                //})
             } else {
-                console.log( 'no se puede analizar ' + myArgs[1] + ' con fecha anterior a ' + app.Mins[myArgs[1]] )
+                console.log('no se puede analizar ' + myArgs[1] + ' con fecha anterior a ' + app.Mins[myArgs[1]])
             }
         })
- })
+    })
 
 

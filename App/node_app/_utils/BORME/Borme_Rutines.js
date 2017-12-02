@@ -139,6 +139,9 @@
             _transforms: transforms,
             get: {
                 principal: function ($) {
+                    //console.log($('analisis modalidad').html())
+                    //if ($('analisis modalidad').html() == "Formalización contrato")
+                    //    debugger
                     return {
                         id: $('metadatos identificador').html(),
                         text: $('metadatos titulo').html(),
@@ -164,7 +167,7 @@
                     var _lastParragraf = true
                     var _arr = []
 
-                    var DOMParser = app.DOMParser
+                    var DOMParser = require('xmldom').DOMParser
                     var xml = new DOMParser().parseFromString(body)
                     var _json = app.Rutines().xmlToJson(xml)
                     var _areas = []
@@ -222,7 +225,7 @@
             },
             transforms: function (_array, _regexp) {
                 if (_regexp!=null)
-                   
+                    //for (i in _array) {
                     for (p in _regexp) {
 
                         if (_regexp[p][0] == 'F') {
@@ -230,21 +233,23 @@
                             _array = _regexp[p][1].f(_array, _regexp[p][2], _regexp[p][3])
                             
                         } else {
-
+                            //console.log(_array, p)
+                            //if (p == 9)
+                            //debugger
                             _array = _array.replace(_regexp[p][1], _regexp[p][2] )
-
+                            //console.log(_array, p)
                         }
                         
                         
                     }
-                
+                //}
                 return _array
             },
             extract: function (_arrayText, search, transforms) {
-                
+                //var _arr = []
 
                 for (i in _arrayText) {
-                    
+                    //console.log(_arrayText[i])
                     if (_arrayText[i].toLowerCase() != null)
                         if (_arrayText[i].toLowerCase().indexOf(search.toLowerCase()) > -1) {
                             _arrT = _arrayText[i].split(":")
@@ -264,8 +269,10 @@
             },
 
             getConstitucion: function (cadena, _keys, _next, data) {
+                //var _ret = []
+                //debugger
                 var _op = ['Comienzo de operaciones:', 'Objeto social:', 'Domicilio:', 'Capital:']
-                var _pos = this.getPosExploreItems(cadena, _op)                                               //sacamos el counjunto de posiciones segun plabras clave
+                var _pos = this.getPosExploreItems(cadena, _op)                             //sacamos el counjunto de posiciones segun plabras clave
                 var _s = this.extraeArrDeCadena(cadena, _pos, { keys: { arr: _keys } }, 'Constitucion')       //extraemos las cadenas de las subopciones
            
                 return _s
@@ -274,7 +281,7 @@
             
                 var _op = ['Capital:', 'Resultante_Suscrito:', 'Resultante_Desembolsado:', ' Suscrito:', 'Desembolsado:'] //0.100,00 Euros. Resultante Suscrito: 120.206,01 Euros.'
                 var _pos = this.getPosExploreItems(cadena, _op, false,"_")                             //sacamos el counjunto de posiciones segun plabras clave
-                var _s = this.extraeArrDeCadena(cadena, _pos, { keys: { arr: _keys } }, 'Ampliacion de Capital')     
+                var _s = this.extraeArrDeCadena(cadena, _pos, { keys: { arr: _keys } }, 'Ampliacion de Capital')       //extraemos las cadenas de las subopciones
                 //debugger
                 return _s
             },
@@ -308,16 +315,22 @@
                 }
                 var _f = found([], cadena)
                 cadena = _f.cadena
-                _found = false 
+                _found = false //_f.found
 
                 if (! _found ) {
                 
                     _cad = titleCase(_f.cadena.split(":")[0] + ":").trim()
-                    
-                    cadena = found([_cad], cadena).cadena
+                    //this.cargos.push( _cad )
+                    cadena = found([_cad], cadena).cadena // this.cargos, cadena).cadena
+                   // app.fs.writeFile(app.path.resolve('../DataFiles/cargos.json'), JSON.stringify(this.cargos.sort()), function (err) {
+                   //     console.log('\n'+'AÑADIDO NUEVO CARGO ' + _cad + '/n')
+                   // })
                 }
-
+                //var _head = cadena.replace(/S.L./g, 'SL.').replace(/S.A./g, 'SA.') //.split(".")
                 var _valores = cadena.replace(/S\.L\./g, 'SL.').replace(/S\.A\./g, 'SA.').replace(/\.\B/g, "#$").replace(/\. /g, "#$").trim().replace(/\./g, "#") + ' '
+
+                //if(_valores.substr(_valores.length-1,1)==" ")
+                //    _valores.trim() + "$"
 
                 var _preval = _valores.split("#$ ")
                 var _valores = []
@@ -332,7 +345,15 @@
                 }
                 for (i in _valores) {
                     //debugger
-                    if (_valores[i].trim().length > 0) {                    
+                    if (_valores[i].trim().length > 0) {
+
+                        // if (_valores[i].trim().indexOf("#") > -1) {
+                        //     debugger
+                        //     
+                        // }else{
+                        //     var item = _valores[i].trim().split(": ")
+                        // }
+                    
                         var item = _valores[i].trim().split(": ")
 
                         if (item.length > 0) {
@@ -364,65 +385,87 @@
             //
             // 
             SQL: {
-                Constitucion: function (__data,data, callback) {
+                Constitucion: function (_linea, __data, callback) {
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
-                AmpliaCapital: function (__data, data, callback) {
+                AmpliaCapital: function (_linea, __data, callback) {
                     //debugger
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
-                Disolucion: function (__data, data, callback) {
+                Disolucion: function (_linea, __data, callback) {
                     //debugger
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
-                Extincion: function (__data, data, callback) {
+                Extincion: function (_linea, __data, callback) {
                     //debugger
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
-                SaveDirectivo: function (__data, data, Active, callback) {
+                SaveDirectivo: function (_linea, __data, Active, callback) {
                     var capitalizeFirstLetter= function(string) {
                         return string.charAt(0).toUpperCase() + string.slice(1);
                     }
                     var _e = 0
-                    var _t = 'Directivo'
-
-                    if (__data.values.Empresa)
-                        _t = "Empresa"
-
-                    cadsql = "Call Insert_Data_Borme_" + capitalizeFirstLetter(_t.toLowerCase()) + "(?,?)"
-                    options.SQL.db.query(cadsql,[__data.values.value, data.e ], function (err, _directivo) {
-                        if (err)
-                            debugger
-                        if (_directivo.length == 0) {
-                            debugger
-                        } else {
-                            if (_directivo.length > 1) {
-                                //debugger
-                                x=1
-                            }
-                            process.stdout.write(__data.values.Empresa?"e":'d')
-                            callback(__data, _directivo[0][0].Id, __data.values.Empresa)
+                    var _table = "Directivo"
+                    //__data.values.Empresa = false
+                    if (__data.values.value == __data.values.value.toUpperCase()) {
+                        _table = "Empresa"
+                        __data.values.Empresa = true
+                    }
+                    if (__data.values.key.toUpperCase() == "AUDITOR") {
+                        _table = "Auditor"
+                        __data.values.Auditor = true
+                        //debugger
+                    }
+                    //app.IA.send('setinMemory', { type: _t, array: [__data.values.value], compress: 'shorthash.unique' }, function (data) {
+                        params = {
+                            table: _table,
+                            e: __data.values.value,
+                            k: app.shorter.unique(__data.values.value),
                         }
-                    })
+                        //params.table + "(?,?,?)", [params.data.ID, params.e, params.k]
+                        app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
+                        //cadsql = "Call Insert_Data_Borme_" + capitalizeFirstLetter(_t.toLowerCase()) + "(?,?)"
+                        //options.SQL.db.query(cadsql, [__data.values.value, app.shorter.unique(__data.values.value)], function (err, _directivo) {
+
+                            if (_directivo.length == 0) {
+                                debugger
+                            } else {
+                                if (_directivo.length > 1) {
+                                    //debugger
+                                    x=1
+                                }
+                                if (Active) {
+                                    process.stdout.write('\x1b[32m')
+                                } else {
+                                    process.stdout.write('\x1b[31m')
+                                }
+                                process.stdout.write( __data.values.Empresa ? "e" : __data.values.Auditor ? "a" :"d" )
+                                process.stdout.write('\x1b[0m')
+                                callback(__data, _directivo[0][0].Id, params , Active)
+                            }
+                        }, function (err, record) {
+                            debugger
+                        })
+                    //})
                
                 },
-                Nombramiento: function (__data, data, callback) {
-                    this.SaveDirectivo(__data, data, true, callback)
+                Nombramiento: function (_linea, __data, callback) {
+                    this.SaveDirectivo(_linea, __data, true, callback)
                 },
-                Reeleccion: function (__data, data, callback) {
-                    this.SaveDirectivo(__data, data, true, callback)
+                Reeleccion: function (_linea, __data, callback) {
+                    this.SaveDirectivo(_linea, __data, true, callback)
                 },
-                Cese: function ( __data, data, callback) {
-                    this.SaveDirectivo(__data, data, false, callback)
+                Cese: function (_linea, __data,  callback) {
+                    this.SaveDirectivo(_linea, __data, false, callback)
                 },
-                Revocacion: function (__data, data, callback) {
-                    this.SaveDirectivo(__data, data, false, callback)
+                Revocacion: function (_linea, __data,  callback) {
+                    this.SaveDirectivo(_linea, __data, false, callback)
                 },
-                Oficio: function (__data, data, callback) {
-                    this.SaveDirectivo(__data, data, false, callback)
+                Oficio: function (_linea, __data,  callback) {
+                    this.SaveDirectivo(_linea, __data, false, callback)
                 },
-                Cancela: function (__data, data, callback) {
-                    this.SaveDirectivo(__data, data, false, callback)
+                Cancela: function (_linea, __data,  callback) {
+                    this.SaveDirectivo(_linea, __data, false, callback)
                 }
             },
             Constitucion: function ( cadena, _keys, _next, data) {
@@ -718,7 +761,7 @@
                 
                     var cadena = ""
                     for (_l in _xlines) {
-
+                        //if (_xlines[_l].indexOf('-') > -1) {
                         var _e = _xlines[_l].substr(_xlines[_l].length - 4, 4)
                         if ( ((_e.charAt(0)>="0" &&  _e.charAt(0)<="9") && (_e.charAt(1)>="0" &&  _e.charAt(1)<="9") && _e.substr(2,2)==").") )  {
                             var _xline = cadena + (cadena.length > 0 ? ' ' : '') + _xlines[_l]
@@ -739,19 +782,24 @@
                     for (i in lines) {
                         if (lines[i].length > 40) {                                                 //si la longitud del texto >40 pj
                             var _items = this.getPosExploreItems(lines[i], map.keys.arr,false)            //extraemos las posiciones donde existen palabras clave
+                            //var _result = this.extraeArrDeCadena(lines[i], _items, map)             //extreamos las cadenas entre palabras clave y las traspasamos a una array
                             if (_items != null) {
                                 if (lines[i].substr(0, _items[0].p).indexOf("(") > -1) {
                                     var _Empresa = lines[i].substr(0, _items[0].p).split("(")[0]        //extreamos la empresa del comienzo de la cadena
                                 } else {
                                     var _Empresa = lines[i].substr(0, _items[0].p)
                                 }
-                                _Empresa = _Empresa.split("-") 
+                                _Empresa = _Empresa.split("-") //.replace(/^\s+|\s+$/gm, '')  //desechando lo que no interesa
                                 //if (_Empresa.length > 2) {
                                 var _n=2
                                 while (_n < _Empresa.length ) {
                                     _Empresa[1] = _Empresa[1] + "-" + _Empresa[_n]
                                     _n++
                                 }
+                                //buscar un ID
+                                //if (_Empresa[0] * 1 == 1359)
+                                //    debugger
+                                //}
                                 _Empresa[1] = _this.transforms(Trim(_Empresa[1]), patterns.Contratista) 
                                 if (_Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS") > -1)
                                     _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].length - _Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS"))
@@ -783,6 +831,61 @@
                     return null
                 }
             },
+            analizeSimpleLine: function (_this, line,map) {
+                var patterns = _this._transforms.getPatern(_this._transforms)
+                var _items = this.getPosExploreItems(line, map.keys.arr, false)            //extraemos las posiciones donde existen palabras clave
+
+                //var _result = this.extraeArrDeCadena(lines[i], _items, map)             //extreamos las cadenas entre palabras clave y las traspasamos a una array
+                if (_items != null) {
+                    if (line.substr(0, _items[0].p).indexOf("(") > -1) {
+                        var _Empresa = line.substr(0, _items[0].p).split("(")[0]        //extreamos la empresa del comienzo de la cadena
+                    } else {
+                        var _Empresa = line.substr(0, _items[0].p)
+                    }
+                    _Empresa = _Empresa.split("-") //.replace(/^\s+|\s+$/gm, '')  //desechando lo que no interesa
+                    //if (_Empresa.length > 2) {
+                    var _n = 2
+                    while (_n < _Empresa.length) {
+                        _Empresa[1] = _Empresa[1] + "-" + _Empresa[_n]
+                        _n++
+                    }
+                    //buscar un ID
+                    //if (_Empresa[0] * 1 == 1359)
+                    //    debugger
+                    //}
+                    _Empresa[1] = _this.transforms(Trim(_Empresa[1]), patterns.Contratista)
+                    if (_Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS") > -1) {
+                        _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].length - _Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS"))
+                    }
+                    if (_Empresa[1].indexOf('SA.') > -1) {
+                        _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].indexOf('SA.') + 2)
+                        //var _k = app.shorter.unique(_Empresa[1].substr(0, _Empresa[1].indexOf('SA.')-1))
+                    }
+
+                    if (_Empresa[1].indexOf('SL.') > -1) {
+                        _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].indexOf('SL.') + 2)
+                        //var _k = app.shorter.unique(_Empresa[1].substr(0, _Empresa[1].indexOf('SL.') - 1))
+                    }
+                    //if (_k == null)
+                    //    debugger
+
+                    var _e=_Empresa[1].split(".")[0].replace(/%/g, '.')
+                    var _line = {
+                        id: Trim(_Empresa[0]),
+                        e: _e,
+                        k: app.shorter.unique(_e),
+                        keys: _items,
+                        original: line,
+                        contenido: _this.explora(line, _items, _this.maps)
+                    }              //acumulando los resultados en una matriz
+
+                    return _line
+
+                }
+
+
+
+            },
             explora: function (cadena, keys, array) {
                 var _ret = []
                 var _i = 0
@@ -790,6 +893,7 @@
                 for (_i in keys) {
                     _i = _i * 1
                     //debugger
+                    //if (_i > 0) {
                     var _func = null
                     var _t = array.keys.arr[keys[_i].id]
                     if (array.nameKeys[keys[_i].id] != null)
@@ -806,11 +910,16 @@
                         } else {
                             debugger
                         }
-                    }                
+                    }
+                 
+                    //if()
+                    //}
+                
                 }
                 //debugger
                 return _ret
             }
         
         }
+    //})
 };
