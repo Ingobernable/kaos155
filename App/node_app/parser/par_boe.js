@@ -2,8 +2,8 @@ module.exports = function (app, callback) {
 
     var options = {
         Command: app.command,
-        Rutines: require('../_utils/BOLETIN/__Rutines.js')(app),
-        transforms: require('../_utils/BOLETIN/__Transforms.js')(app),
+        Rutines: require('../_utils/CONTRATOS/__Rutines.js')(app),
+        transforms: require('../_utils/CONTRATOS/__Transforms.js')(app),
         _common: require('../_common.js')(app),
         SQL: {
             db: null,
@@ -77,10 +77,10 @@ module.exports = function (app, callback) {
             },
         },
         parser: {
-            Preceptos: function (type) {
+            Preceptos: function (options, type, callback) {
                 var consulta = function (type, callback) {
-                    options.SQL.scrapDb.query('call GetNextTextParser(?)', [type], function (err, record) {
-                        callback(record)
+                    options.SQL.scrapDb.query('call GetNextTextParser(?,?)', [type, app.anyo], function (err, record) {
+                        callback(err, record)
                     })
                 }
 

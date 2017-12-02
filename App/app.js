@@ -142,13 +142,8 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
                                     //options = objeto que realiza el escrapeo
                                     //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
                                     app.BOLETIN = options
-                                    //cargamos los contadores para poder continuar donde se dejó
-                                    //app.commonSQL.SQL.getCounter(app, options, type, function (options) {
-                                        //realizamos el proceso de parseo  
-
-                                        options._common.Actualize(options, type) // { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
-                                        //options._common.Actualize(options, type, null)
-                                    //})
+                                    //realizamos el proceso de parseo  
+                                    options._common.Actualize(options, type)
                                 })
                             //})
                         
