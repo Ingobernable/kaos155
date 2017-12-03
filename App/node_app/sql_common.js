@@ -49,7 +49,6 @@
                     multipleStatements: true,
                     waitForConnection: true,
                 })
-
                 _this.getConnect(options, type, callback)
 
             } else {

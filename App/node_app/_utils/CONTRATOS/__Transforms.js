@@ -10,7 +10,12 @@ module.exports = function (app) {
             }
             return _arrOut
         },
+        replaceMatch: function (opc, string, _search, _repl, ignore) {
+            //return _.replace(string, new RegExp(_search, "g"), _repl)
+            return string.replace(new RegExp(_search.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, "\\$&"), (ignore ? "gi" : "g")), (typeof (_repl) == "string") ? _repl.replace(/\$/g, "$$$$") : str2);
+        },
         replaceAll: function (opc, string, _search, _repl, ignore) {
+            //return _.replace(string, new RegExp(_search, "g"), _repl)
             return string.replace(new RegExp(_search.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, "\\$&"), (ignore ? "gi" : "g")), (typeof (_repl) == "string") ? _repl.replace(/\$/g, "$$$$") : str2);
         },
         replace: function (opc, string, _search, _repl) {
@@ -199,11 +204,18 @@ module.exports = function (app) {
                     
                 ],
                 exoticChars: [
-                    ['F', { f: _this.replaceAll }, '/(À|Á|Â|Ã|Ä|Å|Æ)/gi', 'A'],
-                    ['F', { f: _this.replaceAll }, '/(È|É|Ê|Ë)/gi', 'E'],
-                    ['F', { f: _this.replaceAll }, '/(Ì|Í|Î|Ï)/gi', 'I'],
-                    ['F', { f: _this.replaceAll }, '/(Ò|Ó|Ô|Ö)/gi', 'O'],
-                    ['F', { f: _this.replaceAll }, '/(Ù|Ú|Û|Ü)/gi', 'U']
+                    ['F', { f: _this.replaceMatch }, '[ÀÁÂÃÄÅÆ]', 'A'],
+                    ['F', { f: _this.replaceMatch }, '(È|É|Ê|Ë)', 'E'],
+                    ['F', { f: _this.replaceMatch }, '(Ì|Í|Î|Ï)', 'I'],
+                    ['F', { f: _this.replaceMatch }, '(Ò|Ó|Ô|Ö)', 'O'],
+                    ['F', { f: _this.replaceMatch }, '(Ù|Ú|Û|Ü)', 'U'],
+
+                    ['F', { f: _this.replaceMatch }, '(à|á|à|ä|)', 'a'],
+                    ['F', { f: _this.replaceMatch }, '(è|é|ê|ë)', 'e'],
+                    ['F', { f: _this.replaceMatch }, '[íìíîï]', 'i'],
+                    ['F', { f: _this.replaceMatch }, '(ò|ó|ô|ö)', 'o'],
+                    ['F', { f: _this.replaceMatch }, '(ù|ú|û|ü)', 'u']
+
 
                 ],
                 especialChars: [
@@ -226,10 +238,17 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, 'A.-', 'A.;'],
                     ['F', { f: _this.replaceAll }, 'L.-', 'L.;'],
                     ['F', { f: _this.replaceAll }, '- ', '-'],
-                    
-                    
+                    ['F', { f: _this.replaceAll }, ',', ''],
+                    ['F', { f: _this.replaceAll }, '"', ''],
 
                     
+                ],
+                sinPuntos: [
+                    ['R', new RegExp(/\./, "g"), ""]
+
+                ],
+                sinBlancoInicial: [
+                    ["F", { f: _this.removeFirstChar }, ' ']
                 ]
             }
         }

@@ -98,9 +98,7 @@
                                         app.commonSQL.SQL.commands.insert.Boletin.text(options, _analisis, data, function (data) {
                                             callback(data)
                                         })
-                                        //options.SQL.insert(options, _analisis , data, function (data) {
-                                        //    callback(data)
-                                        //})
+
                                     } else {
                                         callback(data,true)
                                     }
@@ -123,10 +121,6 @@
             }
         }
     }
-
-   
-    //app.commonSQL.init(options, 'BOE', app._fileCredenciales + options.Command, callback)
-
 
     //creamos la conexión a la DB
     app.commonSQL.init(options, options.Type, app._fileCredenciales + options.Command, function (options) {

@@ -13,6 +13,8 @@
         return (point)
     }
 
+    _ = app._
+
     return {
         pdfOpc: ['-raw', '-nopgbrk', '-enc UTF-8'],
         get: {
@@ -122,19 +124,19 @@
                     _callback({ _arr: _arr, _extra: _extra ,_err:err })
                 }
             },
-            importes: function (data, options, patterns) {
+            importes: function (_text, data, options, patterns) {
 
-                var importe = "*" + options.Rutines.extract(data.textExtend, 'Importe de la adjudicación:', options.transforms.ADD(
+                var importe = "*" + options.Rutines.extract(_text, 'Importe de la adjudicación:', options.transforms.ADD(
                         [patterns.General,
                         patterns.Importes]
                 ))
                 if (importe == "*")
-                    importe = "*" + options.Rutines.extract(data.textExtend, 'Importes de las adjudicaciones:', options.transforms.ADD(
+                    importe = "*" + options.Rutines.extract(_text, 'Importes de las adjudicaciones:', options.transforms.ADD(
                         [patterns.General,
                         patterns.Importes]
                     ))
                 if (importe == "*")
-                    importe = "*" + options.Rutines.extract(data.textExtend, 'd) Importe ', options.transforms.ADD(
+                    importe = "*" + options.Rutines.extract(_text, 'd) Importe ', options.transforms.ADD(
                         [patterns.General,
                         patterns.Importes]
                     ))
@@ -142,7 +144,7 @@
 
 
                 if (importe == "*")
-                    importe = "*" + options.Rutines.extract(data.textExtend, 'Importe total:', options.transforms.ADD(
+                    importe = "*" + options.Rutines.extract(_text, 'Importe total:', options.transforms.ADD(
                         [patterns.General,
                         patterns.Importes]
                     ))
@@ -659,7 +661,62 @@
                     _callback(null)
                 }
             })
+        },
+        normalizeTextContrato: function (arrayT, _keys, callback) {
+        var _iniline = [":"]
+        var _finline = ["."]
+        var _lines = []
+        var preline = ""
+
+        valInKeys = function (text, _keys) {
+            var _found = 0
+            var _n = 0
+            _.forEach(_keys, function(value){
+                _n++
+                if(text.indexOf(value)>-1)
+                    _found = _n
+            })
+            return _found 
         }
 
+        //debugger
+
+        _.forEach(arrayT, function(value){
+            var _lchar = value.substr(value.length - 1, 1)
+            if ((value.match(/^\d{1,2}\./) || []).length ==0) {
+
+                if ((value.match(/^\w{1}\)/) || []).length > 0) {
+                    if (_finline.indexOf(_lchar) > -1) {
+                        if (valInKeys(value, _keys))
+                            _lines[_lines.length] = value.substr(3, value.length)
+                    } else {
+                        preline = value 
+                    }
+                } else {
+                    if (_finline.indexOf(_lchar) > -1) {
+                        var _valp = valInKeys(preline, _keys)
+                        if (_valp>0)
+                            if (_valp < _keys.length) {
+                                _lines[_lines.length] = preline.substr(3, preline.length - 2) + ' ' + value
+                            } else {
+                                var _v = preline.substr(3, preline.length - 2) + ' ' + value
+                                var _cargo = _v.split(_keys[_keys.length - 1])[1].split(",")[0]
+                                var _firma = _v.split(_keys[_keys.length - 1])[1].split(",")[1]
+                                _lines[_lines.length] = 'cargo:' + _cargo
+                                _lines[_lines.length] = 'firma:'+_firma
+                            }
+
+                        preline=''
+                    } else {
+                        preline = preline + value
+                    }
+                    //debugger
+                }
+            }
+
+        })
+        callback(_lines)
+            //debugger
+    }
     }
 }

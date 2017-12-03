@@ -2,6 +2,7 @@
 
 
     return {
+        
         lastupdate: Date.now(),
         askToServer: function (options, requestOptions, data, callback) {
             //console.log("\n"+requestOptions.uri)
@@ -172,6 +173,59 @@
                     });
                 });
             });
+        },
+        normalizeTextContrato: function (arrayT, _keys, callback) {
+            var _iniline = [":"]
+            var _finline = ["."]
+            var _lines = []
+            var preline = ""
+
+            valInKeys = function (text, _keys) {
+                var _found = 0
+                var _n = 0
+                _.forEach(_keys, function(value){
+                    _n++
+                    if(text.indexOf(value)>-1)
+                        _found = _n
+                })
+                return _found 
+            }
+
+            debugger
+
+            _.forEach(arrayT, function(value){
+                var _lchar = value.substr(value.length - 1, 1)
+                if ((value.match(/^\d{1,2}\./) || []).length ==0) {
+
+                    if ((value.match(/^\w{1}\)/) || []).length > 0) {
+                        if (_finline.indexOf(_lchar) > -1) {
+                            if (valInKeys(value, _keys))
+                                _lines[_lines.length] = value.substr(3, value.length)
+                        } else {
+                            preline = value 
+                        }
+                    } else {
+                        if (_finline.indexOf(_lchar) > -1) {
+                            var _valp = valInKeys(preline, _keys)
+                            if (_valp>0)
+                                if (_valp < _keys.length) {
+                                    _lines[_lines.length] = preline.substr(3, preline.length - 2) + ' ' + value
+                                } else {
+                                    var _v = preline.substr(3, preline.length - 2) + ' ' + value
+                                    _lines[_lines.length] = 'firma: '+_v.split(_keys[_keys.length-1])[1].split(",")[1]
+                                }
+
+                            preline=''
+                        } else {
+                            preline = preline + value
+                        }
+                        //debugger
+                    }
+                }
+
+            })
+            callback(_lines)
+            //debugger
         }
     }
     

@@ -13,6 +13,7 @@ var App = {
     Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
 
     //Plugins
+    _: require('lodash'),
     mysql: require('mysql'),
     iconv: require('iconv-lite'),
     request: require('request'),
@@ -27,6 +28,7 @@ var App = {
     resolvePath: require('resolve-path'),
     shorter: require('shorthash'),
     schedule: require('node-schedule')
+    
 }
 
 String.prototype.Trim = function Trim(x) {
