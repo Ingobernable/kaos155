@@ -530,6 +530,7 @@
                     'Cambio de denominación social.',
                     'Cambio de domicilio social.',
                     'Cambio de objeto social.',
+                    'Cambio objeto social.',
                     'Fusión por absorción.',
                     'Modificaciones estatutarias.',
                     'Reducción de capital.',
