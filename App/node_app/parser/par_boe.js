@@ -22,7 +22,7 @@ module.exports = function (app, callback) {
                     data.precio,
                     data.ambitoGeo,
                     data.adjudicador,
-                    app.shorter.unique(data.adjudicador,                   
+                    app.shorter.unique(data.adjudicador),                   
                     data.cargo,
                     data.firma,
                     data.UTE,
