@@ -7,25 +7,23 @@
   - python-mysqldb
 
 - name: add repo key
-  when: mariadb_install_mode == "repo"
   apt_key:
-    keyserver: keyserver.ubuntu.com
-    id: '0xF1656F24C74CD1D8'
+    keyserver: pgp.mit.edu
+    id: '5072E1F5'
 
 - name: add repo
-  when: mariadb_install_mode == "repo"
   apt_repository:
-    repo: "deb [arch=amd64] http://mariadb.mirrors.ovh.net/MariaDB/repo/{{ mariadb_version }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} main"
+    repo: deb http://repo.mysql.com/apt/debian stretch mysql-5.7
     state: present
 
 - name: install packages
   apt:
     update_cache: yes
-    name: mariadb-server
+    name: mysql-server
     state: latest
 
 - name: enable service
   service:
-    name: mariadb
+    name: mysql
     state: started
     enabled: yes
