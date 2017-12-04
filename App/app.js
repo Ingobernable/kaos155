@@ -1,5 +1,10 @@
 var Version = '0.1.3'
 
+//para propositos de testeo//
+//process.argv.push('SCRAP')
+//process.argv.push('BORME')
+//process.argv.push('2017')
+/////////////////////////////
 
 console.log('kaos155 App - version -' + Version+'.' )
 
@@ -9,21 +14,25 @@ var App = {
     _fileCredenciales: 'ACCESO_mysql_',
 
     TypeBoletines: ["BORME", "BOE", "BOCM"],
-    Commands: ['SCRAP', 'DELETE', 'EXIT'],
+    Commands: ['SCRAP', 'EXIT'],
     Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
 
     //Plugins
+    fs: require("fs"),
+    path:require('path'),
+    http: require('http'),
+    merge: require('merge'),
     mysql: require('mysql'),
-    iconv: require('iconv-lite'),
-    request: require('request'),
+    moment: require("moment"),
+
     mkdirp: require('mkdirp'),
     cheerio: require('cheerio'),
-    path:require('path'),
-    fs: require("fs"),
-    http: require('http'),
-    moment: require("moment"),
-    merge: require('merge'),
+    request: require('request'),
+
+    iconv: require('iconv-lite'),
     inquirer: require('inquirer'),
+    DOMParser: require('xmldom'),
+    schedule: require('node-schedule')
 }
 
 String.prototype.Trim = function Trim(x) {
@@ -76,11 +85,14 @@ String.prototype.lastIndexOfRegex = function (regex) {
 
 //
  require("./node_app/options_menu.js")(App, process.argv.slice(2), function (app, myArgs, date) {
+     if (myArgs[0]=='EXIT')
+         process.exit(1)
 
-        debugger
+     debugger
 
-        var App = app.merge(app,{           
-            command : myArgs[0],            
+     var App = app.merge(app, {
+             date:new Date(),
+             command: myArgs[0],
                
             update: myArgs[3] ,
             anyo: !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
@@ -98,7 +110,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
 
             _xData: {
                 Sumario: {
-                    BOE: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOE-S-19950102' },
+                    BOE: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOE-S-20010102' },
                     BORME: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BORME-S-20090102' },
                     BOCM: { SUMARIO_LAST: '', SUMARIO_NEXT: 'BOCM-S-20100212' }
                 },
@@ -121,17 +133,14 @@ String.prototype.lastIndexOfRegex = function (regex) {
             //entra la propia aplicación y la funcion a ejecutar
             init: function (app, cb) {
                 //cargamos el plugin de conversion de PDF a TEXTO
-                this.pdftotext = require('./node_app/pdftotext.js')
+                this.pdftotext = require('./node_app/_utils/pdftotext.js')
                 //arrancamos el pugin general de intreracciones con la DB
                 require('./node_app/sql_common.js')(app, function (SQL) {
                     app.commonSQL = SQL
             
                     cb({
                         EXEC: function (type) {
-                            //futuras aplicaciones
-                            require('./node_app/elasticIO.js')(app).init(function (options) {
-                                app.io = { elasticIO: options }
-                   
+
                                 //cargamos la rutina de escrapeo específica del tipo de BOLETIN
                                 //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
                                 //el retorno (options) es el objeto encargado del escrapeo         
@@ -147,13 +156,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
                                         
                                     })
                                 })
-                            })
-                        },
-                        CREATE: function (datafile) {
-                            app.commonSQL.init({ SQL: { db:null} }, 'CREATE', function () { 
-                                process.exit(1)
-                            })
-
+                            
                         }
                     })
 

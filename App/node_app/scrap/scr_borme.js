@@ -3,9 +3,9 @@
     options = {
         Type : 'BORME',
         Command: app.command,
-        Rutines: require('../parser/BORME/Borme_Rutines')(app, require('../parser/BORME/Borme_Transforms')(app)),
+        Rutines: require('../_utils/BORME/Borme_Rutines')(app, require('../_utils/BORME/Borme_Transforms')(app)),
         //Rutines: require('../parser/BOLETIN/__Rutines')(app),
-        _common: require('../parser_common')(app),
+        _common: require('../_common')(app),
         pdfOpc: ['-nopgbrk', '-enc UTF-8'],
         url: app.urlBORME,
         
@@ -27,11 +27,28 @@
 
                             if ($('error').length > 0) {
                                 data._list = []
-                                data.SUMARIO_NEXT = app.moment(data.SUMARIO_NEXT, "YYYYMMDD").add(1, 'days').format('YYYYMMDD');
+                                data.SUMARIO_NEXT = 'BORME-S-' + app.moment(data.desde, "YYYYMMDD").add(1, 'days').format('YYYYMMDD');
                                 callback(data)
                             } else {
+                                
+                                data.Fdate = $('sumario meta pubDate').html() 
                                 data.next = $('sumario meta fechaSig').html()
-                                data.Fdate = $('sumario meta pubDate').html() // = $('sumario meta fechaSig').html()
+
+                                if (data.next.length == 0) {
+                                    var _data = $('sumario meta fechaInv').html()
+                                    var yyyy = _data.substr(0, 4);
+                                    var mm = _data.substr(5, 2) // getMonth() is zero-based
+                                    var dd = _data.substr(8, 2)
+                                    var date = app.moment($('sumario meta fechaInv').html(), 'YYYY/MM/DD').add(1, 'day')
+
+                                    if (new Date(date).getDay() == 6)
+                                        date.add(1, 'day')
+                                    if (new Date(date).getDay() == 0)
+                                        date.add(1, 'day')
+
+                                    data.next = date.format('DD/MM/YYYY')
+                                }
+
                                 data.SUMARIO_NEXT = "BORME-S-" + data.next.substr(6, 4) + data.next.substr(3, 2) + data.next.substr(0, 2)
 
                                 //debugger
@@ -96,8 +113,6 @@
                 var xcadsql = null
 
                 var _file = app.PDFStore + urlDoc.split("/")[urlDoc.split("/").length - 1]
-                //var bocm = turl[turl.length - 1].split(".")[0]
-
                 //punto de guardado del PDF precepto
                 if (body != null) {
                     app.mkdirp(app.PDFStore, function (err) {

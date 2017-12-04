@@ -15,7 +15,7 @@
                     this.poolSql[type].getConnection(function (err, connection) {
                         // connected! (unless `err` is set)
                         if (err == null) {
-                            console.log('new connection ' + type + ' mysql OK')
+                            console.log('new connection ' + options.Command + ' mysql OK')
                             options.SQL.db = connection // _this.connection[type] = connection
                             _exit(options, type, callback)
                         } else {
@@ -39,20 +39,21 @@
             var _this = this
             _this.encryptor = require('simple-encryptor')("bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : ''))
 
-            if (process.env['KAOS_MYSQL_' + type + '_PASS']) {
+            if (process.env['KAOS_MYSQL_' + options.Command + '_PASS']) {
                 
                 _this.poolSql[type] = app.mysql.createPool({
-                    host: process.env['KAOS_MYSQL_' + options.Command + '_HOST'], 
+                    host: process.env['KAOS_MYSQL_' + options.Command + '_HOST'],
                     user: process.env['KAOS_MYSQL_' + options.Command + '_USER'],
-                    password: process.env['KAOS_MYSQL_' + options.Command + '_PASS'], 
-                    database: process.env['KAOS_MYSQL_' + options.Command + '_DB'], 
+                    password: process.env['KAOS_MYSQL_' + options.Command + '_PASS'],
+                    database: process.env['KAOS_MYSQL_' + options.Command + '_DB'],
                     multipleStatements: true,
                     waitForConnection: true,
                 })
 
                 _this.getConnect(options, type, callback)
 
-            }else{
+            } else {
+
                 app.fs.readFile(app.path.normalize('sqlfiles/x_'+ _file + '.json'), function (err, _JSON) {
                     if (err) {
                         testIp = function (testIp,callback) {
@@ -96,13 +97,13 @@
                                                     console.log("Database " + db + " created");
 
                                                     const cp = require('child_process');
-                                                    cp.exec('mysql -u' + resp.user + ' -p ' + resp.password + ' < ' + app.path.normalize('sqlfiles/CREATE_DB_' + options.Command + '.sql') , (error, stdout, stderr) => {
+                                                    cp.exec('mysql -u' + resp.user + ' -p' + resp.password + ' -h' + resp.host + ' < ' + app.path.normalize('sqlfiles/CREATE_FULL_' + options.Command + '.sql'), (error, stdout, stderr) => {
                                                         if (error) throw error;
                                                         console.log(`stdout: ${stdout}`);
                                                         console.log(`stderr: ${stderr}`);
                                                         console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
                                                         con.end()
-                                                        app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify({ mySQL: _credenciales} ), function (err, _JSON) {
+                                                        app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
                                                             callback(_credenciales)
                                                         })
                                                     });
@@ -180,10 +181,18 @@
                 insert: {
                     AnyoRead: function (options, db, type, callback) {
                         db.query('call InsertAnyo(?,?)', [options.Type, app.anyo], function (err, record) {
-                            if (record[0][0][type.toLowerCase()]>0)
-                                app.logStop(3, 'el ' + type + ' del año ' + app.anyo + ' ya se ha completado')
-
-                            callback(options)
+                            if (err) {
+                                console.log(err)
+                                process.exit(1)
+                            } else {
+                               
+                                if (record[0][0][type.toLowerCase()] > 0 && app.anyo < app.date.getFullYear() ) {
+                                    app.logStop(3, 'el ' + type + ' del año ' + app.anyo + ' ya se ha completado')
+                                    process.exit(1)
+                                } else {
+                                    callback(options)
+                                }
+                            }
                         })
                     },
                     Borme: {

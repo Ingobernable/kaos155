@@ -64,15 +64,32 @@
                         if (options.type == "BOCM")
                             if (Sumario.indexOf("-S-") == -1) {
                                 var url = options.url + '_Boletin_BOCM/' + Sumario.substr(5, 4) + "/" + Sumario.substr(9, 2) + "/" + Sumario.substr(11, 2) + "/" + Sumario + ".PDF"
-                            } else {
+                            } else {                               
                                 var url = options.url + '_Boletin_BOCM/' + Sumario.substr(7, 4) + "/" + Sumario.substr(11, 2) + "/" + Sumario.substr(13, 2) + "/" + options.type + Sumario.substr(6, 9) + ".PDF"
                             }
                         //
                         //Cargamos y analizamos las secciones con el parseador concreto de cada TYPE de documento
                         //BOE,BOCM,BORME......etc
-                            
-                        options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
-                            callback(data, repeat)
+                        // si el campo STOP estuviera a 1
+                        //salimos del proceso
+
+                        cadsql = "SELECT STOP FROM lastread WHERE Type='" + options.type + "' AND anyo = " + data.desde.substr(0, 4)
+                        options.SQL.db.query(cadsql, function (err, record) {
+                            if(err)
+                                console.log(err)
+
+                            //debugger
+                            if (record[0].STOP == 0) {
+                                options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
+                                    callback(data, repeat)
+                                })
+                            } else {
+                                cadsql = "UPDATE lastread set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + data.desde.substr(0, 4)
+                                options.SQL.db.query(cadsql, function (err,record) {
+                                    console.log('proceso obligado a parar')
+                                    process.exit(1)
+                                })
+                            }
                         })
 
 
@@ -153,30 +170,44 @@
                 var imonth = data.desde.substr(4, 2)
                 var iday = data.desde.substr(6, 2)
                 var _DATE = new Date(imonth + "/" + iday + "/" + iyear)
+                var _AHORA = new Date()
                 if (app.update == null) {
-                    if (iyear == app.anyo) { 
-                        options.type = type.toUpperCase()
-                        options.Sumario = data.type.toUpperCase() + "-" + (type != "BOCM" ? "S-" : "") + iyear + imonth + iday
-                        //
-                        //Punto en el que llama a analiza un sumario correspondiente a un dia, con multiples subdocumentos
-                        //
-                        _this.SQL.commands.Sumario.get(options, data, function (data) {
-                            if (data._list.length > 0) {
-                                data.e = 0
-                                _this.parser(app).NEW(options, data, options.scrap.Preceptos, function (data) {
+                    if (iyear == app.anyo) {
+                        if (_DATE < _AHORA) {
+                            options.type = type.toUpperCase()
+                            options.Sumario = data.type.toUpperCase() + "-" + (type != "BOCM" ? "S-" : "") + iyear + imonth + iday
+                            //
+                            //Punto en el que llama a analiza un sumario correspondiente a un dia, con multiples subdocumentos
+                            //
+                            _this.SQL.commands.Sumario.get(options, data, function (data) {
+                                if (data._list.length > 0) {
+                                    data.e = 0
+                                    _this.parser(app).NEW(options, data, options.scrap.Preceptos, function (data) {
+                                        options._common.SQL.commands.Sumario.update(options, data, function () {
+                                            data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
+                                            _this.Actualize(options, type, data)
+                                        })
+                                    })
+                                } else {
                                     options._common.SQL.commands.Sumario.update(options, data, function () {
                                         data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
                                         _this.Actualize(options, type, data)
                                     })
-                                })
-                            } else {
-                                options._common.SQL.commands.Sumario.update(options, data, function () {
-                                    data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
-                                    _this.Actualize(options, type, data)
-                                })
-                            }
-                        })
+                                }
+                            })
+                        } else {
+                            var date = new Date(iyear*1, (imonth*1)-1 , iday*1, 23, 0, 0);
+                            
+                            console.log('el año no ha acabado pero si los sumarios')
+                            console.log('continuaremos el ' + date.toString())
+
+                            app.schedule.scheduleJob(date, function (y) {
+                                console.log('despertando ... '+ y + ' ... empezando a analizar ' + type)
+                                _this.Actualize(options, type, data)
+                            })
+                        }
                     } else {
+                        
                         cadsql = "UPDATE lastread SET Read_Complete = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo
                         options.SQL.db.query(cadsql, function (err, record) {
                             cadsql = "UPDATE anyosread SET " + options.Command.toLowerCase() + " = 1 WHERE Type='" + options.Type + "' AND Anyo = " + app.anyo
