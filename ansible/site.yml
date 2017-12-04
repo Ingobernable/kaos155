@@ -1,3 +1,8 @@
+- hosts: all
+  tasks:
+  - name: install fucking vim!
+    apt: name=vim
+
 - hosts: databases
   roles:
   - mysql
