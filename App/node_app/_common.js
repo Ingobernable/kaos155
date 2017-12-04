@@ -235,7 +235,13 @@
                 }
             } else {
                 options.parser.Preceptos(options, type, function (data, ok) {
-                    debugger
+                    if (ok == 0) {
+                        callback(data, ok)
+                    } else {
+                        options.SQL.scrapDb.query("UPDATE _"+type.toLowerCase()+"_text_"+data.anyo+" SET parser="+ok+" WHERE BOLETIN='" + data.cod + "'", function(err,record){
+                            callback(data, ok)
+                        })
+                    }
                 }, options.parser.Preceptos)
             }
         }

@@ -144,8 +144,13 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
                                     //options = objeto que realiza el escrapeo
                                     //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
                                     app.BOLETIN = options
-                                    //realizamos el proceso de parseo  
-                                    options._common.Actualize(options, type)
+
+                                    //realizamos el proceso de parseo
+                                    app._returnfunc = function (data, ok) {
+                                        if(ok>0)
+                                            options._common.Actualize(options, type, {}, app._returnfunc)
+                                    }
+                                    options._common.Actualize(options, type, {}, app._returnfunc )
                                 })
                             //})
                         

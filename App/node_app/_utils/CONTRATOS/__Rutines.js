@@ -151,11 +151,11 @@
 
                 
 
-                var _imp = this.adaptImportes(importe.replace("*",""), data )
+                var _imp = this.adaptImportes(options, importe.replace("*",""), data )
 
                 return _imp != null ? _imp : 0 
             },
-            adaptImportes: function (_dataimporte, data) {
+            adaptImportes: function (options, _dataimporte, data) {
 
                 function isNumeric(n) {
                     return !isNaN(parseFloat(n)) && isFinite(n);
@@ -198,14 +198,69 @@
                         }
                     }
                 } else {
-                    var _imp = _dataimporte.replace("*", " ").split(";")
-                    if (data.contratista.indexOf("UTE ") == -1) {
+                    var _impT = _dataimporte.replace(', y "',";").split(";")
+                    var _imp = []
+                    var _empImp=[]
+                    _.forEach(_impT, function (value) {
+                        var _vx = (value.toLowerCase().match(/\(([^()]*euros[^()]*)\)/) || [])
+                        var _m = 1
+                        if (_vx.length > 1) {
+                            _imp[_imp.length] = _vx[1]
+                        } else {
+                            var _vx = (value.toLowerCase().match(/\(([^()]*pesetas[^()]*)\)/) || [])
+                            
+                            if (_vx.length > 0) {
+                                var _m = 166.386
+                                _imp[_imp.length] = _vx[0]
+                            } else {
+                                var _vx = (value.toLowerCase().match(/(\d+(\.\d{3})+?) (?:de )?(pesetas|euros)/) || [])
+                                if (_vx.length > 0) {
+                                    if(_vx[0].indexOf('pesetas')>-1){
+                                        var _m = 166.386
+                                        _imp[_imp.length] = _vx[0].replaceAll(" de ", "").replaceAll(".", ",")
+                                    }else{
+                                        _imp[_imp.length] = _vx[0]
+                                    }
 
-                        var _emp = data.contratista.split(";")
+                                    
+                                } else {
+                                    debugger
+                                }
+                            }
+                        }
+                       
+                            if (value.indexOf('".') > -1) {
+                                _vs = value.split('".')[0].toLowerCase()
+                            } else {
+                                if (value.indexOf('",') > -1) {
+                                    _vs = value.split('",')[0].toLowerCase() //
+                                } else {
+                                    debugger
+                                }
+                            }
+                            _empImp[_empImp.length] = _.deburr(options.Rutines.transforms(_vs, options.transforms.ADD(
+                                       [
+                                       options.patterns.General,
+                                       options.patterns.Contratista,
+                                       options.patterns.especialChars,
+                                       options.patterns.exoticChars,
+                                       options.patterns.specialContratista,
+                                       options.patterns.sinBlancos,
+                                       options.patterns.sinPuntos
+                                       ]))
+                              ).toLowerCase()
+                            
+
+                    })
+                    if (data.Empresa.indexOf("UTE ") == -1) {
+
+                        var _emp = data.Empresa.split(";")
                         var _test = []
                         var _moneda = ""
                         for (n in _emp) {
-                            importe = _imp[n] != null ? _imp[n] : (data.presupuesto != null ? data.presupuesto:0)
+                            _empresa = _.deburr(_.camelCase(_emp[n])).toLowerCase()
+                            var _n = _empImp.indexOf(_empresa)
+                            importe = _imp[_n] != null ? _imp[_n] : (data.presupuesto != null ? data.presupuesto:0)
                             if (!isNumeric(importe)) {
                                 if (importe.indexOf("euros") > 0 || importe.indexOf(_moneda) == -1) {
                                     _moneda = "euros"
@@ -214,7 +269,13 @@
                                     } else {
                                         _i = importe
                                     }
+                                    if (_i.indexOf(",") == -1)
+                                        _i = _.trim(_i).replaceAll(".", "") + ".00"
+                                    else {
+                                        _i = _.trim(_i).replace(",", "#").replaceAll(".", "").replace("#", ".")
+                                    }
                                     if (isNumeric(_i)) {
+
                                         _test[_test.length] = parseFloat(_i).toFixed(2)
                                     } else {
                                         _test[_test.length] = data.presupuesto

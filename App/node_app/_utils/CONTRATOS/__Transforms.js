@@ -110,24 +110,32 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, 'Sociedad Anónima Española', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', Sociedad Anónima', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', Sociedad Limitada', ' SL.'],
-                    ['F', { f: _this.replaceAll }, ', Sociedad Limitada', ' SL.'],
                     ['F', { f: _this.replaceAll }, ' Sociedad Limitada', ' SL.'],
-                    ['F', { f: _this.replaceAll }, 'Sociedad Anónima', ' SA.'],
+                    ['F', { f: _this.replaceAll }, ', SociedadLimitada', ' SL.'],
+                    ['F', { f: _this.replaceAll }, ',Sociedad Limitada', ' SL.'],
+                    ['F', { f: _this.replaceAll }, ', sociedad limitada', ' SL.'],
 
+                    ['F', { f: _this.replaceAll }, 'Sociedad Anónima', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', sociedad anónima española', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'sociedad anónima española', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', sociedad anónima', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'sociedad anónima', ' SA.'],
+                    ['F', { f: _this.replaceAll }, '. sociedad anónima', ' SA.'],
 
                     ['F', { f: _this.replaceAll }, ', Sociedad Anómima Española', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'Sociedad Anómima Española', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', Sociedad Anómima', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'Sociedad Anómima', ' SA.'],
-
+                    ['F', { f: _this.replaceAll }, ', SociedadAnónima', ' SA.'],
+                    
                     ['F', { f: _this.replaceAll }, ', sociedad anómima española', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'sociedad anómima española', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', sociedad anónima', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'sociedad anómima', ' SA.'],
+                    ['F', { f: _this.replaceAll }, 'sociedadanomima', 'sa.'],
+                     ['F', { f: _this.replaceAll }, 'sociedadlimitada', ' sl.'],
+                     ['F', { f: _this.replaceAll }, ', sociedadlimitada', ' sl.'],
+
                     ['F', { f: _this.replaceAll }, 'union temporal de empresas', 'UTE '],
                     ['F', { f: _this.replaceAll }, 'Union Temporal de Empresas', 'UTE '],
                     ['F', { f: _this.replaceAll }, 'Unión Temporal de Empresas', 'UTE '],
@@ -147,6 +155,9 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, ' SAE', ' SA.'],
                     ['F', { f: _this.replaceAll }, '. SAU', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'UTE ', 'UTE. '],
+
+
+                    NÚMEROS DE ORDEN
 
                     //['R', new RegExp(/Sociedad Anónima/, "g"), "S.A.\";"],
                     //['R', new RegExp(/, Sociedad Anónima Española/, "g"), "S.A.\";"],
@@ -245,10 +256,12 @@ module.exports = function (app) {
                 ],
                 sinPuntos: [
                     ['R', new RegExp(/\./, "g"), ""]
-
                 ],
                 sinBlancoInicial: [
                     ["F", { f: _this.removeFirstChar }, ' ']
+                ],
+                sinBlancos: [
+                    ["F", { f: _this.replaceAll }, ' ', "" ]
                 ]
             }
         }

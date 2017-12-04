@@ -51,8 +51,8 @@ module.exports = function (app) {
                     ['R', new RegExp(/^\s+|\s+$/, "gm"), ""],
                     ['F', { f: _this.replaceAll }, 'LEY 18 1982 DE 26 DE MAYO', 'L.18/1982'],
 
-                    ['F', { f: _this.replaceAll }, 'SOCIEDAD COLECTIVA', 'S.C.'],
-                    ['F', { f: _this.replaceAll }, 'SOCIEDAD COLECTIVA', 'S.C.'],
+                    ['F', { f: _this.replaceAll }, 'SOCIEDAD COLECTIVA', 'SC'],
+                    ['F', { f: _this.replaceAll }, 'SOCIEDAD COLECTIVA', 'SC'],
                     ['F', { f: _this.replaceAll }, 'SOCIEDAD DE RESPONSABILIDAD LIMITADA', 'SRL'],
                     ['F', { f: _this.replaceAll }, 'SOCIEDAD LIMITADA LABORAL', 'SLL'],
                     ['F', { f: _this.replaceAll }, 'SOCIEDAD LABORAL', 'SAL'],
