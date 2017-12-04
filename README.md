@@ -3,12 +3,12 @@
 Herramienta para la obtención de datos de Contratación con la administración pública y relaciones societarias en España.
 
 ```
- _   __                 __   _____ _____ 
+ _   __                 __   _____ _____
 | | / /                /  | |  ___|  ___|
-| |/ /  __ _  ___  ___ `| | |___ \|___ \ 
+| |/ /  __ _  ___  ___ `| | |___ \|___ \
 |    \ / _` |/ _ \/ __| | |     \ \   \ \
 | |\  \ (_| | (_) \__ \_| |_/\__/ /\__/ /
-\_| \_/\__,_|\___/|___/\___/\____/\____/ 
+\_| \_/\__,_|\___/|___/\___/\____/\____/
 ```                                         
 
 Es una herramienta de software libre bajo los terminos de la licencia GPL 3. (ver archivo [LICENSE](https://github.com/Ingobernable/kaos155/blob/master/LICENSE) para más detalles).
@@ -34,6 +34,6 @@ http://listas.ingobernable.net/cgi-bin/mailman/listinfo/kaos
 
 Puedes consultar las formas de instalar Kaos155 en los archivos .md dentro del directorio [doc](https://github.com/Ingobernable/kaos155/blob/master/doc/) del proyecto.
 
+* Instalar Kaos155 sobre Docker: [INSTALL-DOCKER.md](https://github.com/Ingobernable/kaos155/blob/master/doc/INSTALL-DOCKER.md)
 * Instalar Kaos155 sobre GNU/Linux Debian 9: [INSTALL-GNU_LINUX.md](https://github.com/Ingobernable/kaos155/blob/master/doc/INSTALL-GNU_LINUX.md)
 * Instalar Kaos155 vía Vagrant Ansible: [INSTALL-VAGRANT_ANSIBLE.md](https://github.com/Ingobernable/kaos155/blob/master/doc/INSTALL-VAGRANT_ANSIBLE.md)
-
