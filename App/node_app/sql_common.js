@@ -62,7 +62,7 @@
 
                             ]).then(function (resp) {
                                 //_this.createfistConnect(resp, function (fail) {
-                                var db = "bbdd_kaos155" + (options.command == "" ? "_text" : "")
+                                var db = "bbdd_kaos155" + (options.command == "SCRAP" ? "_text" : "")
 
                                 var con = app.mysql.createConnection({
                                     host: resp.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
