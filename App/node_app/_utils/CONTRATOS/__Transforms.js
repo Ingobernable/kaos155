@@ -69,6 +69,19 @@ module.exports = function (app) {
             }
 
         },
+        replaceNumerosorden: function (opc, string, find, del ) {
+            var _te =[] 
+            //if(del)
+                _.forEach( string.split(find) , function (value) {
+                    if ((value.indexOf(", NÚMEROS DE ORDEN") > -1 && del)) {
+                        _te[_te.length] = value.substr(0, value.indexOf(", NÚMEROS DE ORDEN") )
+                    } else {
+                       _te[_te.length] = value
+                    }
+
+                })
+            return _te.join(";")
+        },
         getPatern: function (_this) {
             return {
                 General: [
@@ -155,9 +168,11 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, ' SAE', ' SA.'],
                     ['F', { f: _this.replaceAll }, '. SAU', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'UTE ', 'UTE. '],
-
-
-                    NÚMEROS DE ORDEN
+                    ['F', { f: _this.executeIF }, function (string) {
+                        return string.indexOf(", números de orden") > -1  && string.indexOf('. "') >-1
+                    }, [
+                        ['F', { f: _this.replaceNumerosorden }, '. "' , true ],
+                    ]]
 
                     //['R', new RegExp(/Sociedad Anónima/, "g"), "S.A.\";"],
                     //['R', new RegExp(/, Sociedad Anónima Española/, "g"), "S.A.\";"],
