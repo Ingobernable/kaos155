@@ -1,4 +1,4 @@
-# MariaDB database server configuration file.
+# mysql database server configuration file.
 #
 # You can copy this file to one of:
 # - "/etc/mysql/my.cnf" to set global options,
@@ -44,14 +44,14 @@ skip-external-locking
 #
 # Instead of skip-networking the default is now to listen only on
 # localhost which is more compatible and is not less secure.
-bind-address		= {{ mariadb_bind_address }}
+bind-address		= {{ mysql_bind_address }}
 #
 # * Fine Tuning
 #
-max_connections		= {{ mariadb_max_connections }}
+max_connections		= {{ mysql_max_connections }}
 connect_timeout		= 5
 wait_timeout		= 600
-max_allowed_packet	= {{ mariadb_max_allowed_packet }}
+max_allowed_packet	= {{ mysql_max_allowed_packet }}
 thread_cache_size       = 128
 sort_buffer_size	= 4M
 bulk_insert_buffer_size	= 16M
@@ -74,8 +74,8 @@ read_rnd_buffer_size	= 1M
 # * Query Cache Configuration
 #
 # Cache only tiny result sets, so we can fit more in the query cache.
-query_cache_limit		= {{ mariadb_query_cache_limit }}
-query_cache_size		= {{ mariadb_query_cache_size }}
+query_cache_limit		= {{ mysql_query_cache_limit }}
+query_cache_size		= {{ mysql_query_cache_size }}
 # for more write intensive setups, set to DEMAND or OFF
 #query_cache_type		= DEMAND
 #
@@ -95,8 +95,8 @@ log_warnings		= 2
 # Enable the slow query log to see queries with especially long duration
 #slow_query_log[={0|1}]
 slow_query_log = 1
-slow_query_log_file	= /var/log/mysql/mariadb-slow.log
-long_query_time = {{ mariadb_slow_query_time }}
+slow_query_log_file	= /var/log/mysql/mysql-slow.log
+long_query_time = {{ mysql_slow_query_time }}
 #log_slow_rate_limit	= 1000
 log_slow_verbosity	= query_plan
 
@@ -110,8 +110,8 @@ log_slow_verbosity	= query_plan
 #report_host		= master1
 #auto_increment_increment = 2
 #auto_increment_offset	= 1
-log_bin			= /var/log/mysql/mariadb-bin
-log_bin_index		= /var/log/mysql/mariadb-bin.index
+log_bin			= /var/log/mysql/mysql-bin
+log_bin_index		= /var/log/mysql/mysql-bin.index
 # not fab for performance, but safer
 #sync_binlog		= 1
 expire_logs_days	= 10
@@ -134,7 +134,7 @@ max_binlog_size         = 100M
 default_storage_engine	= InnoDB
 # you can't just change log file size, requires special procedure
 #innodb_log_file_size	= 50M
-innodb_buffer_pool_size	= {{ mariadb_innodb_buffer_pool_size }}
+innodb_buffer_pool_size	= {{ mysql_innodb_buffer_pool_size }}
 innodb_log_buffer_size	= 8M
 innodb_file_per_table	= 1
 innodb_open_files	= 400
@@ -190,4 +190,4 @@ key_buffer		= 16M
 !includedir /etc/mysql/conf.d/
 
 
-{{ mariadb_custom_config }}
+{{ mysql_custom_config }}

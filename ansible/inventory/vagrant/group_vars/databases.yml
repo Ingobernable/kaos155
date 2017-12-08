@@ -1,7 +1,11 @@
-mariadb_bind_address: 0.0.0.0
-mariadb_max_connections: 50
-mariadb_append_privs: yes
-mariadb_databases:
+kaos_sqlscripts_path:
+- "/vagrant/App/sqlfiles/CREATE_DB_SCRAP.sql"
+- "/vagrant/App/sqlfiles/CREATE_PROC_SCRAP.sql"
+
+mysql_bind_address: 0.0.0.0
+mysql_max_connections: 50
+mysql_append_privs: yes
+mysql_databases:
 - name: bbdd_kaos155
   collation: utf8_general_ci
   encoding: utf8
@@ -10,8 +14,7 @@ mariadb_databases:
   encoding: utf8
 
 
-
-mariadb_users:
+mysql_users:
 - name: kaos
   password: password
   priv: "bbdd_kaos155_text.*:ALL"

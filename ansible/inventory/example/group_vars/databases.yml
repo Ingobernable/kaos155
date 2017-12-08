@@ -1,7 +1,7 @@
-mariadb_bind_address: 127.0.0.1
-mariadb_max_connections: 200
-mariadb_append_privs: yes
-mariadb_databases:
+mysql_bind_address: 127.0.0.1
+mysql_max_connections: 200
+mysql_append_privs: yes
+mysql_databases:
 - name: bbdd_kaos155
   collation: utf8_general_ci
   encoding: utf8
@@ -11,7 +11,7 @@ mariadb_databases:
 
 
 
-mariadb_users:
+mysql_users:
 - name: kaos
   password: password
   priv: "bbdd_kaos155_text.*:ALL"

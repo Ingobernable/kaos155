@@ -11,7 +11,7 @@
                         })
                     },
                     insert: function (options, data, callback) {
-                        var next = data.SUMARIO_NEXT //options.type + (options.type=="BOCM"?"":"-S-") + data.next.substr(6, 4) + data.next.substr(3, 2) + data.next.substr(0, 2)
+                        var next = data.SUMARIO_NEXT
                         if (data._analisis == null) {
                             if (data._list[data.e][data.type] == null) {
                                 var _boletin = data._list[data.e].split("=")[1]
@@ -44,8 +44,7 @@
                                             process.stdout.write('%')
                                             callback(data)
                                         }
-                                        //console.log(err, sumariosql)
-                                        //callback({ error: true, SUMARIO_NEXT: rows[0].SUMARIO_NEXT })
+
                                     }
                                 } else {
                                     debugger
@@ -65,7 +64,7 @@
                         if (options.type == "BOCM")
                             if (Sumario.indexOf("-S-") == -1) {
                                 var url = options.url + '_Boletin_BOCM/' + Sumario.substr(5, 4) + "/" + Sumario.substr(9, 2) + "/" + Sumario.substr(11, 2) + "/" + Sumario + ".PDF"
-                            } else {
+                            } else {                               
                                 var url = options.url + '_Boletin_BOCM/' + Sumario.substr(7, 4) + "/" + Sumario.substr(11, 2) + "/" + Sumario.substr(13, 2) + "/" + options.type + Sumario.substr(6, 9) + ".PDF"
                             }
                         //
@@ -76,19 +75,23 @@
 
                         cadsql = "SELECT STOP FROM lastread WHERE Type='" + options.type + "' AND anyo = " + app.anyo
                         options.SQL.db.query(cadsql, function (err, record) {
-                            debugger
+                            if(err)
+                                console.log(err)
+
+                            //debugger
                             if (record[0].STOP == 0) {
                                 options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
                                     callback(data, repeat)
                                 })
                             } else {
                                 cadsql = "UPDATE lastread set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + app.anyo
-                                options.SQL.db.query(cadsql, function (err, record) {
+                                options.SQL.db.query(cadsql, function (err,record) {
                                     console.log('proceso obligado a parar')
                                     process.exit(1)
                                 })
                             }
                         })
+
 
                         
                     },
@@ -151,7 +154,6 @@
                     })
                 },
                 Search: function (options, doc, sdata, analizer, callback) {
-                    //var _this = this
                     if (doc[options.type] != null)
                         doc = [options.type]
 
@@ -162,7 +164,6 @@
             }
         },
         Actualize: function ( options, type, data, callback) {
-            //var _r = { BOCM: 5, BOE: 6, BORME: 8 }
             var _this = this
             if (options.Command == app.Commands[0]) {
                 var iyear = data.desde.substr(0, 4)
@@ -195,18 +196,18 @@
                                 }
                             })
                         } else {
-                            var date = new Date(iyear * 1, (imonth * 1) - 1, iday * 1, 23, 0, 0);
-
+                            var date = new Date(iyear*1, (imonth*1)-1 , iday*1, 23, 0, 0);
+                            
                             console.log('el año no ha acabado pero si los sumarios')
                             console.log('continuaremos el ' + date.toString())
 
                             app.schedule.scheduleJob(date, function (y) {
-                                console.log('despertando ... ' + y + ' ... empezando a analizar ' + type)
+                                console.log('despertando ... '+ y + ' ... empezando a analizar ' + type)
                                 _this.Actualize(options, type, data)
                             })
                         }
                     } else {
-
+                        
                         cadsql = "UPDATE lastread SET Read_Complete = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo
                         options.SQL.db.query(cadsql, function (err, record) {
                             cadsql = "UPDATE anyosread SET " + options.Command.toLowerCase() + " = 1 WHERE Type='" + options.Type + "' AND Anyo = " + app.anyo
@@ -234,7 +235,7 @@
 
                 }
             } else {
-                options.parser.Preceptos(options, type, function () { }, options.parser.Preceptos)
+                options.parser.Preceptos(type)
             }
         }
     }

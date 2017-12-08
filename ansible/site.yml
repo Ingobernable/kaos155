@@ -1,13 +1,20 @@
+- hosts: all
+  tasks:
+  - name: install fucking vim!
+    apt: name=vim
+
 - hosts: databases
   roles:
-  - mariadb
+  - mysql
   tasks:
   - name: check if database is provisioned
     shell: mysql -u root -e "select * from bbdd_kaos155.boletin;"
     register: checkdb
-    failed_when: no
+    ignore_errors: yes
   - name: provision database
-    shell: mysql -u root bbdd_kaos155 < /vagrant/sqlfiles/CREATE_COMPLETO.sql
+    with_items:
+    - "{{ kaos_sqlscripts_path }}"
+    shell: "mysql -u root bbdd_kaos155 < {{ item }}"
     when: checkdb|failed
 
 - hosts: appservers
