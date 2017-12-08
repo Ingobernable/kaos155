@@ -1,3 +1,4 @@
+var os = require('os')
 
 var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
@@ -29,7 +30,7 @@ function pdftotext(filename, options) {
         //var isWin = /^win/.test(process.platform);
 
         self.add_options([filename]);
-        var _command = 'pdftotext ' + self.options.additional.join(' ')
+        var _command = (os.platform().indexof("win")>0?'bin/':'') + 'curl ' + self.options.additional.join(' ')
         //console.log(_command)
         exec(_command, cb);
     }

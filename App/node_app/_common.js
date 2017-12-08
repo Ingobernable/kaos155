@@ -74,7 +74,7 @@
                         // si el campo STOP estuviera a 1
                         //salimos del proceso
 
-                        cadsql = "SELECT STOP FROM lastread WHERE Type='" + options.type + "' AND anyo = " + Sumario.substr(5, 4)
+                        cadsql = "SELECT STOP FROM lastread WHERE Type='" + options.type + "' AND anyo = " + app.anyo
                         options.SQL.db.query(cadsql, function (err, record) {
                             debugger
                             if (record[0].STOP == 0) {
@@ -82,7 +82,7 @@
                                     callback(data, repeat)
                                 })
                             } else {
-                                cadsql = "UPDATE lastread set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + Sumario.substr(5, 4)
+                                cadsql = "UPDATE lastread set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + app.anyo
                                 options.SQL.db.query(cadsql, function (err, record) {
                                     console.log('proceso obligado a parar')
                                     process.exit(1)
