@@ -7,5 +7,3 @@ develop:
   ansible_playbook: ansible/site.yml
   port_forwarding: no
   verbose: no
-  node_target: BOE
-  node_year: 2001
