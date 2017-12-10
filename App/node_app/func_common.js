@@ -1,5 +1,6 @@
 ﻿module.exports = function (app, callback) {
 
+    var _this = this
 
     return {
         lastupdate: Date.now(),
@@ -21,8 +22,9 @@
                 }
                     //console.log("\n" + app.moment().format('MMM D, HH:MM:SS') + "->" + requestOptions.uri)
                 //leemos el documento SUMARIO
-                app.request.get(requestOptions, function (req, res, body) {
-                    if (body != null) {
+                app.request.get(requestOptions, function (error, response, body) {
+                    if (!error && response.statusCode == 200) {
+                    //if (body != null) {
                         if (body.length > 0) {
                             if (requestOptions.encoding == null) {
                                 callback(options, body, data)
@@ -45,7 +47,7 @@
                         }
                     } else {
                         //debugger
-                        console.log("ERROR " + requestOptions.uri + ' response ' + req)
+                        console.log("ERROR " + requestOptions.uri )
                         setTimeout(function () { 
                             console.log('delay ok.')
                             callback(_this, null, data)
