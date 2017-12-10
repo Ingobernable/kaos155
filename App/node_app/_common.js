@@ -82,7 +82,7 @@
                                     callback(data, repeat)
                                 })
                             } else {
-                                cadsql = "UPDATE lastread set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + Sumario.substr(5, 4)
+                                cadsql = "UPDATE lastread set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + app.anyo
                                 options.SQL.db.query(cadsql, function (err, record) {
                                     console.log('proceso obligado a parar')
                                     process.exit(1)
