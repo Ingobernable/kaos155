@@ -74,9 +74,9 @@
                         // si el campo STOP estuviera a 1
                         //salimos del proceso
 
-                        cadsql = "SELECT STOP FROM lastread WHERE Type='" + options.type + "' AND anyo = " + Sumario.substr(5, 4)
+                        cadsql = "SELECT STOP FROM lastread WHERE Type='" + options.type + "' AND anyo = " + app.anyo
                         options.SQL.db.query(cadsql, function (err, record) {
-                            debugger
+                            //debugger
                             if (record[0].STOP == 0) {
                                 options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
                                     callback(data, repeat)
