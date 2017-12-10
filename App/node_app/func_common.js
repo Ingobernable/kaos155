@@ -1,5 +1,6 @@
 ﻿module.exports = function (app, callback) {
 
+    //var _this = this
 
     return {
         
@@ -22,14 +23,15 @@
                 }
                     //console.log("\n" + app.moment().format('MMM D, HH:MM:SS') + "->" + requestOptions.uri)
                 //leemos el documento SUMARIO
-                app.request.get(requestOptions, function (req, res, body) {
-                    if (body != null) {
+                app.request.get(requestOptions, function (error, response, body) {
+                    if (!error && response.statusCode == 200) {
+                    //if (body != null) {
                         if (body.length > 0) {
                             if (requestOptions.encoding == null) {
                                 callback(options, body, data)
                             } else {
                                 if (body.toString().indexOf('encoding="') > -1 || body.toString().indexOf('meta charset') > -1) {
-                                    callback(options, _this.iconv.decode(new Buffer(body), _this.Rutines().ISO(body.toString())), data)
+                                    callback(options, options.iconv.decode(new Buffer(body), options.Rutines().ISO(body.toString())), data)
                                 } else {
                                     debugger
                                     console.log("ERROR " + requestOptions.uri + ' response sin encoding valido')
@@ -46,7 +48,7 @@
                         }
                     } else {
                         //debugger
-                        console.log("ERROR " + requestOptions.uri + ' response ' + req)
+                        console.log("ERROR " + requestOptions.uri )
                         setTimeout(function () { 
                             console.log('delay ok.')
                             callback(_this, null, data)
@@ -77,6 +79,7 @@
         xmlToJson: function (xml) {
 
             // Create the return object
+            x = _this
 
             var obj = {};
 
@@ -99,14 +102,14 @@
                     var item = xml.childNodes.item(i);
                     var nodeName = item.nodeName;
                     if (typeof (obj[nodeName]) == "undefined") {
-                        obj[nodeName] = _this.Rutines(_this).xmlToJson(item);
+                        obj[nodeName] = _this.Rutines().xmlToJson(item);
                     } else {
                         if (typeof (obj[nodeName].push) == "undefined") {
                             var old = obj[nodeName];
                             obj[nodeName] = [];
                             obj[nodeName].push(old);
                         }
-                        obj[nodeName].push(_this.Rutines(_this).xmlToJson(item));
+                        obj[nodeName].push(_this.Rutines().xmlToJson(item));
                     }
                 }
             }

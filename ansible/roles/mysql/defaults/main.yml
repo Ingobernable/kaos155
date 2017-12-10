@@ -1,0 +1,26 @@
+# can be "system" or "repo"
+mysql_install_mode: repo
+mysql_version: "10.2"
+mysql_root_password: password
+
+mysql_databases:
+- name: default
+  collation: utf8_general_ci
+  encoding: utf8
+
+mysql_users:
+- name: project
+  password: password
+  priv: "{{db_name}}.*:ALL"
+
+mysql_max_connections: 200
+# {{ (ansible_memtotal_mb * 0.8) | int }} for use all
+mysql_innodb_buffer_pool_size: 256M
+mysql_bind_address: 127.0.0.1
+mysql_max_allowed_packet: "64M"
+
+mysql_slow_query_time: "2"
+mysql_query_cache_limit: "1M"
+mysql_query_cache_size: "64M"
+
+mysql_custom_config: |

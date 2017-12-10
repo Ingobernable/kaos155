@@ -1,6 +1,7 @@
 
 var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
+var path = require('path');
 
 function pdftotext(filename, options) {
     this.options = options || {};
@@ -26,10 +27,10 @@ function pdftotext(filename, options) {
 
     pdftotext.prototype.getText = function (cb) {
         var self = this;
-        //var isWin = /^win/.test(process.platform);
-
+        var isWin = /^win/.test(process.platform);
+        
         self.add_options([filename]);
-        var _command = 'pdftotext ' + self.options.additional.join(' ')
+        var _command = (isWin?path.normalize(path.dirname(__filename)+'/../../bin/win/'):'')+'pdftotext ' + self.options.additional.join(' ')
         //console.log(_command)
         exec(_command, cb);
     }

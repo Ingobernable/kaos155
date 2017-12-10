@@ -4,6 +4,7 @@ Datafiles/
 *.suo
 *.sln
 *.njsproj
+*.dll
 
 # Created by https://www.gitignore.io/api/node,visualstudio
 
@@ -91,7 +92,6 @@ typings/
 x64/
 x86/
 bld/
-[Bb]in/
 [Oo]bj/
 [Ll]og/
 
@@ -364,3 +364,7 @@ __pycache__/
 # End of https://www.gitignore.io/api/node,visualstudio
 /app/package-lock.json
 *.json
+
+
+# vagrant
+.vagrant

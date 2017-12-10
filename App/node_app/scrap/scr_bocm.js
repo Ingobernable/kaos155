@@ -107,7 +107,7 @@
                                                                         if (inContrato) {
                                                                             if (_t[n].indexOfRegex(/BOCM-\d{8}[-]\d{1,4}/) > 0) {
                                                                                 BOCM = _t[n].match(/BOCM-\d{8}[-]\d{1,4}/g)[0]
-                                                                                t[t.length] = { BOCM:BOCM, pdf: options.url + "_Orden_BOCM/" + BOCM.substr(5, 4) + "/" + BOCM.substr(9, 2) + "/" + BOCM.substr(11, 2) + "/" + BOCM + ".PDF" }
+                                                                                t[t.length] = { BOCM:BOCM, pdf: "_Orden_BOCM/" + BOCM.substr(5, 4) + "/" + BOCM.substr(9, 2) + "/" + BOCM.substr(11, 2) + "/" + BOCM + ".PDF" }
                                                                                 inContrato = false
                                                                             }
                                                                         } else {
