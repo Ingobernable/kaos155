@@ -30,7 +30,7 @@
                                 callback(options, body, data)
                             } else {
                                 if (body.toString().indexOf('encoding="') > -1 || body.toString().indexOf('meta charset') > -1) {
-                                    callback(options, _this.iconv.decode(new Buffer(body), _this.Rutines().ISO(body.toString())), data)
+                                    callback(options, options.iconv.decode(new Buffer(body), options.Rutines().ISO(body.toString())), data)
                                 } else {
                                     debugger
                                     console.log("ERROR " + requestOptions.uri + ' response sin encoding valido')
@@ -75,7 +75,7 @@
                 decodeEntities: false
             })
         },
-        xmlToJson: function (xml) {
+        xmlToJson: function (xml, xmlToJson) {
 
             // Create the return object
 
@@ -100,14 +100,14 @@
                     var item = xml.childNodes.item(i);
                     var nodeName = item.nodeName;
                     if (typeof (obj[nodeName]) == "undefined") {
-                        obj[nodeName] = _this.Rutines(_this).xmlToJson(item);
+                        obj[nodeName] = xmlToJson(item, xmlToJson);
                     } else {
                         if (typeof (obj[nodeName].push) == "undefined") {
                             var old = obj[nodeName];
                             obj[nodeName] = [];
                             obj[nodeName].push(old);
                         }
-                        obj[nodeName].push(_this.Rutines(_this).xmlToJson(item));
+                        obj[nodeName].push(xmlToJson(item, xmlToJson));
                     }
                 }
             }
