@@ -1,6 +1,6 @@
 ﻿module.exports = function (app, callback) {
 
-    var _this = this
+    //var _this = this
 
     return {
         lastupdate: Date.now(),
@@ -75,9 +75,10 @@
                 decodeEntities: false
             })
         },
-        xmlToJson: function (xml, xmlToJson) {
+        xmlToJson: function (xml) {
 
             // Create the return object
+            x = _this
 
             var obj = {};
 
@@ -100,14 +101,14 @@
                     var item = xml.childNodes.item(i);
                     var nodeName = item.nodeName;
                     if (typeof (obj[nodeName]) == "undefined") {
-                        obj[nodeName] = xmlToJson(item, xmlToJson);
+                        obj[nodeName] = _this.Rutines().xmlToJson(item);
                     } else {
                         if (typeof (obj[nodeName].push) == "undefined") {
                             var old = obj[nodeName];
                             obj[nodeName] = [];
                             obj[nodeName].push(old);
                         }
-                        obj[nodeName].push(xmlToJson(item, xmlToJson));
+                        obj[nodeName].push(_this.Rutines().xmlToJson(item));
                     }
                 }
             }
