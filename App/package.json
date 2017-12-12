@@ -8,15 +8,20 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.2",
     "iconv-lite": "^0.4.19",
-    "inquirer": "^4.0.0",
+    "inquirer": "^4.0.1",
+    "lodash": "^4.17.4",
     "merge": "^1.2.0",
     "mkdirp": "^0.5.1",
-    "moment": "^2.18.1",
-    "mysql": "^2.14.1",
+    "moment": "^2.19.3",
+    "mysql": "^2.15.0",
     "node-schedule": "^1.2.5",
     "request": "^2.83.0",
+    "resolve-path": "^1.3.3",
+    "shorthash": "0.0.2",
     "simple-encryptor": "^1.1.1",
+    "urlencode": "^1.1.0",
     "xmldom": "^0.1.27"
   }
 }
