@@ -134,41 +134,41 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
 
 
 
-                                //cargamos la rutina de escrapeo específica del tipo de BOLETIN
+                                //cargamos la rutina de escrapeo especï¿½fica del tipo de BOLETIN
                                 //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
-                                //el retorno es el objeto encargado del escrapeo                 
+                                //el retorno es el objeto encargado del escrapeo
                                 var prefix = app.command.substr(0, 3).toLowerCase() + "_"
                                 require('./node_app/PARSER/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
                                     //options = objeto que realiza el escrapeo
                                     //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
                                     app.BOLETIN = options
-                                    //cargamos los contadores para poder continuar donde se dejó
+                                    //cargamos los contadores para poder continuar donde se dejï¿½
                                     //app.commonSQL.SQL.getCounter(app, options, type, function (options) {
-                                        //realizamos el proceso de parseo  
+                                        //realizamos el proceso de parseo
 
                                         options._common.Actualize(options, type) // { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
                                         //options._common.Actualize(options, type, null)
                                     //})
                                 })
                             //})
-                        
+
                         },
                         SCRAP: function (type) {
 
                             //require('./node_app/elasticIO.js')(app).init(function (options) {
                                 //app.io = { elasticIO: options }
 
-                                //cargamos la rutina de escrapeo específica del tipo de BOLETIN
+                                //cargamos la rutina de escrapeo especï¿½fica del tipo de BOLETIN
                                 //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
-                                //el retorno es el objeto encargado del escrapeo                 
+                                //el retorno es el objeto encargado del escrapeo
                                 var prefix = app.command.substr(0, 3).toLowerCase() + "_"
-                                require('./node_app/SCRAP/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
+                                require('./node_app/scrap/' + prefix.toLowerCase() + type.toLowerCase() + '.js')(app, function (options) {
                                     //options = objeto que realiza el escrapeo
                                     //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
                                     app.BOLETIN = options
-                                    //cargamos los contadores para poder continuar donde se dejó
+                                    //cargamos los contadores para poder continuar donde se dejï¿½
                                     app.commonSQL.SQL.getCounter(app, options, type, function (options) {
-                                        //realizamos el proceso de escrapeo  
+                                        //realizamos el proceso de escrapeo
                                         options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
                                         //options._common.Actualize(options, type, null)
                                     })
@@ -277,5 +277,3 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
             }
         })
     })
-
-
