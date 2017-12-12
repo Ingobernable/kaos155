@@ -28,9 +28,9 @@ function pdftotext(filename, options) {
     pdftotext.prototype.getText = function (cb) {
         var self = this;
         var isWin = /^win/.test(process.platform);
-
+        
         self.add_options([filename]);
-        var _command = (isWin ? path.normalize(path.dirname(__filename) + '/../../bin/win/') : '') + 'pdftotext ' + self.options.additional.join(' ')
+        var _command = (isWin?path.normalize(path.dirname(__filename)+'/../../bin/win/'):'')+'pdftotext ' + self.options.additional.join(' ')
         //console.log(_command)
         exec(_command, cb);
     }

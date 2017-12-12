@@ -29,21 +29,28 @@
         app.command = command
         require("./sql_common.js")(app, function (commonSQL) {
             app.commonSQL = commonSQL
-            app.commonSQL.init({ SQL: { db: null }, Command: command }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
-                scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosread WHERE Type='" + type + "' AND SCRAP=1" , function (err, record) {
-                    
+            app.commonSQL.init({ SQL: { db: null }, Command: 'SCRAP' }, 'SCRAP', app._fileCredenciales + 'SCRAP' , function (scrapdb) {
+                scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosread WHERE Type='" + type + "' AND SCRAP = 1" , function (err, record) { //+(command=='SCRAP' ? 1: 0) 
                     var anyos = []
-                    var date = new Date()
-                    for (n = app.Mins[type]; n <= date.getFullYear() ; n++) {
-                        var ok=true
-                        for(p in record){
-                            if (record[p].Anyo == n && record[p].Anyo < date.getFullYear() ) {
-                                ok = false
+                    if (command == 'SCRAP') {
+                        
+                        var date = new Date()
+                        for (n = app.Mins[type]; n <= date.getFullYear() ; n++) {
+                            var ok=true
+                            for(p in record){
+                                if (record[p].Anyo == n) {
+                                    ok = false
+                                }
                             }
+                            if(ok)
+                              anyos[anyos.length] = n + ""
                         }
-                        if(ok)
-                            anyos[anyos.length] = n+""
+                    } else {
+                        for (p in record) {
+                            anyos[anyos.length] = record[p].Anyo + ""
+                        }
                     }
+
                     callback(app, anyos)
                 })
             })
@@ -58,7 +65,7 @@
                         myArgs[0]= command.value
                         app.inquirer.prompt([{ type: 'list', name: 'value', message: 'tipo', choices: ['BORME', 'BOE', 'BOCM'] }])
                                 .then(function (type) {
-                                    getanyos(app, 'SCRAP', type.value, function (app, anyos) {
+                                    getanyos(app, command.value , type.value, function (app, anyos) {
                                         app.inquirer.prompt([{ type: 'list', name: 'anyo', message: 'anyo ', choices: anyos }])
                                                 .then(function (resp) {
 

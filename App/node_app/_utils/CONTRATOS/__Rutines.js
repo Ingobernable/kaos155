@@ -85,7 +85,7 @@
 
                 var DOMParser = require('xmldom').DOMParser
                 var xml = new DOMParser().parseFromString(body.toString())
-                var _json = app.Rutines().xmlToJson(xml)
+                var _json = app.Rutines().xmlToJson(xml, app.Rutines().xmlToJson)
                 var _areas = []
                 var _content = []
                 var err = null
