@@ -230,8 +230,8 @@ module.exports = function (app, callback) {
 
                         var $ = app.Rutines(app).XmlToDom(body)                 // convertimos el texto xml en objetos DOM
                         if ($('error').length == 0) {
-                            data.codigo = options.Rutines.get.principal($)      // rescatamos las variables directas
-                            var _analisis = options.Rutines.get.data(options, data)      //creamos la estructura con los datos principales
+                            data.codigo = options.Rutines.scrap.principal($)      // rescatamos las variables directas
+                            var _analisis = options.Rutines.scrap.data(options, data)      //creamos la estructura con los datos principales
                             if (_analisis._type == null)
                                 debugger
 
@@ -239,7 +239,7 @@ module.exports = function (app, callback) {
                                 debugger
 
                             if (_analisis._type.indexOf('Adjudicación') > -1 || _analisis._modalidad == "Formalización contrato") {
-                                options.Rutines.get.p_parrafo(options, $, '.', body, function (_data) {
+                                options.Rutines.scrap.p_parrafo(options, $, '.', body, function (_data) {
                                     if (_data != null) {
                                         data.extra = _data._extra
                                         //console.log(_extra)
@@ -272,7 +272,7 @@ module.exports = function (app, callback) {
                                                         [["F", { f: options.transforms.removeFirstChar }, ' ']]
                                                         ]), true)
 
-                                                //data.presupuesto = options.Rutines.get.adaptImportes(data.presupuesto ,data)
+                                                //data.presupuesto = options.Rutines.scrap.adaptImportes(data.presupuesto ,data)
 
                                                 for (_i in _text) {
                                                     //console.log(_arrayText[i])

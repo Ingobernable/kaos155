@@ -187,6 +187,8 @@
                 insert: {
                     AnyoRead: function (options, db, type, callback) {
                         db.query('call InsertAnyo(?,?)', [options.Type, app.anyo], function (err, record) {
+                            if(err!=null)
+                                console.log(err)
                             if (record[0][0][type.toLowerCase()] > 0)
                                 app.logStop(3, 'el ' + type + ' del año ' + app.anyo + ' ya se ha completado')
 
@@ -252,39 +254,49 @@
                     Boletin: {
                         text: function (options, _analisis, data, callback) {
                             //var i = isNaN(data.importe * 1) ? 0 : data.importe * 1
-
-                            var boletin = _analisis._BOLETIN.split("=").length > 1 ? _analisis._BOLETIN.split("=")[1] : _analisis._BOLETIN
-                            var fecha = boletin.split("-").length == 2 ? boletin.split("-")[1] : data.desde
-
-                            var params = [
-                                data.textExtend.length,
-                                boletin.split("-")[0],                                                      //type
-                                fecha.substr(6, 2),                                                      //Dia
-                                fecha.substr(4, 2),                                                      //Mes
-                                fecha.substr(0, 4),                                                       //Anyo
-                                boletin,                                                                    //BOLETIN                                                                                                                   
-                                data.textExtend.join("<br>").replace(/\r/g, "").replace(/'/g, "\'"),        //Texto
-                                JSON.stringify(_analisis.extra),                                                  //resultado del primer analisis
-                                _analisis._importe,                                                          //importe accesible?
-                                data.err == null ? '' : data.err
-                            ]
-
-                            options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', params, function (err, record) {
-
-                                if (err != null) {
-                                    process.stdout.write('X')
-                                    cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
-                                    options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
-                                        var x = err
-                                        var y = params
-                                        callback(data)
-                                    })
-                                } else {
-                                    process.stdout.write('+')
+                            if (data.err != null) {
+                                process.stdout.write('X')
+                                cadSql = "INSERT INTO errores (BOLETIN, SqlMensaje, SqlError) VALUES (?,?,?)"
+                                options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1],data._list[data.e], data.err], function (err2) {
                                     callback(data)
-                                }
-                            })
+                                })
+                            } else {
+                                var boletin = _analisis._BOLETIN.split("=").length > 1 ? _analisis._BOLETIN.split("=")[1] : _analisis._BOLETIN
+                                var fecha = boletin.split("-").length == 2 ? boletin.split("-")[1] : data.desde
 
+                                options.Rutines.normalizeTextContrato(data.textExtend, options.itemsContrato, function (_text, _jsonData) {
+                                    var params = [
+                                        _text.length,
+                                        boletin.split("-")[0],                                                      //type
+                                        fecha.substr(6, 2),                                                      //Dia
+                                        fecha.substr(4, 2),                                                      //Mes
+                                        fecha.substr(0, 4),                                                       //Anyo
+                                        boletin,                                                                    //BOLETIN                                                                                                                   
+                                        _text.join("<br>").replace(/\r/g, "").replace(/'/g, "\'"),                  //Texto
+
+                                        JSON.stringify(_jsonData),
+                                        JSON.stringify(_analisis.extra),
+                                        _analisis._importe,                                                          //importe accesible?
+                                        data.err == null ? '' : data.err
+                                    ]
+
+                                    options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?,?)', params, function (err, record) {
+
+                                        if (err != null) {
+                                            process.stdout.write('X')
+                                            cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
+                                            options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
+                                                var x = err
+                                                var y = params
+                                                callback(data)
+                                            })
+                                        } else {
+                                            process.stdout.write('+')
+                                            callback(data)
+                                        }
+                                    })
+                                })
+                            }
                         }
                     },
                     Sumario: function (options, _sumario, _boletin, callback) {
@@ -315,7 +327,7 @@
                             if (err) {
                                 debugger
                             }
-                            callback()
+                            callback(data)
                         })
                     },
                     ScrapLabel: function (options, data, callback) {

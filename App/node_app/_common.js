@@ -79,7 +79,7 @@
                             //debugger
                             if (record[0].STOP == 0) {
                                 options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
-                                    callback(data, repeat)
+                                    callback(jsonData, repeat)
                                 })
                             } else {
                                 cadsql = "UPDATE lastread set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + app.anyo
@@ -97,8 +97,8 @@
                             SUMARIO_LAST: data.SUMARIO_LAST,
                             SUMARIO_NEXT: data.SUMARIO_NEXT
                         }
-                        app.commonSQL.SQL.commands.update.lastRead(options, data, function () {
-                            callback()
+                        app.commonSQL.SQL.commands.update.lastRead(options, data, function (data) {
+                            callback(data)
                         })
 
                     }
@@ -178,20 +178,31 @@
                             //
                             //Punto en el que llama a analiza un sumario correspondiente a un dia, con multiples subdocumentos
                             //
-                            _this.SQL.commands.Sumario.get(options, data, function (data) {
-                                if (data._list.length > 0) {
-                                    data.e = 0
-                                    _this.parser(app).NEW(options, data, options.scrap.Preceptos, function (data) {
+                            _this.SQL.commands.Sumario.get(options, data, function (data, repeat) {
+                                if (data._list == null) {
+                                    if (!repeat) {
+                                        options._common.SQL.commands.Sumario.update(options, data, function (data) {
+                                            data.desde = app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8)
+                                            _this.Actualize(options, type, data)
+                                        })
+                                    } else {
+                                        _this.Actualize(options, type, data)
+                                    }
+                                } else {
+                                    if (data._list.length > 0) {
+                                        data.e = 0
+                                        _this.parser(app).NEW(options, data, options.scrap.Preceptos, function (data) {
+                                            options._common.SQL.commands.Sumario.update(options, data, function () {
+                                                data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
+                                                _this.Actualize(options, type, data)
+                                            })
+                                        })
+                                    } else {
                                         options._common.SQL.commands.Sumario.update(options, data, function () {
                                             data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
                                             _this.Actualize(options, type, data)
                                         })
-                                    })
-                                } else {
-                                    options._common.SQL.commands.Sumario.update(options, data, function () {
-                                        data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
-                                        _this.Actualize(options, type, data)
-                                    })
+                                    }
                                 }
                             })
                         } else {

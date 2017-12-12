@@ -11,7 +11,11 @@
                
                 this.lastupdate = Date.now()
                 var _d = new Date()
-                var _bolet = requestOptions.uri.split("/")[requestOptions.uri.split("/").length - 1].split(".")[0]
+                if (requestOptions.uri.indexOf("=")==-1){
+                    var _bolet = requestOptions.uri.split("/")[requestOptions.uri.split("/").length - 1].split(".")[0]
+                } else {
+                    var _bolet = requestOptions.uri.split("=")[1]
+                }
                 if (data.type != "BORME") {
                     var _boletin = data._analisis != null ? data._analisis.length > 0 ? data._analisis[data.e][data.type].trim() : _bolet : _bolet // data.type+"-"+data.desde
                 } else {
@@ -31,11 +35,11 @@
                                 callback(options, body, data)
                             } else {
                                 if (body.toString().indexOf('encoding="') > -1 || body.toString().indexOf('meta charset') > -1) {
-                                    callback(options, options.iconv.decode(new Buffer(body), options.Rutines().ISO(body.toString())), data)
+                                    callback(options, options.iconv.decode(new Buffer(body), options.Rutines(options).ISO(body.toString())), data, response.statusCode)
                                 } else {
                                     debugger
                                     console.log("ERROR " + requestOptions.uri + ' response sin encoding valido')
-                                    callback(_this, null, data)
+                                    callback(_this, null, data, response.statusCode)
                                 }
                             }
                         } else {
@@ -43,7 +47,7 @@
                             cadsql = "INSERT INTO errores (BOLETIN, SqlMensaje, SqlError) VALUES ('" + _boletin + "','PDF VACIO','" + requestOptions.uri + "')"
                             app.BOLETIN.SQL.db.query(cadsql, function(err,rec){
                                 process.stdout.write("xxx")
-                                callback(_this, null, data)
+                                callback(_this, null, data, response.statusCode)
                             })
                         }
                     } else {
@@ -51,7 +55,9 @@
                         console.log("ERROR " + requestOptions.uri )
                         setTimeout(function () { 
                             console.log('delay ok.')
-                            callback(_this, null, data)
+                            if (response.statusCode == 404)
+                                debugger
+                            callback(_this, null, data, response.statusCode)
                         }, app.timeDelay)
 
                     }

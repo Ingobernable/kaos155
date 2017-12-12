@@ -6,6 +6,7 @@
         url: app.urlBOE,
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
         pdfOpc: ['-raw', '-nopgbrk', '-enc UTF-8'],
+        itemsContrato: ["Organismo", "Dependencia", "Descripci\u00F3n", "Tipo", "Lote", "Tramitaci\u00F3n", "Presupuesto", "Procedimiento", "Forma", "Importe", "Contratista", "Nacionalidad", ".-"],
         Rutines: require('../_utils/CONTRATOS/__Rutines')(app),
         //transforms: require('./BOLETIN/__Transforms')(app),
         _common: require('../_common')(app),
@@ -80,36 +81,20 @@
                         
                         var $ = app.Rutines(app).XmlToDom(body)                 // convertimos el texto xml en objetos DOM
                         if ($('error').length == 0) {
-                            data.codigo = options.Rutines.get.principal($)      // rescatamos las variables directas
-                            var _analisis = options.Rutines.get.data(options, data)      //creamos la estructura con los datos principales
+                            data.codigo = options.Rutines.scrap.principal($)      // rescatamos las variables directas
+                            var _analisis = options.Rutines.scrap.data(options, data)      //creamos la estructura con los datos principales
                             if (_analisis._type == null)
                                 debugger
                             //if (["BOE-B-2001-3002"].indexOf(_analisis._BOLETIN.split("=")[1]) > -1)
                             //    debugger
 
-                            if (_analisis._type.indexOf('Adjudicación') > -1 || _analisis._modalidad == "Formalización contrato") {
-                                options.Rutines.get.p_parrafo(options, $, '.', body, function (_data) {
-                                    if (_data != null) {
-                                        //if (_data._arr.length < 8)
-                                        //    debugger
-                                        _analisis.extra = _data._extra
-                                        data.textExtend = _data._arr
-                                        data.err = _data._err
-                                        app.commonSQL.SQL.commands.insert.Boletin.text(options, _analisis, data, function (data) {
-                                            callback(data)
-                                        })
-
-                                    } else {
-                                        callback(data,true)
-                                    }
-                                }, urlDoc, options.Rutines, true )
+                            if ((_analisis._type.indexOf('Adjudicación') > -1 && _analisis._type.indexOf('Subasta') == -1) || _analisis._modalidad == "Formalización contrato") {
+                                    options.Rutines.scrap.set(options, $, body, _analisis, data, urlDoc, callback)                                    
                             } else {
                                 process.stdout.write('-')
                                 callback(data,false,true)
                             }
                          
-
-                        
                         } else {
                             callback(data)
                         }

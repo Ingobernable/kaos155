@@ -27,7 +27,7 @@
                 //if (url.uri.indexOf("   ") > -1)
                 //    debugger
 
-                app.Rutines(app).askToServer(app, { encoding: null, method: "GET", uri: url.uri }, data, function (app, body, data) {
+                app.Rutines(app).askToServer(app, { encoding: null, method: "GET", uri: url.uri }, data, function (app, body, data, statusCode) {
                     if (body != null) {
                         var xcadsql = null
                         var turl = url.uri.split("/")
@@ -142,7 +142,7 @@
                         //}
                     } else {
                         //debugger
-                        callback(data, url, true)
+                        callback(data, statusCode==200)
                     }
                 })
                 return
@@ -162,7 +162,7 @@
 
                     }
 
-                    options.Rutines.getTextFromPdf(options, urlDoc, _arr, '.', function (_data) {
+                    options.Rutines.scrapTextFromPdf(options, urlDoc, _arr, '.', function (_data) {
                         if (_data != null) {
                             if (_data._arr.length == 0) {
                                 app.commonSQL.SQL.commands.insert.errores(options,_analisis._BOLETIN, 'CONTENIDO NO STANDART', urlDoc, function () {
