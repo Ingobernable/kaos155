@@ -90,7 +90,7 @@ module.exports = function (app, callback) {
 
                 consulta(type, function (err,record) {
                     if (record.length > 0) {
-                        process.stdout.write('\x1b[33m+.\x1b[0m')
+                        process.stdout.write('\x1b[36m.\x1b[0m')
                         options.Rutines.normalizeTextContrato(record[0][0].texto.split("<br>"), ["Organismo", "Dependencia", "Descripci\u00F3n del objeto:", "Tipo de contrato", "Descripci\u00F3n", "Lotes", "Tramitaci\u00F3n", "Presupuesto", "Procedimiento", "Forma", "Importe", "Contratista", "Nacionalidad", ".-"], function (_text) {
                             _analisis = JSON.parse(record[0][0].analisis)
 

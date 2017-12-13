@@ -91,7 +91,7 @@
                             if ((_analisis._type.indexOf('Adjudicación') > -1 && _analisis._type.indexOf('Subasta') == -1) || _analisis._modalidad == "Formalización contrato") {
                                     options.Rutines.scrap.set(options, $, body, _analisis, data, urlDoc, callback)                                    
                             } else {
-                                process.stdout.write('-')
+                                process.stdout.write('\x1b[33m-\x1b[0m')
                                 callback(data,false,true)
                             }
                          

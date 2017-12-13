@@ -65,10 +65,11 @@
                         myArgs[0]= command.value
                         app.inquirer.prompt([{ type: 'list', name: 'value', message: 'tipo', choices: ['BORME', 'BOE', 'BOCM'] }])
                                 .then(function (type) {
-                                    getanyos(app, command.value , type.value, function (app, anyos) {
-                                        app.inquirer.prompt([{ type: 'list', name: 'anyo', message: 'anyo ', choices: anyos }])
-                                                .then(function (resp) {
+                                    getanyos(app, command.value, type.value, function (app, anyos) {
 
+                                        app.inquirer.prompt([{ type: 'checkbox', name: 'anyo', message: 'anyo ', choices: anyos }])
+                                                .then(function (resp) {
+                                                    debugger
                                                     myArgs = [command.value, type.value , resp.anyo]
                                                     exit(myArgs, callback)
                                                 })

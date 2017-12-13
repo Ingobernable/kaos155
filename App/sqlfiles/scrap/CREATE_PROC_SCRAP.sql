@@ -173,7 +173,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost`  PROCEDURE `Insert_Error_Boletin`(IN _Boletin nvarchar(2), IN _SqlMensaje mediumtext, IN _SqlError mediumtext)
+CREATE DEFINER=`root`@`localhost`  PROCEDURE `Insert_Error_Boletin`(IN _Boletin nvarchar(20), IN _SqlMensaje mediumtext, IN _SqlError mediumtext)
 BEGIN
 	INSERT INTO errores (BOLETIN, SqlMensaje, SqlError) VALUES (_Boletin,_SqlMensaje,_SqlError);
     UPDATE sumarios SET scrap = 0, _error=1 WHERE BOLETIN = _Boletin;

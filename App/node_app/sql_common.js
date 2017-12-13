@@ -100,14 +100,15 @@
                                                         } else {
                                                             const cp = require('child_process');
                                                             cp.exec('mysql -h ' + resp.host + ' -u ' + resp.user + ' -D ' + db + ' -p' + resp.password + ' < ' + app.resolvePath('sqlfiles/' + options.Command + '/CREATE_PROC_' + options.Command + '.sql'), (error, stdout, stderr) => {
-                                                                if (error) throw error;
-                                                                console.log(`stdout: ${stdout}`);
-                                                                console.log(`stderr: ${stderr}`);
-                                                                console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
-                                                                con.end()
-                                                                app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify({ mySQL: _credenciales }), function (err, _JSON) {
-                                                                    callback(_credenciales)
-                                                                })
+                                                                if (!error) {
+                                                                    console.log(`stdout: ${stdout}`);
+                                                                    console.log(`stderr: ${stderr}`);
+                                                                    console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
+                                                                    con.end()
+                                                                    app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify({ mySQL: _credenciales }), function (err, _JSON) {
+                                                                        callback(_credenciales)
+                                                                    })
+                                                                }
                                                             });
                                                         }
                                                     });
@@ -255,7 +256,7 @@
                         text: function (options, _analisis, data, callback) {
                             //var i = isNaN(data.importe * 1) ? 0 : data.importe * 1
                             if (data.err != null) {
-                                process.stdout.write('X')
+                                process.stdout.write('\x1b[31mX\x1b[0m')
                                 cadSql = "CALL Insert_Error_Boletin(?,?,?)"
                                 options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1],data._list[data.e], data.err], function (err2) {
                                     callback(data)
@@ -265,7 +266,7 @@
                                 var fecha = boletin.split("-").length == 2 ? boletin.split("-")[1] : data.desde
 
                                 options.Rutines.normalizeTextContrato(data.textExtend, options.itemsContrato, function (_text, _jsonData) {
-                                    if (_jsonData.Contratista != null && (_jsonData.Importe != null || _analisis._importe.length > 0)) {
+
                                         _analisis.data = _jsonData
                                         var params = [
                                             _text.length,
@@ -283,9 +284,8 @@
                                         ]
 
                                         options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', params, function (err, record) {
-
                                             if (err != null) {
-                                                process.stdout.write('X')
+                                                process.stdout.write('\x1b[31mX\x1b[0m')
                                                 cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
                                                 options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                                     var x = err
@@ -293,17 +293,20 @@
                                                     callback(data)
                                                 })
                                             } else {
-                                                process.stdout.write('+')
-                                                callback(data)
+                                                if (!(_jsonData.Contratista != null && (_jsonData.Importe != null || _analisis._importe.length > 0))) {
+                                                    process.stdout.write('\x1b[31mXXX\x1b[0m')
+                                                    cadSql = "CALL Insert_Error_Boletin(?,?,?)"
+                                                    options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], data._list[data.e], "FALTA CONTRATISTA o IMPORTES"], function (err2) {
+                                                        callback(data)
+                                                    })
+                                                } else {
+                                                    process.stdout.write('\x1b[32m+\x1b[0m')
+                                                    callback(data)
+                                                }
                                             }
                                         })
-                                    } else {
-                                        process.stdout.write('XXX')
-                                        cadSql = "CALL Insert_Error_Boletin(?,?,?)"
-                                        options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], data._list[data.e], "FALTA CONTRATISTA o IMPORTES"], function (err2) {
-                                            callback(data)
-                                        })
-                                    }
+                                    //} else {
+
                                 })
                             }
                         }
@@ -358,35 +361,6 @@
                             callback(err, recordset)
                         })
                     }
-                }
-            },
-            tables: {
-                CREATE: {
-                    create: function (_this, db, callback) {
-                        app.fs.readFile(app.path.normalize('../sqlfiles/CREATE.sql'), function (err, _sql) {
-                            //if (err) {
-                            //    console.log(err)
-                            //    debugger
-                            //} else {
-
-                            //_this.commands.create(_sql.toString(), db, function () {
-                            //console.log('tablas vacias creadas......')
-                            //app.fs.readFile(app.path.normalize('../sqlfiles/CREATE_Procs.sql'), function (err, _sql) {
-                            if (err) {
-                                console.log(err)
-                                debugger
-                            } else {
-                                _this.commands.create(_sql.toString(), db, function () {
-                                    console.log('elementos de la DB bbdd_kaos155 creadas......')
-                                    callback()
-                                })
-                            }
-                            //})
-
-                            //})
-                            //}
-                        })
-                    },
                 }
             },
             getCounter: function (app, _options, type, callback) {
