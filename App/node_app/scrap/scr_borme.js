@@ -1,14 +1,14 @@
-﻿module.exports = function (app, callback) { 
+﻿module.exports = function (app, callback) {
 
     options = {
         Type : 'BORME',
         Command: app.command,
-        Rutines: require('../utils/BORME/Borme_Rutines.js')(app, require('../utils/BORME/Borme_Transforms.js')(app)),
+        Rutines: require('../_utils/BORME/Borme_Rutines.js')(app, require('../_utils/BORME/Borme_Transforms.js')(app)),
         //Rutines: require('../parser/BOLETIN/__Rutines')(app),
         _common: require('../_common.js')(app),
         pdfOpc: ['-nopgbrk', '-enc UTF-8'],
         url: app.urlBORME,
-        
+
         SQL: { db: null },
         scrap: {
             Secciones : function (options, url, data, callback) {
@@ -36,7 +36,7 @@
 
                                 //debugger
                                // options._common.SQL.commands.Sumario.update(options, data, function (options, data) {
-                                
+
                                 var _into = data.into==null?null: data.into //.split("#")[1] // * 1
 
                                     if (data.Idate == null) {
@@ -116,7 +116,7 @@
                                     var _fileText =  _file.split(".pdf")[0] + ".txt"
                                     //console.log(_fileText)
                                     app.fs.readFile( _fileText , 'utf8', function (err, text) {
-                                        app.fs.unlink(_fileText, function (err) { 
+                                        app.fs.unlink(_fileText, function (err) {
                                             app.fs.unlink(_file,function(err){
 
                                                 options.DirEmpresas = []
@@ -135,7 +135,7 @@
                                                         })
 
                                                     }
-                                                
+
                                                 } else {
                                                     debugger
                                                     callback(data, null)
@@ -156,6 +156,6 @@
     app.commonSQL.init(options, options.Type , app._fileCredenciales + options.Command, function (options) {
         app.commonSQL.SQL.commands.insert.AnyoRead(options, options.SQL.db, app.command , function (options) {
            callback(options)
-        })        
+        })
     })
 }
