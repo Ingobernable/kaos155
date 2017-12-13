@@ -19,12 +19,10 @@
                             options.SQL.db = connection // _this.connection[type] = connection
                             _exit(options, type, callback)
                         } else {
-                            if (test==null) {
-                                console.log(err)
-                                process.exit(1);
-                            } else {
-                                _exit(options, type, callback,test)
-                            }
+                            _exit(options, type, callback, test)
+                            //testDB(con, resp, db, function (err) { 
+                               
+                            //}, false)
                         }
                     })
                 } else {
@@ -34,6 +32,48 @@
                 this.init(options, type, callback)
             }
  
+        },
+        mysqlCommand: function (_command,db,callback) {
+            const cp = require('child_process');
+            cp.exec(_command, (error, stdout, stderr) => {
+                if (error) {
+                    console.log("\x1b[31m ERROR: la creación de la DB " + db + " ha fallado parcialmente")
+                    console.log("para poder continuar, por favor lance desde su consola el comando \x1b[0m")
+                    console.log(_command)
+                    process.exit(1)
+                } else {
+                    console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
+                    if (close)
+                        con.end()
+                    //app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
+                    callback()
+                    //})
+                }
+            });
+        },
+        testDB: function (options,con, resp, db,  callback, close) {
+            var _this = this
+            console.log("\x1b[32m testeando consistencia DB " + db + " \x1b[0m");
+            con.query("SHOW Databases LIKE '" + db + "'", function (err, record) {
+                var _command = 'mysqld -u' + resp.user + ' -p' + resp.password + ' -h' + resp.host + ' -D' + db + '< ' + app.path.normalize(__dirname + '/../sqlfiles/CREATE_FULL_' + options.Command + '.sql')
+
+                if (record.length == 0) {
+                    con.query("CREATE DATABASE IF NOT EXISTS " + db, function (err, result) {
+                        console.log("\x1b[32m BASE DE DATOS \x1b[0m" + db + "\x1b[32m CREADA VACIA OK \x1b[0m");
+                        _this.mysqlCommand(_command, db, callback)
+                    })
+                } else {
+                    var queryTables = "SELECT COUNT(*) as total FROM information_schema.tables WHERE table_schema = '" + db + "';"
+                    con.query(queryTables, function (err, record) {
+                        if (record[0].total < 3) {
+                            _this.mysqlCommand(_command, db, callback)
+                        } else {
+                            callback()
+                        }
+                    })
+
+                }
+            })
         },
         init: function (options, type, _file , callback) {
             var _this = this
@@ -89,34 +129,13 @@
                                         testIp(testIp)
                                     } else {
                                         console.log("\x1b[32m Conectado a mysql OK \x1b[0m");
-                                        
-                                        con.query("SHOW Databases LIKE '" + db + "'", function (err, record) {
-                                            if (record.length == 0) {
-                                                con.query("CREATE DATABASE IF NOT EXISTS " + db, function (err, result) {
-                                                    if (err) throw err;
-                                                    console.log("Database " + db + " created");
 
-                                                    const cp = require('child_process');
-                                                    cp.exec('mysql -u' + resp.user + ' -p' + resp.password + ' -h' + resp.host + ' < ' + app.path.normalize('sqlfiles/CREATE_FULL_' + options.Command + '.sql'), (error, stdout, stderr) => {
-                                                        if (error) throw error;
-                                                        console.log(`stdout: ${stdout}`);
-                                                        console.log(`stderr: ${stderr}`);
-                                                        console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
-                                                        con.end()
-                                                        app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
-                                                            callback(_credenciales)
-                                                        })
-                                                    });
-                                                })
-                                            } else {
-                                                console.log('\x1b[32m la DB ' + db + ' ya existe, continuamos ..... \x1b[0m')
-                                                con.end()
-                                                app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
-                                                    callback(_credenciales)
-                                                })
-                                            }
-                                            
-                                        })
+                                        _this.testDB(options,con, resp, db, function () {
+                                            app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
+                                                console.log("\x1b[32m Nuevas credenciales de acceso mysql guardadas OK \x1b[0m");
+                                                callback(_credenciales)
+                                            })
+                                        }, true)
                                     }
                                 });
                             })
@@ -155,7 +174,7 @@
                                 waitForConnection: true,
                             })
 
-                            _this.getConnect(options, type, callback)
+                            _this.getConnect(options, type, callback, null)
                         
                         } else {
                             callback(options)
