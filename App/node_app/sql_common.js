@@ -99,7 +99,7 @@
                                                             callback(null)
                                                         } else {
                                                             const cp = require('child_process');
-                                                            cp.exec('mysql -u ' + resp.user + ' -p' + resp.password + ' < ' + app.resolvePath('sqlfiles/' + options.Command + '/CREATE_PROC_' + options.Command + '.sql'), (error, stdout, stderr) => {
+                                                            cp.exec('mysql -h ' + resp.host + ' -u ' + resp.user + ' -D ' + db + ' -p' + resp.password + ' < ' + app.resolvePath('sqlfiles/' + options.Command + '/CREATE_PROC_' + options.Command + '.sql'), (error, stdout, stderr) => {
                                                                 if (error) throw error;
                                                                 console.log(`stdout: ${stdout}`);
                                                                 console.log(`stderr: ${stderr}`);

@@ -142,11 +142,12 @@ BEGIN
     DECLARE _cmp nvarchar(255);
     DECLARE _kprovincia nvarchar(255) DEFAULT '';
     DECLARE _ki nvarchar(255) DEFAULT '';
-
+    
     SET _counter = (SELECT Count(*) FROM anyosread WHERE Type=_type AND Anyo=_anyo );
     IF _counter=0 THEN
 		IF _type='BOE' THEN
-			SET _cmp = "`analisis` mediumtext,`importe` varchar(45) DEFAULT NULL, `_p` int(11) DEFAULT NULL , `parser` int DEFAULT 0,";
+			SET _cmp = "`JSONData` JSON,`analisis` mediumtext,`importe` varchar(45) DEFAULT NULL, `_p` int(11) DEFAULT NULL , `parser` int DEFAULT 0,";
+            
 		END IF;
 		IF _type='BORME' THEN
 			SET _cmp = "`ID_BORME` int(11) DEFAULT '0', `provincia` varchar(55) DEFAULT NULL, `parser` int DEFAULT 0,";
@@ -154,20 +155,19 @@ BEGIN
         END IF;
 
 		IF _type='BOCM' THEN
-
-			SET _cmp = "`analisis` mediumtext, `_p` int(11) DEFAULT NULL, `parser` int DEFAULT 0,";
+          
+			SET _cmp = "`JSONData` JSON,`analisis` mediumtext, `_p` int(11) DEFAULT NULL, `parser` int DEFAULT 0,";
         END IF;
 
 		SET @s= CONCAT('CREATE TABLE IF NOT EXISTS `_', LOWER(_type) ,'_text_' , _anyo ,'` ( `id` int(11) NOT NULL AUTO_INCREMENT, `dia` varchar(2) DEFAULT NULL, `mes` varchar(2) DEFAULT NULL,`BOLETIN` varchar(22) DEFAULT NULL,`texto` mediumtext,', _cmp ,' `_err` VARCHAR(25), PRIMARY KEY (`id`),KEY `parser` (`parser`)' , _ki ,') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;');
 
-
 		PREPARE stmt1 FROM @s;
-		EXECUTE stmt1;
+		EXECUTE stmt1;  
 		DEALLOCATE PREPARE stmt1;
-
+    
 		INSERT INTO anyosread (Type,Anyo) VALUES (_type,_anyo);
     END IF;
-    SELECT scrap, parser,anyo FROM anyosread WHERE Type=_type AND Anyo=_anyo;
+    SELECT scrap, parser FROM anyosread WHERE Type=_type AND Anyo=_anyo;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -185,15 +185,15 @@ DROP PROCEDURE IF EXISTS `Insert_Text_BOLETIN`;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Text_BOLETIN`(
-
 	IN _COUNT_LINES INT,
     IN _Type nvarchar(6),
     IN _Dia CHAR(2),
     IN _Mes CHAR(2),
     IN _Anyo CHAR(4),
 	IN _BOLETIN nvarchar(22),
-
+    
 	IN _TEXTO MEDIUMTEXT,
+    IN _JSONData MEDIUMTEXT,
 	IN _analisis MEDIUMTEXT,
     IN _importe MEDIUMTEXT,
 	IN _error nvarchar(55)
@@ -202,60 +202,60 @@ BEGIN
 	DECLARE _counter INT;
     DECLARE _LINE nvarchar(1024);
     DECLARE _ID_Borme int;
-
+    
     SET @CountLines = _COUNT_LINES;
     SET @Type = _Type;
     SET @Dia = _Dia;
     SET @Mes = _Mes;
     SET @Anyo = _Anyo;
-
+    
     SET @BOLETIN = _BOLETIN ;
-
+    SET @JSONData = _JSONData;
 	SET @TEXTO = _TEXTO;
 	SET @analisis = _analisis;
-    SET @importe = _importe;
+    SET @importe = _importe; 
     SET @err = _error;
-
+    
     SET @s = CONCAT("SET @counter= ( SELECT count(*) FROM _", LOWER(_Type) ,"_text_",_Anyo ," WHERE BOLETIN ='", _BOLETIN ,"' );");
     PREPARE stmt1 FROM @s;
-	EXECUTE stmt1;
+	EXECUTE stmt1;  
 	DEALLOCATE PREPARE stmt1;
-
+    
 	IF _Type='BOE' THEN
 		IF _COUNT_LINES=0 THEN
 			INSERT INTO errores (BOLETIN,SqlError) VALUES(_BOLETIN,'CONTENIDO NO STANDART');
 		END IF;
 		IF @counter=0 THEN
-			SET @s = CONCAT('INSERT INTO _', LOWER(_Type) ,'_text_', _Anyo , ' (_p,BOLETIN,dia,mes,TEXTO,analisis,importe,_err) VALUES (@CountLines,@BOLETIN,@Dia,@Mes, @TEXTO, @analisis,@importe,@err);');
+			SET @s = CONCAT('INSERT INTO _', LOWER(_Type) ,'_text_', _Anyo , ' (_p,BOLETIN,dia,mes,TEXTO,JSONData,analisis,importe,_err) VALUES (@CountLines,@BOLETIN,@Dia,@Mes, @TEXTO,@JSONData, @analisis,@importe,@err);'); 
 			PREPARE stmt1 FROM @s;
-			EXECUTE stmt1;
-			DEALLOCATE PREPARE stmt1;
+			EXECUTE stmt1;  
+			DEALLOCATE PREPARE stmt1;            
 		END IF;
-
+		
     END IF;
 	IF _Type='BOCM' THEN
-
+    
     	IF @counter=0 THEN
-			SET @s = CONCAT('INSERT INTO _', LOWER(_Type) ,'_text_', _Anyo , ' (_p,BOLETIN,dia,mes,TEXTO,analisis,_err) VALUES (@CountLines,@BOLETIN,@Dia,@Mes, @TEXTO, @analisis,@err);');
+			SET @s = CONCAT('INSERT INTO _', LOWER(_Type) ,'_text_', _Anyo , ' (_p,BOLETIN,dia,mes,TEXTO,JSONData,analisis,_err) VALUES (@CountLines,@BOLETIN,@Dia,@Mes, @TEXTO, @JSONData, @analisis,@err);'); 
 			PREPARE stmt1 FROM @s;
-			EXECUTE stmt1;
-			DEALLOCATE PREPARE stmt1;
+			EXECUTE stmt1;  
+			DEALLOCATE PREPARE stmt1;            
 		END IF;
-
+    
     END IF;
-
+    
     IF _Type='BORME' THEN
-        SET _counter = 0;
+        SET _counter = 0;    
 		while _counter < _COUNT_LINES do
 			SET @LINE = (SELECT SPLIT_STR( _TEXTO, '#', _counter+1));
             SET @ID_Borme= (SELECT SPLIT_STR( _importe, '#', _counter+1) * 1 );
 
 			IF @counter=0 THEN
-				SET @s = CONCAT('INSERT INTO _', LOWER(_Type) ,'_text_', _Anyo , ' (BOLETIN,dia,mes,TEXTO,provincia,ID_Borme,_err) VALUES (@BOLETIN,@Dia,@Mes,@LINE,@analisis,@ID_Borme,@err);');
+				SET @s = CONCAT('INSERT INTO _', LOWER(_Type) ,'_text_', _Anyo , ' (BOLETIN,dia,mes,TEXTO,provincia,ID_Borme,_err) VALUES (@BOLETIN,@Dia,@Mes,@LINE,@analisis,@ID_Borme,@err);'); 
 				PREPARE stmt1 FROM @s;
-				EXECUTE stmt1;
-				DEALLOCATE PREPARE stmt1;
-			END IF;
+				EXECUTE stmt1;  
+				DEALLOCATE PREPARE stmt1;            
+			END IF; 
             SET _counter = _counter+ 1;
 		 END WHILE;
 
@@ -263,7 +263,6 @@ BEGIN
     SELECT last_insert_id() as ID;
     UPDATE sumarios SET Contrato=1, scrap=1 WHERE BOLETIN=_BOLETIN;
     UPDATE lastread SET ID_LAST = _BOLETIN WHERE Type= _Type AND Anyo=_Anyo;
-
 
 END ;;
 DELIMITER ;

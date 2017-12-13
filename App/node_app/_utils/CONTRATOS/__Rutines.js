@@ -775,7 +775,6 @@
                                     _e++
                                 } else {
                                     _arrayT[_arrayT.length] = value + "."
-                                   
                                 }
                             })
                         } else {
