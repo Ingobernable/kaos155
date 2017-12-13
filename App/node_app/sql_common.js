@@ -19,10 +19,10 @@
                             options.SQL.db = connection // _this.connection[type] = connection
                             _exit(options, type, callback)
                         } else {
-                            _exit(options, type, callback, test)
-                            //testDB(con, resp, db, function (err) { 
-                               
-                            //}, false)
+                            console.log("\x1b[31m ERROR: al acceder a la DB ")
+                            console.log("elimine el fichero '" + app.path.normalize('sqlfiles/x_ACCESO_mysql_' + options.Command + '.json') + "'  \x1b[0m")
+                            console.log("y vuelva a ejecutar app.js")
+                            process.exit(1)
                         }
                     })
                 } else {
