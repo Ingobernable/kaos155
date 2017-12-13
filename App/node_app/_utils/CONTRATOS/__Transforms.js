@@ -157,7 +157,7 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, 'UTE ', 'UTE. '],
 
 
-                    NÚMEROS DE ORDEN
+                    //NÚMEROS DE ORDEN
 
                     //['R', new RegExp(/Sociedad Anónima/, "g"), "S.A.\";"],
                     //['R', new RegExp(/, Sociedad Anónima Española/, "g"), "S.A.\";"],

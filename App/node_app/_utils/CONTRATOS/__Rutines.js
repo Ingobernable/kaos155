@@ -779,19 +779,22 @@
                             })
                         } else {
                             if ((value.match(/\d{1,2} (?:de )?(diciembre|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre)/i) || []).length > 0 && value.indexOf(".-")>-1) {
-                                if ((value.match(/(\d+(\.\d{3})+?) (?:de )?(pesetas|euros)/g) || []).length > 0) {
-                                    _arrayT[_arrayT.length] = "i) " + _.words(value.split(/^\w{1}\)/)[1])[0] + ":" + value.match(/(\d+(\.\d{3})+?) (?:de )?(pesetas|euros)/gi).join(";") + "."
-                                } else {
-                                    _arrayT[_arrayT.length] = "i) " + _.words(value.split(/^\w{1}\)/)[1])[0] + ":" + value.split(/\d{1,2} (?:de )?(diciembre|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre)/i)[0] + "."
+                                if (valInKeys(value, _keys)>0) {
+                                    if ((value.match(/(\d+(\.\d{3})+?) (?:de )?(pesetas|euros)/g) || []).length > 0) {
+                                        _arrayT[_arrayT.length] = "i) " + _.words(value.split(/^\w{1}\)/)[1])[0] + ":" + value.match(/(\d+(\.\d{3})+?) (?:de )?(pesetas|euros)/gi).join(";") + "."
+                                    } else {
+                                        _arrayT[_arrayT.length] = "i) " + _.words(value.split(/^\w{1}\)/)[1])[0] + ":" + value.split(/\d{1,2} (?:de )?(diciembre|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre)/i)[0] + "."
+                                    }
                                 }
-                                _arrayT[_arrayT.length] = ".- " + value.split(".-")[1]
+                                if(value.indexOf(".-")>-1)
+                                    _arrayT[_arrayT.length] = ".- " + value.split(".-")[1] + "."
                             } else {
                                 _arrayT[_arrayT.length] = value
                             }
 
                         }
                     } else {
-                        _arrayT[_arrayT.length] = value
+                        _arrayT[_arrayT.length-1] = _arrayT[_arrayT.length-1] + value
                     }
                 //} else {
                 //    debugger
@@ -817,19 +820,19 @@
                     }
                 } else {
                     if (_finline.indexOf(_lchar) > -1) {
-                        var _valp = valInKeys(preline, _keys)
+                        var _valp = valInKeys(value, _keys)
                         if (_valp>0)
                             if (_valp < _keys.length) {
                                 _lines[_lines.length] = preline.substr(3, preline.length - 2) + ' ' + value
                             } else {
                                 var _v = preline.substr(3, preline.length - 2) + ' ' + value
                                 var _d = _v.split(_keys[_keys.length - 1])[1].split(",")
-                                var _cargo = _d[0]
+                                var _cargo = _d[0].split(".")[0]
                                 var _firma = _d[1]
                                 if (_d.length > 0) {
-                                    _lines[_lines.length] = 'Cargo:' + _d[0]
+                                    _lines[_lines.length] = 'Cargo:' + _cargo
                                     if (_d.length > 1)
-                                        _lines[_lines.length] = 'Firma:' + _d[1]
+                                        _lines[_lines.length] = 'Firma:' + _firma
                                 }
                             }
 
@@ -845,11 +848,12 @@
 
         _.forEach(_lines, function (value) {
             if (value.indexOf(":") > -1) {
-                var _p = value.split(":")
+                var _p = value.split(/\:/g)
 
-                _json[_.deburr(_.words(_p[0])[0])]=_.trim(_p[1] )
+                _json[_.deburr(_.words(_p[0])[0])]=_.trim(_p[_p.length-1] )
             }
         })
+
         callback(_lines, _json)
             //debugger
     }

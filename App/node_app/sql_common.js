@@ -256,7 +256,7 @@
                             //var i = isNaN(data.importe * 1) ? 0 : data.importe * 1
                             if (data.err != null) {
                                 process.stdout.write('X')
-                                cadSql = "INSERT INTO errores (BOLETIN, SqlMensaje, SqlError) VALUES (?,?,?)"
+                                cadSql = "CALL Insert_Error_Boletin(?,?,?)"
                                 options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1],data._list[data.e], data.err], function (err2) {
                                     callback(data)
                                 })
@@ -265,36 +265,45 @@
                                 var fecha = boletin.split("-").length == 2 ? boletin.split("-")[1] : data.desde
 
                                 options.Rutines.normalizeTextContrato(data.textExtend, options.itemsContrato, function (_text, _jsonData) {
-                                    var params = [
-                                        _text.length,
-                                        boletin.split("-")[0],                                                      //type
-                                        fecha.substr(6, 2),                                                      //Dia
-                                        fecha.substr(4, 2),                                                      //Mes
-                                        fecha.substr(0, 4),                                                       //Anyo
-                                        boletin,                                                                    //BOLETIN                                                                                                                   
-                                        _text.join("<br>").replace(/\r/g, "").replace(/'/g, "\'"),                  //Texto
+                                    if (_jsonData.Contratista != null && (_jsonData.Importe != null || _analisis._importe.length > 0)) {
+                                        _analisis.data = _jsonData
+                                        var params = [
+                                            _text.length,
+                                            boletin.split("-")[0],                                                      //type
+                                            fecha.substr(6, 2),                                                      //Dia
+                                            fecha.substr(4, 2),                                                      //Mes
+                                            fecha.substr(0, 4),                                                       //Anyo
+                                            boletin,                                                                    //BOLETIN                                                                                                                   
+                                            _text.join("<br>").replace(/\r/g, "").replace(/'/g, "\'"),                  //Texto
 
-                                        JSON.stringify(_jsonData),
-                                        JSON.stringify(_analisis.extra),
-                                        _analisis._importe,                                                          //importe accesible?
-                                        data.err == null ? '' : data.err
-                                    ]
+                                            //JSON.stringify(_jsonData),
+                                            JSON.stringify(_analisis.extra),
+                                            _analisis._importe,                                                          //importe accesible?
+                                            data.err == null ? '' : data.err
+                                        ]
 
-                                    options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?,?)', params, function (err, record) {
+                                        options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', params, function (err, record) {
 
-                                        if (err != null) {
-                                            process.stdout.write('X')
-                                            cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
-                                            options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
-                                                var x = err
-                                                var y = params
+                                            if (err != null) {
+                                                process.stdout.write('X')
+                                                cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
+                                                options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
+                                                    var x = err
+                                                    var y = params
+                                                    callback(data)
+                                                })
+                                            } else {
+                                                process.stdout.write('+')
                                                 callback(data)
-                                            })
-                                        } else {
-                                            process.stdout.write('+')
+                                            }
+                                        })
+                                    } else {
+                                        process.stdout.write('XXX')
+                                        cadSql = "CALL Insert_Error_Boletin(?,?,?)"
+                                        options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], data._list[data.e], "FALTA CONTRATISTA o IMPORTES"], function (err2) {
                                             callback(data)
-                                        }
-                                    })
+                                        })
+                                    }
                                 })
                             }
                         }
@@ -312,7 +321,7 @@
                         })
                     },
                     errores: function (options, Boletin, SqlError, SqlMensaje, callback) {
-                        cadSql = "INSERT INTO errores (BOLETIN, SqlError,SQLMensaje) VALUES (?,?,?)"
+                        cadSql = "CALL Insert_Error_Boletin(?,?,?)"
                         options.SQL.db.query(cadSql, [Boletin, SqlError, SqlMensaje], function (err2) {
                             callback()
                         })
