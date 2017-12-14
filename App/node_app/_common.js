@@ -175,6 +175,7 @@
                         if (_DATE < _AHORA) {
                             options.type = type.toUpperCase()
                             options.Sumario = data.type.toUpperCase() + "-" + (type != "BOCM" ? "S-" : "") + iyear + imonth + iday
+                            data._list = []
                             //
                             //Punto en el que llama a analiza un sumario correspondiente a un dia, con multiples subdocumentos
                             //

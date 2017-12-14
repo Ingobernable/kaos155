@@ -131,7 +131,7 @@
                                                     } else {
                                                         data.textExtend = _lines
                                                         //data.err = _data._err
-                                                        app.commonSQL.SQL.commands.insert.Boletin.text(options, {} , data, function (data) {
+                                                        app.commonSQL.SQL.commands.insert.Borme.text(options, data, function (data) {
                                                             callback(data)
                                                         })
 
