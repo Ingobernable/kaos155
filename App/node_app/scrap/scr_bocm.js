@@ -171,8 +171,8 @@
                     var _analisis = {
                         _BOLETIN: data._analisis[data.e].BOCM,
                         _importe: "?",
-                        urlPdf: urlDoc
-
+                        urlPdf: urlDoc,
+                        extra: {}
                     }
                     //options.Rutines.getTextFromPdf(options, urlDoc, _arr, charEnd, _callback, _json, _this, onlyScrap)
                     //options.Rutines.scrapTextFromPdf(options, urlDoc, _arr, '.', function (_data) {

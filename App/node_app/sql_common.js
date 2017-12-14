@@ -210,7 +210,8 @@
                         })
                     },
                     Borme: {
-                        text: function (options, _linea, data, callback) {
+                        text: function (options, data, callback) {
+                            _linea = data.textExtend
                             var _text = ""
                             var _id = ""
                             for (n in _linea.data) {
@@ -280,7 +281,7 @@
 
                                 options.Rutines.normalizeTextContrato(data.textExtend, options.keysContrato, function (_text, _jsonData) {
 
-                                        _analisis.data = _jsonData
+                                        _analisis.extra.data = _jsonData
                                         var params = [
                                             _text.length,
                                             boletin.split("-")[0],                                                      //type
