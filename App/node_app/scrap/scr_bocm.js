@@ -5,7 +5,7 @@
         Command: app.command,
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
         pdfOpc: ['-raw', '-enc UTF-8'],
-        //pdftotext : require('../pdftotext'),
+        keysContrato: ["Organismo", "Dependencia", "Descripci\u00F3n", "Tipo", "Lote", "Tramitaci\u00F3n", "Presupuesto", "Procedimiento", "Forma", "Importe", "Contratista", "Nacionalidad", ".-"],
         Rutines: require('../_utils/CONTRATOS/__Rutines')(app),
         _common: require('../_common')(app),
         url: app.urlBOCM,
@@ -14,6 +14,7 @@
         },
         scrap: {
             Secciones: function (options, url, data, callback) {
+                //debugger
                 var _this = this
                 var _ret = []
                 var getTitle = function (item, po) {
@@ -27,7 +28,7 @@
                 //if (url.uri.indexOf("   ") > -1)
                 //    debugger
 
-                app.Rutines(app).askToServer(app, { encoding: null, method: "GET", uri: url.uri }, data, function (app, body, data) {
+                app.Rutines(app).askToServer(app, { encoding: null, method: "GET", uri: url.uri }, data, function (app, body, data, statusCode) {
                     if (body != null) {
                         var xcadsql = null
                         var turl = url.uri.split("/")
@@ -141,8 +142,20 @@
                         //    
                         //}
                     } else {
-                        //debugger
-                        callback(data, url, true)
+                        debugger
+                        var _data = app._xData.Sumario.BOCM.SUMARIO_NEXT.substr(5, 8)
+                        var yyyy = _data.substr(0, 4);
+                        var mm = _data.substr(4, 2) // getMonth() is zero-based
+                        var dd = _data.substr(6, 2)
+                        var date = app.moment(app._xData.Sumario.BOCM.SUMARIO_NEXT.substr(5, 8), 'YYYYMMDD').add(1, 'day')
+                        if (new Date(date).getDay() == 0)
+                            date.add(1, 'day')
+
+                        data.SUMARIO_LAST = app._xData.Sumario.BOCM.SUMARIO_NEXT
+                        data.SUMARIO_NEXT = "BOCM-" + date.format('YYYYMMDD')
+                        data.next = date.format('DD/MM/YYYY')
+
+                        callback(data, statusCode==200)
                     }
                 })
                 return
@@ -161,7 +174,8 @@
                         urlPdf: urlDoc
 
                     }
-
+                    //options.Rutines.getTextFromPdf(options, urlDoc, _arr, charEnd, _callback, _json, _this, onlyScrap)
+                    //options.Rutines.scrapTextFromPdf(options, urlDoc, _arr, '.', function (_data) {
                     options.Rutines.getTextFromPdf(options, urlDoc, _arr, '.', function (_data) {
                         if (_data != null) {
                             if (_data._arr.length == 0) {

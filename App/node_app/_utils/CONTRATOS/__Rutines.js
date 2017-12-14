@@ -13,10 +13,12 @@
         return (point)
     }
 
+    _ = app._
+
     return {
         pdfOpc: ['-raw', '-nopgbrk', '-enc UTF-8'],
-        get: {
-            principal: function($) {
+        scrap: {
+            principal: function ($) {
 
                 return {
                     modalidad: $('analisis modalidad').html(),
@@ -28,25 +30,25 @@
                     materias_cpv: $('analisis materias_cpv').html(),
                 }
             },
-            data: function(options, data) {
+            data: function (options, data) {
 
-                    return {
-                        _BOLETIN: data._list[data.e],
-                        _cod: data.codigo.id,
-                        _modalidad: data.codigo.modalidad,
-                        _type: data.codigo.text,
-                        _tramitacion: '',
-                        _importe: data.codigo.importe,
-                        _ambito_geografico: data.codigo.ambito_geografico,
-                        _materias_cpv: data.codigo.materias_cpv,
-                        urlPdf: data.codigo.urlPdf,
-                        urlXml: options.url  + data._list[data.e],
-                        //Contratista: [],
-                        //Importe: []
-                    }
+                return {
+                    _BOLETIN: data._list[data.e],
+                    _cod: data.codigo.id,
+                    _modalidad: data.codigo.modalidad,
+                    _type: data.codigo.text,
+                    _tramitacion: '',
+                    _importe: data.codigo.importe,
+                    _ambito_geografico: data.codigo.ambito_geografico,
+                    _materias_cpv: data.codigo.materias_cpv,
+                    urlPdf: data.codigo.urlPdf,
+                    urlXml: options.url + data._list[data.e],
+                    //Contratista: [],
+                    //Importe: []
+                }
             },
-            extra: function (_json,scrap) {
-                var splitfunc = ['materias', 'materias_cpv' ]
+            extra: function (_json, scrap) {
+                var splitfunc = ['materias', 'materias_cpv']
                 var _regex = [/\d{3}/g, new RegExp('/([0-9])\w+/g')]
                 var _ret = {}
                 for (i in _json) {
@@ -58,9 +60,9 @@
                         var p = splitfunc.indexOf(i)
                         if (p > -1 && _r.length > 0) {
                             var table = _r.split(/\n/g)
-                            var keys = p<2?_r.match(/\d{3,9}/g):null
+                            var keys = p < 2 ? _r.match(/\d{3,9}/g) : null
                             if (!scrap) {
-                                for (n in table) { 
+                                for (n in table) {
                                     var _data_aux = [p, keys == null ? '' : keys[n], table[n].substr(keys == null ? 0 : keys[n].length + 1, table[n].length)]
                                     //console.log(_data_aux)
                                     app.BOLETIN.SQL.db.query("call insertInTable_Aux(?,?,?)", _data_aux, function (err_aux) {
@@ -91,21 +93,21 @@
                 var err = null
 
                 if (_json.documento.texto.dl != null) {
-                    var pdf =  options.url  + _json.documento.metadatos.url_pdf["#text"]
+                    var pdf = options.url + _json.documento.metadatos.url_pdf["#text"]
                     __this.getTextFromPdf(options, pdf, _arr, charEnd, _callback, _json, _this, onlyScrap)
                 } else {
 
                     $('p.parrafo').each(function (p, _parraf) {
                         var _t = Trim($($('p.parrafo')[p]).html())
                         if (_t.length > 0) {
-                            if ((_t.indexOf(')') == 1 || _t.indexOf('.') == 1) && _t.substr(2,1)==" " ){ // || _lastParragraf) {
+                            if ((_t.indexOf(')') == 1 || _t.indexOf('.') == 1) && _t.substr(2, 1) == " ") { // || _lastParragraf) {
                                 _arr[_arr.length] = _t
                             } else {
                                 if (_arr.length > 0) {
-                                    if (err!=null) {
+                                    if (err != null) {
                                         _arr[_arr.length - 1] = _arr[_arr.length - 1] + ' ' + _t
                                     } else {
-                                        _arr[_arr.length ] = _t
+                                        _arr[_arr.length] = _t
                                     }
                                 } else {
                                     err = "CONTENIDO NO STANDART"
@@ -119,22 +121,41 @@
                         _a: this.extra(_json.documento.analisis, onlyScrap),
                         _m: this.extra(_json.documento.metadatos, onlyScrap)
                     }
-                    _callback({ _arr: _arr, _extra: _extra ,_err:err })
+                    _callback({ _arr: _arr, _extra: _extra, _err: err })
                 }
             },
-            importes: function (data, options, patterns) {
+            set: function (options, $, body, _analisis, data, urlDoc, callback) {
+                options.Rutines.scrap.p_parrafo(options, $, '.', body, function (_data) {
+                    if (_data != null) {
+                        //if (_data._arr.length < 8)
+                        //    debugger
+                        _analisis.extra = _data._extra
+                        data.textExtend = _data._arr
+                        data.err = _data._err
+                        app.commonSQL.SQL.commands.insert.Boletin.text(options, _analisis, data, function (data) {
+                            callback(data)
+                        })
 
-                var importe = "*" + options.Rutines.extract(data.textExtend, 'Importe de la adjudicación:', options.transforms.ADD(
+                    } else {
+                        callback(data, true)
+                    }
+                }, urlDoc, options.Rutines, true)
+            }
+        },
+        get: {
+            importes: function (_text, data, options, patterns) {
+
+                var importe = "*" + options.Rutines.extract(_text, 'Importe de la adjudicación:', options.transforms.ADD(
                         [patterns.General,
                         patterns.Importes]
                 ))
                 if (importe == "*")
-                    importe = "*" + options.Rutines.extract(data.textExtend, 'Importes de las adjudicaciones:', options.transforms.ADD(
+                    importe = "*" + options.Rutines.extract(_text, 'Importes de las adjudicaciones:', options.transforms.ADD(
                         [patterns.General,
                         patterns.Importes]
                     ))
                 if (importe == "*")
-                    importe = "*" + options.Rutines.extract(data.textExtend, 'd) Importe ', options.transforms.ADD(
+                    importe = "*" + options.Rutines.extract(_text, 'd) Importe ', options.transforms.ADD(
                         [patterns.General,
                         patterns.Importes]
                     ))
@@ -142,18 +163,18 @@
 
 
                 if (importe == "*")
-                    importe = "*" + options.Rutines.extract(data.textExtend, 'Importe total:', options.transforms.ADD(
+                    importe = "*" + options.Rutines.extract(_text, 'Importe total:', options.transforms.ADD(
                         [patterns.General,
                         patterns.Importes]
                     ))
 
                 
 
-                var _imp = this.adaptImportes(importe.replace("*",""), data )
+                var _imp = this.adaptImportes(options, importe.replace("*",""), data )
 
                 return _imp != null ? _imp : 0 
             },
-            adaptImportes: function (_dataimporte, data) {
+            adaptImportes: function (options, _dataimporte, data) {
 
                 function isNumeric(n) {
                     return !isNaN(parseFloat(n)) && isFinite(n);
@@ -196,14 +217,69 @@
                         }
                     }
                 } else {
-                    var _imp = _dataimporte.replace("*", " ").split(";")
-                    if (data.contratista.indexOf("UTE ") == -1) {
+                    var _impT = _dataimporte.replace(', y "',";").split(";")
+                    var _imp = []
+                    var _empImp=[]
+                    _.forEach(_impT, function (value) {
+                        var _vx = (value.toLowerCase().match(/\(([^()]*euros[^()]*)\)/) || [])
+                        var _m = 1
+                        if (_vx.length > 1) {
+                            _imp[_imp.length] = _vx[1]
+                        } else {
+                            var _vx = (value.toLowerCase().match(/\(([^()]*pesetas[^()]*)\)/) || [])
+                            
+                            if (_vx.length > 0) {
+                                var _m = 166.386
+                                _imp[_imp.length] = _vx[0]
+                            } else {
+                                var _vx = (value.toLowerCase().match(/(\d+(\.\d{3})+?) (?:de )?(pesetas|euros)/) || [])
+                                if (_vx.length > 0) {
+                                    if(_vx[0].indexOf('pesetas')>-1){
+                                        var _m = 166.386
+                                        _imp[_imp.length] = _vx[0].replaceAll(" de ", "").replaceAll(".", ",")
+                                    }else{
+                                        _imp[_imp.length] = _vx[0]
+                                    }
 
-                        var _emp = data.contratista.split(";")
+                                    
+                                } else {
+                                    debugger
+                                }
+                            }
+                        }
+                       
+                            if (value.indexOf('".') > -1) {
+                                _vs = value.split('".')[0].toLowerCase()
+                            } else {
+                                if (value.indexOf('",') > -1) {
+                                    _vs = value.split('",')[0].toLowerCase() //
+                                } else {
+                                    debugger
+                                }
+                            }
+                            _empImp[_empImp.length] = _.deburr(options.Rutines.transforms(_vs, options.transforms.ADD(
+                                       [
+                                       options.patterns.General,
+                                       options.patterns.Contratista,
+                                       options.patterns.especialChars,
+                                       options.patterns.exoticChars,
+                                       options.patterns.specialContratista,
+                                       options.patterns.sinBlancos,
+                                       options.patterns.sinPuntos
+                                       ]))
+                              ).toLowerCase()
+                            
+
+                    })
+                    if (data.Empresa.indexOf("UTE ") == -1) {
+
+                        var _emp = data.Empresa.split(";")
                         var _test = []
                         var _moneda = ""
                         for (n in _emp) {
-                            importe = _imp[n] != null ? _imp[n] : (data.presupuesto != null ? data.presupuesto:0)
+                            _empresa = _.deburr(_.camelCase(_emp[n])).toLowerCase()
+                            var _n = _empImp.indexOf(_empresa)
+                            importe = _imp[_n] != null ? _imp[_n] : (data.presupuesto != null ? data.presupuesto:0)
                             if (!isNumeric(importe)) {
                                 if (importe.indexOf("euros") > 0 || importe.indexOf(_moneda) == -1) {
                                     _moneda = "euros"
@@ -212,7 +288,13 @@
                                     } else {
                                         _i = importe
                                     }
+                                    if (_i.indexOf(",") == -1)
+                                        _i = _.trim(_i).replaceAll(".", "") + ".00"
+                                    else {
+                                        _i = _.trim(_i).replace(",", "#").replaceAll(".", "").replace("#", ".")
+                                    }
                                     if (isNumeric(_i)) {
+
                                         _test[_test.length] = parseFloat(_i).toFixed(2)
                                     } else {
                                         _test[_test.length] = data.presupuesto
@@ -659,7 +741,121 @@
                     _callback(null)
                 }
             })
-        }
+        },
+        normalizeTextContrato: function (arrayT, _keys, callback) {
+        var _iniline = [":"]
+        var _finline = ["."]
+        var _lines = []
+        var _json = {}
+        var _arrayT = []
+        var preline = ""
 
+        valInKeys = function (text, _keys) {
+            var _found = 0
+            var _n = 0
+            _.forEach(_keys, function(value){
+                _n++
+                if(text.indexOf(value)>-1)
+                    _found = _n
+            })
+            return _found 
+        }
+        //var _key = null
+        _.forEach(arrayT, function (value) {
+            var _p = arrayT
+            if ((value.match(/^\d{1,2}\./) || []).length == 0) {
+                //if (_key != null) {
+                    if ((value.match(/^\w{1}\)/) || []).length > 0) {
+                        if (value.split(/\. \w{1}\)/).length > 1) {
+                            var _e = 0
+                            var _t = value.match(/\. \w{1}\)/g)
+                            _.forEach(value.split(/\. \w{1}\)/), function (value) {
+                                if ((value.match(/^\w{1}\)/) || []).length == 0) {
+                                    _arrayT[_arrayT.length] = _t[_e].match(/\w{1}\)/)[0] + value + "."
+                                    _e++
+                                } else {
+                                    _arrayT[_arrayT.length] = value + "."
+                                }
+                            })
+                        } else {
+                            if ((value.match(/\d{1,2} (?:de )?(diciembre|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre)/i) || []).length > 0 && value.indexOf(".-")>-1) {
+                                if (valInKeys(value, _keys)>0) {
+                                    if ((value.match(/(\d+(\.\d{3})+?) (?:de )?(pesetas|euros)/g) || []).length > 0) {
+                                        _arrayT[_arrayT.length] = "i) " + _.words(value.split(/^\w{1}\)/)[1])[0] + ":" + value.match(/(\d+(\.\d{3})+?) (?:de )?(pesetas|euros)/gi).join(";") + "."
+                                    } else {
+                                        _arrayT[_arrayT.length] = "i) " + _.words(value.split(/^\w{1}\)/)[1])[0] + ":" + value.split(/\d{1,2} (?:de )?(diciembre|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre)/i)[0] + "."
+                                    }
+                                }
+                                if(value.indexOf(".-")>-1)
+                                    _arrayT[_arrayT.length] = ".- " + value.split(".-")[1] + "."
+                            } else {
+                                _arrayT[_arrayT.length] = value
+                            }
+
+                        }
+                    } else {
+                        _arrayT[_arrayT.length-1] = _arrayT[_arrayT.length-1] + value
+                    }
+                //} else {
+                //    debugger
+                //}
+            } else {
+                //_key = _.words(value.split(/^\d{1,2}/)[1])[0]
+                if (value.indexOf("Presupuesto") > -1 && (value.match(/(\d+(\.\d{3})+?) (?:de )?(pesetas|euros)/) || []).length > 0) {
+                    _arrayT[_arrayT.length] = "p) " + _.words(value.split(/^\d{1,2}/)[1])[0] + ": " + value.match(/(\d+(\.\d{3})+?) (?:de )?(pesetas|euros)/g)[value.match(/(\d+(\.\d{3})+?) (?:de )?(pesetas|euros)/g).length-1] + "."
+                }
+            }
+        })
+           // debugger
+        _.forEach(_arrayT, function(value){
+            var _lchar = value.substr(value.length - 1, 1)
+            //if ((value.match(/^\d{1,2}\./) || []).length ==0) {
+
+                if ((value.match(/^\w{1}\)/) || []).length > 0) {
+                    if (_finline.indexOf(_lchar) > -1) {
+                        if (valInKeys(value, _keys))
+                            _lines[_lines.length] = value.substr(3, value.length)
+                    } else {
+                        preline = value 
+                    }
+                } else {
+                    if (_finline.indexOf(_lchar) > -1) {
+                        var _valp = valInKeys(value, _keys)
+                        if (_valp>0)
+                            if (_valp < _keys.length) {
+                                _lines[_lines.length] = preline.substr(3, preline.length - 2) + ' ' + value
+                            } else {
+                                var _v = preline.substr(3, preline.length - 2) + ' ' + value
+                                var _d = _v.split(_keys[_keys.length - 1])[1].split(",")
+                                var _cargo = _d[0].split(".")[0]
+                                var _firma = _d[1]
+                                if (_d.length > 0) {
+                                    _lines[_lines.length] = 'Cargo:' + _cargo
+                                    if (_d.length > 1)
+                                        _lines[_lines.length] = 'Firma:' + _firma
+                                }
+                            }
+
+                        preline=''
+                    } else {
+                        preline = preline + value
+                    }
+                    //debugger
+                }
+            //}
+
+        })
+
+        _.forEach(_lines, function (value) {
+            if (value.indexOf(":") > -1) {
+                var _p = value.split(/\:/g)
+
+                _json[_.deburr(_.words(_p[0])[0])]=_.trim(_p[_p.length-1] )
+            }
+        })
+
+        callback(_lines, _json)
+            //debugger
+    }
     }
 }

@@ -122,17 +122,22 @@
                                                 options.DirEmpresas = []
                                                 lines = text.replace(/"/g, "").split('\n')
 
-                                                _lines = options.Rutines.getDataFromMap(options.Rutines, lines, options.Rutines.maps)
+                                                _lines = options.Rutines.scrapDataFromMap(options.Rutines, lines, options.Rutines.maps)
                                                 //debugger
                                                 if (_lines != null) {
                                                     if (_lines.data.length == 0) {
                                                         debugger
                                                         callback(data, null)
                                                     } else {
-
-                                                        app.commonSQL.SQL.commands.insert.Borme.text(options, _lines, data, function (data) {
+                                                        data.textExtend = _lines
+                                                        //data.err = _data._err
+                                                        app.commonSQL.SQL.commands.insert.Boletin.text(options, {} , data, function (data) {
                                                             callback(data)
                                                         })
+
+                                                        //app.commonSQL.SQL.commands.insert.Boletin.text(options, _lines, data, function (data) {
+                                                        //    callback(data)
+                                                        //})
 
                                                     }
 

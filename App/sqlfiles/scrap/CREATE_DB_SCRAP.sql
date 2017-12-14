@@ -79,6 +79,7 @@ CREATE TABLE `sumarios` (
   `BOLETIN` varchar(20) CHARACTER SET utf8 NOT NULL,
   `Contrato` boolean DEFAULT '0',
   `scrap` boolean DEFAULT '0',
+  `_error` boolean DEFAULT '0',
   PRIMARY KEY (`BOLETIN`),
   UNIQUE KEY `_Boletin` (`BOLETIN`),
   KEY `_Type` (`Type`,`Anyo`)

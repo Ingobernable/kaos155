@@ -3,14 +3,19 @@
     //var _this = this
 
     return {
+        
         lastupdate: Date.now(),
         askToServer: function (options, requestOptions, data, callback) {
-            //console.log("\n"+requestOptions.uri)
+            //debugger
             if (requestOptions.uri.file == null) {
                
                 this.lastupdate = Date.now()
                 var _d = new Date()
-                var _bolet = requestOptions.uri.split("/")[requestOptions.uri.split("/").length - 1].split(".")[0]
+                if (requestOptions.uri.indexOf("=")==-1){
+                    var _bolet = requestOptions.uri.split("/")[requestOptions.uri.split("/").length - 1].split(".")[0]
+                } else {
+                    var _bolet = requestOptions.uri.split("=")[1]
+                }
                 if (data.type != "BORME") {
                     var _boletin = data._analisis != null ? data._analisis.length > 0 ? data._analisis[data.e][data.type].trim() : _bolet : _bolet // data.type+"-"+data.desde
                 } else {
@@ -30,11 +35,11 @@
                                 callback(options, body, data)
                             } else {
                                 if (body.toString().indexOf('encoding="') > -1 || body.toString().indexOf('meta charset') > -1) {
-                                    callback(options, options.iconv.decode(new Buffer(body), options.Rutines().ISO(body.toString())), data)
+                                    callback(options, options.iconv.decode(new Buffer(body), options.Rutines(options).ISO(body.toString())), data, response.statusCode)
                                 } else {
                                     debugger
                                     console.log("ERROR " + requestOptions.uri + ' response sin encoding valido')
-                                    callback(_this, null, data)
+                                    callback(_this, null, data, response.statusCode)
                                 }
                             }
                         } else {
@@ -42,7 +47,7 @@
                             cadsql = "INSERT INTO errores (BOLETIN, SqlMensaje, SqlError) VALUES ('" + _boletin + "','PDF VACIO','" + requestOptions.uri + "')"
                             app.BOLETIN.SQL.db.query(cadsql, function(err,rec){
                                 process.stdout.write("xxx")
-                                callback(_this, null, data)
+                                callback(_this, null, data, response.statusCode)
                             })
                         }
                     } else {
@@ -50,7 +55,9 @@
                         console.log("ERROR " + requestOptions.uri )
                         setTimeout(function () { 
                             console.log('delay ok.')
-                            callback(_this, null, data)
+                            //if (response.statusCode == 404)
+                            //    debugger
+                            callback(_this, null, data, response.statusCode)
                         }, app.timeDelay)
 
                     }
@@ -175,6 +182,59 @@
                     });
                 });
             });
+        },
+        normalizeTextContrato: function (arrayT, _keys, callback) {
+            var _iniline = [":"]
+            var _finline = ["."]
+            var _lines = []
+            var preline = ""
+
+            valInKeys = function (text, _keys) {
+                var _found = 0
+                var _n = 0
+                _.forEach(_keys, function(value){
+                    _n++
+                    if(text.indexOf(value)>-1)
+                        _found = _n
+                })
+                return _found 
+            }
+
+            debugger
+
+            _.forEach(arrayT, function(value){
+                var _lchar = value.substr(value.length - 1, 1)
+                if ((value.match(/^\d{1,2}\./) || []).length ==0) {
+
+                    if ((value.match(/^\w{1}\)/) || []).length > 0) {
+                        if (_finline.indexOf(_lchar) > -1) {
+                            if (valInKeys(value, _keys))
+                                _lines[_lines.length] = value.substr(3, value.length)
+                        } else {
+                            preline = value 
+                        }
+                    } else {
+                        if (_finline.indexOf(_lchar) > -1) {
+                            var _valp = valInKeys(preline, _keys)
+                            if (_valp>0)
+                                if (_valp < _keys.length) {
+                                    _lines[_lines.length] = preline.substr(3, preline.length - 2) + ' ' + value
+                                } else {
+                                    var _v = preline.substr(3, preline.length - 2) + ' ' + value
+                                    _lines[_lines.length] = 'firma: '+_v.split(_keys[_keys.length-1])[1].split(",")[1]
+                                }
+
+                            preline=''
+                        } else {
+                            preline = preline + value
+                        }
+                        //debugger
+                    }
+                }
+
+            })
+            callback(_lines)
+            //debugger
         }
     }
     

@@ -83,6 +83,7 @@ CREATE TABLE `sumarios` (
   `BOLETIN` varchar(20) CHARACTER SET utf8 NOT NULL,
   `Contrato` boolean DEFAULT '0',
   `scrap` boolean DEFAULT '0',
+  `_error` boolean DEFAULT '0',
   PRIMARY KEY (`BOLETIN`),
   UNIQUE KEY `_Boletin` (`BOLETIN`),
   KEY `_Type` (`Type`,`Anyo`)
@@ -175,10 +176,30 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `GetNextTextParser` */;
+/*!50003 DROP PROCEDURE IF EXISTS `InsertAnyo` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost`  PROCEDURE `Insert_Error_Boletin`(IN _Boletin nvarchar(20), IN _SqlMensaje mediumtext, IN _SqlError mediumtext)
+BEGIN
+	INSERT INTO errores (BOLETIN, SqlMensaje, SqlError) VALUES (_Boletin,_SqlMensaje,_SqlError);
+    UPDATE sumarios SET scrap = 0, _error=1 WHERE BOLETIN = _Boletin;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `GetNextTextParser` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET character_set_client  = utf8 */ ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
@@ -226,7 +247,7 @@ BEGIN
     SET _counter = (SELECT Count(*) FROM anyosread WHERE Type=_type AND Anyo=_anyo );
     IF _counter=0 THEN
 		IF _type='BOE' THEN
-			SET _cmp = "`analisis` mediumtext,`importe` varchar(45) DEFAULT NULL, `_p` int(11) DEFAULT NULL , `parser` int DEFAULT 0,";
+			SET _cmp = "`analisis` JSON,`importe` varchar(45) DEFAULT NULL, `_p` int(11) DEFAULT NULL , `parser` int DEFAULT 0,";
 		END IF;
 		IF _type='BORME' THEN
 			SET _cmp = "`ID_BORME` int(11) DEFAULT '0', `provincia` varchar(55) DEFAULT NULL, `parser` int DEFAULT 0,";
@@ -235,7 +256,7 @@ BEGIN
 
 		IF _type='BOCM' THEN
           
-			SET _cmp = "`analisis` mediumtext, `_p` int(11) DEFAULT NULL, `parser` int DEFAULT 0,";
+			SET _cmp = "`analisis` JSON, `_p` int(11) DEFAULT NULL, `parser` int DEFAULT 0,";
         END IF;
 
 		SET @s= CONCAT('CREATE TABLE IF NOT EXISTS `_', LOWER(_type) ,'_text_' , _anyo ,'` ( `id` int(11) NOT NULL AUTO_INCREMENT, `dia` varchar(2) DEFAULT NULL, `mes` varchar(2) DEFAULT NULL,`BOLETIN` varchar(22) DEFAULT NULL,`texto` mediumtext,', _cmp ,' `_err` VARCHAR(25), PRIMARY KEY (`id`),KEY `parser` (`parser`)' , _ki ,') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;');
