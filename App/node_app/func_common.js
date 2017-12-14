@@ -55,8 +55,8 @@
                         console.log("ERROR " + requestOptions.uri )
                         setTimeout(function () { 
                             console.log('delay ok.')
-                            if (response.statusCode == 404)
-                                debugger
+                            //if (response.statusCode == 404)
+                            //    debugger
                             callback(_this, null, data, response.statusCode)
                         }, app.timeDelay)
 

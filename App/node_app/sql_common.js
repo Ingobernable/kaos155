@@ -15,16 +15,15 @@
                     this.poolSql[type].getConnection(function (err, connection) {
                         // connected! (unless `err` is set)
                         if (err == null) {
-                            console.log('new connection ' + type + ' mysql OK')
+                            console.log('new connection ' + options.Command + ' mysql OK')
                             options.SQL.db = connection // _this.connection[type] = connection
                             _exit(options, type, callback)
                         } else {
-                            if (test == null) {
-                                console.log(err)
-                                process.exit(1);
-                            } else {
-                                _exit(options, type, callback, test)
-                            }
+
+                            console.log("\x1b[31m ERROR: al acceder a la DB ")
+                            console.log("elimine el fichero '" + app.path.normalize('sqlfiles/x_ACCESO_mysql_' + options.Command + '.json') + "'  \x1b[0m")
+                            console.log("y vuelva a ejecutar app.js")
+                            process.exit(1)
                         }
                     })
                 } else {
@@ -35,23 +34,67 @@
             }
 
         },
+        mysqlCommand: function (_command, db, callback) {
+            const cp = require('child_process');
+            cp.exec(_command, (error, stdout, stderr) => {
+                if (error) {
+                    console.log("\x1b[31m ERROR: la creación de la DB " + db + " ha fallado parcialmente")
+                    console.log("para poder continuar, por favor lance desde su consola el comando \x1b[0m")
+                    console.log(_command)
+                    process.exit(1)
+                } else {
+                    console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
+                    if (close)
+                        con.end()
+                    //app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
+                    callback()
+                    //})
+                }
+            });
+        },
+        testDB: function (options, con, resp, db, callback, close) {
+            var _this = this
+            console.log("\x1b[32m testeando consistencia DB " + db + " \x1b[0m");
+            con.query("SHOW Databases LIKE '" + db + "'", function (err, record) {
+                var _command = 'mysql -u' + resp.user + ' -p' + resp.password + ' -h' + resp.host + ' -D' + db + '< ' + app.path.normalize(__dirname + '/../sqlfiles/CREATE_FULL_' + options.Command + '.sql')
+
+                if (record.length == 0) {
+                    con.query("CREATE DATABASE IF NOT EXISTS " + db, function (err, result) {
+                        console.log("\x1b[32m BASE DE DATOS \x1b[0m" + db + "\x1b[32m CREADA VACIA OK \x1b[0m");
+                        _this.mysqlCommand(_command, db, callback)
+                    })
+                } else {
+                    var queryTables = "SELECT COUNT(*) as total FROM information_schema.tables WHERE table_schema = '" + db + "';"
+                    con.query(queryTables, function (err, record) {
+                        if (record[0].total < 3) {
+                            _this.mysqlCommand(_command, db, callback)
+                        } else {
+                            callback()
+                        }
+                    })
+
+                }
+            })
+        },
         init: function (options, type, _file, callback) {
             var _this = this
-            _this.encryptor = require('simple-encryptor')("bbdd_kaos155_text") // + (options.Command == 'SCRAP' ? '_text' : ''))
+            _this.encryptor = require('simple-encryptor')("bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : ''))
 
             if (process.env['KAOS_MYSQL_' + options.Command + '_PASS']) {
 
                 _this.poolSql[type] = app.mysql.createPool({
-                    host: process.env['KAOS_MYSQL_' + options.Command + '_HOST'], //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
-                    user: process.env['KAOS_MYSQL_' + options.Command + '_USER'], // _sql.mySQL.user,
-                    password: process.env['KAOS_MYSQL_' + options.Command + '_PASS'], // _sql.mySQL.password,
-                    database: process.env['KAOS_MYSQL_' + options.Command + '_DB'], // _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                    host: process.env['KAOS_MYSQL_' + options.Command + '_HOST'],
+                    user: process.env['KAOS_MYSQL_' + options.Command + '_USER'],
+                    password: process.env['KAOS_MYSQL_' + options.Command + '_PASS'],
+                    database: process.env['KAOS_MYSQL_' + options.Command + '_DB'],
                     multipleStatements: true,
                     waitForConnection: true,
                 })
+
                 _this.getConnect(options, type, callback)
 
             } else {
+
                 app.fs.readFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), function (err, _JSON) {
                     if (err) {
                         testIp = function (testIp, callback) {
@@ -61,69 +104,39 @@
                                         { type: 'password', name: 'password', message: 'mysql ' + options.Command + ' password' }
 
                             ]).then(function (resp) {
-                                //_this.createfistConnect(resp, function (fail) {
-                                var db = "bbdd_kaos155" + (options.Command == "SCRAP" ? "_text" : "")
+
+                                var db = "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : '')
 
                                 var con = app.mysql.createConnection({
-                                    host: resp.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
-                                    user: resp.user, // _sql.mySQL.user,
-                                    password: resp.password, // _sql.mySQL.password,
+                                    host: resp.host,
+                                    user: resp.user,
+                                    password: resp.password,
                                     multipleStatements: true
                                 })
 
-                                var encryptor = require('simple-encryptor')("bbdd_kaos155_text");
+                                var encryptor = require('simple-encryptor')(db);
                                 var _credenciales = {
-                                    host: resp.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
-                                    user: resp.user, // _sql.mySQL.user,
-                                    password: _this.encryptor.encrypt(resp.password), // _sql.mySQL.password,
-                                    database: db, // _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                                    host: resp.host,
+                                    user: resp.user,
+                                    password: _this.encryptor.encrypt(resp.password),
+                                    database: db,
                                     multipleStatements: true,
                                     waitForConnection: true,
                                 }
 
                                 con.connect(function (err) {
                                     if (err) {
-                                        //console.log(err)
                                         console.log('\x1b[31m las credenciales no parecen validas, vuelve a intentarlo \x1b[0m')
                                         testIp(testIp)
                                     } else {
                                         console.log("\x1b[32m Conectado a mysql OK \x1b[0m");
 
-                                        con.query("SHOW Databases LIKE '" + db + "'", function (err, record) {
-                                            if (record.length == 0) {
-                                                app.fs.readFile(app.path.normalize('sqlfiles/'+options.Command+'/CREATE_DB_' + options.Command + '.sql'), function (err, sqlTXT) {
-                                                    con.query(sqlTXT.toString(), function (err, record) {
-                                                        if (err) {
-                                                            console.log(err)
-                                                            process.exit(1)
-                                                            callback(null)
-                                                        } else {
-                                                            const cp = require('child_process');
-                                                            cp.exec('mysql -h ' + resp.host + ' -u ' + resp.user + ' -D ' + db + ' -p' + resp.password + ' < ' + app.resolvePath('sqlfiles/' + options.Command + '/CREATE_PROC_' + options.Command + '.sql'), (error, stdout, stderr) => {
-                                                                if (!error) {
-                                                                    console.log(`stdout: ${stdout}`);
-                                                                    console.log(`stderr: ${stderr}`);
-                                                                    console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
-                                                                    con.end()
-                                                                    app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify({ mySQL: _credenciales }), function (err, _JSON) {
-                                                                        callback(_credenciales)
-                                                                    })
-                                                                }
-                                                            });
-                                                        }
-                                                    });
-                                                });
-
-
-                                            } else {
-                                                console.log('\x1b[32m la DB ' + db + ' ya existe, continuamos ..... \x1b[0m')
-                                                con.end()
-                                                app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
-                                                    callback(_credenciales)
-                                                })
-                                            }
-
-                                        })
+                                        _this.testDB(options, con, resp, db, function () {
+                                            app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
+                                                console.log("\x1b[32m Nuevas credenciales de acceso mysql guardadas OK \x1b[0m");
+                                                callback(_credenciales)
+                                            })
+                                        }, true)
                                     }
                                 });
                             })
@@ -133,8 +146,8 @@
                             _this.poolSql[type] = app.mysql.createPool({
                                 host: credenciales.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
                                 user: credenciales.user, // _sql.mySQL.user,
-                                password: _this.encryptor.decrypt(credenciales.password),  // _sql.mySQL.password,
-                                database: credenciales.database, // _sql.mySQL.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                                password: _this.encryptor.decrypt(credenciales.password),
+                                database: credenciales.database,
                                 multipleStatements: true,
                                 waitForConnection: true,
                             })
@@ -154,15 +167,15 @@
                         if (_this.poolSql[type] == null) {
 
                             _this.poolSql[type] = app.mysql.createPool({
-                                host: _sql.host, //, //'localhost', //'66.70.184.214',
+                                host: _sql.host,
                                 user: _sql.user,
                                 password: _this.encryptor.decrypt(_sql.password),
-                                database: _sql.database, //'bbdd_kaos155', //+ type.toLowerCase(),//(type == 'RELACIONES' ? 'visualcif' : type.toLowerCase()),
+                                database: _sql.database,
                                 multipleStatements: true,
                                 waitForConnection: true,
                             })
 
-                            _this.getConnect(options, type, callback)
+                            _this.getConnect(options, type, callback, null)
 
                         } else {
                             callback(options)
@@ -197,34 +210,34 @@
                         })
                     },
                     Borme: {
-                        text: function (options, _linea, callback) {
+                        text: function (options, _linea, data, callback) {
                             var _text = ""
                             var _id = ""
-                            for (n in _analisis.data) {
-                                _text = _text + (_text.length > 0 ? "#" : "") + _analisis.data[n].original
-                                _id = _id + (_id.length > 0 ? "#" : "") + _analisis.data[n].id
+                            for (n in _linea.data) {
+                                _text = _text + (_text.length > 0 ? "#" : "") + _linea.data[n].original
+                                _id = _id + (_id.length > 0 ? "#" : "") + _linea.data[n].id
                             }
 
                             var params = [
-                                _analisis.data.length,                                                      //type
+                                _linea.data.length,                                                      //type
                                 "BORME",
                                 data.desde.substr(6, 2),                                                      //Dia
                                 data.desde.substr(4, 2),                                                      //Mes
                                 data.desde.substr(0, 4),                                                       //Anyo
-                                _analisis.BORME,                                                                    //BOLETIN                                                                                                                   
+                                _linea.BORME,                                                                    //BOLETIN                                                                                                                   
                                 _text,                                                                      //Texto
-                                _analisis.PROVINCIA,                                                    //PROVINCIA
+                                _linea.PROVINCIA,                                                    //PROVINCIA
                                 _id,
                                 ''
                             ]
-                            process.stdout.write(_analisis.PROVINCIA)
+                            process.stdout.write(_linea.PROVINCIA)
                             options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', params, function (err, record) {
 
                                 process.stdout.write(String.fromCharCode(25))
                                 if (err != null) {
                                     x = _text.length
                                     cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
-                                    options.SQL.db.query(cadSql, [_analisis.BORME, err.sqlMessage.replaceAll("'", "/'")], function (err2) {
+                                    options.SQL.db.query(cadSql, [_linea.BORME, err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                         var x = err
                                         var y = params
                                         callback(data)

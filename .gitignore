@@ -368,3 +368,6 @@ __pycache__/
 
 # vagrant
 .vagrant
+/scrapboe_2.bat
+/scrap.bat
+/scrapboe.bat

@@ -2,28 +2,32 @@
     
     //var inquirer = require('inquirer')
     var _exit = "EXIT"
-    var exit = function (myArgs,callback) {
-        if (myArgs[1] != 'BORME') {
+    var exit = function (myArgs,callback,automatic) {
 
-            var date = new Date(myArgs[2].substr(0, 4), 0, 1) //myArgs[2])
+        //if (automatic) {
+            if (myArgs[1] != 'BORME') {
 
-            if (date.getDay() == 0) {
-                date.setDate(date.getDate() + 1)
+                var date = new Date(myArgs[2].substr(0, 4), 0, 1) //myArgs[2])
+
+                if (date.getDay() == 0) {
+                    date.setDate(date.getDate() + 1)
+                }
+            } else {
+
+                var date = new Date(myArgs[2].substr(0, 4), 0, 2) //myArgs[2])
+                if (date.getDay() == 6) {
+                    date.setDate(date.getDate() + 1)
+
+                }
+                if (date.getDay() == 0) {
+                    date.setDate(date.getDate() + 1)
+
+                }
             }
-        } else {
-
-            var date = new Date(myArgs[2].substr(0, 4), 0, 2) //myArgs[2])
-            if (date.getDay() == 6) {
-                date.setDate(date.getDate() + 1)
-
-            }
-            if (date.getDay() == 0) {
-                date.setDate(date.getDate() + 1)
-
-            }
-        }
-
-        callback(app, myArgs, date) // options
+        //} else {
+        //    var date = new Date()
+        //}
+        callback(app, myArgs, date, automatic) // options
     }
     var getanyos = function (app,command, type, callback) {
         app.command = command
@@ -69,9 +73,9 @@
 
                                         app.inquirer.prompt([{ type: 'checkbox', name: 'anyo', message: 'anyo ', choices: anyos }])
                                                 .then(function (resp) {
-                                                    debugger
-                                                    myArgs = [command.value, type.value , resp.anyo]
-                                                    exit(myArgs, callback)
+                                                    //debugger
+                                                    myArgs = [command.value, type.value , resp.anyo[0]]
+                                                    exit(myArgs, callback,false)
                                                 })
                                     })
                                 })
@@ -82,7 +86,7 @@
             
     } else {
         require('./sql_common.js')(app, function (SQL) {
-            exit(myArgs, callback)
+            exit(myArgs, callback, true)
         })
     }
 

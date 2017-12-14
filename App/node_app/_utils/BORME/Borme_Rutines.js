@@ -698,7 +698,7 @@
                 }
                 return result;
             },
-            getDataFromMap: function (_this, lines, map) {
+            scrapDataFromMap: function (_this, lines, map) {
                 if (lines.length == 0)
                     debugger
                 var exclusion = ['Núm. ','Actos inscritos', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'SECCIÓN', 'Empresarios', 'BOLETÍN OFICIAL DEL REGISTRO MERCANTIL', 'Pág.', 'http://www.boe.es','D.L.:' ]

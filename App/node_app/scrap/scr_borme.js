@@ -3,7 +3,7 @@
     options = {
         Type : 'BORME',
         Command: app.command,
-        Rutines: require('../utils/BORME/Borme_Rutines.js')(app, require('../utils/BORME/Borme_Transforms.js')(app)),
+        Rutines: require('../_utils/BORME/Borme_Rutines.js')(app, require('../_utils/BORME/Borme_Transforms.js')(app)),
         //Rutines: require('../parser/BOLETIN/__Rutines')(app),
         _common: require('../_common.js')(app),
         pdfOpc: ['-nopgbrk', '-enc UTF-8'],
