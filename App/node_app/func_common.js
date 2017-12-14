@@ -6,7 +6,7 @@
         
         lastupdate: Date.now(),
         askToServer: function (options, requestOptions, data, callback) {
-            //console.log("\n"+requestOptions.uri)
+            //debugger
             if (requestOptions.uri.file == null) {
                
                 this.lastupdate = Date.now()

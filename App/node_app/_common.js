@@ -60,7 +60,7 @@
                     get: function (options, data, callback) {
                         var _this = this
                         var Sumario = options.Sumario
-
+                        //debugger
                         var url = options.url + 'diario_' + data.type.toLowerCase() + '/xml.php?id=' + Sumario
                         if (options.type == "BOCM")
                             if (Sumario.indexOf("-S-") == -1) {

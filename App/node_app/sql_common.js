@@ -278,7 +278,7 @@
                                 var boletin = _analisis._BOLETIN.split("=").length > 1 ? _analisis._BOLETIN.split("=")[1] : _analisis._BOLETIN
                                 var fecha = boletin.split("-").length == 2 ? boletin.split("-")[1] : data.desde
 
-                                options.Rutines.normalizeTextContrato(data.textExtend, options.itemsContrato, function (_text, _jsonData) {
+                                options.Rutines.normalizeTextContrato(data.textExtend, options.keysContrato, function (_text, _jsonData) {
 
                                         _analisis.data = _jsonData
                                         var params = [

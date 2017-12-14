@@ -71,7 +71,7 @@
                                 .then(function (type) {
                                     getanyos(app, command.value, type.value, function (app, anyos) {
 
-                                        app.inquirer.prompt([{ type: 'checkbox', name: 'anyo', message: 'anyo ', choices: anyos }])
+                                        app.inquirer.prompt([{ type: 'list', name: 'anyo', message: 'anyo ', choices: anyos }])
                                                 .then(function (resp) {
                                                     //debugger
                                                     myArgs = [command.value, type.value , resp.anyo[0]]

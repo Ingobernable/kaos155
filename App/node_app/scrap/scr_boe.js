@@ -6,7 +6,7 @@
         url: app.urlBOE,
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
         pdfOpc: ['-raw', '-nopgbrk', '-enc UTF-8'],
-        itemsContrato: ["Organismo", "Dependencia", "Descripci\u00F3n", "Tipo", "Lote", "Tramitaci\u00F3n", "Presupuesto", "Procedimiento", "Forma", "Importe", "Contratista", "Nacionalidad", ".-"],
+        keysContrato: ["Organismo", "Dependencia", "Descripci\u00F3n", "Tipo", "Lote", "Tramitaci\u00F3n", "Presupuesto", "Procedimiento", "Forma", "Importe", "Contratista", "Nacionalidad", ".-"],
         Rutines: require('../_utils/CONTRATOS/__Rutines')(app),
         //transforms: require('./BOLETIN/__Transforms')(app),
         _common: require('../_common')(app),
@@ -74,9 +74,6 @@
                 })
             },
             Preceptos: function (options, urlDoc, body, data, callback) {
-                //app.Rutines(app).askToServer(app, { encoding: 'UTF-8', method: "GET", uri: options.url + urlDoc, agent: false }, data, function (app, body, data) {
-                    //var xcadsql = null
-                    //var contratos = []
                     if (body != null) {
                         
                         var $ = app.Rutines(app).XmlToDom(body)                 // convertimos el texto xml en objetos DOM

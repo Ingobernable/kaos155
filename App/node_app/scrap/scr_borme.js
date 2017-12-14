@@ -129,10 +129,15 @@
                                                         debugger
                                                         callback(data, null)
                                                     } else {
-
-                                                        app.commonSQL.SQL.commands.insert.Borme.text(options, _lines, data, function (data) {
+                                                        data.textExtend = _lines
+                                                        //data.err = _data._err
+                                                        app.commonSQL.SQL.commands.insert.Boletin.text(options, {} , data, function (data) {
                                                             callback(data)
                                                         })
+
+                                                        //app.commonSQL.SQL.commands.insert.Boletin.text(options, _lines, data, function (data) {
+                                                        //    callback(data)
+                                                        //})
 
                                                     }
                                                 
