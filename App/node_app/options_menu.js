@@ -74,7 +74,7 @@
                                         app.inquirer.prompt([{ type: 'list', name: 'anyo', message: 'anyo ', choices: anyos }])
                                                 .then(function (resp) {
                                                     //debugger
-                                                    myArgs = [command.value, type.value , resp.anyo[0]]
+                                                    myArgs = [command.value, type.value , resp.anyo]
                                                     exit(myArgs, callback,false)
                                                 })
                                     })
