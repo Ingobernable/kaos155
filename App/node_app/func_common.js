@@ -57,7 +57,7 @@
                             console.log('delay ok.')
                             //if (response.statusCode == 404)
                             //    debugger
-                            callback(_this, null, data, response.statusCode)
+                            callback(_this, null, data, response==null?null:response.statusCode)
                         }, app.timeDelay)
 
                     }
