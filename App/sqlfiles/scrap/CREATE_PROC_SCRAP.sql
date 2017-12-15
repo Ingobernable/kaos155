@@ -69,7 +69,7 @@ DECLARE _last int DEFAULT _to_year;
 		DELETE FROM errores  WHERE INSTR(BOLETIN,@vol) >0;
 		DELETE FROM anyosread where Anyo=_counter;
         
-        IF _counter>_last THEN
+        IF _counter>=_last THEN
             LEAVE my_loop;
 		else
 			SET _counter = _counter + 1;
