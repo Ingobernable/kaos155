@@ -62,8 +62,9 @@
                                                         } else {
                                                             if (_into == lst.attribs.id) {
                                                                 _reg[_reg.length] = { BORME: lst.attribs.id, pdf: pdf, titulo: titulo }
-                                                                _into=null
+                                                                _into = data.into = null
                                                             } else {
+                                                                console.log(_into, lst.attribs.id)
                                                                 process.stdout.write('S ')
                                                             }
                                                         }
