@@ -65,7 +65,7 @@
                                                                 _into = data.into = null
                                                             } else {
                                                                 console.log(_into, lst.attribs.id)
-                                                                app.process.stdout.write(app, options, ,'','S ','')
+                                                                app.process.stdout.write(app, options, '','S ','')
                                                             }
                                                         }
 

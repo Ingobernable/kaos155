@@ -1,4 +1,13 @@
-﻿App.leyendas = { BOE: { data: ['S', 'X', 'XXX', '-', '+'], css: ['sum', 'fail', 'fail', 'menos', 'mas'] } }
+﻿App.leyendas = {
+    BOE: {
+        data: ['S', 'X', 'XXX', '-', '+'],
+        css: ['sum', 'fail', 'fail', 'menos', 'mas']
+    },
+    BORME: {
+        data: ['↓', 'A CORUÑA', 'LA CORUÑA', 'ARABA/ÁLAVA', 'ÁLAVA', 'ALBACETE', 'ALICANTE', 'ALMERÍA', 'ASTURIAS', 'ÁVILA', 'BADAJOZ', 'BARCELONA', 'BIZKAIA', 'BURGOS', 'CÁCERES', 'CÁDIZ', 'CANTABRIA', 'CASTELLÓN', 'CIUDAD REAL', 'CÓRDOBA', 'CUENCA', 'CEUTA', 'GIRONA', 'GRANADA', 'GUADALAJARA', 'GUIPÚZCOA', 'GIPUZKOA', 'HUELVA', 'HUESCA', 'ILLES BALEARS', 'ISLAS BALEARES', 'JAÉN', 'LA RIOJA', 'LAS PALMAS', 'LEÓN', 'LLEIDA', 'LUGO', 'MADRID', 'MÁLAGA', 'MELILLA', 'MURCIA', 'NAVARRA', 'ORENSE', 'OURENSE', 'PALENCIA', 'PONTEVEDRA', 'SALAMANCA', 'SEGOVIA', 'SEVILLA', 'SORIA', 'TARRAGONA', 'SANTA CRUZ DE TENERIFE', 'TERUEL', 'TOLEDO', 'VALENCIA', 'VALLADOLID', 'VIZCAYA', 'ZAMORA', 'ZARAGOZA'],
+        css: ['save', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov', 'prov']
+    },
+}
 App.ioevents = ['Connecting', 'connected', 'graphData'],
 
 App.ioresponses= {
