@@ -46,7 +46,7 @@
                              //requestOptions.uri.split("/")[requestOptions.uri.split("/").length-1].split(".")
                             cadsql = "INSERT INTO errores (BOLETIN, SqlMensaje, SqlError) VALUES ('" + _boletin + "','PDF VACIO','" + requestOptions.uri + "')"
                             app.BOLETIN.SQL.db.query(cadsql, function(err,rec){
-                                process.stdout.write("xxx")
+                                app.process.stdout.write(app, options, '',"xxx",'')
                                 callback(_this, null, data, response.statusCode)
                             })
                         }
@@ -226,7 +226,7 @@
 
                             preline=''
                         } else {
-                            preline = preline + value
+                            preline = preline  + value
                         }
                         //debugger
                     }

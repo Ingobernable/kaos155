@@ -113,7 +113,7 @@
                                                                             }
                                                                         } else {
                                                                             if (_t[n].indexOfRegex(/BOCM-\d{8}[-]\d{1,4}/) > 0) {
-                                                                                process.stdout.write('-')
+                                                                                app.process.stdout.write(app, options, '','-','')
                                                                             }
                                                                         }
                                                                     }
@@ -180,7 +180,7 @@
                         if (_data != null) {
                             if (_data._arr.length == 0) {
                                 app.commonSQL.SQL.commands.insert.errores(options,_analisis._BOLETIN, 'CONTENIDO NO STANDART', urlDoc, function () {
-                                    process.stdout.write("xxx")
+                                    app.process.stdout.write(app, options,'', "xxx",'')
                                     callback(data)
                                 })
                                 //cadsql = "INSERT INTO errores (BOLETIN, SqlMensaje, SqlError) VALUES ('" + _analisis._BOLETIN + "','CONTENIDO NO STANDART','" + urlDoc + "')"
@@ -195,7 +195,7 @@
                                 })
                             }
                         } else {
-                            process.stdout.write("fff")
+                            app.process.stdout.write('',"fff",'')
                             callback(data)
                         }
                         //options.SQL.insert(options, _analisis, data, function (data) {

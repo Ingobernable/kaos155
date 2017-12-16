@@ -32,7 +32,7 @@ module.exports = function (app, callback) {
 
                 _linea.table = "Empresa"
                 app.commonSQL.SQL.commands.insert.Borme.keys(options, _linea, function (_linea, _rec) {
-                    process.stdout.write('\x1b[1m\x1b[36mE\x1b[0m')
+                    app.process.stdout.write('\x1b[1m\x1b[36mE\x1b[0m')
                     _linea.ID = _rec[0][0].Id
 
                     options.parser.saveDiarioMovimientos(_linea, _cb)
@@ -95,7 +95,7 @@ module.exports = function (app, callback) {
                             //insertamos un dato en el diario de movimientos
                             //
                             app.commonSQL.SQL.commands.insert.Borme.diario(options, params, function (err, _record) {
-                                process.stdout.write('\x1b[33m.\x1b[0m')
+                                app.process.stdout.write('\x1b[33m.\x1b[0m')
                                 //repitiendo el proceso para todos los datos de una linea
                                 _e++
                                 _func(_e, _linea, _cb, _func)
@@ -121,14 +121,14 @@ module.exports = function (app, callback) {
                 app.commonSQL.SQL.commands.select.NextTextParser(options, [type, app.anyo], function (err, recordset) {
                     if (recordset[0].length > 0) {
                         if (options.f != recordset[0][0].mes + '/' + recordset[0][0].dia)
-                            process.stdout.write('\x1b[36m' + recordset[0][0].mes + '/' + recordset[0][0].dia + ':\x1b[0m')
+                            app.process.stdout.write(app, options, '\x1b[36m', recordset[0][0].mes + '/' + recordset[0][0].dia, ':\x1b[0m')
 
                         if (options.Provincia != recordset[0][0].provincia)
-                            process.stdout.write(recordset[0][0].provincia)
+                            app.process.stdout.write(app, options,'' ,recordset[0][0].provincia,'')
 
                         options.f = recordset[0][0].mes + '/' + recordset[0][0].dia
                         options.Provincia = recordset[0][0].provincia
-                        process.stdout.write('\x1b[33m+\x1b[0m')
+                        app.process.stdout.write(app, options, '\x1b[33m', '+', '\x1b[0m')
                         //analizamos la linea y obtenemos una estructura con su contenido
                         _line = options.Rutines.analizeSimpleLine(options.Rutines, recordset[0][0].texto, options.Rutines.maps)
                         _line.data = recordset[0][0]

@@ -231,10 +231,10 @@
                                 _id,
                                 ''
                             ]
-                            process.stdout.write(_linea.PROVINCIA)
+                            app.process.stdout.write(app, options, '',_linea.PROVINCIA,'')
                             options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', params, function (err, record) {
 
-                                process.stdout.write(String.fromCharCode(25))
+                                app.process.stdout.write(app, options, '', String.fromCharCode(25), '')
                                 if (err != null) {
                                     x = _text.length
                                     cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
@@ -270,7 +270,7 @@
                         text: function (options, _analisis, data, callback) {
                             //var i = isNaN(data.importe * 1) ? 0 : data.importe * 1
                             if (data.err != null) {
-                                process.stdout.write('\x1b[31mX\x1b[0m')
+                                app.process.stdout.write(app, options, '\x1b[31m','X','\x1b[0m')
                                 cadSql = "CALL Insert_Error_Boletin(?,?,?)"
                                 options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1],data._list[data.e], data.err], function (err2) {
                                     callback(data)
@@ -299,7 +299,7 @@
 
                                         options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', params, function (err, record) {
                                             if (err != null) {
-                                                process.stdout.write('\x1b[31mX\x1b[0m')
+                                                app.process.stdout.write(app, options, '\x1b[31m'+'X'+'\x1b[0m')
                                                 cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
                                                 options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                                     var x = err
@@ -308,13 +308,13 @@
                                                 })
                                             } else {
                                                 if (!(_jsonData.Contratista != null && (_jsonData.Importe != null || _analisis._importe.length > 0))) {
-                                                    process.stdout.write('\x1b[31mXXX\x1b[0m')
+                                                    app.process.stdout.write(app, options, '\x1b[31m','XXX','\x1b[0m')
                                                     cadSql = "CALL Insert_Error_Boletin(?,?,?)"
                                                     options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], data._list[data.e], "FALTA CONTRATISTA o IMPORTES"], function (err2) {
                                                         callback(data)
                                                     })
                                                 } else {
-                                                    process.stdout.write('\x1b[32m+\x1b[0m')
+                                                    app.process.stdout.write(app, options, '\x1b[32m','+','\x1b[0m')
                                                     callback(data)
                                                 }
                                             }
@@ -332,8 +332,8 @@
                                 x = cadsql
                                 debugger
                             }
-                            app._xData.TSUMARIOS[options.type] = app._xData.TSUMARIOS[options.type] +
-                            process.stdout.write('.')
+                            app._xData.TSUMARIOS[options.type] = app._xData.TSUMARIOS[options.type] + 1
+                            app.process.stdout.write(app,options,'', '.', '')
                             callback()
                         })
                     },

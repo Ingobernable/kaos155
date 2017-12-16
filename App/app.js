@@ -163,15 +163,19 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
                                 //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
                                 //el retorno es el objeto encargado del escrapeo                 
                                 var prefix = app.command.substr(0, 3).toLowerCase() + "_"
-                                require('./node_app/SCRAP/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
+                                require('./node_app/scrap/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
                                     //options = objeto que realiza el escrapeo
                                     //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
                                     app.BOLETIN = options
                                     //cargamos los contadores para poder continuar donde se dejó
                                     app.commonSQL.SQL.getCounter(app, options, type, function (options) {
-                                        //realizamos el proceso de escrapeo  
-                                        options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
-                                        //options._common.Actualize(options, type, null)
+                                        //realizamos el proceso de escrapeo
+                                        app._io = require('./node_www/IO.js')(app)
+                                        require('./node_www/server_http.js')(app, function (io) {
+                                            app.process.stdout.io = io
+                                            options._common.Actualize(options, type, { desde: app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8), into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() })
+                                        
+                                        })
                                     })
                                 })
                                 //})
@@ -245,7 +249,21 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
                             })
                         }
                     })
-                }
+                },
+                process:  {
+                        stdout: {
+                            write: function (app, options,_cini, string, _cfin) {
+                            
+                                process.stdout.write(_cini + string + _cfin)
+                                var cadsql = "SELECT * FROM lastread WHERE Type=? AND Anyo=?;" //sumarios (_counter, Anyo, SUMARIO, BOLETIN, Type) VALUES ('" + (app._xData.TSUMARIOS[options.type] + 1) + "','" + app.anyo + "','" + _sumario + "', '" + _boletin + "','" + options.type + "')"
+                                options.SQL.db.query(cadsql,[app.Type,app.anyo], function (err, records) {
+                                    app.process.stdout.io.emit('graphData', { code: string, color: { _i: _cini, _f: _cfin }, record: { SUMARIO: records[0].SUMARIO_NEXT, LAST_ID: records[0].ID_LAST } })
+                                })
+                                //debugger
+                            }
+                        }
+                    }
+                
 
             })
 

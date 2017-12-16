@@ -435,12 +435,12 @@
                                     x=1
                                 }
                                 if (Active) {
-                                    process.stdout.write('\x1b[32m')
+                                    app.process.stdout.write(app, options, '\x1b[32m','','')
                                 } else {
-                                    process.stdout.write('\x1b[31m')
+                                    app.process.stdout.write(app, options, '\x1b[31m', '', '')
                                 }
-                                process.stdout.write( __data.values.Empresa ? "e" : __data.values.Auditor ? "a" :"d" )
-                                process.stdout.write('\x1b[0m')
+                                app.process.stdout.write(app, options, '', __data.values.Empresa ? "e" : __data.values.Auditor ? "a" : "d",'')
+                                app.process.stdout.write(app, options, '','', '\x1b[0m')
                                 callback(__data, _directivo[0][0].Id, params , Active)
                             }
                         }, function (err, record) {

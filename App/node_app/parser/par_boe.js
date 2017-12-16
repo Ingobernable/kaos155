@@ -83,14 +83,14 @@ module.exports = function (app, callback) {
 
                 var consulta = function (type, _cb) {
                     options.SQL.scrapDb.query('call GetNextTextParser(?,?)', [type, app.anyo], function (err, record) {
-                        process.stdout.write('\x1b[33m+B\x1b[0m')
+                        app.process.stdout.write(app, options, '\x1b[33m','+B'+'\x1b[0m')
                         _cb(err, record)
                     })
                 }
 
                 consulta(type, function (err,record) {
                     if (record.length > 0) {
-                        process.stdout.write('\x1b[36m.\x1b[0m')
+                        app.process.stdout.write(app, options, '\x1b[36m','.','\x1b[0m')
                         options.Rutines.normalizeTextContrato(record[0][0].texto.split("<br>"), ["Organismo", "Dependencia", "Descripci\u00F3n del objeto:", "Tipo de contrato", "Descripci\u00F3n", "Lotes", "Tramitaci\u00F3n", "Presupuesto", "Procedimiento", "Forma", "Importe", "Contratista", "Nacionalidad", ".-"], function (_text) {
                             _analisis = JSON.parse(record[0][0].analisis)
 
@@ -198,7 +198,7 @@ module.exports = function (app, callback) {
                                     if (data.Empresa != null) {
                                         if (data.Empresa.length > 0 && data._Imp.length > 0) {
                                             options.SQL.insert(options, data, function (data, state) {
-                                                process.stdout.write('\x1b[36m' + data._counterContratos + '\x1b[0mE')
+                                                app.process.stdout.write('\x1b[36m' + data._counterContratos + '\x1b[0mE')
                                                 callback(data, state)
                                             })
                                         } else {

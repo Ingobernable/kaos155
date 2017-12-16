@@ -771,7 +771,7 @@
                             var _t = value.match(/\. \w{1}\)/g)
                             _.forEach(value.split(/\. \w{1}\)/), function (value) {
                                 if ((value.match(/^\w{1}\)/) || []).length == 0) {
-                                    _arrayT[_arrayT.length] = _t[_e].match(/\w{1}\)/)[0] + value + "."
+                                    _arrayT[_arrayT.length] = _t[_e].match(/\w{1}\)/)[0] + ' ' + value + "."
                                     _e++
                                 } else {
                                     _arrayT[_arrayT.length] = value + "."
@@ -794,7 +794,7 @@
 
                         }
                     } else {
-                        _arrayT[_arrayT.length-1] = _arrayT[_arrayT.length-1] + value
+                        _arrayT[_arrayT.length-1] = _arrayT[_arrayT.length-1] + ' ' + value
                     }
                 //} else {
                 //    debugger

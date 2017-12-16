@@ -38,10 +38,10 @@
                                         })
                                     } else {
                                         if (rows[0].scrap == 1) {
-                                            process.stdout.write('#')
+                                            app.process.stdout.write(app, options, '','#','')
                                             callback(data, true)
                                         } else {
-                                            process.stdout.write('%')
+                                            app.process.stdout.write(app, options, '','%', '')
                                             callback(data)
                                         }
                                         //console.log(err, sumariosql)

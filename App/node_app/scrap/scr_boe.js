@@ -2,6 +2,7 @@
      
     var options = {
         Type: 'BOE',
+        anyo :app.anyo,
         Command: app.command,
         url: app.urlBOE,
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
@@ -19,7 +20,7 @@
                 app.Rutines(app).askToServer(app, { encoding: 'UTF-8', method: "GET", uri: url.uri, agent: false }, data, function (app, body, data) {
                     //try {
                     if (body != null) {
-                        process.stdout.write('S')
+                        app.process.stdout.write(app,options,'', 'S', '')
                         //pasamos el XML a formato "JQUERY de node"
                         var $ = app.Rutines(app).XmlToDom(body)
                         if ($('error').length > 0) {
@@ -46,7 +47,7 @@
                                     $(item.children).find('departamento item').each(function (b, boe) {
                                         var _ok=false
                                         if (app._xData.Sumario.BOE.SCR_ID_LAST != null) {
-                                            process.stdout.write('%')
+                                            app.process.stdout.write(app,options,'','%','')
                                             if (app._xData.Sumario.BOE.SCR_ID_LAST==boe.attribs.id)
                                                 app._xData.Sumario.BOE.SCR_ID_LAST = null
                                         }else{
@@ -88,7 +89,7 @@
                             if ((_analisis._type.indexOf('Adjudicación') > -1 && _analisis._type.indexOf('Subasta') == -1) || _analisis._modalidad == "Formalización contrato") {
                                     options.Rutines.scrap.set(options, $, body, _analisis, data, urlDoc, callback)                                    
                             } else {
-                                process.stdout.write('\x1b[33m-\x1b[0m')
+                                app.process.stdout.write(app, options,'\x1b[33m', '-', '\x1b[0m')
                                 callback(data,false,true)
                             }
                          
