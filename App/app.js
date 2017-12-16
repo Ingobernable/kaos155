@@ -139,7 +139,7 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
                                 //cuando cargamos la rutina incorporamos en la llamada app y la funcion de retorno una vez cargado el objeto
                                 //el retorno es el objeto encargado del escrapeo                 
                                 var prefix = app.command.substr(0, 3).toLowerCase() + "_"
-                                require('./node_app/PARSER/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
+                                require('./node_app/parser/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
                                     //options = objeto que realiza el escrapeo
                                     //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
                                     app.BOLETIN = options
