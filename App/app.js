@@ -261,6 +261,7 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
                             
                                 process.stdout.write(_cini + string + _cfin)
                                 var cadsql = "SELECT * FROM lastread WHERE Type=? AND Anyo=?;" //sumarios (_counter, Anyo, SUMARIO, BOLETIN, Type) VALUES ('" + (app._xData.TSUMARIOS[options.type] + 1) + "','" + app.anyo + "','" + _sumario + "', '" + _boletin + "','" + options.type + "')"
+                                debugger
                                 options.SQL.scrapDb.SQL.db.query(cadsql, [app.Type, app.anyo], function (err, records) {
                                     app.process.stdout.io.emit('graphData', { code: string, color: { _i: _cini, _f: _cfin }, record: { SUMARIO: records[0].SUMARIO_NEXT, LAST_ID: records[0].ID_LAST } })
                                 })

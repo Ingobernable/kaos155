@@ -159,7 +159,7 @@ module.exports = function (app, callback) {
     options.Rutines.cargos = [] //dataCargos
     app.commonSQL.init(options, 'PARSER', app._fileCredenciales + options.Command, function (options) {
         app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
-
+            debugger
             options.SQL.scrapDb = scrapdb
             callback(options)
 
