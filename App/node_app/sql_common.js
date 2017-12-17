@@ -114,7 +114,7 @@
                                     multipleStatements: true
                                 })
 
-                                var encryptor = require('simple-encryptor')(db);
+                                // var encryptor = require('simple-encryptor')(db);
                                 var _credenciales = {
                                     host: resp.host,
                                     user: resp.user,
