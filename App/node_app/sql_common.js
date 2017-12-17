@@ -105,7 +105,7 @@
 
                             ]).then(function (resp) {
 
-                                var db = "bbdd_kaos155_text"
+                                var db = "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : '')
 
                                 var con = app.mysql.createConnection({
                                     host: resp.host,
