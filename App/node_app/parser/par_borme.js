@@ -32,7 +32,7 @@ module.exports = function (app, callback) {
 
                 _linea.table = "Empresa"
                 app.commonSQL.SQL.commands.insert.Borme.keys(options, _linea, function (_linea, _rec) {
-                    app.process.stdout.write('\x1b[1m\x1b[36mE\x1b[0m')
+                    app.process.stdout.write(app,options,'\x1b[1m\x1b[36m'+'E'+'\x1b[0m')
                     _linea.ID = _rec[0][0].Id
 
                     options.parser.saveDiarioMovimientos(_linea, _cb)
@@ -95,7 +95,7 @@ module.exports = function (app, callback) {
                             //insertamos un dato en el diario de movimientos
                             //
                             app.commonSQL.SQL.commands.insert.Borme.diario(options, params, function (err, _record) {
-                                app.process.stdout.write('\x1b[33m.\x1b[0m')
+                                app.process.stdout.write(app,options,'\x1b[33m'+'.'+'\x1b[0m')
                                 //repitiendo el proceso para todos los datos de una linea
                                 _e++
                                 _func(_e, _linea, _cb, _func)

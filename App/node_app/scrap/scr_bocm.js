@@ -196,7 +196,7 @@
                                 })
                             }
                         } else {
-                            app.process.stdout.write('',"fff",'')
+                            app.process.stdout.write(app,options,'',"fff",'')
                             callback(data)
                         }
                         //options.SQL.insert(options, _analisis, data, function (data) {

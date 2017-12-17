@@ -198,7 +198,7 @@ module.exports = function (app, callback) {
                                     if (data.Empresa != null) {
                                         if (data.Empresa.length > 0 && data._Imp.length > 0) {
                                             options.SQL.insert(options, data, function (data, state) {
-                                                app.process.stdout.write('\x1b[36m' + data._counterContratos + '\x1b[0mE')
+                                                app.process.stdout.write(app,options,'\x1b[36m' + data._counterContratos + '\x1b[0mE')
                                                 callback(data, state)
                                             })
                                         } else {
