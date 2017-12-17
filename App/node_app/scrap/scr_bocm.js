@@ -213,6 +213,7 @@
 
     app.commonSQL.init(options, options.Type, app._fileCredenciales + options.Command, function (options) {
         app.commonSQL.SQL.commands.insert.AnyoRead(options, options.SQL.db, app.command, function (options) {
+            options.SQL.scrapDb = options.SQL.db
             callback(options)
         })
     })
