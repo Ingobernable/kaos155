@@ -149,7 +149,12 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
                                         if (ok > 0)
                                             options._common.Actualize(options, type, {}, app._returnfunc)
                                     }
-                                    options._common.Actualize(options, type, {}, app._returnfunc)
+
+                                    app._io = require('./node_www/IO.js')(app)
+                                    require('./node_www/server_http.js')(app, function (io) {
+                                        app.process.stdout.io = io
+                                        options._common.Actualize(options, type, {}, app._returnfunc)
+                                    })
                                 })
                                 //})
 
