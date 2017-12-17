@@ -34,7 +34,7 @@
             }
 
         },
-        mysqlCommand: function (_command, db, callback) {
+        mysqlCommand: function (_command, db, callback,close) {
             const cp = require('child_process');
             cp.exec(_command, (error, stdout, stderr) => {
                 if (error) {
@@ -61,13 +61,13 @@
                 if (record.length == 0) {
                     con.query("CREATE DATABASE IF NOT EXISTS " + db, function (err, result) {
                         console.log("\x1b[32m BASE DE DATOS \x1b[0m" + db + "\x1b[32m CREADA VACIA OK \x1b[0m");
-                        _this.mysqlCommand(_command, db, callback)
+                        _this.mysqlCommand(_command, db, callback,close)
                     })
                 } else {
                     var queryTables = "SELECT COUNT(*) as total FROM information_schema.tables WHERE table_schema = '" + db + "';"
                     con.query(queryTables, function (err, record) {
                         if (record[0].total < 3) {
-                            _this.mysqlCommand(_command, db, callback)
+                            _this.mysqlCommand(_command, db, callback,close)
                         } else {
                             callback()
                         }
