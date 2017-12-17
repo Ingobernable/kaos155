@@ -250,7 +250,7 @@
                     if (ok == 0) {
                         callback(data, ok)
                     } else {
-                        options.SQL.scrapDb.query("UPDATE _"+type.toLowerCase()+"_text_"+data.anyo+" SET parser="+ok+" WHERE BOLETIN='" + data.cod + "'", function(err,record){
+                        options.SQL.scrapDb.SQL.db.query("UPDATE _"+type.toLowerCase()+"_text_"+data.anyo+" SET parser="+ok+" WHERE BOLETIN='" + data.cod + "'", function(err,record){
                             callback(data, ok)
                         })
                     }

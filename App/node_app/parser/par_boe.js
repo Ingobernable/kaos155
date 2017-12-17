@@ -82,7 +82,7 @@ module.exports = function (app, callback) {
             Preceptos: function (options, type, callback) {
 
                 var consulta = function (type, _cb) {
-                    options.SQL.scrapDb.query('call GetNextTextParser(?,?)', [type, app.anyo], function (err, record) {
+                    options.SQL.scrapDb.SQL.db.query('call GetNextTextParser(?,?)', [type, app.anyo], function (err, record) {
                         app.process.stdout.write(app, options, '\x1b[33m','+B'+'\x1b[0m')
                         _cb(err, record)
                     })
@@ -374,7 +374,7 @@ module.exports = function (app, callback) {
 
     app.commonSQL.init(options, 'PARSER', app._fileCredenciales + options.Command, function (options) {
         app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
-            options.SQL.scrapDb = scrapdb.SQL.db
+            options.SQL.scrapDb = scrapdb
             callback(options)
         })
     })

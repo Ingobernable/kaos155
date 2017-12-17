@@ -1,5 +1,7 @@
 ﻿module.exports = function (app, callback) {
-    
+    console.log('proceso en construccion disculpa las molestias')
+    process.exit(1)
+
     var options = {
         Command: app.command,
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
