@@ -4,10 +4,16 @@
 <head>
     <meta charset="utf-8" />
     <title>KAOS 155</title>
+    <link href="/css/Semantic-UI-CSS-master-2.2/semantic.css" rel="stylesheet" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
 
-    <script src="/js/plugins/jquery/jquery-2.2.0.min.js"></script>
+    <script src="/js/plugins/jquery/jquery-3.2.1.min.js"></script>
     <script src="/js/plugins/socket.io/socket.io.js"></script>
-    <script src="/js/plugins/d3/d3.v4.min.js"></script>
+    <script src="/css/Semantic-UI-CSS-master-2.2/semantic.js"></script>
+    
+    <script src="/js/plugins/highlight/highlight.pack.js"></script>
+
+
     <script src="/js/client_app.js"></script>
     <script src="/js/io_app.js"></script>
     <script src="/js/client_home.js"></script>
@@ -32,16 +38,80 @@
 
         .menos {
             font-size: 2em;
-            color: brown;
+            color: #aed6e9;
         }
+
         .prov {
-            font-size:0.8em;
+            font-size: 0.8em;
         }
+
+        .ui.styled.accordion {
+            width: 100% !important;
+        }
+
+        pre.line-numbers {
+            position: relative;
+            padding-left: 3.8em;
+            counter-reset: linenumber;
+        }
+
+            pre.line-numbers > code {
+                position: relative;
+                white-space: inherit;
+            }
+
+        .line-numbers .line-numbers-rows {
+            position: absolute;
+            pointer-events: none;
+            top: 0;
+            font-size: 100%;
+            left: -3.8em;
+            width: 3em; /* works for line-numbers below 1000 lines */
+            letter-spacing: -1px;
+            border-right: 1px solid #999;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .line-numbers-rows > span {
+            pointer-events: none;
+            display: block;
+            counter-increment: linenumber;
+        }
+
+            .line-numbers-rows > span:before {
+                content: counter(linenumber);
+                color: #999;
+                display: block;
+                padding-right: 0.8em;
+                text-align: right;
+            }
     </style>
 </head>
 <body>
-    <p class="boxtittle"></p>
-    <span><span>BOLETIN:</span><span class="bol"></span></span>
-    <div class="boxcontainer"></div>
+    <div class="ui segment" style="margin:10px;">
+        <p class="boxtittle"></p>
+        <span><span>BOLETIN:</span><span class="bol"></span></span>
+
+
+        <div class="ui two column grid">
+            <div class="column">
+                <div class="ui segment">
+                    <div class="boxcontainer">
+                    </div>
+                </div>
+            </div>
+            <div class="column">
+                <div class="ui segment">
+                    <pre><code class="html">...</code></pre>
+                </div>
+            </div>
+        </div>
+        
+
+
+    </div>
 </body>
 </html>

@@ -78,7 +78,7 @@
         },
         init: function (options, type, _file, callback) {
             var _this = this
-            _this.encryptor = require('simple-encryptor')("bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : ''))
+            _this.encryptor = require('simple-encryptor')("bbdd_kaos155_text")
 
             if (process.env['KAOS_MYSQL_' + options.Command + '_PASS']) {
 
@@ -105,7 +105,7 @@
 
                             ]).then(function (resp) {
 
-                                var db = "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : '')
+                                var db = "bbdd_kaos155_text"
 
                                 var con = app.mysql.createConnection({
                                     host: resp.host,
