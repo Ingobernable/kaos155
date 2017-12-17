@@ -299,7 +299,7 @@
 
                                         options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', params, function (err, record) {
                                             if (err != null) {
-                                                app.process.stdout.write(app, options, '\x1b[31m'+'X'+'\x1b[0m')
+                                                app.process.stdout.write(app, options, '\x1b[31m','X','\x1b[0m')
                                                 cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
                                                 options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                                     var x = err

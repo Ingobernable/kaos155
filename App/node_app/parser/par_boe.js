@@ -83,7 +83,7 @@ module.exports = function (app, callback) {
 
                 var consulta = function (type, _cb) {
                     options.SQL.scrapDb.SQL.db.query('call GetNextTextParser(?,?)', [type, app.anyo], function (err, record) {
-                        app.process.stdout.write(app, options, '\x1b[33m','+B'+'\x1b[0m')
+                        app.process.stdout.write(app, options, '\x1b[33m','+B','\x1b[0m')
                         _cb(err, record)
                     })
                 }
@@ -198,7 +198,7 @@ module.exports = function (app, callback) {
                                     if (data.Empresa != null) {
                                         if (data.Empresa.length > 0 && data._Imp.length > 0) {
                                             options.SQL.insert(options, data, function (data, state) {
-                                                app.process.stdout.write(app,options,'\x1b[36m' + data._counterContratos + '\x1b[0mE')
+                                                app.process.stdout.write(app,options,'\x1b[36m' , data._counterContratos , '\x1b[0mE')
                                                 callback(data, state)
                                             })
                                         } else {
