@@ -934,21 +934,12 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(IN _Name  nvarchar(250), _iKey  nvarchar(15))
 BEGIN
-	DECLARE _counter int;
-    
-    SET _counter= (SELECT count(*) FROM borme_auditor WHERE _key = _iKey);
-    IF _counter = 0 THEN
-		BEGIN          
-   			INSERT INTO borme_auditor (Name, _key) VALUES (_Name,_iKey);
-        END;
-	END IF;
-    
+    INSERT IGNORE INTO borme_auditor (Name, _key) VALUES (_Name,_iKey);
     SELECT Id,Name,_key FROM borme_auditor WHERE _key = _iKey;
-    
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -963,7 +954,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Diario`(
 	IN _BOLETIN nvarchar(20) ,
@@ -992,9 +983,8 @@ BEGIN
 	SET _IdDiario = (SELECT last_insert_id() as Id );
             
 	IF _Empresa_Id>0 AND _Relacion_Id>0 THEN
-		SET _counter = (SELECT count(*) FROM borme_relaciones WHERE Diario_Id= _IdDiario);
-		IF _counter=0 THEN
-			INSERT INTO borme_relaciones (Diario_Id,Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo)
+	
+			INSERT IGNORE INTO borme_relaciones (Diario_Id,Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo)
 								  VALUES (_IdDiario,_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo); 
             IF _T_Relacion = 0 then
 				UPDATE borme_empresa SET ERelations=ERelations+1 , TRelations = TRelations + 1 WHERE id = _Relacion_Id;
@@ -1006,7 +996,7 @@ BEGIN
                 END IF;
             END IF;
 
-        END IF;
+
         
         IF _T_Relacion = 0 then
 			UPDATE borme_empresa SET ERelations=ERelations + 1 , TRelations = TRelations + 1 WHERE id = _Empresa_Id;
@@ -1033,20 +1023,12 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(7))
 BEGIN
-	DECLARE _counter int;
-    
-    SET _counter=(SELECT count(*) FROM borme_directivo where _key = _ikey);
-    IF _counter = 0 THEN
-		BEGIN
-			INSERT INTO borme_directivo  ( Name, _key) VALUES (_Name, _ikey);
-        END;
-	END IF;
+    INSERT IGNORE INTO borme_directivo  ( Name, _key) VALUES (_Name, _ikey);
 	SELECT Id , Name, _key FROM borme_directivo WHERE _key = _ikey;
-    
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1061,19 +1043,11 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(15))
 BEGIN
-	DECLARE _counter int;
-    
-    SET _counter= (SELECT count(*) FROM borme_empresa WHERE _key = _iKey);
-    IF _counter = 0 THEN
-		BEGIN          
-   			INSERT INTO borme_empresa (Name, _key) VALUES (_Name,_iKey);
-        END;
-	END IF;
-    
+    INSERT IGNORE INTO borme_empresa (Name, _key) VALUES (_Name,_iKey);
     SELECT Id,Name,_key FROM borme_empresa WHERE _key = _iKey;
     
 END ;;
@@ -1082,6 +1056,24 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Final view structure for view `volumen`
+--
+
+/*!50001 DROP VIEW IF EXISTS `volumen`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `volumen` AS select now() AS `now()`,`information_schema`.`tables`.`TABLE_SCHEMA` AS `TABLE_SCHEMA`,`information_schema`.`tables`.`TABLE_NAME` AS `TABLE_NAME`,`information_schema`.`tables`.`TABLE_ROWS` AS `TABLE_ROWS`,`information_schema`.`tables`.`AVG_ROW_LENGTH` AS `AVG_ROW_LENGTH`,`information_schema`.`tables`.`DATA_LENGTH` AS `DATA_LENGTH`,`information_schema`.`tables`.`INDEX_LENGTH` AS `INDEX_LENGTH`,`information_schema`.`tables`.`AUTO_INCREMENT` AS `AUTO_INCREMENT`,`information_schema`.`tables`.`ENGINE` AS `ENGINE` from `information_schema`.`tables` where ((`information_schema`.`tables`.`TABLE_SCHEMA` like 'bbdd%') and (`information_schema`.`tables`.`TABLE_ROWS` > 0)) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1091,5 +1083,3 @@ DELIMITER ;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2017-12-02  0:27:39
