@@ -1,15 +1,16 @@
-# kaos155
+<div align="center" id="top" valign="top">
+	<a href="https://github.com/StateMapper/StateMapper#top"><img src="doc/logo/logo.png" /></a>
+	<h3 align="center">Herramienta para la obtención de datos de Contratación con la administración pública y relaciones societarias en España.</h3>
+</div>
+<p align="center" id="badges">
+	<a href="#top"><img src="https://img.shields.io/badge/manuals-draft-red.svg?style=flat-square" /></a>
+	<a href="https://statemapper.net"><img src="https://img.shields.io/badge/code-prototype-red.svg?style=flat-square" /></a>
+	<a href="http://php.net/"><img src="https://img.shields.io/badge/language-NodeJS%2FMySQL-yellow.svg?style=flat-square" /></a>
+	<a href="https://github.com/ingobernable/kaos155/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-GPLv3-green.svg?style=flat-square" /></a>
+	<img src="https://img.shields.io/badge/chat-XMPP-ff69b4.svg" />
+</p>
 
-Herramienta para la obtención de datos de Contratación con la administración pública y relaciones societarias en España.
-
-```
- _   __                 __   _____ _____
-| | / /                /  | |  ___|  ___|
-| |/ /  __ _  ___  ___ `| | |___ \|___ \
-|    \ / _` |/ _ \/ __| | |     \ \   \ \
-| |\  \ (_| | (_) \__ \_| |_/\__/ /\__/ /
-\_| \_/\__,_|\___/|___/\___/\____/\____/
-```                                         
+-----
 
 Es una herramienta de software libre bajo los terminos de la licencia GPL 3. (ver archivo [LICENSE](https://github.com/Ingobernable/kaos155/blob/master/LICENSE) para más detalles).
 La herramienta fue desarrollada originalmente por Ricardo y Ana Torbellino y liberada como software libre tras el hackmeeting del 12 de Octubre del 2017 realizado en Madrid.
