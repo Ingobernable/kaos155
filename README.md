@@ -1,5 +1,5 @@
 <div align="center" id="top" valign="top">
-	<a href="https://github.com/ingobernable/kaos155#top"><img src="doc/logo/logo.png" /></a>
+	<a href="https://github.com/ingobernable/kaos155#top"><img src="doc/logo/logo-thin.png" /></a>
 	<h3 align="center">Herramienta para la obtención de datos de Contratación con la administración pública y relaciones societarias en España.</h3>
 </div>
 <p align="center" id="badges">
