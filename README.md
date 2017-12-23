@@ -3,8 +3,7 @@
 	<h3 align="center">Herramienta para la obtención de datos de Contratación con la administración pública y relaciones societarias en España.</h3>
 </div>
 <p align="center" id="badges">
-	<a href="#top"><img src="https://img.shields.io/badge/manuales-draft-red.svg?style=flat-square" /></a>
-	<img src="https://img.shields.io/badge/c%C3%B3digo-prototype-red.svg?style=flat-square" />
+	<img src="https://img.shields.io/badge/c%C3%B3digo-prot%C3%B3tipo-red.svg?style=flat-square" />
 	<a href="https://nodejs.org/"><img src="https://img.shields.io/badge/lenguaje-NodeJS%2FMySQL-yellow.svg?style=flat-square" /></a>
 	<a href="https://github.com/ingobernable/kaos155/blob/master/LICENSE"><img src="https://img.shields.io/badge/licencia-GPLv3-green.svg?style=flat-square" /></a>
 	<img src="https://img.shields.io/badge/chat-XMPP-ff69b4.svg" />
