@@ -249,9 +249,15 @@
                             })
                         },
                         keys: function (options, params, callback, _cberror) {
+                            //if (params.table == 'directivo' && params.e.split(" ") > 4)
+                                
                             options.SQL.db.query("CALL Insert_Data_BORME_" + params.table + "(?,?)", [params.e, params.k], function (err, _rec) {
                                 if (err != null || _rec[0][0] == null) {
-                                    _cberror(err)
+                                    app.commonSQL.SQL.commands.insert.errores(options, params.data.BOLETIN + '#' + params.data.ID_BORME , err.sql , err.sqlMessage , function (err2) {
+                                        app.process.stdout.write(app, options, '\x1b[31m', "x", '\x1b[0m')
+                                        _cberror(params)
+                                    })
+                                    //_cberror(err)
                                 } else {
 
                                     callback(params, _rec)

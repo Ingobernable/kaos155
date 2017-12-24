@@ -421,6 +421,7 @@
                             table: _table,
                             e: __data.values.value,
                             k: app.shorter.unique(__data.values.value),
+                            data:_linea.data
                         }
                         //params.table + "(?,?,?)", [params.data.ID, params.e, params.k]
                         app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
@@ -443,8 +444,8 @@
                                 app.process.stdout.write(app, options, '','', '\x1b[0m')
                                 callback(__data, _directivo[0][0].Id, params , Active)
                             }
-                        }, function (err, record) {
-                            debugger
+                        }, function (params) {
+                            callback(null)
                         })
                     //})
                

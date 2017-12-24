@@ -1,6 +1,28 @@
 --
 -- Dumping routines for database 'bbdd_kaos155'
 --
+/*!50003 DROP FUNCTION IF EXISTS `get_Name` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `GET_NAME`( __key nvarchar(7)) RETURNS varchar(255) CHARSET utf8
+BEGIN
+	DECLARE _value nvarchar(255);
+	SET _value = (SELECT Nombre FROM borme_keys WHERE _key = __key);
+
+RETURN _value;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP FUNCTION IF EXISTS `SPLIT_STR` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -71,6 +93,37 @@ BEGIN
     END;  
   END WHILE;  
   RETURN s;  
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `_type` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `_type`( Empresa int, Directivo int, Auditor int ) RETURNS int(11)
+BEGIN  
+  DECLARE _r int;  
+  IF Auditor >0 THEN
+	SET _r = 2;
+  ELSE
+	  IF Directivo >0 THEN
+		SET _r = 1;
+	  ELSE
+		  IF Empresa >0 THEN
+			SET _r = 0;
+		  END IF;
+	  END IF;
+  END IF;
+  RETURN _r;  
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -938,8 +991,8 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(IN _Name  nvarchar(250), _iKey  nvarchar(15))
 BEGIN
-    INSERT IGNORE INTO borme_auditor (Name, _key) VALUES (_Name,_iKey);
-    SELECT Id,Name,_key FROM borme_auditor WHERE _key = _iKey;
+    INSERT borme_keys (_key,Nombre,_Auditor ) VALUES(_iKey,_Name,1) ON DUPLICATE KEY UPDATE _Auditor = 1;
+    SELECT LAST_INSERT_ID() as Id, _iKey as _key;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -976,39 +1029,14 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Diario`(
 )
 BEGIN
 	DECLARE _counter int;
-    DECLARE _IdDiario INT;
-		
-    INSERT INTO borme_diario (BOLETIN,BOLETIN_Id,Dia,Mes,Anyo,Provincia,Empresa_key, Relation_key,T_Relation,Type,_key,_value) 
-            VALUES ( _BOLETIN,_BOLETIN_ID,_Dia,_Mes,_Anyo,_Provincia,_Empresa_key,_Relacion_key,_T_Relacion,_type,_key,_value);
-	SET _IdDiario = (SELECT last_insert_id() as Id );
-            
+    
 	IF _Empresa_Id>0 AND _Relacion_Id>0 THEN
 	
-			INSERT IGNORE INTO borme_relaciones (Diario_Id,Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo)
-								  VALUES (_IdDiario,_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo); 
-            IF _T_Relacion = 0 then
-				UPDATE borme_empresa SET ERelations=ERelations+1 , TRelations = TRelations + 1 WHERE id = _Relacion_Id;
-            ELSE 
-				IF _T_Relacion = 1 then
-					UPDATE borme_directivo SET TRelations = TRelations + 1 WHERE id = _Relacion_Id;
-                ELSE
-					UPDATE borme_auditor SET TRelations = TRelations + 1 WHERE id = _Relacion_Id;
-                END IF;
-            END IF;
+			INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo)
+								  VALUES (_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo); 
+	END IF;  
+    
 
-
-        
-        IF _T_Relacion = 0 then
-			UPDATE borme_empresa SET ERelations=ERelations + 1 , TRelations = TRelations + 1 WHERE id = _Empresa_Id;
-		else
-			IF _T_Relacion = 1 then
-				UPDATE borme_empresa SET DRelations=DRelations + 1 ,TRelations = TRelations + 1 WHERE id = _Empresa_Id;
-			ELSE
-				UPDATE borme_empresa SET ARelations=ARelations + 1 ,TRelations = TRelations + 1 WHERE id = _Empresa_Id;
-			END IF;
-		END IF;
-        
-	END IF;        
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1027,8 +1055,9 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(7))
 BEGIN
-    INSERT IGNORE INTO borme_directivo  ( Name, _key) VALUES (_Name, _ikey);
-	SELECT Id , Name, _key FROM borme_directivo WHERE _key = _ikey;
+    INSERT borme_keys (_key,Nombre,_Directivo ) VALUES(_iKey,_Name,1) ON DUPLICATE KEY UPDATE _Directivo = 1;
+    
+	SELECT LAST_INSERT_ID() as Id,_iKey as _key;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1047,8 +1076,10 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(15))
 BEGIN
-    INSERT IGNORE INTO borme_empresa (Name, _key) VALUES (_Name,_iKey);
-    SELECT Id,Name,_key FROM borme_empresa WHERE _key = _iKey;
+    INSERT borme_keys (_key,Nombre,_Empresa ) VALUES(_iKey,_Name,1) ON DUPLICATE KEY UPDATE _Empresa = 1;
+    
+
+    SELECT LAST_INSERT_ID() as Id,_iKey as _key;
     
 END ;;
 DELIMITER ;
@@ -1056,6 +1087,24 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Final view structure for view `relations`
+--
+
+/*!50001 DROP VIEW IF EXISTS `relations`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `relations` AS select `borme_relaciones`.`Empresa_key` AS `EKey`,`borme_relaciones`.`Relation_key` AS `RKey`,`GET_NAME`(`borme_relaciones`.`Empresa_key`) AS `Empresa`,`GET_NAME`(`borme_relaciones`.`Relation_key`) AS `Relacion`,`_type`(`bkm`.`_Empresa`,`bkm`.`_Directivo`,`bkm`.`_Auditor`) AS `EType`,`_type`(`bkr`.`_Empresa`,`bkr`.`_Directivo`,`bkr`.`_Auditor`) AS `RType`,`borme_relaciones`.`Motivo` AS `Motivo`,`borme_relaciones`.`Cargo` AS `Cargo`,`borme_relaciones`.`Activo` AS `Activo`,`borme_relaciones`.`Anyo` AS `anyo` from ((`borme_relaciones` left join `borme_keys` `bkm` on((`borme_relaciones`.`Empresa_key` = `bkm`.`_key`))) left join `borme_keys` `bkr` on((`borme_relaciones`.`Relation_key` = `bkr`.`_key`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
 -- Final view structure for view `volumen`
@@ -1083,3 +1132,5 @@ DELIMITER ;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2017-12-24 13:40:56

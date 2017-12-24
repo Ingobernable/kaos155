@@ -57,49 +57,51 @@ module.exports = function (app, callback) {
 
                             }
 
-                            if (_Dl == null || params == null)
-                                debugger
-                            //if (_line.data[e] == null)
-                            //    debugger
-                            var _idEmpresa = true
-                            // if(idDirectivo>0)
-                            //      _idEmpresa = options.foundEmpresas(options.DirEmpresas, _linea.k)
-                            //if (_idEmpresa == null)
-                            //    debugger
+                            if (_Dl == null || params == null) {
+                                _cb(_linea)
+                            } else {
+                                //if (_line.data[e] == null)
+                                //    debugger
+                                var _idEmpresa = true
+                                // if(idDirectivo>0)
+                                //      _idEmpresa = options.foundEmpresas(options.DirEmpresas, _linea.k)
+                                //if (_idEmpresa == null)
+                                //    debugger
 
-                            //debugger
+                                //debugger
 
-                            params = [
-                                 _linea.data.BOLETIN,
-                                 _linea.id,
-                                 _linea.data.dia,
-                                 _linea.data.mes,
-                                 _linea.data.BOLETIN.match(/[\d]{4}/)[0],
-                                 _linea.data.provincia,
-                                 _linea.ID,
-                                 _linea.k,
-                                 idRelacion,
-                                 params.k,
-                                 _Dl.values == null ? 0 : _Dl.values.Auditor ? 2 : _Dl.values.Empresa ? 0 : 1,
-                                 (Active ? 1 : 0),
-                                 _Dl.type ? _Dl.type : _Dl.values.type,
-                                 _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
-                                 (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value)
-                            ]
+                                params = [
+                                    _linea.data.BOLETIN,
+                                    _linea.id,
+                                    _linea.data.dia,
+                                    _linea.data.mes,
+                                    _linea.data.BOLETIN.match(/[\d]{4}/)[0],
+                                    _linea.data.provincia,
+                                    _linea.ID,
+                                    _linea.k,
+                                    idRelacion,
+                                    params.k,
+                                    _Dl.values == null ? 0 : _Dl.values.Auditor ? 2 : _Dl.values.Empresa ? 0 : 1,
+                                    (Active ? 1 : 0),
+                                    _Dl.type ? _Dl.type : _Dl.values.type,
+                                    _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
+                                    (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value)
+                                ]
 
-                            if (_Dl == null) {
-                                debugger
-                                console.log('_Dl = null error borme.js')
+                                if (_Dl == null) {
+                                    debugger
+                                    console.log('_Dl = null error borme.js')
+                                }
+                                //
+                                //insertamos un dato en el diario de movimientos
+                                //
+                                app.commonSQL.SQL.commands.insert.Borme.diario(options, params, function (err, _record) {
+                                    app.process.stdout.write(app, options, '\x1b[33m', '.', '\x1b[0m')
+                                    //repitiendo el proceso para todos los datos de una linea
+                                    _e++
+                                    _func(_e, _linea, _cb, _func)
+                                })
                             }
-                            //
-                            //insertamos un dato en el diario de movimientos
-                            //
-                            app.commonSQL.SQL.commands.insert.Borme.diario(options, params, function (err, _record) {
-                                app.process.stdout.write(app,options,'\x1b[33m','.','\x1b[0m')
-                                //repitiendo el proceso para todos los datos de una linea
-                                _e++
-                                _func(_e, _linea, _cb, _func)
-                            })
 
                         })
                     } else {
