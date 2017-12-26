@@ -82,8 +82,6 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
 
 
     require("./node_app/options_menu.js")(App, process.argv.slice(2), function (app, myArgs, date, automatic) {
-
-
             var App = app.merge(app, {
                 command: myArgs[0],
 
@@ -272,7 +270,6 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
                 
 
             })
-
             App.parameters(App, myArgs, function (app) {
                 if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {
                     myArgs[2] = (date.getFullYear() + '').pad(4) + '0212'
@@ -302,7 +299,6 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
                 }
 
             })
-        //}
     })
 
 
