@@ -81,7 +81,7 @@
         d3.json("/relaciones/@key" , function (error, flare) {
             if (error) throw error;
 
-            root = JSON.parse(flare)._root;
+            root = flare._root;
             root.x0 = height / 2;
             root.y0 = 0;
 
