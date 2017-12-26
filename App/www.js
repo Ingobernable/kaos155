@@ -6,7 +6,8 @@ var App = {
     http : require('http'),
     fs: require("fs"),
     path: require('path'),
-    mysql: require('mysql')
+    mysql: require('mysql'),
+    inquirer: require('inquirer'),
 }
 
 require('./node_app/sql_common.js')(App, function (SQL) {
