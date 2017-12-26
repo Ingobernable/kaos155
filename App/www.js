@@ -11,7 +11,7 @@ var App = {
 }
 
 require('./node_app/sql_common.js')(App, function (SQL) {
-    SQL.init({ SQL: { db: null } }, 'PARSER', 'ACCESO_mysql_PARSER', function (options) {
+    SQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'PARSER', 'ACCESO_mysql_PARSER', function (options) {
         var www = App.express();
         var server = App.http.createServer(www).listen(80);
 
