@@ -9,7 +9,7 @@
         url: app.urlBOE,
         opc: ['-table', '-raw', '-layout', '-enc UTF-8'],
         pdfOpc: ['-raw', '-nopgbrk', '-enc UTF-8'],
-        keysContrato: ["Organismo", "Dependencia", "Descripci\u00F3n", "Tipo", "Lote", "Tramitaci\u00F3n", "Presupuesto", "Procedimiento", "Forma", "Importe", "Contratista", "Nacionalidad", ".-"],
+        keysContrato: ["Organismo", "Dependencia", "Descripci\u00F3n", "Tipo", "Lote", "Tramitaci\u00F3n", "Presupuesto", "Procedimiento", "Forma", "Importe", "Contratista", "Contratistas", "Nacionalidad", "explotaci\u00F3n", ".-"],
         Rutines: require('../_utils/CONTRATOS/__Rutines')(app),
         //transforms: require('./BOLETIN/__Transforms')(app),
         _common: require('../_common')(app),

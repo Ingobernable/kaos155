@@ -276,7 +276,7 @@
                         text: function (options, _analisis, data, callback) {
                             //var i = isNaN(data.importe * 1) ? 0 : data.importe * 1
                             if (data.err != null) {
-                                app.process.stdout.write(app, options, '\x1b[31m','X','\x1b[0m')
+                                app.process.stdout.write(app, options, '\x1b[31m','CNS','\x1b[0m')
                                 cadSql = "CALL Insert_Error_Boletin(?,?,?)"
                                 options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1],data._list[data.e], data.err], function (err2) {
                                     callback(data)
@@ -287,7 +287,10 @@
 
                                 options.Rutines.normalizeTextContrato(data.textExtend, options.keysContrato, function (_text, _jsonData) {
 
-                                        _analisis.extra.data = _jsonData
+                                    _analisis.extra.data = _jsonData
+                                    if (!(_jsonData.Contratista != null && (_jsonData.Importe != null || _analisis._importe.length > 0))) {
+                                        data.err = "FALTA CONTRATISTA o IMPORTES"
+                                    }
                                         var params = [
                                             _text.length,
                                             boletin.split("-")[0],                                                      //type
@@ -305,7 +308,7 @@
 
                                         options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', params, function (err, record) {
                                             if (err != null) {
-                                                app.process.stdout.write(app, options, '\x1b[31m','X','\x1b[0m')
+                                                app.process.stdout.write(app, options, '\x1b[31m','INS','\x1b[0m')
                                                 cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
                                                 options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                                     var x = err
@@ -313,12 +316,9 @@
                                                     callback(data)
                                                 })
                                             } else {
-                                                if (!(_jsonData.Contratista != null && (_jsonData.Importe != null || _analisis._importe.length > 0))) {
-                                                    app.process.stdout.write(app, options, '\x1b[31m','XXX','\x1b[0m')
-                                                    cadSql = "CALL Insert_Error_Boletin(?,?,?)"
-                                                    options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], data._list[data.e], "FALTA CONTRATISTA o IMPORTES"], function (err2) {
-                                                        callback(data)
-                                                    })
+                                                if (data.err!=null) {
+                                                    app.process.stdout.write(app, options, '\x1b[31m','ERR','\x1b[0m')
+                                                    callback(data)
                                                 } else {
                                                     app.process.stdout.write(app, options, '\x1b[32m','+','\x1b[0m')
                                                     callback(data)

@@ -1,5 +1,6 @@
 ﻿
 module.exports = function (app) {
+    _ = app._
     return {
         ADD: function (_arraysIn) {
             var _arrOut = []
@@ -9,6 +10,9 @@ module.exports = function (app) {
                 }
             }
             return _arrOut
+        },
+        deburr: function (opc, string) {
+            return _.deburr(string)
         },
         replaceMatch: function (opc, string, _search, _repl, ignore) {
             //return _.replace(string, new RegExp(_search, "g"), _repl)
@@ -96,6 +100,10 @@ module.exports = function (app) {
                 ],
                 Contratista: [
 
+
+                    ["F", { f: _this.replaceAll }, "Lote único", ""],
+                    ["F", { f: _this.replaceAll }, "Ñ","&Ene;"],
+                    ["F", { f: _this.replaceAll }, "ñ","&ene;"],
                     ["F", { f: _this.removeFirstChar }, '" "'],
                     ['F', { f: _this.replaceAll }, ', SAU.', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'S o c i e d a d A n ó n i -ma', ' SA.'],
@@ -133,28 +141,29 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, ', sociedad anónima', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'sociedad anómima', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'sociedadanomima', 'sa.'],
-                     ['F', { f: _this.replaceAll }, 'sociedadlimitada', ' sl.'],
-                     ['F', { f: _this.replaceAll }, ', sociedadlimitada', ' sl.'],
+                    ['F', { f: _this.replaceAll }, 'sociedadlimitada', ' sl.'],
+                    ['F', { f: _this.replaceAll }, ', sociedadlimitada', ' sl.'],
 
                     ['F', { f: _this.replaceAll }, 'union temporal de empresas', 'UTE '],
-                    ['F', { f: _this.replaceAll }, 'Union Temporal de Empresas', 'UTE '],
-                    ['F', { f: _this.replaceAll }, 'Unión Temporal de Empresas', 'UTE '],
-                    ['F', { f: _this.replaceAll }, 'unión temporal de empresas', 'UTE '],
-
 
                     ['F', { f: _this.replaceAll }, ' S A', ' SA.'],
+                    ['F', { f: _this.replaceAll }, ' S L', ' SL.'],
                     ['F', { f: _this.replaceAll }, '. S L', ' SL.'],
                     ['F', { f: _this.replaceAll }, '. S A', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', S A L', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', SAL', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', S L L', ' SL.'],
-                    ['F', { f: _this.replaceAll }, '. S L U',  ' SL.'],
+                    ['F', { f: _this.replaceAll }, '. S L U', ' SL.'],
+                    ['F', { f: _this.replaceAll }, ' S L U', ' SLU.'],
                     ['F', { f: _this.replaceAll }, 'S.L.', 'SL.'],
                     ['F', { f: _this.replaceAll }, 'S.A.', 'SA.'],
+                    ['F', { f: _this.replaceAll }, ' S. A.', ' SA.'], 
                     ['F', { f: _this.replaceAll }, ', S A', ' SA.'],
                     ['F', { f: _this.replaceAll }, ' SAE', ' SA.'],
                     ['F', { f: _this.replaceAll }, '. SAU', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'UTE ', 'UTE. '],
+                    ['F', { f: _this.replaceAll }, ', S.C.', ' SC'],
+                    
 
 
                     //NÚMEROS DE ORDEN
@@ -215,17 +224,19 @@ module.exports = function (app) {
                     
                 ],
                 exoticChars: [
-                    ['F', { f: _this.replaceMatch }, '[ÀÁÂÃÄÅÆ]', 'A'],
-                    ['F', { f: _this.replaceMatch }, '(È|É|Ê|Ë)', 'E'],
-                    ['F', { f: _this.replaceMatch }, '(Ì|Í|Î|Ï)', 'I'],
-                    ['F', { f: _this.replaceMatch }, '(Ò|Ó|Ô|Ö)', 'O'],
-                    ['F', { f: _this.replaceMatch }, '(Ù|Ú|Û|Ü)', 'U'],
+                    ['F', { f: _this.deburr }],
+                    ["F", { f: _this.replaceAll }, "&Ene;", "Ñ"],
+                    ["F", { f: _this.replaceAll }, "&ene;", "ñ"],
+                   // ['F', { f: _this.replaceMatch }, '(È|É|Ê|Ë)', 'E'],
+                   // ['F', { f: _this.replaceMatch }, '(Ì|Í|Î|Ï)', 'I'],
+                   // ['F', { f: _this.replaceMatch }, '(Ò|Ó|Ô|Ö)', 'O'],
+                   // ['F', { f: _this.replaceMatch }, '(Ù|Ú|Û|Ü)', 'U'],
 
-                    ['F', { f: _this.replaceMatch }, '(à|á|à|ä|)', 'a'],
-                    ['F', { f: _this.replaceMatch }, '(è|é|ê|ë)', 'e'],
-                    ['F', { f: _this.replaceMatch }, '[íìíîï]', 'i'],
-                    ['F', { f: _this.replaceMatch }, '(ò|ó|ô|ö)', 'o'],
-                    ['F', { f: _this.replaceMatch }, '(ù|ú|û|ü)', 'u']
+                   // ['F', { f: _this.replaceMatch }, '(à|á|à|ä|)', 'a'],
+                   // ['F', { f: _this.replaceMatch }, '(è|é|ê|ë)', 'e'],
+                   // ['F', { f: _this.replaceMatch }, '[íìíîï]', 'i'],
+                   // ['F', { f: _this.replaceMatch }, '(ò|ó|ô|ö)', 'o'],
+                   // ['F', { f: _this.replaceMatch }, '(ù|ú|û|ü)', 'u']
 
 
                 ],
