@@ -17,7 +17,7 @@ BEGIN
 
         DECLARE n INT ;
 
-        -- get max number of items
+        
         SET n = LENGTH(s) - LENGTH(REPLACE(s, del, '')) + 1;
 
         IF i > n THEN
@@ -40,7 +40,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `DropTextFromYear`(_from_year int,_to_year int,_type nvarchar(7))
 BEGIN
@@ -86,8 +86,8 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `GetNextTextParser` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
 /*!50003 SET character_set_client  = utf8 */ ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
@@ -115,6 +115,37 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `GetNextTextParser_UTE` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetNextTextParser_UTE`(_type nvarchar(5) , _anyo int)
+BEGIN
+
+		IF _type='BORME' THEN 
+			SET @s= CONCAT( 'SELECT * FROM `_', LOWER(_type) ,'_text_' , _anyo ,'` WHERE ( `parser` = 4 ) ORDER BY `id` LIMIT 1;');
+			PREPARE stmt1 FROM @s;
+			EXECUTE stmt1;  
+			DEALLOCATE PREPARE stmt1;
+		ELSE 
+        	SET @s= CONCAT( 'SELECT * FROM `_', LOWER(_type) ,'_text_' , _anyo ,'` WHERE ( `parser` = 4 and LENGTH(_err)=0 ) ORDER BY `id` LIMIT 1;');
+			PREPARE stmt1 FROM @s;
+			EXECUTE stmt1;  
+			DEALLOCATE PREPARE stmt1;
+        END IF;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `InsertAnyo` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -123,7 +154,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `InsertAnyo`(_type nvarchar(5), _anyo int)
 BEGIN
@@ -139,7 +170,7 @@ BEGIN
 		END IF;
 		IF _type='BORME' THEN
 			SET _cmp = "`ID_BORME` int(11) DEFAULT '0', `provincia` varchar(55) DEFAULT NULL, `parser` int DEFAULT 0,";
-            SET _ki = ',KEY `prov` (`provincia`),KEY `prov_mes` (`provincia`,`mes`), KEY `ID_BORME` (`ID_BORME`) ';
+            SET _ki = ',KEY `prov` (`provincia`),KEY `prov_mes` (`provincia`,`mes`) ';
         END IF;
 
 		IF _type='BOCM' THEN
@@ -147,7 +178,7 @@ BEGIN
 			SET _cmp = "`analisis` JSON, `_p` int(11) DEFAULT NULL, `parser` int DEFAULT 0,";
         END IF;
 
-		SET @s= CONCAT('CREATE TABLE IF NOT EXISTS `_', LOWER(_type) ,'_text_' , _anyo ,'` ( `id` int(11) NOT NULL AUTO_INCREMENT, `dia` varchar(2) DEFAULT NULL, `mes` varchar(2) DEFAULT NULL,`BOLETIN` varchar(22) DEFAULT NULL,`texto` mediumtext,', _cmp ,' `_err` VARCHAR(25), PRIMARY KEY (`id`),KEY `parser` (`parser`)' , _ki ,') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;');
+		SET @s= CONCAT('CREATE TABLE IF NOT EXISTS `_', LOWER(_type) ,'_text_' , _anyo ,'` ( `id` int(11) NOT NULL AUTO_INCREMENT, `dia` varchar(2) DEFAULT NULL, `mes` varchar(2) DEFAULT NULL,`BOLETIN` varchar(22) DEFAULT NULL,`texto` mediumtext,', _cmp ,' `_err` VARCHAR(55), PRIMARY KEY (`id`),KEY `parser` (`parser`)' , _ki ,') ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;');
 
 
 		PREPARE stmt1 FROM @s;
@@ -163,7 +194,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `InsertAnyo` */;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Error_Boletin` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -173,13 +204,12 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost`  PROCEDURE `Insert_Error_Boletin`(IN _Boletin nvarchar(20), IN _SqlMensaje mediumtext, IN _SqlError mediumtext)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Error_Boletin`(IN _Boletin nvarchar(20), IN _SqlMensaje mediumtext, IN _SqlError mediumtext)
 BEGIN
 	INSERT INTO errores (BOLETIN, SqlMensaje, SqlError) VALUES (_Boletin,_SqlMensaje,_SqlError);
     UPDATE sumarios SET scrap = 0, _error=1 WHERE BOLETIN = _Boletin;
 END ;;
 DELIMITER ;
-
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
@@ -192,7 +222,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Text_BOLETIN`(
 
@@ -271,7 +301,11 @@ BEGIN
 
     END IF;
     SELECT last_insert_id() as ID;
-    UPDATE sumarios SET Contrato=1, scrap=1 WHERE BOLETIN=_BOLETIN;
+    IF LENGTH(_err) = 0 THEN
+		UPDATE sumarios SET Contrato=1, scrap=1 WHERE BOLETIN=_BOLETIN;
+	ELSE
+		UPDATE sumarios SET Contrato=1, scrap=1, parser=0 WHERE BOLETIN=_BOLETIN;
+    END IF;
     UPDATE lastread SET ID_LAST = _BOLETIN WHERE Type= _Type AND Anyo=_Anyo;
     
     
@@ -317,4 +351,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-11-22  8:50:32
+-- Dump completed on 2018-01-01 11:09:27

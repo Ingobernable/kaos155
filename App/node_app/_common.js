@@ -250,8 +250,11 @@
                     if (ok == 0) {
                         callback(data, ok)
                     } else {
-                        options.SQL.scrapDb.SQL.db.query("UPDATE _"+type.toLowerCase()+"_text_"+data.anyo+" SET parser="+ok+" WHERE BOLETIN='" + data.cod + "'", function(err,record){
-                            callback(data, ok)
+                        options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + data.anyo + " SET parser=" + ok + " WHERE BOLETIN='" + data.cod + "'", function (err, record) {
+                            cadsql = "UPDATE sumarios  SET parser = " + ok + " WHERE BOLETIN= '" + data.cod + "'" 
+                            options.SQL.scrapDb.SQL.db.query(cadsql, function (err, record) {
+                                callback(data, ok)
+                            })
                         })
                     }
                 }, options.parser.Preceptos)

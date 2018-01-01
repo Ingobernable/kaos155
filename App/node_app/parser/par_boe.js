@@ -11,15 +11,18 @@ module.exports = function (app, callback) {
             saveCodeMaterias: function (options,data,callback) {
                 var _counter=0
                 var _exit = ""
-
+                //debugger
                 _.forEach(data.materias.split(";"), function (value) {
-                    if ((value.match(/\d{3,7}/) != null || []).length > 0) {
-                    _code_materia = value.match(/\d{3,8}/)[0]
-                    _text_materia = value.substr(_code_materia.length+1, value.length)
-                    options.SQL.db.query('Call Insert_Data_BOLETIN_Materia_Aux(?,?,?)', [data.type,_code_materia,_text_materia], function (err, record) { }) 
-                    _exit = _exit + (_exit.length>0?";":"") + _code_materia
-                    _counter++
-                        }
+                    if ((value.match(/^\d{3,8}/) || []).length > 0) {
+                        _code_materia = value.match(/\d{3,8}/)[0]
+                        _text_materia = value.substr(_code_materia.length+1, value.length)
+                        options.SQL.db.query('Call Insert_Data_BOLETIN_Materia_Aux(?,?)', [_code_materia, _text_materia], function (err, record) {
+                            if(err!=null)
+                                debugger
+                        }) 
+                        _exit = _exit + (_exit.length>0?";":"") + _code_materia
+                        _counter++
+                    }
                 })
                 data.materias = _exit
                 data._counterMaterias = _counter
@@ -64,9 +67,6 @@ module.exports = function (app, callback) {
                             JSON.stringify(data.extra)
                         ]
 
-                        
-
-
                         options.SQL.db.query('Call Insert_Data_BOLETIN(?,?, ?,?, ?,?,?, ?,?,?,?, ?,?,?, ?,?,?)', params, function (err, record) {
                             if (err != null) {
                                 debugger
@@ -86,6 +86,19 @@ module.exports = function (app, callback) {
                     var _acron = ""
                     var _nif = ""
                     var _key = ""
+
+                    writeContrato = function (cod, keyEmpresa, empresa, importe, _key, _acron, _nif, counter, callback) {
+                        if (_acron.length > 10) {
+                            _acron = "?????"
+                        }
+                        options.SQL.db.query('Call Insert_Data_BOLETIN_Contrato(?,?,?,?,?,?,?,?)', [cod, keyEmpresa, empresa, importe, _key, _acron, _nif, counter], function (err, record) {
+                            if (err != null) {
+                                debugger
+                            }
+                            callback(data, 1)
+                        })
+                    }
+
 
                     if ( ( (empresa.match(/^\w\d{7,8}/) || []).length > 0) ) {
                         _nif = empresa.match(/^\w\d{7,8}/)[0]
@@ -130,23 +143,36 @@ module.exports = function (app, callback) {
                     } else {
                         empresa = empresa.substr(0, _fin + 3)
                     }
-                    if (_.trim(empresa).length > 4) {
-                        options.SQL.db.query('SELECT * FROM borme_keys WHERE _key=?', [app.shorter.unique(_.trim(empresa)) ], function (err, record) {
+                    empresa = _.trim(empresa)
+                    if (empresa.length > 4) {
+                        var _key = app.shorter.unique(empresa)
+                        options.SQL.db.query('SELECT * FROM borme_keys WHERE _key=?', [ _key ], function (err, record) {
                             if (err) {
                                 debugger
                             } else {
-                                if(record.length>0)
+                                if (record.length > 0) {
                                     _key = record[0]._key
-                            }
-                            if (_acron.length > 10) {
-                                _acron="?????"
-                            }
-                            options.SQL.db.query('Call Insert_Data_BOLETIN_Contrato(?,?,?,?,?,?,?)', [cod, empresa, importe, _key, _acron, _nif, counter], function (err, record) {
-                                if (err != null) {
-                                    debugger
+                                    var suggestEmpresa = record[0].Nombre
+                                    empresa = ""
+                                    writeContrato(cod, suggestEmpresa, empresa, importe, _key, _acron, _nif, counter, callback)
+                                } else {
+
+                                    options.SQL.db.query('SELECT * FROM bbdd_kaos155.borme_keys WHERE MATCH (Nombre) AGAINST (?) LIMIT 1', [ empresa ], function (err, record) {
+                                        if (record.length > 0) {
+                                            var _words = empresa.split(" ")
+                                            var _prop_words = record[0].Nombre.split(" ") 
+                                            _key = record[0]._key
+                                            var suggestEmpresa = record[0].Nombre
+                                            writeContrato(cod, suggestEmpresa, empresa, importe, _key, _acron, _nif, counter, callback)
+                                        } else {
+                                            _key=""
+                                            writeContrato(cod, suggestEmpresa, empresa, importe, _key, _acron, _nif, counter, callback)
+                                        }
+                                    })
                                 }
-                                callback(data, 1)
-                            })
+                            }
+
+
 
                         })
                     } else {
@@ -185,11 +211,17 @@ module.exports = function (app, callback) {
                                     options.patterns.sinBlancoInicial,
                                     options.patterns.sinPuntos
                                 ])
-                        )
-
+                        ).replaceAll( /^\d\) / , "")
+                        //_Empresa = _Empresa
                         console.log(_analisis.data.Lotes, _Empresa)
-                        //if (record[0][0].BOLETIN == 'BOE-B-2001-1052' || record[0][0].BOLETIN == 'BOE-B-2001-2028')
-                        //    debugger
+                        var _stop = ['BOE-B-2001-23067',
+                            'BOE-B-2001-23054',
+                            'BOE-B-2001-1066',
+                            'BOE-B-2001-21012',
+                            'BOE-B-2001-20101']
+
+                        if (_stop.indexOf(record[0][0].BOLETIN)>-1)
+                            debugger
 
                         var _l = [false, false]
                         if (_analisis.data.Lotes != null)
@@ -222,7 +254,7 @@ module.exports = function (app, callback) {
                                 anyo: app.anyo,
                                 Empresa: (_Empresa.indexOf(' SA') > -1 || _Empresa.indexOf(' SL') > -1) ? _Empresa : _e ,
                                 adjudicador: _analisis.data.Organismo == null ? "" : _analisis.data.Organismo.replace("..", "."),
-                                materias: _analisis._a.materias,
+                                materias: _analisis._a.materias.length > 0 ? _analisis._a.materias : _analisis._a.materias_cpv,
 
                                 tipoBoletin: _analisis._a.tipo,
                                 tipoTramite: _analisis.data.Tramitacion == null ? "" : _analisis.data.Tramitacion.replace("..", "."), //options.Rutines.extract(_text, 'Tramitaci\u00F3n', options.transforms.ADD([options.patterns.General, options.patterns.sinPuntos, options.patterns.sinBlancoInicial]), true),
@@ -263,7 +295,7 @@ module.exports = function (app, callback) {
                                         data._Imp = _imp * 1
                                     }
                                 } else {
-                                    var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe : options.Rutines.get.importes(_text, data, options, options.patterns)
+                                    var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe.replace(".","").replace(",",".") : options.Rutines.get.importes(_text, data, options, options.patterns)
                                     data._Imp = _imp * 1
                                 }
 

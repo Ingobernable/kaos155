@@ -154,7 +154,7 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, ', SAL', ' SA.'],
                     ['F', { f: _this.replaceAll }, ', S L L', ' SL.'],
                     ['F', { f: _this.replaceAll }, '. S L U', ' SL.'],
-                    ['F', { f: _this.replaceAll }, ' S L U', ' SLU.'],
+                    ['F', { f: _this.replaceAll }, ' S L U', ' SL.'],
                     ['F', { f: _this.replaceAll }, 'S.L.', 'SL.'],
                     ['F', { f: _this.replaceAll }, 'S.A.', 'SA.'],
                     ['F', { f: _this.replaceAll }, ' S. A.', ' SA.'], 
@@ -162,7 +162,9 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, ' SAE', ' SA.'],
                     ['F', { f: _this.replaceAll }, '. SAU', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'UTE ', 'UTE. '],
-                    ['F', { f: _this.replaceAll }, ', S.C.', ' SC'],
+                    ['F', { f: _this.replaceAll }, ', S.C.', ' SL'],
+                    ['F', { f: _this.replaceAll }, ', S. C.', ' SL'],
+                    
                     
 
 

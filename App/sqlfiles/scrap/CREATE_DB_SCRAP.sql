@@ -1,10 +1,10 @@
-CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_text` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_text` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `bbdd_kaos155_text`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
--- Host: localhost    Database: bbdd_kaos155_text
+-- Host: 54.36.112.143    Database: bbdd_kaos155_text
 -- ------------------------------------------------------
--- Server version	5.7.19-log
+-- Server version	5.7.20
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -21,13 +21,14 @@ USE `bbdd_kaos155_text`;
 -- Table structure for table `anyosread`
 --
 
+DROP TABLE IF EXISTS `anyosread`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `anyosread` (
   `Type` varchar(5) NOT NULL,
   `Anyo` int(11) NOT NULL,
-  `scrap` boolean DEFAULT '0',
-  `parser` boolean DEFAULT '0',
+  `scrap` tinyint(1) DEFAULT '0',
+  `parser` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`Type`,`Anyo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -36,6 +37,7 @@ CREATE TABLE `anyosread` (
 -- Table structure for table `errores`
 --
 
+DROP TABLE IF EXISTS `errores`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `errores` (
@@ -50,6 +52,7 @@ CREATE TABLE `errores` (
 -- Table structure for table `lastread`
 --
 
+DROP TABLE IF EXISTS `lastread`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `lastread` (
@@ -59,8 +62,8 @@ CREATE TABLE `lastread` (
   `SUMARIO_LAST` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
   `SUMARIO_NEXT` varchar(16) CHARACTER SET utf8 DEFAULT NULL,
   `ID_LAST` varchar(145) DEFAULT NULL,
-  `Read_Complete` boolean DEFAULT '0',
-  `STOP` boolean DEFAULT '0',
+  `Read_Complete` tinyint(1) DEFAULT '0',
+  `STOP` tinyint(1) DEFAULT '0',
   UNIQUE KEY `_id_UNIQUE` (`_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -69,6 +72,7 @@ CREATE TABLE `lastread` (
 -- Table structure for table `sumarios`
 --
 
+DROP TABLE IF EXISTS `sumarios`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `sumarios` (
@@ -77,9 +81,10 @@ CREATE TABLE `sumarios` (
   `Anyo` varchar(4) NOT NULL,
   `SUMARIO` varchar(16) CHARACTER SET utf8 NOT NULL,
   `BOLETIN` varchar(20) CHARACTER SET utf8 NOT NULL,
-  `Contrato` boolean DEFAULT '0',
-  `scrap` boolean DEFAULT '0',
-  `_error` boolean DEFAULT '0',
+  `Contrato` tinyint(1) DEFAULT '0',
+  `scrap` tinyint(1) DEFAULT '0',
+  `_error` tinyint(1) DEFAULT '0',
+  `parser` int(11) DEFAULT NULL,
   PRIMARY KEY (`BOLETIN`),
   UNIQUE KEY `_Boletin` (`BOLETIN`),
   KEY `_Type` (`Type`,`Anyo`)
