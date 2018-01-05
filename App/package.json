@@ -18,7 +18,6 @@
     "moment": "^2.20.0",
     "mysql": "^2.15.0",
     "node-schedule": "^1.2.5",
-    "node-spider": "^1.4.1",
     "request": "^2.83.0",
     "resolve-path": "^1.3.3",
     "serve-static": "^1.13.1",
