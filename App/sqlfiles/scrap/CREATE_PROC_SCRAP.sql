@@ -301,10 +301,14 @@ BEGIN
 
     END IF;
     SELECT last_insert_id() as ID;
-    IF LENGTH(_err) = 0 THEN
-		UPDATE sumarios SET Contrato=1, scrap=1 WHERE BOLETIN=_BOLETIN;
-	ELSE
-		UPDATE sumarios SET Contrato=1, scrap=1, parser=0 WHERE BOLETIN=_BOLETIN;
+    IF _Type='BORME' then
+		UPDATE sumarios SET scrap=1,parser=0 WHERE BOLETIN=_BOLETIN;
+    ELSE
+		IF LENGTH(_error) = 0 THEN
+			UPDATE sumarios SET Contrato=1, scrap=1 WHERE BOLETIN=_BOLETIN;
+		ELSE
+			UPDATE sumarios SET Contrato=1, scrap=1, parser=0 WHERE BOLETIN=_BOLETIN;
+		END IF;
     END IF;
     UPDATE lastread SET ID_LAST = _BOLETIN WHERE Type= _Type AND Anyo=_Anyo;
     
