@@ -378,7 +378,7 @@
                                 ]))
                         if (_analisis.contratista.length > 0) {
                             if (_analisis.contratista.indexOf("#") == -1) {
-                                var _imp = options.Rutines.get.importes(data, options, patterns)
+                                var _imp = options.Rutines.get.importes(data, options, patterns, false)
                                 _analisis.importe = _imp
                                 if (_analisis.importe == 0) {
                                     _analisis.importe = ""

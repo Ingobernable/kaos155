@@ -162,7 +162,10 @@
             }
         },
         get: {
-            importes: function (_text, data, options, patterns) {
+            importeLotes: function (_text, data, options, patterns) {
+
+            },
+            importes: function (_text, data, options, patterns, lotes) {
 
                 var importe = "*" + options.Rutines.extract(_text, 'Importe de la adjudicación:', options.transforms.ADD(
                         [patterns.General,
@@ -199,11 +202,11 @@
 
                 
 
-                var _imp = this.adaptImportes(options, importe.replace("*",""), data )
+                var _imp = this.adaptImportes(options, importe.replace("*",""), data , lotes)
 
                 return _imp != null ? _imp : 0 
             },
-            adaptImportes: function (options, _dataimporte, data) {
+            adaptImportes: function (options, _dataimporte, data, lotes) {
 
                 function isNumeric(n) {
                     return !isNaN(parseFloat(n)) && isFinite(n);
@@ -250,33 +253,44 @@
                     var _imp = []
                     var _empImp=[]
                     _.forEach(_impT, function (value) {
+
+                        if (lotes) {
+                            //var _e = _dataimporte
+                            if ((value.match(/\"(.*?)\"/g) || []).length > 0)
+                                var _e = value.match(/\"(.*?)\"/g)
+
+
+                            debugger
+                        }
+
                         var _vx = (value.toLowerCase().match(/\(([^()]*euros[^()]*)\)/) || [])
                         var _m = 1
                         if (_vx.length > 1) {
                             _imp[_imp.length] = _vx[1]
                         } else {
                             var _vx = (value.toLowerCase().match(/\(([^()]*pesetas[^()]*)\)/) || [])
-                            
+
                             if (_vx.length > 0) {
                                 var _m = 166.386
                                 _imp[_imp.length] = _vx[0]
                             } else {
                                 var _vx = (value.toLowerCase().match(/(\d+(\.\d{3})+?) (?:de )?(pesetas|euros)/) || [])
                                 if (_vx.length > 0) {
-                                    if(_vx[0].indexOf('pesetas')>-1){
+                                    if (_vx[0].indexOf('pesetas') > -1) {
                                         var _m = 166.386
-                                        _imp[_imp.length] = _vx[0].replaceAll(" de ", "").replaceAll(".", ",")
-                                    }else{
-                                        _imp[_imp.length] = _vx[0]
+                                        _imp[_imp.length] = _vx[0].replaceAll(" de ", "").replaceAll(".", "")
+                                    } else {
+                                        _imp[_imp.length] = _vx[0].replace("euros", "")
                                     }
 
-                                    
+
                                 } else {
                                     _imp[_imp.length] = value
                                 }
                             }
                         }
-                            var _vs=null
+                        if (!lotes) {
+                            var _vs = null
                             if (value.indexOf('".') > -1) {
                                 _vs = value.split('".')[0].toLowerCase()
                             } else {
@@ -302,20 +316,37 @@
                                     ]))
                                 ).toLowerCase()
                             }
+                        }else {
+                            debugger
+                        }
+                    
                             
 
                     })
                     if (data.Empresa.indexOf("UTE ") == -1 && data.Empresa.indexOf(" UTE") == -1) {
 
-                        var _emp = data.Empresa.split(";")
+                        var _emp = lotes? _e: data.Empresa.split(";")
                         var _test = []
                         var _moneda = ""
                         for (n in _emp) {
-                            _empresa = _.deburr(_.camelCase(_emp[n])).toLowerCase()
-                            var _n = _empImp.indexOf(_empresa)
-                            if (_n == -1)
-                                _n = n
-                            importe = _imp[_n] != null ? _imp[_n] : (data.presupuesto != null ? data.presupuesto:0)
+
+                            _empresa = options.Rutines.transforms(_emp[n], options.transforms.ADD(
+                                [
+                                    options.patterns.General,
+                                    options.patterns.Contratista,
+                                    options.patterns.especialChars,
+                                    options.patterns.exoticChars,
+                                    options.patterns.specialContratista,
+                                    options.patterns.sinBlancos,
+                                    options.patterns.sinPuntos
+                                ]))
+
+
+                            //_empresa = _.deburr(_.camelCase(_emp[n])).toLowerCase()
+                            //var _n = _empImp.indexOf(_empresa)
+                            //if (_n == -1)
+                            //    _n = n
+                            importe = _imp[n] != null ? _imp[n] : (data.presupuesto != null ? data.presupuesto:0)
                             if (!isNumeric(importe)) {
                                 if (importe.indexOf("euros") > 0 || importe.indexOf(_moneda) == -1) {
                                     _moneda = "euros"
@@ -344,8 +375,8 @@
                                             _i = importe
                                         }
                                         if (isNumeric(_i)) {
-                                            _test[_test.length] = parseFloat(_i) / 166.386
-                                            _test[_test.length - 1] = _test[_test.length - 1].toFixed(2)
+                                            _test[_test.length] = (parseFloat(_i) / 166.386).toFixed(2)
+                                            
                                         } else {
                                             _test[_test.length] = data.presupuesto
                                         }
@@ -640,13 +671,13 @@
                                 }
                             } else {
                                 if (_arrayText[i].indexOf(";") > -1 && _arrayText[i].indexOf(":") > -1 && _arrayText[i].indexOf(".-") == -1) {
-                                    _arrT = _arrayText[i].substr(_arrayText[i].indexOf(": ") + 1, _arrayText[i].length).split(";")
+                                    _arrT = _arrayText[i].substr(_arrayText[i].indexOf(": ") + 1, _arrayText[i].length).replace(", y ","; ").split(";")
                                     for (n in _arrT) {
                                         //if (_arrT[n].length>0 && )
                                         if (_arrT[n].indexOf(": ") > -1) {
                                             _arrT[n] = this.transforms(_arrT[n].split(": ")[1], transforms)
                                         } else {
-                                            _arrT[n] = this.transforms(_arrT[n])
+                                            _arrT[n] = _arrT[n] //this.transforms(_arrT[n].replace("PESETAS", "pesetas").replace("PESETAS", "euros").replace('", ', ";"), transforms)
                                         }
                                     }
                                     return _arrT.join(";")
@@ -1040,33 +1071,102 @@
 
             return data
         },
+        findImpSplitList: function (data,options,_text,_analisis, _lotes) {
+            if (data.Empresa.indexOf("#") > -1) {
+                var _s = data.Empresa.split("#")
+                data.Empresa = _s[0]
+                if (_.isNumber(_s[1] * 1)) {
+                    data._Imp = _s[1] * 1
+                } else {
+                    if (!_lotes) {
+                        var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe : options.Rutines.get.importes(_text, data, options, options.patterns)                        
+                    } else {
+                        var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe : options.Rutines.get.importeLotes(_text, data, options, options.patterns)    
+                    }
+                    data._Imp = _imp * 1
+                }
+            } else {
+               var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe.replace(".", "").replace(",", ".") : options.Rutines.get.importes(_text, data, options, options.patterns, _lotes)
+               //if (!_lotes) {
+               //     var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe.replace(".", "").replace(",", ".") : options.Rutines.get.importes(_text, data, options, options.patterns, _lotes)
+               // } else {
+
+                //}
+                if (_imp.indexOf(";") > -1) {
+                    data._Imp = _imp
+                } else {
+                    data._Imp = _imp * 1
+                }
+            }
+            return data
+        },
+        getData: function (app,record,_analisis, _Empresa,_e) {
+            return {
+                    _counterContratos: 0,
+                    type: app.Type,
+                    cod: record[0][0].BOLETIN,
+                    titulo: _analisis._m.titulo,
+                    dia: record[0][0].dia,
+                    mes: record[0][0].mes,
+                    anyo: app.anyo,
+                    Empresa: (_Empresa.indexOf(' SA') > -1 || _Empresa.indexOf(' SL') > -1) ? _Empresa : _e,
+                    adjudicador: _analisis.data.Organismo == null ? "" : _analisis.data.Organismo.replace("..", "."),
+                    materias: _analisis._a.materias.length > 0 ? _analisis._a.materias : _analisis._a.materias_cpv,
+
+                    tipoBoletin: _analisis._a.tipo,
+                    tipoTramite: _analisis.data.Tramitacion == null ? "" : _analisis.data.Tramitacion.replace("..", "."), //options.Rutines.extract(_text, 'Tramitaci\u00F3n', options.transforms.ADD([options.patterns.General, options.patterns.sinPuntos, options.patterns.sinBlancoInicial]), true),
+                    precio: _analisis._a.precio,
+                    ambitoGeo: _analisis._a.ambito_geografico,
+                    //adjudicador: options.Rutines.extract(_text, 'Organismo',
+                    //        options.transforms.ADD(
+                    //            [options.patterns.General,
+                    //            options.patterns.Contratista,
+                    //            options.patterns.sinBlancoInicial
+                    //            ]), true),
+                    // cargo: options.Rutines.extract(_text, 'cargo',
+                    //         options.transforms.ADD(
+                    //             [options.patterns.General, options.patterns.sinBlancoInicial, [
+                    //             ["F", { f: options.transforms.replace }, 'se\u00F1or', ''],
+                    //             ["F", { f: options.transforms.replace }, 'General ', '']
+                    //        ]]), true),
+
+                    //firma: options.Rutines.extract("f) firma :" + _analisis.data.Firma, 'firma', options.transforms.ADD([options.patterns.General, options.patterns.sinPuntos, options.patterns.sinBlancoInicial]), true),
+                    descripcion: _analisis.data.Descripcion == null ? "" : _analisis.data.Descripcion.replace("..", "."), //options.Rutines.extract(_text, 'Descripci\u00F3n', options.transforms.ADD([options.patterns.General, options.patterns.sinPuntos, options.patterns.sinBlancoInicial]), true),
+                    pdf: _analisis._m.url_pdf,
+                    extra: {}
+                    }
+        },
         saveDataBoletin: function (app,options,data, callback ) {
             if (data.Empresa != null) {
-                if (data.Empresa.length > 0 && data._Imp > 0) {
+                if (data.Empresa.length > 0 && (data._Imp >0 || data.Empresa.indexOf("#") > 0) ) {
                     //debugger
                     //options.Rutines.saveDataBoletin(app, options, data, callback)
 
                     options.SQL.insert.boletin(options, data, function (data, state) {
-                        app.process.stdout.write(app, options, '\x1b[36m', data._counterContratos, '\x1b[0mE')
+                        
                         if (state == 1) {
                             if (data.Empresa.indexOf('#') > -1) {
-                                var p = 0
-                                var t = 1
-                                var _e = data.Empresa.split("#")
-                                var _i = data._Imp.split("#")
+                                //var t = 1
+                                var _e = data.Empresa.split(";")
+                                data._counterContratos = 1
                                 _.forEach(_e, function (value) {
-                                    options.SQL.insert.contrato(options, data, data.cod, value, _i[p], t, function (data, state) {
-                                        t++
-                                        if (t > _e.length)
+                                    var _i = value.split("#")
+                                    options.SQL.insert.contrato(options, data, data.cod, _i[0], _i[1], data._counterContratos, function (data, state) {
+                                        data._counterContratos++
+                                        if (data._counterContratos >= _e.length) {
+                                            app.process.stdout.write(app, options, '\x1b[36m', data._counterContratos, '\x1b[0mE')
                                             callback(data, state)
+                                        }
                                     })
-                                    p++
+                                    
                                 })
                             } else {
                                 options.SQL.insert.contrato(options, data, data.cod, data.Empresa, _.isNumber(data._Imp) ? data._Imp.toFixed(2) : "0.00", 1, function (data, state) {
+                                    app.process.stdout.write(app, options, '\x1b[36m', data._counterContratos, '\x1b[0mE')
                                     callback(data, state)
                                 })
                             }
+                            
                         } else {
                             callback(data, state)
                         }
@@ -1082,6 +1182,160 @@
             } else {
                 callback(data, 8)
             }
+        },
+        analisis: function (type, string) {
+            var analisis = function (arrIn, exclude, data) {
+                return _.intersection(_.difference(arrIn, exclude), data)
+            }
+            var words = _.deburr(string.toLowerCase()).split(" ")
+            var exclude = ["de", "la"]
+            var _Educacion = ["universidad","universitat"]
+            var _Sanidad = ["social","salud","saude","salut", "hospital","tgss"]
+            var _Defensa = ["marina","armada","ejercito"]
+            var _Local = ["ayuntamiento"]
+            var _Deportes = ["deportiva"]
+            var _Diputacion = ["diputacion"]
+            var _Estado = ["consejeria", "hacienda", "presidencia", "agencia", "tributaria", "gobierno", "delegacion", "ine" , "empleo", "estado", "contratacion" ]
+            var _Fomento = ["reforma","consejeria","fomento" , "vivienda","adif","velocidad","portuaria","ferroviarias","carreteras","bomberos","hidrografica"]
+            var _ID = ["supercomputacion", "investigaciones", "cientificas", "diseno","Comunicació"]
+            var _Justicia = ["justicia"]
+
+            //debugger
+            var _resp =  {
+                            Local: analisis(words, exclude, _Local),
+                            Educacion: analisis(words, exclude, _Educacion),
+                            Sanidad: analisis(words, exclude, _Sanidad),
+                            Defensa: analisis(words, exclude, _Defensa),
+                            
+                            Diputacion: analisis(words, exclude, _Diputacion),
+                            Deportes: analisis(words, exclude, _Deportes),
+                            Estado: analisis(words, exclude, _Estado),
+                            Fomento: analisis(words, exclude, _Fomento),
+                            ID: analisis(words, exclude, _ID),
+                            Justicia: analisis(words, exclude, _Justicia),
+                        }
+            var _r =[]
+            _.forEach(_resp, function (value, key) {
+                if (value.length > 0)
+                    _r[_r.length] = { key: key, points: value.length , options:value }
+                
+            })
+            var _resp = null
+            var points = 0
+            _.forEach(_r, function (value) {
+                if (value.points > points) {
+                    _resp = value.key
+                }
+
+            })
+            if (_resp == null)
+                debugger
+
+            return _resp
+        },
+        refineLineaText: function (options, _arr) {
+            var into = ["Organismo", "Dependencia", "Descripci\u00F3n", "Tipo", "Lote", "Tramitaci\u00F3n", "Presupuesto", "Procedimiento", "Forma", "Importe", "Contratista", "Contratistas", "Nacionalidad", "explotaci\u00F3n", ".-"]
+            var _ret = []
+            _.forEach(_arr, function (frase) {
+                var _stringArray = frase.split("")
+                var _dospuntos = false
+                var _punto = false
+                var recorta = false
+
+                _.forEach(_stringArray, function (value, key) {
+                    
+                    if (value == "." && _dospuntos > 0 && _punto > 0)
+                        recorta = true
+
+                    if (value == "." && _dospuntos > 0 && _punto==0 )
+                        _punto = key
+
+                    if (value == ":" && _dospuntos == 0)
+                        _dospuntos = key
+                })
+                if (_dospuntos > 0 && _punto > 0 && !recorta)
+                    _ret[_ret.length] = frase
+
+                if (_dospuntos > 0 && _punto > 0 && recorta) {
+                    var _sobrante = _.trim(frase.substr(_punto + 1, frase.length))
+                    if ((_sobrante.match(/^\d./) || []).length > 0) {
+                        _sobrante = _sobrante.substr(3, _sobrante.length)
+                        if (_sobrante.indexOf('Importe total:') > -1) {
+                            var _s = _sobrante.substr(_sobrante.indexOf('Importe total:')+15,_sobrante.length)
+                            _sobrante = _sobrante.split(" ")[0] + ":" + options.Rutines.textToNumber(_s)
+                        }
+
+                    }
+                    var _first = _sobrante.split(" ")[0]
+
+                    if (into.indexOf(_first) == -1) {
+                        _ret[_ret.length] = frase
+                    } else {
+                        _ret[_ret.length] = frase.substr(0, _punto + 1)
+                        _ret[_ret.length] = _sobrante
+      
+                    }
+                        
+                }
+            })
+            return _ret
+        },
+        textToNumber: function (text) {
+            var _words = text.toLowerCase().replace(".","").split(" ")
+            var _unidades = ['un','dos','tres','cuatro','cinco','seis','siete','ocho', 'nueve' ]
+            var _decenas = ['diez', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa']
+            var _centenas = ['cien', 'doscientos', 'trescientos', 'cuatrocientos', 'quinientos', 'seiscientos', 'setecientos', 'ochocientos', 'novecientos']
+            var _multiplicador = ['mil', , , 'millon']
+
+            var _excepciones = [,,,,,,,,,,'once','doce','trece', 'catorce','quince','diciseis','diecisiete','dieciocho','diecinueve',,'veintiun','veintidos','veintitres','veinticuatro','veinticinco','veintiseis','veintisiete','veintiocho','veintinueve']
+
+            var _values = _.difference(_words, ["y"])
+            var _c = 0
+            var _d = 0
+            var _u = 0
+            var _m = 0
+            var _v = 0
+            _.forEach(_values, function (data, key) {
+                if (data != "euros") {
+                    if (_excepciones.indexOf(_.intersection([data], _excepciones)[0]) > -1) {
+                        _d = ((_excepciones.indexOf(_.intersection([data], _excepciones)[0]) + 1) / 10).toFixed(0) * 10
+                        _u = (_excepciones.indexOf(_.intersection([data], _excepciones)[0]) + 1) - _d
+                    } else {
+                        if (data == 'ciento') {
+                            _c = 100
+                        } else {
+                            if (_centenas.indexOf(_.intersection([data], _centenas)[0]) > -1)
+                                _c = (_centenas.indexOf(_.intersection([data], _centenas)[0]) + 1) * 100
+                            if (_decenas.indexOf(_.intersection([data], _decenas)[0]) > -1)
+                                _d = (_decenas.indexOf(_.intersection([data], _decenas)[0]) + 1) * 10
+                            if (_unidades.indexOf(_.intersection([data], _unidades)[0]) > -1)
+                                _u = _unidades.indexOf(_.intersection([data], _unidades)[0]) + 1
+
+                            if (data == 'millones' || _multiplicador.indexOf(_.intersection([data], _multiplicador)[0]) > -1) {
+                                if (data == 'millones') {
+                                    _m = _m * 1000000
+                                } else {
+                                    _m = Math.pow(1000, _multiplicador.indexOf(_.intersection([data], _multiplicador)[0]) + 1)
+                                }
+                                if (_values[key + 1] != 'millones') {
+                                    if ((_c + _d + _u) * _m > 0) {
+                                        _v = _v + ((_c + _d + _u) * _m)
+
+                                        _c = 0
+                                        _d = 0
+                                        _u = 0
+                                        _m = 0
+                                    }
+                                }
+                            }
+
+                        }
+
+                    }
+
+                }
+            })
+            return _v = _v + ((_c + _d + _u) * 1)
         }
     }
 }

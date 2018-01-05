@@ -1,4 +1,4 @@
-# INSTALACION MANUAL DE KAOS155 EN GNU/Linux
+﻿# INSTALACION MANUAL DE KAOS155 EN GNU/Linux
 
 Estos pasos son para montar la versión "Cospedal" de kaos155. La versión "Cospedal" solamente contempla la parte de SCRAP.
 Futuras versiones contemplarán la parte PARSER y WEB. Por el momento "Cospedal" es solo para SCRAP de datos.
@@ -40,7 +40,7 @@ Paso 4: Descargar e instalar xpdf tools 4.0
 
 
 ```
-# wget http://www.xpdfreader.com/dl/xpdf-tools-linux-4.00.tar.gz
+# wget https://xpdfreader-dl.s3.amazonaws.com/xpdf-tools-linux-4.00.tar.gz  (new)
 # tar xfvz xpdf-tools-linux-4.00.tar.gz
 # cd xpdf-tools-linux-4.00
 # cp -pRv bin64/* /usr/local/bin/

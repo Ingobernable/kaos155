@@ -196,7 +196,7 @@ module.exports = function (app, callback) {
                     if (record[0].length > 0) {
                         app.process.stdout.write(app, options, '\x1b[36m', '.', '\x1b[0m')
                         //options.Rutines.normalizeTextContrato(record[0][0].texto.split("<br>"), ["Organismo", "Dependencia", "Descripci\u00F3n del objeto:", "Tipo de contrato", "Descripci\u00F3n", "Lotes", "Tramitaci\u00F3n", "Presupuesto", "Procedimiento", "Forma", "Importe", "Contratista", "Nacionalidad", ".-"], function (_text) {
-                        var _text = record[0][0].texto.split("<br>")
+                        var _text = options.Rutines.refineLineaText(options, record[0][0].texto.split("<br>"))
                         var _analisis = JSON.parse(record[0][0].analisis)
 
                         var _Empresa = options.Rutines.extract(_text, 'contratista',
@@ -214,14 +214,6 @@ module.exports = function (app, callback) {
                         ).replaceAll( /^\d\) / , "")
                         //_Empresa = _Empresa
                         console.log(_analisis.data.Lotes, _Empresa)
-                        var _stop = ['BOE-B-2001-23067',
-                            'BOE-B-2001-23054',
-                            'BOE-B-2001-1066',
-                            'BOE-B-2001-21012',
-                            'BOE-B-2001-20101']
-
-                        if (_stop.indexOf(record[0][0].BOLETIN)>-1)
-                            debugger
 
                         var _l = [false, false]
                         if (_analisis.data.Lotes != null)
@@ -229,10 +221,35 @@ module.exports = function (app, callback) {
                         if (_analisis.data.Lote != null)
                             _l[1] = ((_.deburr(_analisis.data.Lote.replace("..", "")) == "Si") || (_analisis.data.Lote.match(/\d/g) || []).length > 0) 
 
-                        if (_l[0] || _l[1] || _Empresa.split(";").length>1 ) {
+                        if (_l[0] || _l[1] || _Empresa.split(";").length > 1 && (_Empresa.indexOf("(UTE)") == -1 && _Empresa.indexOf(" UTE") == -1 && _Empresa.indexOf("UTE ") == -1) ) {
                             //if () {
                             //debugger
-                            callback({ anyo: app.anyo, cod: record[0][0].BOLETIN }, 3)
+                            var _e = _Empresa.split(";")
+                            var data = options.Rutines.findImpSplitList(options.Rutines.putData(options.Rutines.getData(app, record, _analisis, _Empresa,_e), _analisis), options, _text , _analisis, true)
+
+                            if (data.extra.adjudicador) {
+                                data.extra.area = options.Rutines.analisis('area', data.extra.adjudicador)
+                            }
+
+                            if (_Empresa.indexOf("#") == -1) {
+                                var _i = data._Imp.split(";")
+                                var _p = 0
+                                _Empresa = ""
+                                if (_i.length == _e.length) {
+                                    _.forEach(_e, function (value) {
+                                        _Empresa = _Empresa + (_Empresa.length > 0 ? ';' : '') + value + "#" + _i[_p]
+                                        _p++
+                                    })
+                                    data.Empresa = _Empresa
+                                    options.Rutines.saveDataBoletin(app, options, data, callback)
+
+                                } else {
+                                    callback({ anyo: app.anyo, cod: record[0][0].BOLETIN }, 13)
+                                }
+                            } else {
+                                data.Empresa = _Empresa
+                                options.Rutines.saveDataBoletin(app, options, data, callback)
+                            }
                             //debugger
                             //} else {
                             //    debugger
@@ -243,62 +260,15 @@ module.exports = function (app, callback) {
                                 _e = _e.match(/\"(.*?)\"/g).join(";")
 
                             //debugger
-
-                            data = {
-                                _counterContratos: 0,
-                                type: app.Type,
-                                cod: record[0][0].BOLETIN,
-                                titulo: _analisis._m.titulo,
-                                dia: record[0][0].dia,
-                                mes: record[0][0].mes,
-                                anyo: app.anyo,
-                                Empresa: (_Empresa.indexOf(' SA') > -1 || _Empresa.indexOf(' SL') > -1) ? _Empresa : _e ,
-                                adjudicador: _analisis.data.Organismo == null ? "" : _analisis.data.Organismo.replace("..", "."),
-                                materias: _analisis._a.materias.length > 0 ? _analisis._a.materias : _analisis._a.materias_cpv,
-
-                                tipoBoletin: _analisis._a.tipo,
-                                tipoTramite: _analisis.data.Tramitacion == null ? "" : _analisis.data.Tramitacion.replace("..", "."), //options.Rutines.extract(_text, 'Tramitaci\u00F3n', options.transforms.ADD([options.patterns.General, options.patterns.sinPuntos, options.patterns.sinBlancoInicial]), true),
-                                precio: _analisis._a.precio,
-                                ambitoGeo: _analisis._a.ambito_geografico,
-                                //adjudicador: options.Rutines.extract(_text, 'Organismo',
-                                //        options.transforms.ADD(
-                                //            [options.patterns.General,
-                                //            options.patterns.Contratista,
-                                //            options.patterns.sinBlancoInicial
-                                //            ]), true),
-                                // cargo: options.Rutines.extract(_text, 'cargo',
-                                //         options.transforms.ADD(
-                                //             [options.patterns.General, options.patterns.sinBlancoInicial, [
-                                //             ["F", { f: options.transforms.replace }, 'se\u00F1or', ''],
-                                //             ["F", { f: options.transforms.replace }, 'General ', '']
-                                //        ]]), true),
-
-                                //firma: options.Rutines.extract("f) firma :" + _analisis.data.Firma, 'firma', options.transforms.ADD([options.patterns.General, options.patterns.sinPuntos, options.patterns.sinBlancoInicial]), true),
-                                descripcion: _analisis.data.Descripcion == null ? "" : _analisis.data.Descripcion.replace("..", "."), //options.Rutines.extract(_text, 'Descripci\u00F3n', options.transforms.ADD([options.patterns.General, options.patterns.sinPuntos, options.patterns.sinBlancoInicial]), true),
-                                pdf: _analisis._m.url_pdf,
-                                extra: {}
+                            var data = options.Rutines.getData(app, record, _analisis, _Empresa,_e)
+                            if (data.adjudicador) {
+                                data.area = options.Rutines.analisis('area', data.adjudicador)
                             }
 
-                            //if (_text.length > 0) {
-                            //debugger
                             if (data.Empresa.length > 0 && (data.Empresa.indexOf("(UTE)") == -1 && data.Empresa.indexOf(" UTE") == -1 && data.Empresa.indexOf("UTE ") == -1 )) {
 
-                                data = options.Rutines.putData(data, _analisis)
-
-                                if (data.Empresa.indexOf("#") > -1) {
-                                    var _s = data.Empresa.split("#")
-                                    data.Empresa = _s[0]
-                                    if (_.isNumber(_s[1] * 1)) {
-                                        data._Imp = _s[1] * 1
-                                    } else {
-                                        var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe : options.Rutines.get.importes(_text, data, options, options.patterns)
-                                        data._Imp = _imp * 1
-                                    }
-                                } else {
-                                    var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe.replace(".","").replace(",",".") : options.Rutines.get.importes(_text, data, options, options.patterns)
-                                    data._Imp = _imp * 1
-                                }
-
+                                //data = options.Rutines.putData(data, _analisis)
+                                data = options.Rutines.findImpSplitList( options.Rutines.putData(data, _analisis), options, _text, _analisis , false)
                                 data._counterContratos++
                                 
                                 data.UTE = 0 //data._counterContratos == 1 && data.Empresa.indexOf('UTE') > -1 ? 1 : 0
@@ -310,7 +280,7 @@ module.exports = function (app, callback) {
                                     //debugger
                                     data.Empresa = _Empresa
                                     data = options.Rutines.putData(data, _analisis)
-                                    var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe : options.Rutines.get.importes(_text, data, options, options.patterns)
+                                    var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe : options.Rutines.get.importes(_text, data, options, options.patterns, false)
                                     data._Imp = _imp * 1
                                     data._counterContratos++
                                     options.Rutines.saveDataBoletin(app, options, data, callback)
@@ -370,6 +340,9 @@ module.exports = function (app, callback) {
                                                         [["F", { f: options.transforms.removeFirstChar }, ' ']]
                                                         ]), true)
 
+
+
+
                                                 data.presupuesto = options.Rutines.extract(_text, 'Presupuesto base de licitación',
                                                     options.transforms.ADD(
                                                         [options.patterns.General,
@@ -389,7 +362,7 @@ module.exports = function (app, callback) {
                                                     }
                                                 }
                                                 if (data.contratista.indexOf("#") == -1) {
-                                                    var _imp = options.Rutines.get.importes(data, options, patterns)
+                                                    var _imp = options.Rutines.get.importes(data, options, patterns, false)
                                                     data.importe = _imp
                                                     if (data.importe == 0) {
                                                         data.importe = ""
