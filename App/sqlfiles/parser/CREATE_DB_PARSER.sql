@@ -1,10 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `bbdd_kaos155`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
--- Host: 54.36.112.143    Database: bbdd_kaos155
+-- Host: 127.0.0.1    Database: bbdd_kaos155
 -- ------------------------------------------------------
--- Server version	5.7.20
+-- Server version	5.7.20-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -43,17 +41,17 @@ CREATE TABLE `boletin` (
   `JSON` json NOT NULL,
   PRIMARY KEY (`id`),
   KEY `BOLETIN` (`BOLETIN`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `boletin_aux_ADJ`
+-- Table structure for table `boletin_aux_adj`
 --
 
-DROP TABLE IF EXISTS `boletin_aux_ADJ`;
+DROP TABLE IF EXISTS `boletin_aux_adj`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `boletin_aux_ADJ` (
+CREATE TABLE `boletin_aux_adj` (
   `_auxcode` varchar(6) NOT NULL,
   `Descripcion` varchar(255) DEFAULT NULL,
   `_l` int(11) DEFAULT NULL,
@@ -62,13 +60,13 @@ CREATE TABLE `boletin_aux_ADJ` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `boletin_aux_BOL`
+-- Table structure for table `boletin_aux_bol`
 --
 
-DROP TABLE IF EXISTS `boletin_aux_BOL`;
+DROP TABLE IF EXISTS `boletin_aux_bol`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `boletin_aux_BOL` (
+CREATE TABLE `boletin_aux_bol` (
   `_auxcode` varchar(6) NOT NULL,
   `Descripcion` varchar(255) DEFAULT NULL,
   `_l` int(11) DEFAULT NULL,
@@ -77,13 +75,13 @@ CREATE TABLE `boletin_aux_BOL` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `boletin_aux_MAT`
+-- Table structure for table `boletin_aux_mat`
 --
 
-DROP TABLE IF EXISTS `boletin_aux_MAT`;
+DROP TABLE IF EXISTS `boletin_aux_mat`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `boletin_aux_MAT` (
+CREATE TABLE `boletin_aux_mat` (
   `_auxcode` varchar(8) NOT NULL,
   `Descripcion` varchar(255) DEFAULT NULL,
   `_l` int(11) DEFAULT NULL,
@@ -93,13 +91,13 @@ CREATE TABLE `boletin_aux_MAT` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `boletin_aux_PRE`
+-- Table structure for table `boletin_aux_pre`
 --
 
-DROP TABLE IF EXISTS `boletin_aux_PRE`;
+DROP TABLE IF EXISTS `boletin_aux_pre`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `boletin_aux_PRE` (
+CREATE TABLE `boletin_aux_pre` (
   `_auxcode` varchar(6) NOT NULL,
   `Descripcion` varchar(255) DEFAULT NULL,
   `_l` int(11) DEFAULT NULL,
@@ -108,13 +106,13 @@ CREATE TABLE `boletin_aux_PRE` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `boletin_aux_TRA`
+-- Table structure for table `boletin_aux_tra`
 --
 
-DROP TABLE IF EXISTS `boletin_aux_TRA`;
+DROP TABLE IF EXISTS `boletin_aux_tra`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `boletin_aux_TRA` (
+CREATE TABLE `boletin_aux_tra` (
   `_auxcode` varchar(6) NOT NULL,
   `Descripcion` varchar(255) DEFAULT NULL,
   `_l` int(11) DEFAULT NULL,
@@ -144,7 +142,7 @@ CREATE TABLE `boletin_contratos` (
   KEY `BOLETIN` (`BOLETIN`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Empresa` (`Empresa`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -162,6 +160,27 @@ CREATE TABLE `boletin_materias` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `borme_actos`
+--
+
+DROP TABLE IF EXISTS `borme_actos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `borme_actos` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Empresa_key` char(7) NOT NULL,
+  `Acto` varchar(45) NOT NULL,
+  `Motivo` varchar(45) NOT NULL,
+  `Texto` varchar(255) NOT NULL,
+  `Anyo` int(10) unsigned NOT NULL,
+  `Mes` int(11) DEFAULT NULL,
+  `Dia` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `Empresa` (`Empresa_key`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `borme_keys`
 --
 
@@ -174,8 +193,10 @@ CREATE TABLE `borme_keys` (
   `_Empresa` tinyint(4) DEFAULT '0',
   `_Directivo` tinyint(4) DEFAULT '0',
   `_Auditor` tinyint(4) DEFAULT '0',
+  `Provincia` varchar(25) DEFAULT NULL,
   PRIMARY KEY (`_key`),
-  FULLTEXT KEY `Name` (`Nombre`)
+  FULLTEXT KEY `Name` (`Nombre`),
+  FULLTEXT KEY `Prov` (`Provincia`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -195,8 +216,9 @@ CREATE TABLE `borme_relaciones` (
   `Cargo` varchar(45) NOT NULL,
   `Activo` bit(1) NOT NULL,
   `Anyo` int(10) unsigned NOT NULL,
+  `Mes` int(11) DEFAULT NULL,
+  `Dia` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
@@ -216,3 +238,45 @@ CREATE TABLE `borme_tree` (
   UNIQUE KEY `_key_UNIQUE` (`_Key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Temporary view structure for view `relations`
+--
+
+DROP TABLE IF EXISTS `relations`;
+/*!50001 DROP VIEW IF EXISTS `relations`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `relations` AS SELECT 
+ 1 AS `EKey`,
+ 1 AS `RKey`,
+ 1 AS `Empresa`,
+ 1 AS `Relacion`,
+ 1 AS `EType`,
+ 1 AS `RType`,
+ 1 AS `Motivo`,
+ 1 AS `Cargo`,
+ 1 AS `Activo`,
+ 1 AS `anyo`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `volumen`
+--
+
+DROP TABLE IF EXISTS `volumen`;
+/*!50001 DROP VIEW IF EXISTS `volumen`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `volumen` AS SELECT 
+ 1 AS `now()`,
+ 1 AS `TABLE_SCHEMA`,
+ 1 AS `TABLE_NAME`,
+ 1 AS `TABLE_ROWS`,
+ 1 AS `AVG_ROW_LENGTH`,
+ 1 AS `DATA_LENGTH`,
+ 1 AS `INDEX_LENGTH`,
+ 1 AS `AUTO_INCREMENT`,
+ 1 AS `ENGINE`*/;
+SET character_set_client = @saved_cs_client;
+

@@ -547,51 +547,74 @@
             maps: {
                 keys: {
                     arr: [
-                    'Constitución.',
-                    //actos registrales que afectan a nombramientos
-                    'Nombramientos.',
-                    'Ceses/Dimisiones.',                
-                    'Revocaciones.',
+                        'Constitución.',
+                        //actos registrales que afectan a nombramientos
+                        'Nombramientos.',
+                        'Ceses/Dimisiones.',                
+                        'Revocaciones.',
 
-                    'Cancelaciones de oficio de nombramientos.',
-                    'Disolución.',
-                    'Reelecciones.',
-                    'Extinción.',
+                        'Cancelaciones de oficio de nombramientos.',
+                        'Disolución.',
+                        'Reelecciones.',
+                        'Extinción.',
                 
 
-                    'Declaración de unipersonalidad.',                 
-                    'Sociedad unipersonal.',
-                    'Socio único.',
-                    'Empresario Individual.',
-                    'Pérdida del caracter de unipersonalidad. ',
+                        'Declaración de unipersonalidad.',                 
+                        'Sociedad unipersonal.',
+                        'Socio único.',
+                        'Empresario Individual.',
+                        'Pérdida del caracter de unipersonalidad. ',
 
-                    //otros actos registrales
-                    'Ampliación de capital.',                
+                        //otros actos registrales
+                        'Ampliación de capital.',                
                 
-                    'Cierre provisional hoja registral art. 137.2 Ley 43/1995 Impuesto de Sociedades.',
-                    'Ampliacion del objeto social.',
+                        'Cierre provisional hoja registral art. 137.2 Ley 43/1995 Impuesto de Sociedades.',
+                        'Ampliacion del objeto social.',
                 
-                    'Cambio de denominación social.',
-                    'Cambio de domicilio social.',
-                    'Cambio de objeto social',
-                    'Cambio objeto social.',
-                    'Fusión por absorción.',
-                    'Modificaciones estatutarias.',
-                    'Reducción de capital.',
-                    'Escisión total.',
-                    'Escisión parcial.',
-                    'Transformación de sociedad.',
-                    'Reapertura hoja registral',
-                    'Situación concursal.',
-                    'Primera sucursal de sociedad extranjera.',
-                    'Articulo 378.5 del Reglamento del Registro Mercantil.',
-                
-                    'Desembolso de dividendos pasivos.',
-                    'Modificaciones estatutarias.',
-                    'Fe de erratas:',
-                    'Qiebra:',
-                    'Otros conceptos:',
-                    'Datos registrales.',
+                        'Cambio de denominación social.',
+                        'Cambio de domicilio social.',
+                        'Cambio de objeto social',
+                        'Cambio objeto social.',
+                        'Ampliacion del objeto social.',
+                        'Objeto social.',
+                        'Crédito incobrable.',
+                        'Fusión por absorción.',
+                        'Fusión por unión.',
+                        'Modificaciones estatutarias.',
+                        'Modificación de poderes.',
+                        'Modificación de duración',
+                        'Reducción de capital.',
+                        'Escisión total.',
+                        'Escisión parcial.',
+                        'Emisión de obligaciones.',
+                        'Transformación de sociedad.',
+                        'Reapertura hoja registral',
+                        'Situación concursal.',
+                        'Suspensión de pagos.',
+                        'suspensión de pagos.',
+                        'Primera sucursal de sociedad extranjera.',
+                        'Articulo 378.5 del Reglamento del Registro Mercantil.',
+                        'Página web de la sociedad',
+                        'Apertura de sucursal.',
+                        'Segregación.',
+                        'Adaptación de sociedad',
+                        'Cierre de Sucursal',
+                        'Primera inscripcion',
+                        'Reactivación de la sociedad',
+                        'reactivación De La Sociedad (art242 Del Reglamento Del Registro Mercantil)',
+                        'Cierre provisional hoja registral por baja en el índice de Entidades Jurídicas.',
+                        'Cesión global de activo y pasivo',
+
+                        'Desembolso de dividendos pasivos.',
+                        'Modificaciones estatutarias.',
+                        'Fe de erratas:',
+                        'Qiebra:',
+                        'Resoluciones:',
+                        'Otros conceptos:',
+                        'Datos registrales.',
+                        'Datos registrales',
+                        'datos Registrales',
+                        
 
                     ]
                 }, nameKeys: [
@@ -904,10 +927,10 @@
                     if (_i < keys.length - 1 && _func != null) {
                         if (this[_func] != null) {
                             var _trozo = cadena.substr(keys[_i].p + keys[_i].c.length, keys[_i + 1].p - keys[_i].p - keys[_i].c.length)
-                            var _v = this[_func]( _trozo, keys[_i], (_i < keys.length - 1 ? keys[_i] : null), array)
+                            var _v = this[_func](_trozo, keys[_i], (_i < keys.length - 1 ? keys[_i] : null), array)
                             for (p in _v) {
 
-                                _ret[_ret.length] = { type: _func , values: _v[p] }
+                                _ret[_ret.length] = { type: _func, values: _v[p] }
                             }
                         } else {
                             debugger
@@ -918,7 +941,9 @@
                     //}
                 
                 }
-                //debugger
+                if (keys.length == 0)
+                    debugger
+
                 return _ret
             }
         

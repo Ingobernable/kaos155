@@ -247,15 +247,27 @@
                 }
             } else {
                 options.parser.Preceptos(options, type, function (data, ok) {
-                    if (ok == 0) {
-                        callback(data, ok)
+                    if (ok == true) {
+                        var _d = new Date()
+                        if (app.anyo*1 < _d.getFullYear()) {
+                            app.anyo = (app.anyo*1) + 1
+                            callback(app, 1)
+
+                        } else {
+                            process.exit(0)
+                        }
+
                     } else {
-                        options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + data.anyo + " SET parser=" + ok + " WHERE BOLETIN='" + data.cod + "'", function (err, record) {
-                            cadsql = "UPDATE sumarios  SET parser = " + ok + " WHERE BOLETIN= '" + data.cod + "'" 
-                            options.SQL.scrapDb.SQL.db.query(cadsql, function (err, record) {
-                                callback(data, ok)
+                        if (ok == 0) {
+                            callback(data, ok)
+                        } else {
+                            options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + data.anyo + " SET parser=" + ok + " WHERE BOLETIN='" + data.cod + "'", function (err, record) {
+                                cadsql = "UPDATE sumarios  SET parser = " + ok + " WHERE BOLETIN= '" + data.cod + "'"
+                                options.SQL.scrapDb.SQL.db.query(cadsql, function (err, record) {
+                                    callback(data, ok)
+                                })
                             })
-                        })
+                        }
                     }
                 }, options.parser.Preceptos)
             }

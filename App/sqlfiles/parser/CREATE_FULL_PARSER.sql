@@ -2,9 +2,9 @@ CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155` /*!40100 DEFAULT CHARACTER SET utf
 USE `bbdd_kaos155`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
--- Host: 54.36.112.143    Database: bbdd_kaos155
+-- Host: 127.0.0.1    Database: bbdd_kaos155
 -- ------------------------------------------------------
--- Server version	5.7.20
+-- Server version	5.7.20-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -43,17 +43,17 @@ CREATE TABLE `boletin` (
   `JSON` json NOT NULL,
   PRIMARY KEY (`id`),
   KEY `BOLETIN` (`BOLETIN`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `boletin_aux_ADJ`
+-- Table structure for table `boletin_aux_adj`
 --
 
-DROP TABLE IF EXISTS `boletin_aux_ADJ`;
+DROP TABLE IF EXISTS `boletin_aux_adj`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `boletin_aux_ADJ` (
+CREATE TABLE `boletin_aux_adj` (
   `_auxcode` varchar(6) NOT NULL,
   `Descripcion` varchar(255) DEFAULT NULL,
   `_l` int(11) DEFAULT NULL,
@@ -62,13 +62,13 @@ CREATE TABLE `boletin_aux_ADJ` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `boletin_aux_BOL`
+-- Table structure for table `boletin_aux_bol`
 --
 
-DROP TABLE IF EXISTS `boletin_aux_BOL`;
+DROP TABLE IF EXISTS `boletin_aux_bol`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `boletin_aux_BOL` (
+CREATE TABLE `boletin_aux_bol` (
   `_auxcode` varchar(6) NOT NULL,
   `Descripcion` varchar(255) DEFAULT NULL,
   `_l` int(11) DEFAULT NULL,
@@ -77,13 +77,13 @@ CREATE TABLE `boletin_aux_BOL` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `boletin_aux_MAT`
+-- Table structure for table `boletin_aux_mat`
 --
 
-DROP TABLE IF EXISTS `boletin_aux_MAT`;
+DROP TABLE IF EXISTS `boletin_aux_mat`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `boletin_aux_MAT` (
+CREATE TABLE `boletin_aux_mat` (
   `_auxcode` varchar(8) NOT NULL,
   `Descripcion` varchar(255) DEFAULT NULL,
   `_l` int(11) DEFAULT NULL,
@@ -93,13 +93,13 @@ CREATE TABLE `boletin_aux_MAT` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `boletin_aux_PRE`
+-- Table structure for table `boletin_aux_pre`
 --
 
-DROP TABLE IF EXISTS `boletin_aux_PRE`;
+DROP TABLE IF EXISTS `boletin_aux_pre`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `boletin_aux_PRE` (
+CREATE TABLE `boletin_aux_pre` (
   `_auxcode` varchar(6) NOT NULL,
   `Descripcion` varchar(255) DEFAULT NULL,
   `_l` int(11) DEFAULT NULL,
@@ -108,13 +108,13 @@ CREATE TABLE `boletin_aux_PRE` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `boletin_aux_TRA`
+-- Table structure for table `boletin_aux_tra`
 --
 
-DROP TABLE IF EXISTS `boletin_aux_TRA`;
+DROP TABLE IF EXISTS `boletin_aux_tra`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `boletin_aux_TRA` (
+CREATE TABLE `boletin_aux_tra` (
   `_auxcode` varchar(6) NOT NULL,
   `Descripcion` varchar(255) DEFAULT NULL,
   `_l` int(11) DEFAULT NULL,
@@ -144,7 +144,7 @@ CREATE TABLE `boletin_contratos` (
   KEY `BOLETIN` (`BOLETIN`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Empresa` (`Empresa`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -162,6 +162,27 @@ CREATE TABLE `boletin_materias` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `borme_actos`
+--
+
+DROP TABLE IF EXISTS `borme_actos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `borme_actos` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Empresa_key` char(7) NOT NULL,
+  `Acto` varchar(45) NOT NULL,
+  `Motivo` varchar(45) NOT NULL,
+  `Texto` varchar(255) NOT NULL,
+  `Anyo` int(10) unsigned NOT NULL,
+  `Mes` int(11) DEFAULT NULL,
+  `Dia` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `Empresa` (`Empresa_key`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `borme_keys`
 --
 
@@ -174,8 +195,10 @@ CREATE TABLE `borme_keys` (
   `_Empresa` tinyint(4) DEFAULT '0',
   `_Directivo` tinyint(4) DEFAULT '0',
   `_Auditor` tinyint(4) DEFAULT '0',
+  `Provincia` varchar(25) DEFAULT NULL,
   PRIMARY KEY (`_key`),
-  FULLTEXT KEY `Name` (`Nombre`)
+  FULLTEXT KEY `Name` (`Nombre`),
+  FULLTEXT KEY `Prov` (`Provincia`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -195,8 +218,9 @@ CREATE TABLE `borme_relaciones` (
   `Cargo` varchar(45) NOT NULL,
   `Activo` bit(1) NOT NULL,
   `Anyo` int(10) unsigned NOT NULL,
+  `Mes` int(11) DEFAULT NULL,
+  `Dia` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
@@ -261,7 +285,7 @@ SET character_set_client = @saved_cs_client;
 --
 -- Dumping routines for database 'bbdd_kaos155'
 --
-/*!50003 DROP FUNCTION IF EXISTS `get_Name` */;
+/*!50003 DROP FUNCTION IF EXISTS `GET_NAME` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -291,19 +315,19 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` FUNCTION `SPLIT_STR`( s VARCHAR(1024) , del CHAR(1) , i INT) RETURNS varchar(1024) CHARSET utf8
+CREATE DEFINER=`root`@`localhost` FUNCTION `SPLIT_STR`( s MEDIUMTEXT , del CHAR(1) , i INT) RETURNS text CHARSET utf8
     DETERMINISTIC
 BEGIN
 
         DECLARE n INT ;
 
-        -- get max number of items
+        
         SET n = LENGTH(s) - LENGTH(REPLACE(s, del, '')) + 1;
 
         IF i > n THEN
-            RETURN NULL;
+            RETURN NULL ;
         ELSE
             RETURN SUBSTRING_INDEX(SUBSTRING_INDEX(s, del, i) , del , -1 ) ;        
         END IF;
@@ -916,9 +940,9 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(IN _Name  nvarchar(250), _iKey  nvarchar(15))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(IN _Name  nvarchar(250), _iKey  nvarchar(15),_provincia nvarchar(25))
 BEGIN
-    INSERT borme_keys (_key,Nombre,_Auditor ) VALUES(_iKey,_Name,1) ON DUPLICATE KEY UPDATE _Auditor = 1;
+    INSERT borme_keys (_key,Nombre,_Auditor, Provincia) VALUES(_iKey,_Name,1,_Provincia) ON DUPLICATE KEY UPDATE _Auditor = 1, Provincia= _provincia;
     SELECT LAST_INSERT_ID() as Id, _iKey as _key;
 END ;;
 DELIMITER ;
@@ -959,9 +983,12 @@ BEGIN
     
 	IF _Empresa_Id>0 AND _Relacion_Id>0 THEN
 	
-			INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo)
-								  VALUES (_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo); 
-	END IF;  
+			INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo,Mes,Dia)
+								  VALUES (_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo,_Mes,_Dia); 
+	else
+			INSERT IGNORE INTO borme_actos (Empresa_key,Acto,Motivo,Texto,Anyo,Mes,Dia)
+								  VALUES (_Empresa_key,_type,_key,_value,_Anyo,_Mes,_Dia); 		
+    END IF;  
     
 
 END ;;
@@ -980,9 +1007,9 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(7))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(7),IN _provincia nvarchar(25))
 BEGIN
-    INSERT borme_keys (_key,Nombre,_Directivo ) VALUES(_iKey,_Name,1) ON DUPLICATE KEY UPDATE _Directivo = 1;
+    INSERT borme_keys (_key,Nombre,_Directivo,Provincia ) VALUES(_iKey,_Name,1,_provincia) ON DUPLICATE KEY UPDATE _Directivo = 1,Provincia=_provincia;
     
 	SELECT LAST_INSERT_ID() as Id,_iKey as _key;
 END ;;
@@ -1001,9 +1028,9 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(15))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(15),IN _provincia nvarchar(25))
 BEGIN
-    INSERT borme_keys (_key,Nombre,_Empresa ) VALUES(_iKey,_Name,1) ON DUPLICATE KEY UPDATE _Empresa = 1;
+    INSERT borme_keys (_key,Nombre,_Empresa,Provincia ) VALUES(_iKey,_Name,1,_provincia) ON DUPLICATE KEY UPDATE _Empresa = 1,Provincia=_provincia;
     
 
     SELECT LAST_INSERT_ID() as Id,_iKey as _key;
@@ -1079,4 +1106,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-01 11:02:21
+-- Dump completed on 2018-01-07  4:58:09

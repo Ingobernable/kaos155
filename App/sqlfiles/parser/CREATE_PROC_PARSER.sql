@@ -1,49 +1,7 @@
-
---
--- Temporary view structure for view `relations`
---
-
-DROP TABLE IF EXISTS `relations`;
-/*!50001 DROP VIEW IF EXISTS `relations`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE VIEW `relations` AS SELECT 
- 1 AS `EKey`,
- 1 AS `RKey`,
- 1 AS `Empresa`,
- 1 AS `Relacion`,
- 1 AS `EType`,
- 1 AS `RType`,
- 1 AS `Motivo`,
- 1 AS `Cargo`,
- 1 AS `Activo`,
- 1 AS `anyo`*/;
-SET character_set_client = @saved_cs_client;
-
---
--- Temporary view structure for view `volumen`
---
-
-DROP TABLE IF EXISTS `volumen`;
-/*!50001 DROP VIEW IF EXISTS `volumen`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE VIEW `volumen` AS SELECT 
- 1 AS `now()`,
- 1 AS `TABLE_SCHEMA`,
- 1 AS `TABLE_NAME`,
- 1 AS `TABLE_ROWS`,
- 1 AS `AVG_ROW_LENGTH`,
- 1 AS `DATA_LENGTH`,
- 1 AS `INDEX_LENGTH`,
- 1 AS `AUTO_INCREMENT`,
- 1 AS `ENGINE`*/;
-SET character_set_client = @saved_cs_client;
-
 --
 -- Dumping routines for database 'bbdd_kaos155'
 --
-/*!50003 DROP FUNCTION IF EXISTS `get_Name` */;
+/*!50003 DROP FUNCTION IF EXISTS `GET_NAME` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -73,19 +31,19 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` FUNCTION `SPLIT_STR`( s VARCHAR(1024) , del CHAR(1) , i INT) RETURNS varchar(1024) CHARSET utf8
+CREATE DEFINER=`root`@`localhost` FUNCTION `SPLIT_STR`( s MEDIUMTEXT , del CHAR(1) , i INT) RETURNS text CHARSET utf8
     DETERMINISTIC
 BEGIN
 
         DECLARE n INT ;
 
-        -- get max number of items
+        
         SET n = LENGTH(s) - LENGTH(REPLACE(s, del, '')) + 1;
 
         IF i > n THEN
-            RETURN NULL;
+            RETURN NULL ;
         ELSE
             RETURN SUBSTRING_INDEX(SUBSTRING_INDEX(s, del, i) , del , -1 ) ;        
         END IF;
@@ -698,9 +656,9 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(IN _Name  nvarchar(250), _iKey  nvarchar(15))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(IN _Name  nvarchar(250), _iKey  nvarchar(15),_provincia nvarchar(25))
 BEGIN
-    INSERT borme_keys (_key,Nombre,_Auditor ) VALUES(_iKey,_Name,1) ON DUPLICATE KEY UPDATE _Auditor = 1;
+    INSERT borme_keys (_key,Nombre,_Auditor, Provincia) VALUES(_iKey,_Name,1,_Provincia) ON DUPLICATE KEY UPDATE _Auditor = 1, Provincia= _provincia;
     SELECT LAST_INSERT_ID() as Id, _iKey as _key;
 END ;;
 DELIMITER ;
@@ -741,9 +699,12 @@ BEGIN
     
 	IF _Empresa_Id>0 AND _Relacion_Id>0 THEN
 	
-			INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo)
-								  VALUES (_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo); 
-	END IF;  
+			INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo,Mes,Dia)
+								  VALUES (_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo,_Mes,_Dia); 
+	else
+			INSERT IGNORE INTO borme_actos (Empresa_key,Acto,Motivo,Texto,Anyo,Mes,Dia)
+								  VALUES (_Empresa_key,_type,_key,_value,_Anyo,_Mes,_Dia); 		
+    END IF;  
     
 
 END ;;
@@ -762,9 +723,9 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(7))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(7),IN _provincia nvarchar(25))
 BEGIN
-    INSERT borme_keys (_key,Nombre,_Directivo ) VALUES(_iKey,_Name,1) ON DUPLICATE KEY UPDATE _Directivo = 1;
+    INSERT borme_keys (_key,Nombre,_Directivo,Provincia ) VALUES(_iKey,_Name,1,_provincia) ON DUPLICATE KEY UPDATE _Directivo = 1,Provincia=_provincia;
     
 	SELECT LAST_INSERT_ID() as Id,_iKey as _key;
 END ;;
@@ -783,9 +744,9 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(15))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(15),IN _provincia nvarchar(25))
 BEGIN
-    INSERT borme_keys (_key,Nombre,_Empresa ) VALUES(_iKey,_Name,1) ON DUPLICATE KEY UPDATE _Empresa = 1;
+    INSERT borme_keys (_key,Nombre,_Empresa,Provincia ) VALUES(_iKey,_Name,1,_provincia) ON DUPLICATE KEY UPDATE _Empresa = 1,Provincia=_provincia;
     
 
     SELECT LAST_INSERT_ID() as Id,_iKey as _key;
@@ -861,4 +822,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-01 11:02:21
+-- Dump completed on 2018-01-07  4:58:09

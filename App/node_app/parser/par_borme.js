@@ -32,6 +32,8 @@ module.exports = function (app, callback) {
             'Página web de la sociedad',
             'Cierre de Sucursal',
             'Primera inscripcion',
+            'Fusión por unión.',
+            'Modificación de duración',
             'Reactivación de la sociedad',
             'reactivación De La Sociedad (art242 Del Reglamento Del Registro Mercantil)',
             'Cierre provisional hoja registral por baja en el índice de Entidades Jurídicas.',
