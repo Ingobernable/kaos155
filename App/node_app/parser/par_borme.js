@@ -38,22 +38,29 @@ module.exports = function (app, callback) {
             'reactivación De La Sociedad (art242 Del Reglamento Del Registro Mercantil)',
             'Cierre provisional hoja registral por baja en el índice de Entidades Jurídicas.',
             'Fe de erratas:'],
-        url: app.urlBORME,
+        url: app.urlBORME,       
         _common: require('../_common.js')(app),
         SQL: { db: null },
         parser: {
+            //cif: require('../_utils/BORME/keys/Cif_Metaspider.js')(app),
             saveEmpresaDeMovimiento: function (_linea, _cb) {
                 //var _ok =false
                 //var _this = this
+                //options.SQL.db.query("select * From borme_keys where _key=?", [_linea.k], function (err, record) { 
+                    //if (record.length == 0) { //|| record[0].cif == null || record[0].cif.length == 0) {
+                        _linea.table = "Empresa"
+                        //_this.cif.ask(_linea.k, _linea.e, function (cif) {
+                            _linea.cif = null
+                            app.commonSQL.SQL.commands.insert.Borme.keys(options, _linea, function (_linea, _rec) {
+                                app.process.stdout.write(app, options, '\x1b[1m\x1b[36m', 'E', '\x1b[0m')
+                                _linea.ID = _rec[0][0].Id
 
-                _linea.table = "Empresa"
-                app.commonSQL.SQL.commands.insert.Borme.keys(options, _linea, function (_linea, _rec) {
-                    app.process.stdout.write(app,options,'\x1b[1m\x1b[36m','E','\x1b[0m')
-                    _linea.ID = _rec[0][0].Id
+                                options.parser.saveDiarioMovimientos(_linea, _cb)
 
-                    options.parser.saveDiarioMovimientos(_linea, _cb)
-
-                }, _cb)
+                            }, _cb)
+                        //})
+                    //}
+                //})
 
             },
             saveDiarioMovimientos: function (_linea, _ret) {

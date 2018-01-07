@@ -44,8 +44,8 @@
                     process.exit(1)
                 } else {
                     console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
-                    if (close)
-                        con.end()
+                    //if (close)
+                    //    con.end()
                     //app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
                     callback()
                     //})
@@ -249,9 +249,15 @@
                             })
                         },
                         keys: function (options, params, callback, _cberror) {
-                            //if (params.table == 'directivo' && params.e.split(" ") > 4)
+                            if (params.table == 'Empresa') {
+                                var _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?)"
+                                var _params = [params.e, params.k, params.data.provincia, params.cif]
+                            } else {
+                                var _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?)"
+                                var _params = [params.e, params.k, params.data.provincia]
+                            }
                                 
-                            options.SQL.db.query("CALL Insert_Data_BORME_" + params.table + "(?,?,?)", [params.e, params.k, params.data.provincia], function (err, _rec) {
+                            options.SQL.db.query(_cadsql, _params , function (err, _rec) {
                                 if (err != null || _rec[0][0] == null) {
 
                                     cadSql = "CALL Insert_Error_Boletin(?,?,?)"
