@@ -433,10 +433,14 @@
                             if (_.toLower(__data.values.value).indexOf('situación concursal') > -1)
                                 __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf('situación concursal') - 1)
 
-                            if (_table == "Directivo")
-                                __data.values.value = _.capitalize(__data.values.value)
-                        }
 
+                        }
+                        if (_.toLower(__data.values.value).indexOf('datos registrales') > -1)
+                            __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf('datos registrales'))
+                        
+                        if (_table == "Directivo")
+                            __data.values.value = _.capitalize(__data.values.value)
+                                
                         if (__data.values.key.toLowerCase() == "juzgado")
                             __data.values.value = __data.values.key + " " + __data.values.value
 
