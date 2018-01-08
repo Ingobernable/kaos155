@@ -426,12 +426,20 @@
                         //debugger
                     }
                     //app.IA.send('setinMemory', { type: _t, array: [__data.values.value], compress: 'shorthash.unique' }, function (data) {
-                    if (__data.values.value.indexOf('Si, Fecha De Resolución') == -1 || __data.values.value.indexOf('No, Fecha De Resolución') == -1) {
-                        if (_.toLower(__data.values.value).indexOf('administrador concursal') > -1) {
-                            __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf('administrador concursal') -1 )
+                    if (__data.values.value.indexOf('Si, Fecha De Resolución') == -1 && __data.values.value.indexOf('No, Fecha De Resolución') == -1) {
+                        if (_.toLower(__data.values.value).indexOf('administrador concursal') > -1 || _.toLower(__data.values.value).indexOf('situación concursal') > -1) {
+                            if (_.toLower(__data.values.value).indexOf('administrador concursal') > -1)
+                                __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf('administrador concursal') - 1)
+                            if (_.toLower(__data.values.value).indexOf('situación concursal') > -1)
+                                __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf('situación concursal') - 1)
+
                             if (_table == "Directivo")
                                 __data.values.value = _.capitalize(__data.values.value)
                         }
+
+                        if (__data.values.key.toLowerCase() == "juzgado")
+                            __data.values.value = __data.values.key + " " + __data.values.value
+
                         params = {
                             table: _table,
                             e: __data.values.value,
@@ -464,7 +472,7 @@
                         })
                         //})
                     } else {
-                        callback(__data, 0, params, false)
+                        callback(__data, 0, null, false)
                     }
                
                 },
