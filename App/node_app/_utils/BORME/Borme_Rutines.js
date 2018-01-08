@@ -285,6 +285,9 @@
                 //debugger
                 return _s
             },
+            EnConcurso: function (type, cadena, _keys, _next, data) {
+                return [{ key: _keys.c, value: cadena }]
+            },
             getDirectivos: function (type, cadena, _keys, _next, data) {
                 var cuenta = function (str) {
                     str = str.replace(/[^.]/g, "").length
@@ -385,6 +388,9 @@
             //
             // 
             SQL: {
+                Concurso: function (_linea, __data, callback) {
+                    callback({ type: __data.type, key: _.trim(__data.values.key.replace(".", "").replace(":", "")), value: _.upperFirst(__data.values.value.toLowerCase()) }, 0)
+                },
                 Varios: function (_linea, __data, callback) {
                     callback({ type: __data.type, key: _.trim(__data.values.key.replace(".", "").replace(":", "")), value: _.upperFirst(__data.values.value.toLowerCase()) }, 0)
                 },
@@ -505,6 +511,10 @@
             Varios: function (cadena, _keys, _next, data) {
                 return [{ key: _keys.c, value: cadena }]
             },
+            Concurso: function (cadena, _keys, _next, data) {
+                //this.EnConcurso(idEmpresa, 'Concurso', cadena, _keys, _next, data)
+                return this.EnConcurso('Concurso', cadena, _keys, _next, data)      //[{ key: _keys.c, value: cadena }]
+            },
             Cierre: function ( cadena, _keys, _next, data) {
                 return this.getDirectivos(idEmpresa, 'Cierre', cadena, _keys, _next, data)
             },
@@ -605,6 +615,7 @@
                         'Adaptación de sociedad',
                         'Cierre de Sucursal',
                         'Primera inscripcion',
+                        
                         'Reactivación de la sociedad',
                         'reactivación De La Sociedad (art242 Del Reglamento Del Registro Mercantil)',
 
@@ -626,6 +637,8 @@
                         'Qiebra:',
                         'Quiebra.',
                         'EN LIQUIDACION.',
+
+                        'Administrador Concursal.',
 
                         'Fe de erratas:',
                         'Adaptada segun D.T. 2 apartado 2 Ley 2/95.',
@@ -705,7 +718,7 @@
                     'Extincion',
                     'Extincion',
                     'Extincion',
-
+                    'Concurso',
                     null,
                     null,
                     null,
