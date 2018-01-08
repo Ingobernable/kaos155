@@ -177,9 +177,12 @@ CREATE TABLE `borme_actos` (
   `Anyo` int(10) unsigned NOT NULL,
   `Mes` int(11) DEFAULT NULL,
   `Dia` int(11) DEFAULT NULL,
+  `BOLETIN` varchar(20) DEFAULT NULL,
+  `_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`,`Dia`,`Mes`,`Anyo`),
-  KEY `Empresa` (`Empresa_key`)
+  KEY `Empresa` (`Empresa_key`),
+  KEY `Boletin` (`BOLETIN`,`_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -197,9 +200,9 @@ CREATE TABLE `borme_keys` (
   `_Directivo` tinyint(4) DEFAULT '0',
   `_Auditor` tinyint(4) DEFAULT '0',
   `Provincia` varchar(25) DEFAULT NULL,
-  `cif` varchar(9) DEFAULT NULL,
+  `BOLETIN` varchar(20) DEFAULT NULL,
+  `_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`_key`),
-  KEY `cif` (`cif`),
   FULLTEXT KEY `Name` (`Nombre`),
   FULLTEXT KEY `Prov` (`Provincia`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -943,9 +946,9 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(IN _Name  nvarchar(250), _iKey  nvarchar(15),_provincia nvarchar(25))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_Name  nvarchar(250), _iKey  nvarchar(15),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT)
 BEGIN
-    INSERT borme_keys (_key,Nombre,_Auditor, Provincia) VALUES(_iKey,_Name,1,_Provincia) ON DUPLICATE KEY UPDATE _Auditor = 1, Provincia= _provincia;
+    INSERT borme_keys (_key,Nombre,_Auditor, Provincia,BOLETIN,_ID) VALUES(_iKey,_Name,1,_Provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Auditor = 1, Provincia= _provincia;
     SELECT LAST_INSERT_ID() as Id, _iKey as _key;
 END ;;
 DELIMITER ;
@@ -989,8 +992,8 @@ BEGIN
 			INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo,Mes,Dia)
 								  VALUES (_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo,_Mes,_Dia); 
 	else
-			INSERT IGNORE INTO borme_actos (Empresa_key,Acto,Motivo,Texto,Anyo,Mes,Dia)
-								  VALUES (_Empresa_key,_type,_key,_value,_Anyo,_Mes,_Dia); 		
+			INSERT IGNORE INTO borme_actos (Empresa_key,Acto,Motivo,Texto,Anyo,Mes,Dia,BOLETIN,_ID)
+								  VALUES (_Empresa_key,_type,_key,_value,_Anyo,_Mes,_Dia,_BOLETIN,_BOLETIN_ID); 		
     END IF;  
     
 
@@ -1010,9 +1013,9 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(7),IN _provincia nvarchar(25))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(7),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
 BEGIN
-    INSERT borme_keys (_key,Nombre,_Directivo,Provincia ) VALUES(_iKey,_Name,1,_provincia) ON DUPLICATE KEY UPDATE _Directivo = 1,Provincia=_provincia;
+    INSERT borme_keys (_key,Nombre,_Directivo,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Directivo = 1,Provincia=_provincia;
     
 	SELECT LAST_INSERT_ID() as Id,_iKey as _key;
 END ;;
@@ -1031,9 +1034,9 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(15),IN _provincia nvarchar(25),IN _cif nvarchar(9))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(15), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
 BEGIN
-    INSERT borme_keys (_key,Nombre,_Empresa,Provincia,cif ) VALUES(_iKey,_Name,1,_provincia,_cif) ON DUPLICATE KEY UPDATE _Empresa = 1,Provincia=_provincia;
+    INSERT borme_keys (_key,Nombre,_Empresa,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Empresa = 1,Provincia=_provincia;
     
 
     SELECT LAST_INSERT_ID() as Id,_iKey as _key;
@@ -1109,4 +1112,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-08  6:21:33
+-- Dump completed on 2018-01-08 12:07:55

@@ -49,7 +49,7 @@ module.exports = function (app) {
                     
                     ["F", { f: _this.removeFirstChar }, " "],                    
                     ['R', new RegExp(/^\s+|\s+$/, "gm"), ""],
-                    ['F', { f: _this.replaceAll }, 'LEY 18 1982 DE 26 DE MAYO', 'L.18/1982'],
+                    ['F', { f: _this.replaceAll }, 'LEY 18 1982 DE 26 DE MAYO', 'UTE'],
 
                     ['F', { f: _this.replaceAll }, 'SOCIEDAD COLECTIVA', 'SC'],
                     ['F', { f: _this.replaceAll }, 'SOCIEDAD COLECTIVA', 'SC'],
@@ -63,16 +63,29 @@ module.exports = function (app) {
 
                     ['F', { f: _this.replaceAll }, 'SOCIEDAD CIVIL PROFESIONAL', 'SCP'],
                     ['F', { f: _this.replaceAll }, 'UNION TEMPORAL DE EMPRESAS', 'UTE'],
-                    ['F', { f: _this.replaceAll }, 'UTE U.T.E.', 'UTE'],
-                    ['F', { f: _this.replaceAll }, 'U.T.E.', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UNION TEMPORAL DE EMPRESA', 'UTE'],
+
                     ['F', { f: _this.replaceAll }, 'UTE LEY 18 1982', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UTE LEY 18 1982 N 1', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE LEY 18/1982 DE 26 DE MAYO', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UTE LEY 18/1992 DE 26 DE MAYO', 'UTE'],
+
                     ['F', { f: _this.replaceAll }, 'UTE DE 26 DE MAYO', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UNION TEMPORAL DE EMPRESA LEY 18/ 1982', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UNION TEMPORAL DE EMPRESA LEY 18/1982', 'UTE'], //UNIN TEMPORAL DE EMPRESAS LEY 18/1982 DE 26 DE MAYO
+                    ['F', { f: _this.replaceAll }, 'UNION TEMPORAL DE EMPRESAS LEY 18/1982 DE 26 DE MAYO', 'UTE'], //
+                    ['F', { f: _this.replaceAll }, 'UNIN TEMPORAL DE EMPRESAS LEY 18/1982 DE 26 DE MAYO', 'UTE'], //
                     ['F', { f: _this.replaceAll }, 'UTE LEY 18/1982', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE LEY 18/1982 DE 26 DE MAYO', 'UTE'], //'ELECTROMONTAJES ACOEMAN SL Y ELECTROMONTAJES RIMAR COMUNIDAD DE BIENES UTE LEY 18/1982'
                     ['F', { f: _this.replaceAll }, 'UTE LEY 1871982 DE 26 DE MAYO', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE SEGUN LEY 18/1982 DE 26 DE MAYO', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UTE UTE', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE U.T.E.', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'U.T.E.', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'LEY 18/82', ''], //UTE SEGUN LEY 18/1982 DE 26 DE MAYO
+                    ['F', { f: _this.replaceAll }, 'LEY 18/1982', ''], //UTE SEGUN LEY 18/1982 DE 26 DE MAYO
+                    ['F', { f: _this.replaceAll }, 'Y DISPOSICIONES COMPLEMETARIAS', ''], //UTE LLEI 18 1982 DE 26 DE MAIG 
+                    ['F', { f: _this.replaceAll }, 'UTE LLEI 18 1982 DE 26 DE MAIG', 'UTE'], //'BALFOUR BEATTY RAIL IBERICA SAU COBRA INSTALACIONES Y SERVICIOS SA ELECNOR SA EMTE SA Y SOCIEDAD ESPAÑOLA DE MONTAJES INDUSTRIALES UTE LEY 1871982 DE 26 DE MAYO UTE EUROASCE MANTENIMIENTO'
 
                     ['F', { f: _this.replaceAll }, 'SOCIEDAD ANONIMA', 'SA'],
                     ['F', { f: _this.replaceAll }, 'S.A.', ' SA'],

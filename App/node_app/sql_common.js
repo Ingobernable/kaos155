@@ -249,13 +249,8 @@
                             })
                         },
                         keys: function (options, params, callback, _cberror) {
-                            if (params.table == 'Empresa') {
-                                var _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?)"
-                                var _params = [params.e, params.k, params.data.provincia, params.cif]
-                            } else {
-                                var _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?)"
-                                var _params = [params.e, params.k, params.data.provincia]
-                            }
+                            var _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)"
+                            var _params = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
                                 
                             options.SQL.db.query(_cadsql, _params , function (err, _rec) {
                                 if (err != null || _rec[0][0] == null) {

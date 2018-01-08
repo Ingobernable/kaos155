@@ -1,4 +1,4 @@
-CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `bbdd_kaos155`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
@@ -177,9 +177,12 @@ CREATE TABLE `borme_actos` (
   `Anyo` int(10) unsigned NOT NULL,
   `Mes` int(11) DEFAULT NULL,
   `Dia` int(11) DEFAULT NULL,
+  `BOLETIN` varchar(20) DEFAULT NULL,
+  `_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`,`Dia`,`Mes`,`Anyo`),
-  KEY `Empresa` (`Empresa_key`)
+  KEY `Empresa` (`Empresa_key`),
+  KEY `Boletin` (`BOLETIN`,`_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -197,9 +200,9 @@ CREATE TABLE `borme_keys` (
   `_Directivo` tinyint(4) DEFAULT '0',
   `_Auditor` tinyint(4) DEFAULT '0',
   `Provincia` varchar(25) DEFAULT NULL,
-  `cif` varchar(9) DEFAULT NULL,
+  `BOLETIN` varchar(20) DEFAULT NULL,
+  `_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`_key`),
-  KEY `cif` (`cif`),
   FULLTEXT KEY `Name` (`Nombre`),
   FULLTEXT KEY `Prov` (`Provincia`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
