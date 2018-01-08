@@ -178,6 +178,7 @@ CREATE TABLE `borme_actos` (
   `Mes` int(11) DEFAULT NULL,
   `Dia` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`,`Dia`,`Mes`,`Anyo`),
   KEY `Empresa` (`Empresa_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -196,7 +197,9 @@ CREATE TABLE `borme_keys` (
   `_Directivo` tinyint(4) DEFAULT '0',
   `_Auditor` tinyint(4) DEFAULT '0',
   `Provincia` varchar(25) DEFAULT NULL,
+  `cif` varchar(9) DEFAULT NULL,
   PRIMARY KEY (`_key`),
+  KEY `cif` (`cif`),
   FULLTEXT KEY `Name` (`Nombre`),
   FULLTEXT KEY `Prov` (`Provincia`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -1028,9 +1031,9 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(15),IN _provincia nvarchar(25))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(15),IN _provincia nvarchar(25),IN _cif nvarchar(9))
 BEGIN
-    INSERT borme_keys (_key,Nombre,_Empresa,Provincia ) VALUES(_iKey,_Name,1,_provincia) ON DUPLICATE KEY UPDATE _Empresa = 1,Provincia=_provincia;
+    INSERT borme_keys (_key,Nombre,_Empresa,Provincia,cif ) VALUES(_iKey,_Name,1,_provincia,_cif) ON DUPLICATE KEY UPDATE _Empresa = 1,Provincia=_provincia;
     
 
     SELECT LAST_INSERT_ID() as Id,_iKey as _key;
@@ -1106,4 +1109,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-07  4:58:09
+-- Dump completed on 2018-01-08  6:21:33
