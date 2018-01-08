@@ -1,5 +1,5 @@
 ﻿module.exports = function (app, transforms) {
-
+       var _ = app._
         /*
         var cargos = [
             'Administr.:',
@@ -385,6 +385,9 @@
             //
             // 
             SQL: {
+                Varios: function (_linea, __data, callback) {
+                    callback({ type: __data.type, key: _.trim(__data.values.key.replace(".", "").replace(":", "")), value: _.upperFirst(__data.values.value.toLowerCase()) }, 0)
+                },
                 Constitucion: function (_linea, __data, callback) {
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
@@ -499,6 +502,9 @@
             Extincion: function ( cadena, _keys, _next, data) {
                 return [{ key: 'Extincion', value: null }] //, cadena, _keys, _next, data)
             },
+            Varios: function (cadena, _keys, _next, data) {
+                return [{ key: _keys.c, value: cadena }]
+            },
             Cierre: function ( cadena, _keys, _next, data) {
                 return this.getDirectivos(idEmpresa, 'Cierre', cadena, _keys, _next, data)
             },
@@ -552,12 +558,12 @@
                         'Nombramientos.',
                         'Ceses/Dimisiones.',                
                         'Revocaciones.',
-
+                        //
                         'Cancelaciones de oficio de nombramientos.',
                         'Disolución.',
                         'Reelecciones.',
                         'Extinción.',
-                
+                        //
 
                         'Declaración de unipersonalidad.',                 
                         'Sociedad unipersonal.',
@@ -567,15 +573,14 @@
 
                         //otros actos registrales
                         'Ampliación de capital.',                
-                
-                        'Cierre provisional hoja registral art. 137.2 Ley 43/1995 Impuesto de Sociedades.',
+                        //
+                        
                         'Ampliacion del objeto social.',
                 
                         'Cambio de denominación social.',
                         'Cambio de domicilio social.',
                         'Cambio de objeto social',
                         'Cambio objeto social.',
-                        'Ampliacion del objeto social.',
                         'Objeto social.',
                         'Crédito incobrable.',
                         'Fusión por absorción.',
@@ -602,26 +607,40 @@
                         'Primera inscripcion',
                         'Reactivación de la sociedad',
                         'reactivación De La Sociedad (art242 Del Reglamento Del Registro Mercantil)',
-                        'Cierre provisional hoja registral por baja en el índice de Entidades Jurídicas.',
-                        'Cesión global de activo y pasivo',
 
+                        'Cierre provisional hoja registral por baja en el índice de Entidades Jurídicas.',
+                        'Cierre provisional hoja registral por revocación del NIFde Entidades Jurídicas',
+                        'Cierre provisional hoja registral art. 137.2 Ley 43/1995 Impuesto de Sociedades.',
+                        'Cierre provisional de la hoja registral por revocación del NIF',
+
+                        'Acuerdo de ampliación de capital social sin ejecutar.',
+                        'Objeto social:',
+                        'Adaptación Ley 2/95',
+                        'Cesión global de activo y pasivo',
                         'Desembolso de dividendos pasivos.',
                         'Modificaciones estatutarias.',
-                        'Fe de erratas:',
+                        'Anotación preventiva.',
+
+                        'Juez:',
+                        
                         'Qiebra:',
+                        'Quiebra.',
+                        'EN LIQUIDACION.',
+
+                        'Fe de erratas:',
+                        'Adaptada segun D.T. 2 apartado 2 Ley 2/95.',
                         'Resoluciones:',
                         'Otros conceptos:',
-                        'Datos registrales.',
-                        'Datos registrales',
-                        'datos Registrales',
-                        
-
+                        'Datos registralesT',
+                        'datos Registralest',
                     ]
                 }, nameKeys: [
                     'Constitucion',
+                    //
                     'Nombramiento',
                     'Cese',
                     'Revocacion',
+                    //
                     'Cancela',
                     'Disolucion',
                     'Reeleccion',
@@ -632,8 +651,67 @@
                     null,
                     null,
                     null,
-                    'AmpliaCapital'
+                    //
+                    'AmpliaCapital',
+                    //
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
 
+                    'Extincion',
+                    'Extincion',
+                    'Extincion',
+                    'Extincion',
+
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+
+
+                    'Nombramiento',
+
+                    'Extincion',
+                    'Extincion',
+                    'Extincion',
+
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
                 ]
 
             

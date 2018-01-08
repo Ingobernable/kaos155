@@ -63,13 +63,25 @@ module.exports = function (app) {
 
                     ['F', { f: _this.replaceAll }, 'SOCIEDAD CIVIL PROFESIONAL', 'SCP'],
                     ['F', { f: _this.replaceAll }, 'UNION TEMPORAL DE EMPRESAS', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE U.T.E.', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'U.T.E.', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE LEY 18 1982', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE LEY 18 1982 N 1', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE LEY 18/1992 DE 26 DE MAYO', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UNION TEMPORAL DE EMPRESA LEY 18/ 1982', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE LEY 18/1982', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE LEY 1871982 DE 26 DE MAYO', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE UTE', 'UTE'],
 
                     ['F', { f: _this.replaceAll }, 'SOCIEDAD ANONIMA', 'SA'],
                     ['F', { f: _this.replaceAll }, 'S.A.', ' SA'],
                     ['F', { f: _this.replaceAll }, 'SOCIEDAD LIMITADA', 'SL'],
                     ['F', { f: _this.replaceAll }, 'S.L.', 'SL'],
                     ['F', { f: _this.replaceAll }, 'EN LIQUIDACION', ' LIQ'],
-                    ['F', { f: _this.replaceAll }, ',', ''],
+                    ['F', { f: _this.replaceAll }, 'EN LIQUIDACION', ' LIQ'],
+                    ['F', { f: _this.replaceAll }, 'S. E. I.', 'SEI'],
+                    ['F', { f: _this.replaceAll }, 'C.I.T.Y.C.E.', 'CITYCE'],
+
                     ['R', new RegExp(/  /, "g"), " "],
                     ['R', new RegExp(/,/, "g"), ""],
                     ['R', new RegExp(/"/, "g"), ""],
@@ -77,8 +89,6 @@ module.exports = function (app) {
                     ['R', new RegExp(/\./g, "g"), "%"],
                     ['R', new RegExp(/\*$/, "g"), "."]
                     //["F", { f: _this.removeLastChar }, "."],
-                   
-
                 ]
             }
         }
