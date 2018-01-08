@@ -426,37 +426,46 @@
                         //debugger
                     }
                     //app.IA.send('setinMemory', { type: _t, array: [__data.values.value], compress: 'shorthash.unique' }, function (data) {
+                    if (__data.values.value.indexOf('Si, Fecha De Resolución') == -1 || __data.values.value.indexOf('No, Fecha De Resolución') == -1) {
+                        if (_.toLower(__data.values.value).indexOf('administrador concursal') > -1) {
+                            __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf('administrador concursal') -1 )
+                            if (_table == "Directivo")
+                                __data.values.value = _.capitalize(__data.values.value)
+                        }
                         params = {
                             table: _table,
                             e: __data.values.value,
                             k: app.shorter.unique(__data.values.value),
-                            data:_linea.data
+                            data: _linea.data
                         }
                         //params.table + "(?,?,?)", [params.data.ID, params.e, params.k]
                         app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
-                        //cadsql = "Call Insert_Data_Borme_" + capitalizeFirstLetter(_t.toLowerCase()) + "(?,?)"
-                        //options.SQL.db.query(cadsql, [__data.values.value, app.shorter.unique(__data.values.value)], function (err, _directivo) {
+                            //cadsql = "Call Insert_Data_Borme_" + capitalizeFirstLetter(_t.toLowerCase()) + "(?,?)"
+                            //options.SQL.db.query(cadsql, [__data.values.value, app.shorter.unique(__data.values.value)], function (err, _directivo) {
 
                             if (_directivo.length == 0) {
                                 debugger
                             } else {
                                 if (_directivo.length > 1) {
                                     //debugger
-                                    x=1
+                                    x = 1
                                 }
                                 if (Active) {
-                                    app.process.stdout.write(app, options, '\x1b[32m','','')
+                                    app.process.stdout.write(app, options, '\x1b[32m', '', '')
                                 } else {
                                     app.process.stdout.write(app, options, '\x1b[31m', '', '')
                                 }
-                                app.process.stdout.write(app, options, '', __data.values.Empresa ? "e" : __data.values.Auditor ? "a" : "d",'')
-                                app.process.stdout.write(app, options, '','', '\x1b[0m')
-                                callback(__data, _directivo[0][0].Id, params , Active)
+                                app.process.stdout.write(app, options, '', __data.values.Empresa ? "e" : __data.values.Auditor ? "a" : "d", '')
+                                app.process.stdout.write(app, options, '', '', '\x1b[0m')
+                                callback(__data, _directivo[0][0].Id, params, Active)
                             }
                         }, function (params) {
                             callback(null)
                         })
-                    //})
+                        //})
+                    } else {
+                        callback(__data, 0, params, false)
+                    }
                
                 },
                 Nombramiento: function (_linea, __data, callback) {
