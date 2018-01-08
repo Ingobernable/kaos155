@@ -68,6 +68,7 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, 'UTE LEY 18 1982', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UTE LEY 18 1982 N 1', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UTE LEY 18/1992 DE 26 DE MAYO', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE DE 26 DE MAYO', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UNION TEMPORAL DE EMPRESA LEY 18/ 1982', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UTE LEY 18/1982', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UTE LEY 1871982 DE 26 DE MAYO', 'UTE'],
