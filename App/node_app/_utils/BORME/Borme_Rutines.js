@@ -460,7 +460,7 @@
                         })
 
                     //app.IA.send('setinMemory', { type: _t, array: [__data.values.value], compress: 'shorthash.unique' }, function (data) {
-                    if (!exclude) {                        
+                    if (!_exclude) {                        
                         if (_table == "Directivo")
                             __data.values.value = _.capitalize(__data.values.value)
                                 
