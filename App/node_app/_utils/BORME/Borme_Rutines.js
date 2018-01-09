@@ -433,17 +433,20 @@
                         'quedan en suspenso',
                         'las facultades de administración',
                         'abierta la fase de liquidación',
-                        'Determinar que las facultades de administración',
-                        'Conversión del procedimiento',
-                        
+                        'determinar que las facultades de administración',
+                        'conversión del procedimiento',
+                        'anotacion preventiva de la declaracion',
+                        'se abre la fase de liquidación',
+                        'conversión del procedimiento abreviado'
                         ]
 
                         ._forEach(exclude, function (value) {
-                            if (_.toLower(__data.values.value).indexOf(value) > -1)
+                            if (_.toLower(__data.values.value).indexOf(value) == 0)
                                 _exclude = true
                         })
 
                     var recorta = ['administrador concursal',
+                        'liquidador concursal',
                         'situación concursal',
                         'datos registrales',
                         'no definido por traspaso',
