@@ -448,6 +448,7 @@
                         'datos registrales',
                         'no definido por traspaso',
                         'cambio de domicilio social',
+                        'Adaptación Ley 2/95',
                         'auxiliar delegado concursal']
 
                         ._forEach(recorta, function (value) {
@@ -666,7 +667,6 @@
 
                         'Acuerdo de ampliación de capital social sin ejecutar.',
                         'Objeto social:',
-                        'Adaptación Ley 2/95',
                         
                         'Cesión global de activo y pasivo',
                         'Desembolso de dividendos pasivos.',
@@ -685,6 +685,7 @@
                         'Adaptada segun D.T. 2 apartado 2 Ley 2/95.',
                         'Resoluciones:',
                         'Otros conceptos:',
+                        'Datos registrales',
                         'Datos registralesT',
                         'datos Registralest',
                     ]
