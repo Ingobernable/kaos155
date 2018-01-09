@@ -440,7 +440,7 @@
                         'conversión del procedimiento abreviado'
                         ]
 
-                        ._forEach(exclude, function (value) {
+                        _.forEach(exclude, function (value) {
                             if (_.toLower(__data.values.value).indexOf(value) == 0)
                                 _exclude = true
                         })
@@ -454,7 +454,7 @@
                         'Adaptación Ley 2/95',
                         'auxiliar delegado concursal']
 
-                        ._forEach(recorta, function (value) {
+                        _.forEach(recorta, function (value) {
                             if (_.toLower(__data.values.value).indexOf(value) > -1)
                                 __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf(value) - 1)
                         })
