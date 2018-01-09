@@ -425,19 +425,38 @@
                         __data.values.Auditor = true
                         //debugger
                     }
-                    //app.IA.send('setinMemory', { type: _t, array: [__data.values.value], compress: 'shorthash.unique' }, function (data) {
-                    if (__data.values.value.indexOf('Si, Fecha De Resolución') == -1 && __data.values.value.indexOf('No, Fecha De Resolución') == -1) {
-                        if (_.toLower(__data.values.value).indexOf('administrador concursal') > -1 || _.toLower(__data.values.value).indexOf('situación concursal') > -1) {
-                            if (_.toLower(__data.values.value).indexOf('administrador concursal') > -1)
-                                __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf('administrador concursal') - 1)
-                            if (_.toLower(__data.values.value).indexOf('situación concursal') > -1)
-                                __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf('situación concursal') - 1)
-
-
-                        }
-                        if (_.toLower(__data.values.value).indexOf('datos registrales') > -1)
-                            __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf('datos registrales'))
+                    var _exclude = false
+                    var exclude = [
+                        'si, Fecha De Resolución',
+                        'no, Fecha De Resolución',
+                        'se aprueba el plan de liquidación',
+                        'quedan en suspenso',
+                        'las facultades de administración',
+                        'abierta la fase de liquidación',
+                        'Determinar que las facultades de administración',
+                        'Conversión del procedimiento',
                         
+                        ]
+
+                        ._forEach(exclude, function (value) {
+                            if (_.toLower(__data.values.value).indexOf(value) > -1)
+                                _exclude = true
+                        })
+
+                    var recorta = ['administrador concursal',
+                        'situación concursal',
+                        'datos registrales',
+                        'no definido por traspaso',
+                        'cambio de domicilio social',
+                        'auxiliar delegado concursal']
+
+                        ._forEach(recorta, function (value) {
+                            if (_.toLower(__data.values.value).indexOf(value) > -1)
+                                __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf(value) - 1)
+                        })
+
+                    //app.IA.send('setinMemory', { type: _t, array: [__data.values.value], compress: 'shorthash.unique' }, function (data) {
+                    if (!exclude) {                        
                         if (_table == "Directivo")
                             __data.values.value = _.capitalize(__data.values.value)
                                 
@@ -648,6 +667,7 @@
                         'Acuerdo de ampliación de capital social sin ejecutar.',
                         'Objeto social:',
                         'Adaptación Ley 2/95',
+                        
                         'Cesión global de activo y pasivo',
                         'Desembolso de dividendos pasivos.',
                         'Modificaciones estatutarias.',

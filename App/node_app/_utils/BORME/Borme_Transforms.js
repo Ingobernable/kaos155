@@ -77,8 +77,9 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, 'UNIN TEMPORAL DE EMPRESAS LEY 18/1982 DE 26 DE MAYO', 'UTE'], //
                     ['F', { f: _this.replaceAll }, 'UTE LEY 18/1982', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UTE LEY 18/1982 DE 26 DE MAYO', 'UTE'], //'ELECTROMONTAJES ACOEMAN SL Y ELECTROMONTAJES RIMAR COMUNIDAD DE BIENES UTE LEY 18/1982'
-                    ['F', { f: _this.replaceAll }, 'UTE LEY 1871982 DE 26 DE MAYO', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE LEY 1871982 DE 26 DE MAYO', 'UTE'], //'Adaptación Ley 44/2015'
                     ['F', { f: _this.replaceAll }, 'UTE SEGUN LEY 18/1982 DE 26 DE MAYO', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'Adaptación Ley 44/2015', ''],
                     ['F', { f: _this.replaceAll }, 'UTE UTE', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UTE U.T.E.', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'U.T.E.', 'UTE'],
