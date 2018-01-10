@@ -123,7 +123,7 @@ module.exports = function (app, callback) {
                         options.Provincia = recordset[0][0].provincia
                         app.process.stdout.write(app, options, '\x1b[33m', '+', '\x1b[0m')
                         //analizamos la linea y obtenemos una estructura con su contenido
-                        _line = options.Rutines.analizeSimpleLine(options.Rutines, recordset[0][0].texto, options.Rutines.maps)
+                        _line = options.Rutines.analizeSimpleLine(options.Rutines, recordset[0][0].texto, options.Rutines.maps, options.Provincia)
                         _line.data = recordset[0][0]
                         //console.log(_line.k, "=", _line.e)
 

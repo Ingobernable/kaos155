@@ -1,123 +1,6 @@
 ﻿module.exports = function (app, transforms) {
        var _ = app._
-        /*
-        var cargos = [
-            'Administr.:',
-            'Adm.Conjunto:',
-            'Adm.Concurs.:',
-            'Apod.Conjun.:',
-            'Adm. Unico:',
-            'Admin.Unico:',
-            'Adm. Mancom.:',
-            'Admin.Manc:',
-            'Adm. Solid.:',
-            'Adm.Solidar.:',
-            'Admin.Solid:',
-            'Adm.Supl.:',
-            'Adm.Unico:',
-            'Apod.D.Gral.:',
-            'Apo.Sol:',
-            'Apo.Sol.:',
-            'Apoderado:',
-            'Apo.Man.Soli:',
-            'Apo.Manc.:',
-            'Aud.Supl.:',
-            'Auditor Sup.:',
-            'Aud.C.Con.:',
-            'Auditor:',
-            'Auditor Tit.:',
-            'Audit.Cuent.:',
-            'Audt.Cts.Con:',
 
-            'Con.Delegado:',
-            'Cons.Del.Sol:',
-            'Cons.Del.Man:',
-            'Cons. Deleg.:',
-            'Co.De.Ma.So:',
-            'Consejero:',
-            'Comisario:',
-
-            'Director Gen:',
-            'Dir. General:',
-            'Dtor.Sucurs.:',
-            'Dtor.General:',
-            'Def.Particip:',
-            'Def.part.:',
-            'Depositario:',
-
-            'Ent. Gestora:',
-            'Enti.Gestora:',
-            'EntidDeposit:',
-
-            'General:',
-            'Gerente:',
-            'Gerente Uni.:',
-            'Ger.Com.Ger:',
-
-            'Interventor:',
-
-            'L. Asesor',
-            'Liquidador:',
-            'Liquidador M:',
-            'Liquid.Manc.:',
-            'LiquiSoli:',
-            'Liquid.conc.:',
-
-            'Miem.Com.Ej.:',
-            'Miem.J.Rec:',
-            'Miem.J.Dir.:',
-            'Miem.J.G.P.V:',
-            'Mie.Cons.Rec:',
-            'Miem.Com.Ctr:',
-            'Mro.Coms.Seq:',
-            'Miem.Com.Liq:',
-            'Mro.Coms.Ctr:',
-            'Mbro.Jta.Dir:',
-            'M.Com.Nom.Re:',
-
-            'Pre.Com.A.YC:',
-            'Pre.Coms.Eje:',
-            'Pres.J.G.P.V:',
-            'Presidente:',
-            'Pres.J.Rec:',
-            'Presi.Jta.Di:',
-            'Pres.Ejecut.:',
-            'Pres.Com.Ej.:',
-            'Promotor:',
-
-            'Represent.:',
-            'Representan:',
-            'Repr.143 Rrm:',
-            'R.L.C.Perma.:',
-
-            'Sec.J.Rec:',
-            'SecreNoConsj:',
-            'Secretario:',
-
-            'Secr.No Cons:',
-            'Sec.J.G.P.V:',
-            'Soc.Prof.:',
-            'Socio:',
-            'Socio único:',
-
-            'Tes.Com.Ej.C:',
-            'Tes.C.Rec:',
-
-            'Vicepresid.:',
-            'Vicepresident:',
-            'Vicepresiden:',
-            'Vicesecret.:',
-            'V-Sec No Con:',
-            'Vocal Jta.Di:',
-            'VsecrNoConsj:'
-        ]
-        */
-        function Trim(x) {
-            if (x == null)
-                return ""
-
-            return x.replace(/^\s+|\s+$/gm, '');
-        }
         function pointer  (point, cadena) {
             var _numero = " .0123456789"
             while (_numero.indexOf(cadena.substr(point, 1)) > -1 && point > -1) {
@@ -125,7 +8,7 @@
             }
             return (point)
         }
-        // Changes XML to JSON
+
         function titleCase(str) {
             str = str.toLowerCase();
             var array = str.split(' ');
@@ -136,6 +19,178 @@
         }
 
         return {
+            ////////////////////////////////////////////////////////////////////////////////////
+            //
+            // rutina para sacar de una cadena los datos desde un mapkey
+            //
+            maps: {
+                keys: {
+                    arr: [
+                        'Constitución.',
+                        //actos registrales que afectan a nombramientos
+                        'Nombramientos.',
+                        'Ceses/Dimisiones.',
+                        'Revocaciones.',
+                        //
+                        'Cancelaciones de oficio de nombramientos.',
+                        'Disolución.',
+                        'Reelecciones.',
+                        'Extinción.',
+                        //
+
+                        'Declaración de unipersonalidad.',
+                        'Sociedad unipersonal.',
+                        'Socio único.',
+                        'Empresario Individual.',
+                        'Pérdida del caracter de unipersonalidad. ',
+
+                        //otros actos registrales
+                        'Ampliación de capital.',
+                        //
+
+                        'Ampliacion del objeto social.',
+
+                        'Cambio de denominación social.',
+                        'Cambio de domicilio social.',
+                        'Cambio de objeto social',
+                        'Cambio objeto social.',
+                        'Objeto social.',
+                        'Crédito incobrable.',
+                        'Fusión por absorción.',
+                        'Fusión por unión.',
+                        'Modificaciones estatutarias.',
+                        'Modificación de poderes.',
+                        'Modificación de duración',
+                        'Reducción de capital.',
+                        'Escisión total.',
+                        'Escisión parcial.',
+                        'Emisión de obligaciones.',
+                        'Transformación de sociedad.',
+                        'Reapertura hoja registral',
+                        'Situación concursal.',
+                        'Suspensión de pagos.',
+                        'suspensión de pagos.',
+                        'Primera sucursal de sociedad extranjera.',
+                        'Articulo 378.5 del Reglamento del Registro Mercantil.',
+                        'Página web de la sociedad',
+                        'Apertura de sucursal.',
+                        'Segregación.',
+                        'Adaptación de sociedad',
+                        'Cierre de Sucursal',
+                        'Primera inscripcion',
+
+                        'Reactivación de la sociedad',
+                        'reactivación De La Sociedad (art242 Del Reglamento Del Registro Mercantil)',
+
+                        'Cierre provisional hoja registral por baja en el índice de Entidades Jurídicas.',
+                        'Cierre provisional hoja registral por revocación del NIFde Entidades Jurídicas',
+                        'Cierre provisional hoja registral art. 137.2 Ley 43/1995 Impuesto de Sociedades.',
+                        'Cierre provisional de la hoja registral por revocación del NIF',
+
+                        'Acuerdo de ampliación de capital social sin ejecutar.',
+                        'Objeto social:',
+
+                        'Cesión global de activo y pasivo',
+                        'Desembolso de dividendos pasivos.',
+                        'Modificaciones estatutarias.',
+                        'Anotación preventiva.',
+
+                        'Juez:',
+
+                        'Qiebra:',
+                        'Quiebra.',
+                        'EN LIQUIDACION.',
+
+                        'Administrador Concursal.',
+
+                        'Fe de erratas:',
+                        'Adaptada segun D.T. 2 apartado 2 Ley 2/95.',
+                        'Resoluciones:',
+                        'Otros conceptos:',
+                        'Datos registrales',
+                        'Datos registralesT',
+                        'datos Registralest',
+                    ]
+                }, nameKeys: [
+                    'Constitucion',
+                    //
+                    'Nombramiento',
+                    'Cese',
+                    'Revocacion',
+                    //
+                    'Cancela',
+                    'Disolucion',
+                    'Reeleccion',
+                    'Extincion',
+                    /////////////////////////////////////////////
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    //
+                    'AmpliaCapital',
+                    //
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+
+                    'Extincion',
+                    'Extincion',
+                    'Extincion',
+                    'Extincion',
+
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+                    'Varios',
+
+
+                    'Nombramiento',
+
+                    'Extincion',
+                    'Extincion',
+                    'Extincion',
+                    'Concurso',
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ]
+            },
             _transforms: transforms,
             get: {
                 principal: function ($) {
@@ -209,7 +264,7 @@
 
 
                     $('p.parrafo').each(function (p, _parraf) {
-                        var _t = Trim($($('p.parrafo')[p]).html())
+                        var _t = _.trim($($('p.parrafo')[p]).html())
                         if (_t.length > 0) {
                             if (_t.indexOf(')') == 1 || _t.indexOf('.') == 1 || _lastParragraf) {
                                 _arr[_arr.length] = _t
@@ -467,10 +522,13 @@
                         if (__data.values.key.toLowerCase() == "juzgado")
                             __data.values.value = __data.values.key + " " + __data.values.value
 
+                        var _k = app.shorter.unique(_linea.data.provincia)
+                        var _i = app.shorter.unique(_linea.data.id+"")
+                        var _l = app.shorter.unique(__data.values.value)
                         params = {
                             table: _table,
                             e: __data.values.value,
-                            k: app.shorter.unique(__data.values.value),
+                            k: _l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
                             data: _linea.data
                         }
                         //params.table + "(?,?,?)", [params.data.ID, params.e, params.k]
@@ -600,180 +658,6 @@
                     return data
                 }
             },
-            ////////////////////////////////////////////////////////////////////////////////////
-            //
-            // rutina para sacar de una cadena los datos desde un mapkey
-            //
-            maps: {
-                keys: {
-                    arr: [
-                        'Constitución.',
-                        //actos registrales que afectan a nombramientos
-                        'Nombramientos.',
-                        'Ceses/Dimisiones.',                
-                        'Revocaciones.',
-                        //
-                        'Cancelaciones de oficio de nombramientos.',
-                        'Disolución.',
-                        'Reelecciones.',
-                        'Extinción.',
-                        //
-
-                        'Declaración de unipersonalidad.',                 
-                        'Sociedad unipersonal.',
-                        'Socio único.',
-                        'Empresario Individual.',
-                        'Pérdida del caracter de unipersonalidad. ',
-
-                        //otros actos registrales
-                        'Ampliación de capital.',                
-                        //
-                        
-                        'Ampliacion del objeto social.',
-                
-                        'Cambio de denominación social.',
-                        'Cambio de domicilio social.',
-                        'Cambio de objeto social',
-                        'Cambio objeto social.',
-                        'Objeto social.',
-                        'Crédito incobrable.',
-                        'Fusión por absorción.',
-                        'Fusión por unión.',
-                        'Modificaciones estatutarias.',
-                        'Modificación de poderes.',
-                        'Modificación de duración',
-                        'Reducción de capital.',
-                        'Escisión total.',
-                        'Escisión parcial.',
-                        'Emisión de obligaciones.',
-                        'Transformación de sociedad.',
-                        'Reapertura hoja registral',
-                        'Situación concursal.',
-                        'Suspensión de pagos.',
-                        'suspensión de pagos.',
-                        'Primera sucursal de sociedad extranjera.',
-                        'Articulo 378.5 del Reglamento del Registro Mercantil.',
-                        'Página web de la sociedad',
-                        'Apertura de sucursal.',
-                        'Segregación.',
-                        'Adaptación de sociedad',
-                        'Cierre de Sucursal',
-                        'Primera inscripcion',
-                        
-                        'Reactivación de la sociedad',
-                        'reactivación De La Sociedad (art242 Del Reglamento Del Registro Mercantil)',
-
-                        'Cierre provisional hoja registral por baja en el índice de Entidades Jurídicas.',
-                        'Cierre provisional hoja registral por revocación del NIFde Entidades Jurídicas',
-                        'Cierre provisional hoja registral art. 137.2 Ley 43/1995 Impuesto de Sociedades.',
-                        'Cierre provisional de la hoja registral por revocación del NIF',
-
-                        'Acuerdo de ampliación de capital social sin ejecutar.',
-                        'Objeto social:',
-                        
-                        'Cesión global de activo y pasivo',
-                        'Desembolso de dividendos pasivos.',
-                        'Modificaciones estatutarias.',
-                        'Anotación preventiva.',
-
-                        'Juez:',
-                        
-                        'Qiebra:',
-                        'Quiebra.',
-                        'EN LIQUIDACION.',
-
-                        'Administrador Concursal.',
-
-                        'Fe de erratas:',
-                        'Adaptada segun D.T. 2 apartado 2 Ley 2/95.',
-                        'Resoluciones:',
-                        'Otros conceptos:',
-                        'Datos registrales',
-                        'Datos registralesT',
-                        'datos Registralest',
-                    ]
-                }, nameKeys: [
-                    'Constitucion',
-                    //
-                    'Nombramiento',
-                    'Cese',
-                    'Revocacion',
-                    //
-                    'Cancela',
-                    'Disolucion',
-                    'Reeleccion',
-                    'Extincion',
-                    /////////////////////////////////////////////
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    //
-                    'AmpliaCapital',
-                    //
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-
-                    'Extincion',
-                    'Extincion',
-                    'Extincion',
-                    'Extincion',
-
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-                    'Varios',
-
-
-                    'Nombramiento',
-
-                    'Extincion',
-                    'Extincion',
-                    'Extincion',
-                    'Concurso',
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-                ]
-
-            
-            },
             sortBy : function (_array, p) {
                 return _array.slice(0).sort(function (a, b) {
                     return (a[p] > b[p]) ? 1 : (a[p] < b[p]) ? -1 : 0;
@@ -786,7 +670,7 @@
                     var _pos = this.getPosExploreItems(data, _keys)                             //sacamos el counjunto de posiciones segun plabras clave
                     var _s = this.extraeArrDeCadena(data, _pos, { keys: { arr: _keys } }, type)       //extraemos las cadenas de las subopciones
                 }
-                return _keys.length > 0 ? { c: type, f: _s } : { c: type, f: Trim(data) }
+                return _keys.length > 0 ? { c: type, f: _s } : { c: type, f: _.trim(data) }
             },
             extraeArrDeCadena: function (cadena, map, _keys, _t) {
                 //rutina clave que extrae de la cadena, el conjunto de datos entre palabras clave
@@ -807,7 +691,7 @@
                         _plength = cadena.length  - py // map[_e].c.length                                  //si es el último elemento calculamos la longitud del resto de la cadena
                     }
                 
-                    var _string = Trim(cadena.substr(py, _plength) )                               //extrayendo el resultado
+                    var _string = _.trim(cadena.substr(py, _plength) )                               //extrayendo el resultado
                     if (_string.substr(_string.length - 1, 1) == ".")
                         _string= _string.substr(0, _string.length - 1)
 
@@ -918,50 +802,45 @@
                         Provincia = sinonimos[i].split('#')[1]
                 }
                 lines = []
-                if (Borme != null && Provincia != null) {
-                
+                if (Borme != null && Provincia != null) {               
                     var cadena = ""
-                    for (_l in _xlines) {
-                        //if (_xlines[_l].indexOf('-') > -1) {
+
+                     for (_l in _xlines) {
                         var _e = _xlines[_l].substr(_xlines[_l].length - 4, 4)
                         if ( ((_e.charAt(0)>="0" &&  _e.charAt(0)<="9") && (_e.charAt(1)>="0" &&  _e.charAt(1)<="9") && _e.substr(2,2)==").") )  {
                             var _xline = cadena + (cadena.length > 0 ? ' ' : '') + _xlines[_l]
-                            _xcline = _xline.split("-")[0]
+                                        _xcline = _xline.split("-")[0]
                             if(!isNaN(parseFloat(_xcline)) && isFinite(_xcline))
                                 lines[lines.length] = _xline
                             cadena=""
                         } else {
                             var cadena = cadena + (cadena.length > 0 ? ' ' : '') + _xlines[_l]
                         }
-                        //}
-                    }
+                        
+                     }
+
                     //leemos el texto convertido a matriz
                     //aplicandole un mapa de palabras clave
             
                     var _lines = []
-                    //debugger
                     for (i in lines) {
                         if (lines[i].length > 40) {                                                 //si la longitud del texto >40 pj
-                            var _items = this.getPosExploreItems(lines[i], map.keys.arr,false)            //extraemos las posiciones donde existen palabras clave
-                            //var _result = this.extraeArrDeCadena(lines[i], _items, map)             //extreamos las cadenas entre palabras clave y las traspasamos a una array
+                            var _items = this.getPosExploreItems(lines[i], map.keys.arr,false)            //extraemos las posiciones donde existen palabras clave //extreamos las cadenas entre palabras clave y las traspasamos a una array
                             if (_items != null) {
                                 if (lines[i].substr(0, _items[0].p).indexOf("(") > -1) {
                                     var _Empresa = lines[i].substr(0, _items[0].p).split("(")[0]        //extreamos la empresa del comienzo de la cadena
                                 } else {
                                     var _Empresa = lines[i].substr(0, _items[0].p)
                                 }
-                                _Empresa = _Empresa.split("-") //.replace(/^\s+|\s+$/gm, '')  //desechando lo que no interesa
-                                //if (_Empresa.length > 2) {
+                                _Empresa = _Empresa.split("-")                                       //desechando lo que no interesa
+
                                 var _n=2
                                 while (_n < _Empresa.length ) {
                                     _Empresa[1] = _Empresa[1] + "-" + _Empresa[_n]
                                     _n++
                                 }
-                                //buscar un ID
-                                //if (_Empresa[0] * 1 == 1359)
-                                //    debugger
-                                //}
-                                _Empresa[1] = _this.transforms(Trim(_Empresa[1]), patterns.Contratista) 
+
+                                _Empresa[1] = _this.transforms(_.trim(_Empresa[1]), patterns.Contratista) 
                                 if (_Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS") > -1)
                                     _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].length - _Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS"))
 
@@ -972,73 +851,70 @@
                                     _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].indexOf('SL.') + 2)
 
                                 _lines[_lines.length] = {
-                                    id: Trim(_Empresa[0]),
+                                    id: _.trim(_Empresa[0]),
                                     e: _Empresa[1].split(".")[0].replace(/%/g,'.'),
                                     keys: _items,
                                     original: lines[i],
                                     contenido : _this.explora(lines[i], _items, _this.maps)
                                 }              //acumulando los resultados en una matriz
-                                // debugger
+
                             
                             }
                         }
           
                     }
 
-                    //debugger
                     return { BORME:Borme, PROVINCIA:Provincia, data: _lines}
                 } else {
                     debugger
                     return null
                 }
             },
-            analizeSimpleLine: function (_this, line,map) {
+            analizeSimpleLine: function (_this, line,map, skey) {
                 var patterns = _this._transforms.getPatern(_this._transforms)
                 var _items = this.getPosExploreItems(line, map.keys.arr, false)            //extraemos las posiciones donde existen palabras clave
 
-                //var _result = this.extraeArrDeCadena(lines[i], _items, map)             //extreamos las cadenas entre palabras clave y las traspasamos a una array
                 if (_items != null) {
                     if (line.substr(0, _items[0].p).indexOf("(") > -1) {
                         var _Empresa = line.substr(0, _items[0].p).split("(")[0]        //extreamos la empresa del comienzo de la cadena
                     } else {
                         var _Empresa = line.substr(0, _items[0].p)
                     }
-                    _Empresa = _Empresa.split("-") //.replace(/^\s+|\s+$/gm, '')  //desechando lo que no interesa
-                    //if (_Empresa.length > 2) {
+                    _Empresa = _Empresa.split("-")                                      //desechando lo que no interesa
+                    
                     var _n = 2
                     while (_n < _Empresa.length) {
                         _Empresa[1] = _Empresa[1] + "-" + _Empresa[_n]
                         _n++
                     }
-                    //buscar un ID
-                    //if (_Empresa[0] * 1 == 1359)
-                    //    debugger
-                    //}
-                    _Empresa[1] = _this.transforms(Trim(_Empresa[1]), patterns.Contratista)
+
+                    _Empresa[1] = _this.transforms(_.trim(_Empresa[1]), patterns.Contratista)
                     if (_Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS") > -1) {
                         _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].length - _Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS"))
                     }
                     if (_Empresa[1].indexOf('SA.') > -1) {
                         _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].indexOf('SA.') + 2)
-                        //var _k = app.shorter.unique(_Empresa[1].substr(0, _Empresa[1].indexOf('SA.')-1))
                     }
 
                     if (_Empresa[1].indexOf('SL.') > -1) {
                         _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].indexOf('SL.') + 2)
-                        //var _k = app.shorter.unique(_Empresa[1].substr(0, _Empresa[1].indexOf('SL.') - 1))
                     }
-                    //if (_k == null)
-                    //    debugger
 
-                    var _e=_Empresa[1].split(".")[0].replace(/%/g, '.')
+
+                    var _e = _Empresa[1].split(".")[0].replace(/%/g, '.')
+                    var _k = app.shorter.unique(skey)
+                    var _l = app.shorter.unique(_e)
+                    var _i = app.shorter.unique(_Empresa[0])
+
                     var _line = {
-                        id: Trim(_Empresa[0]),
+                        id: _.trim(_Empresa[0]),
                         e: _e,
-                        k: app.shorter.unique(_e),
+                        k: _l + _i.substr(0, 1) + _k.substr((_k.length-1) - (8-_l.length) , 8 - _l.length) ,
                         keys: _items,
                         original: line,
                         contenido: _this.explora(line, _items, _this.maps)
-                    }              //acumulando los resultados en una matriz
+                    }
+                    //acumulando los resultados en una matriz
 
                     return _line
 
@@ -1053,8 +929,7 @@
                 var _p = ""
                 for (_i in keys) {
                     _i = _i * 1
-                    //debugger
-                    //if (_i > 0) {
+
                     var _func = null
                     var _t = array.keys.arr[keys[_i].id]
                     if (array.nameKeys[keys[_i].id] != null)
@@ -1072,10 +947,6 @@
                             debugger
                         }
                     }
-                 
-                    //if()
-                    //}
-                
                 }
                 if (keys.length == 0)
                     debugger
@@ -1084,5 +955,4 @@
             }
         
         }
-    //})
 };

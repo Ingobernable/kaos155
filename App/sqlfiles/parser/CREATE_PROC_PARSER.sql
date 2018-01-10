@@ -1,143 +1,3 @@
---
--- Table structure for table `boletin_materias`
---
-
-DROP TABLE IF EXISTS `boletin_materias`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `boletin_materias` (
-  `BOLETIN` varchar(25) NOT NULL,
-  `COD_Materia` varchar(10) DEFAULT NULL,
-  KEY `BOLETIN` (`BOLETIN`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `borme_actos`
---
-
-DROP TABLE IF EXISTS `borme_actos`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `borme_actos` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Empresa_key` char(7) NOT NULL,
-  `Acto` varchar(45) NOT NULL,
-  `Motivo` varchar(45) NOT NULL,
-  `Texto` varchar(255) NOT NULL,
-  `Anyo` int(10) unsigned NOT NULL,
-  `Mes` int(11) DEFAULT NULL,
-  `Dia` int(11) DEFAULT NULL,
-  `BOLETIN` varchar(20) DEFAULT NULL,
-  `_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`,`Dia`,`Mes`,`Anyo`),
-  KEY `Empresa` (`Empresa_key`),
-  KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `borme_keys`
---
-
-DROP TABLE IF EXISTS `borme_keys`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `borme_keys` (
-  `_key` varchar(7) NOT NULL,
-  `Nombre` text,
-  `_Empresa` tinyint(4) DEFAULT '0',
-  `_Directivo` tinyint(4) DEFAULT '0',
-  `_Auditor` tinyint(4) DEFAULT '0',
-  `Provincia` varchar(25) DEFAULT NULL,
-  `BOLETIN` varchar(20) DEFAULT NULL,
-  `_ID` int(11) DEFAULT NULL,
-  PRIMARY KEY (`_key`),
-  FULLTEXT KEY `Name` (`Nombre`),
-  FULLTEXT KEY `Prov` (`Provincia`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `borme_relaciones`
---
-
-DROP TABLE IF EXISTS `borme_relaciones`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `borme_relaciones` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Empresa_key` char(7) NOT NULL,
-  `Relation_key` char(7) NOT NULL,
-  `Type` int(11) DEFAULT '1',
-  `Motivo` varchar(45) NOT NULL,
-  `Cargo` varchar(45) NOT NULL,
-  `Activo` bit(1) NOT NULL,
-  `Anyo` int(10) unsigned NOT NULL,
-  `Mes` int(11) DEFAULT NULL,
-  `Dia` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `Empresa` (`Empresa_key`),
-  KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `borme_tree`
---
-
-DROP TABLE IF EXISTS `borme_tree`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `borme_tree` (
-  `_Key` varchar(7) NOT NULL,
-  `_tree` json DEFAULT NULL,
-  PRIMARY KEY (`_Key`),
-  UNIQUE KEY `_key_UNIQUE` (`_Key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Temporary view structure for view `relations`
---
-
-DROP TABLE IF EXISTS `relations`;
-/*!50001 DROP VIEW IF EXISTS `relations`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE VIEW `relations` AS SELECT 
- 1 AS `EKey`,
- 1 AS `RKey`,
- 1 AS `Empresa`,
- 1 AS `Relacion`,
- 1 AS `EType`,
- 1 AS `RType`,
- 1 AS `Motivo`,
- 1 AS `Cargo`,
- 1 AS `Activo`,
- 1 AS `anyo`*/;
-SET character_set_client = @saved_cs_client;
-
---
--- Temporary view structure for view `volumen`
---
-
-DROP TABLE IF EXISTS `volumen`;
-/*!50001 DROP VIEW IF EXISTS `volumen`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE VIEW `volumen` AS SELECT 
- 1 AS `now()`,
- 1 AS `TABLE_SCHEMA`,
- 1 AS `TABLE_NAME`,
- 1 AS `TABLE_ROWS`,
- 1 AS `AVG_ROW_LENGTH`,
- 1 AS `DATA_LENGTH`,
- 1 AS `INDEX_LENGTH`,
- 1 AS `AUTO_INCREMENT`,
- 1 AS `ENGINE`*/;
-SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping routines for database 'bbdd_kaos155'
@@ -797,7 +657,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_Name  nvarchar(250), _iKey  nvarchar(15),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_Name  nvarchar(250), _iKey  nvarchar(9),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT)
 BEGIN
     INSERT borme_keys (_key,Nombre,_Auditor, Provincia,BOLETIN,_ID) VALUES(_iKey,_Name,1,_Provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Auditor = 1, Provincia= _provincia;
     SELECT LAST_INSERT_ID() as Id, _iKey as _key;
@@ -825,9 +685,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Diario`(
     IN _Anyo INT,
     IN _Provincia nvarchar(50),
     IN _Empresa_Id int,
-    IN _Empresa_key char(7),
+    IN _Empresa_key char(9),
     IN _Relacion_Id int,
-    IN _Relacion_key char(7),
+    IN _Relacion_key char(9),
     IN _T_Relacion INT,
     IN _Activo int,
     IN _type nvarchar(100), 
@@ -864,7 +724,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(7),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(9),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
 BEGIN
     INSERT borme_keys (_key,Nombre,_Directivo,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Directivo = 1,Provincia=_provincia;
     
@@ -885,7 +745,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(15), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(9), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
 BEGIN
     INSERT borme_keys (_key,Nombre,_Empresa,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Empresa = 1,Provincia=_provincia;
     
@@ -963,4 +823,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-08 12:07:55
+-- Dump completed on 2018-01-10 10:02:10

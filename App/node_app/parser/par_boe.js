@@ -32,9 +32,6 @@ module.exports = function (app, callback) {
                 boletin: function (options, data, callback) {
                     options.SQL.saveCodeMaterias(options, data, function (data) {
 
-                        
-
-
                         params = [
                             app.Type,
                             data._counterMaterias,
@@ -124,9 +121,7 @@ module.exports = function (app, callback) {
                                 empresa = empresa.substr(0,empresa.indexOf("(")-1)
                             } else {
                                 empresa = empresa.replace("(", "").replace(")", "")
-                            }
-
-                             
+                            } 
                         }
                     }
                     if (((empresa.match(/^\w\ \w \ /) || []).length > 0)) {
@@ -380,8 +375,8 @@ module.exports = function (app, callback) {
                                                         data.contratista = data.contratista + (data.contratista.length > 0 ? ";" : "") + _e[_l].split("#")[0]
                                                     }
                                                 }
-                                                _analisis._tramitacion = ''.Trim(options.Rutines.extract(_text, 'Tramitación', options.transforms.General, true)).split(" ")[0]
-                                                _analisis._objeto = ''.Trim(options.Rutines.extract(_text, 'Descripción del objeto:', options.transforms.General, true))
+                                                _analisis._tramitacion = _.trim(options.Rutines.extract(_text, 'Tramitación', options.transforms.General, true)).split(" ")[0]
+                                                _analisis._objeto = _.trim(options.Rutines.extract(_text, 'Descripción del objeto:', options.transforms.General, true))
 
                                                 //if(data.contratista.indexOf(' S')==-1)
                                                 //    debugger

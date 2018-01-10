@@ -134,7 +134,7 @@ CREATE TABLE `boletin_contratos` (
   `BOLETIN` varchar(25) NOT NULL,
   `counter` int(11) NOT NULL DEFAULT '1',
   `_BormeEmpresa` varchar(254) DEFAULT NULL,
-  `_key` varchar(7) DEFAULT NULL,
+  `_key` varchar(9) DEFAULT NULL,
   `Empresa` varchar(254) NOT NULL,
   `importe` decimal(13,2) DEFAULT '0.00',
   `_acron` varchar(55) DEFAULT NULL,
@@ -170,7 +170,7 @@ DROP TABLE IF EXISTS `borme_actos`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_actos` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Empresa_key` char(7) NOT NULL,
+  `Empresa_key` char(9) NOT NULL,
   `Acto` varchar(45) NOT NULL,
   `Motivo` varchar(45) NOT NULL,
   `Texto` varchar(255) NOT NULL,
@@ -194,7 +194,7 @@ DROP TABLE IF EXISTS `borme_keys`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_keys` (
-  `_key` varchar(7) NOT NULL,
+  `_key` varchar(9) NOT NULL,
   `Nombre` text,
   `_Empresa` tinyint(4) DEFAULT '0',
   `_Directivo` tinyint(4) DEFAULT '0',
@@ -217,8 +217,8 @@ DROP TABLE IF EXISTS `borme_relaciones`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_relaciones` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Empresa_key` char(7) NOT NULL,
-  `Relation_key` char(7) NOT NULL,
+  `Empresa_key` char(9) NOT NULL,
+  `Relation_key` char(9) NOT NULL,
   `Type` int(11) DEFAULT '1',
   `Motivo` varchar(45) NOT NULL,
   `Cargo` varchar(45) NOT NULL,
@@ -230,21 +230,6 @@ CREATE TABLE `borme_relaciones` (
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `borme_tree`
---
-
-DROP TABLE IF EXISTS `borme_tree`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `borme_tree` (
-  `_Key` varchar(7) NOT NULL,
-  `_tree` json DEFAULT NULL,
-  PRIMARY KEY (`_Key`),
-  UNIQUE KEY `_key_UNIQUE` (`_Key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -946,7 +931,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_Name  nvarchar(250), _iKey  nvarchar(15),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_Name  nvarchar(250), _iKey  nvarchar(9),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT)
 BEGIN
     INSERT borme_keys (_key,Nombre,_Auditor, Provincia,BOLETIN,_ID) VALUES(_iKey,_Name,1,_Provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Auditor = 1, Provincia= _provincia;
     SELECT LAST_INSERT_ID() as Id, _iKey as _key;
@@ -974,9 +959,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Diario`(
     IN _Anyo INT,
     IN _Provincia nvarchar(50),
     IN _Empresa_Id int,
-    IN _Empresa_key char(7),
+    IN _Empresa_key char(9),
     IN _Relacion_Id int,
-    IN _Relacion_key char(7),
+    IN _Relacion_key char(9),
     IN _T_Relacion INT,
     IN _Activo int,
     IN _type nvarchar(100), 
@@ -1013,7 +998,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(7),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(9),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
 BEGIN
     INSERT borme_keys (_key,Nombre,_Directivo,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Directivo = 1,Provincia=_provincia;
     
@@ -1034,7 +1019,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(15), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(9), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
 BEGIN
     INSERT borme_keys (_key,Nombre,_Empresa,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Empresa = 1,Provincia=_provincia;
     
@@ -1112,4 +1097,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-08 12:07:55
+-- Dump completed on 2018-01-10 10:02:10

@@ -134,7 +134,7 @@ CREATE TABLE `boletin_contratos` (
   `BOLETIN` varchar(25) NOT NULL,
   `counter` int(11) NOT NULL DEFAULT '1',
   `_BormeEmpresa` varchar(254) DEFAULT NULL,
-  `_key` varchar(7) DEFAULT NULL,
+  `_key` varchar(9) DEFAULT NULL,
   `Empresa` varchar(254) NOT NULL,
   `importe` decimal(13,2) DEFAULT '0.00',
   `_acron` varchar(55) DEFAULT NULL,
@@ -170,7 +170,7 @@ DROP TABLE IF EXISTS `borme_actos`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_actos` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Empresa_key` char(7) NOT NULL,
+  `Empresa_key` char(9) NOT NULL,
   `Acto` varchar(45) NOT NULL,
   `Motivo` varchar(45) NOT NULL,
   `Texto` varchar(255) NOT NULL,
@@ -194,7 +194,7 @@ DROP TABLE IF EXISTS `borme_keys`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_keys` (
-  `_key` varchar(7) NOT NULL,
+  `_key` varchar(9) NOT NULL,
   `Nombre` text,
   `_Empresa` tinyint(4) DEFAULT '0',
   `_Directivo` tinyint(4) DEFAULT '0',
@@ -217,8 +217,8 @@ DROP TABLE IF EXISTS `borme_relaciones`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_relaciones` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Empresa_key` char(7) NOT NULL,
-  `Relation_key` char(7) NOT NULL,
+  `Empresa_key` char(9) NOT NULL,
+  `Relation_key` char(9) NOT NULL,
   `Type` int(11) DEFAULT '1',
   `Motivo` varchar(45) NOT NULL,
   `Cargo` varchar(45) NOT NULL,
@@ -230,21 +230,6 @@ CREATE TABLE `borme_relaciones` (
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `borme_tree`
---
-
-DROP TABLE IF EXISTS `borme_tree`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `borme_tree` (
-  `_Key` varchar(7) NOT NULL,
-  `_tree` json DEFAULT NULL,
-  PRIMARY KEY (`_Key`),
-  UNIQUE KEY `_key_UNIQUE` (`_Key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

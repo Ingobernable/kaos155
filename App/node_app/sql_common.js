@@ -96,8 +96,11 @@
             } else {
 
                 app.fs.readFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), function (err, _JSON) {
+                    _cb = null
                     if (err) {
                         testIp = function (testIp, callback) {
+
+                            _cb = callback 
                             app.inquirer.prompt([
                                         { type: 'input', name: 'host', message: 'mysql ' + options.Command + ' IP', default: 'localhost' },
                                         { type: 'input', name: 'user', message: 'mysql ' + options.Command + ' user', default: 'root' },
@@ -134,7 +137,7 @@
                                         _this.testDB(options, con, resp, db, function () {
                                             app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
                                                 console.log("\x1b[32m Nuevas credenciales de acceso mysql guardadas OK \x1b[0m");
-                                                callback(_credenciales)
+                                                _cb(_credenciales)
                                             })
                                         }, true)
                                     }
