@@ -522,8 +522,9 @@
                         if (__data.values.key.toLowerCase() == "juzgado")
                             __data.values.value = __data.values.key + " " + __data.values.value
 
+                        var _d = new Date()
                         var _k = app.shorter.unique(_linea.data.provincia)
-                        var _i = app.shorter.unique(_linea.data.id+"")
+                        var _i = app.shorter.unique(new Date().toString()+"")
                         var _l = app.shorter.unique(__data.values.value)
                         params = {
                             table: _table,
@@ -904,7 +905,7 @@
                     var _e = _Empresa[1].split(".")[0].replace(/%/g, '.')
                     var _k = app.shorter.unique(skey)
                     var _l = app.shorter.unique(_e)
-                    var _i = app.shorter.unique(_Empresa[0])
+                    var _i = app.shorter.unique(app.shorter.unique(new Date().toString() + ""))
 
                     var _line = {
                         id: _.trim(_Empresa[0]),
