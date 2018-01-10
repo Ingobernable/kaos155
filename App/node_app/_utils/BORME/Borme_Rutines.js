@@ -872,12 +872,16 @@
                     return null
                 }
             },
-            getUnique: function (_this, db, callback) {
+            getUnique: function (_this, dbq, callback) {
                 var _k = app.shorter.generate()
+                var _db = dbq
+                if (_db == null)
+                    debugger
+
                 cadsql = "select * from borme_keys where _key=?"
-                db.query(cadsql, [_k], function (err, record) {
+                _db.query(cadsql, [_k], function (err, record) {
                     if (record.length > 0) {
-                        _this(db, callback)
+                        _this(_db, callback)
                     } else {
                         callback(_k)
                     }
