@@ -881,7 +881,7 @@
                 cadsql = "select * from borme_keys where _key=?"
                 _db.query(cadsql, [_k], function (err, record) {
                     if (record.length > 0) {
-                        _this(_db, callback)
+                        _this(_this,_db, callback)
                     } else {
                         callback(_k)
                     }
