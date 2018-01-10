@@ -170,7 +170,7 @@ DROP TABLE IF EXISTS `borme_actos`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_actos` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Empresa_key` char(9) NOT NULL,
+  `Empresa_key` char(12) NOT NULL,
   `Acto` varchar(45) NOT NULL,
   `Motivo` varchar(45) NOT NULL,
   `Texto` varchar(255) NOT NULL,
@@ -194,7 +194,7 @@ DROP TABLE IF EXISTS `borme_keys`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_keys` (
-  `_key` varchar(9) NOT NULL,
+  `_key` varchar(12) NOT NULL,
   `Nombre` text,
   `_Empresa` tinyint(4) DEFAULT '0',
   `_Directivo` tinyint(4) DEFAULT '0',
@@ -217,8 +217,8 @@ DROP TABLE IF EXISTS `borme_relaciones`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_relaciones` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Empresa_key` char(9) NOT NULL,
-  `Relation_key` char(9) NOT NULL,
+  `Empresa_key` char(12) NOT NULL,
+  `Relation_key` char(12) NOT NULL,
   `Type` int(11) DEFAULT '1',
   `Motivo` varchar(45) NOT NULL,
   `Cargo` varchar(45) NOT NULL,
@@ -286,7 +286,7 @@ SET character_set_client = @saved_cs_client;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` FUNCTION `GET_NAME`( __key nvarchar(7)) RETURNS varchar(255) CHARSET utf8
+CREATE DEFINER=`root`@`localhost` FUNCTION `GET_NAME`( __key nvarchar(12)) RETURNS varchar(255) CHARSET utf8
 BEGIN
 	DECLARE _value nvarchar(255);
 	SET _value = (SELECT Nombre FROM borme_keys WHERE _key = __key);
@@ -931,7 +931,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_Name  nvarchar(250), _iKey  nvarchar(9),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_Name  nvarchar(250), _iKey  nvarchar(12),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT)
 BEGIN
     INSERT borme_keys (_key,Nombre,_Auditor, Provincia,BOLETIN,_ID) VALUES(_iKey,_Name,1,_Provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Auditor = 1, Provincia= _provincia;
     SELECT LAST_INSERT_ID() as Id, _iKey as _key;
@@ -959,9 +959,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Diario`(
     IN _Anyo INT,
     IN _Provincia nvarchar(50),
     IN _Empresa_Id int,
-    IN _Empresa_key char(9),
+    IN _Empresa_key nvarchar(12),
     IN _Relacion_Id int,
-    IN _Relacion_key char(9),
+    IN _Relacion_key nvarchar(12),
     IN _T_Relacion INT,
     IN _Activo int,
     IN _type nvarchar(100), 
@@ -998,7 +998,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(9),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(12),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
 BEGIN
     INSERT borme_keys (_key,Nombre,_Directivo,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Directivo = 1,Provincia=_provincia;
     
@@ -1019,32 +1019,13 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(9), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey nvarchar(12), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
 BEGIN
     INSERT borme_keys (_key,Nombre,_Empresa,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Empresa = 1,Provincia=_provincia;
     
 
     SELECT LAST_INSERT_ID() as Id,_iKey as _key;
     
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_Tree` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
-/*!50003 SET collation_connection  = utf8_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_Tree`(_ikey VARCHAR(7) , _itree JSON  )
-BEGIN
- INSERT borme_tree (_key, _tree ) VALUES(_iKey,_itree) ON DUPLICATE KEY UPDATE _tree = _itree;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;

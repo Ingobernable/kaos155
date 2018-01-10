@@ -170,7 +170,7 @@ DROP TABLE IF EXISTS `borme_actos`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_actos` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Empresa_key` char(9) NOT NULL,
+  `Empresa_key` char(12) NOT NULL,
   `Acto` varchar(45) NOT NULL,
   `Motivo` varchar(45) NOT NULL,
   `Texto` varchar(255) NOT NULL,
@@ -194,7 +194,7 @@ DROP TABLE IF EXISTS `borme_keys`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_keys` (
-  `_key` varchar(9) NOT NULL,
+  `_key` varchar(12) NOT NULL,
   `Nombre` text,
   `_Empresa` tinyint(4) DEFAULT '0',
   `_Directivo` tinyint(4) DEFAULT '0',
@@ -217,8 +217,8 @@ DROP TABLE IF EXISTS `borme_relaciones`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_relaciones` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Empresa_key` char(9) NOT NULL,
-  `Relation_key` char(9) NOT NULL,
+  `Empresa_key` char(12) NOT NULL,
+  `Relation_key` char(12) NOT NULL,
   `Type` int(11) DEFAULT '1',
   `Motivo` varchar(45) NOT NULL,
   `Cargo` varchar(45) NOT NULL,

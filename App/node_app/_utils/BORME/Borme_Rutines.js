@@ -517,25 +517,23 @@
                     //app.IA.send('setinMemory', { type: _t, array: [__data.values.value], compress: 'shorthash.unique' }, function (data) {
                     if (!_exclude) {                        
                         if (_table == "Directivo")
-                            __data.values.value = _.capitalize(__data.values.value)
+                            __data.values.value = capitalizeFirstLetter(__data.values.value)
                                 
                         if (__data.values.key.toLowerCase() == "juzgado")
-                            __data.values.value = __data.values.key + " " + __data.values.value
+                            __data.values.value = capitalizeFirstLetter(__data.values.key + " " + __data.values.value)
 
-                        var _d = new Date()
-                        var _k = app.shorter.unique(_linea.data.provincia)
-                        var _i = app.shorter.unique(new Date().toString()+"")
-                        var _l = app.shorter.unique(__data.values.value)
+                        //var _d = new Date()
+                        //var _k = app.shorter.unique(_linea.data.provincia)
+                       // var _i = app.shorter.unique(new Date().toString()+"")
+                        //var _l = app.shorter.unique(__data.values.value)
                         params = {
                             table: _table,
                             e: __data.values.value,
-                            k: _l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
+                            k: app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
                             data: _linea.data
                         }
                         //params.table + "(?,?,?)", [params.data.ID, params.e, params.k]
                         app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
-                            //cadsql = "Call Insert_Data_Borme_" + capitalizeFirstLetter(_t.toLowerCase()) + "(?,?)"
-                            //options.SQL.db.query(cadsql, [__data.values.value, app.shorter.unique(__data.values.value)], function (err, _directivo) {
 
                             if (_directivo.length == 0) {
                                 debugger
@@ -903,14 +901,14 @@
 
 
                     var _e = _Empresa[1].split(".")[0].replace(/%/g, '.')
-                    var _k = app.shorter.unique(skey)
-                    var _l = app.shorter.unique(_e)
-                    var _i = app.shorter.unique(app.shorter.unique(new Date().toString() + ""))
+                  //  var _k = app.shorter.generate()(skey)
+                  //  var _l = app.shorter.unique(_e)
+                  //  var _i = app.shorter.unique(app.shorter.unique(new Date().toString() + ""))
 
                     var _line = {
                         id: _.trim(_Empresa[0]),
                         e: _e,
-                        k: _l + _i.substr(0, 1) + _k.substr((_k.length-1) - (8-_l.length) , 8 - _l.length) ,
+                        k: app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length-1) - (8-_l.length) , 8 - _l.length) ,
                         keys: _items,
                         original: line,
                         contenido: _this.explora(line, _items, _this.maps)
