@@ -526,33 +526,36 @@
                         //var _k = app.shorter.unique(_linea.data.provincia)
                        // var _i = app.shorter.unique(new Date().toString()+"")
                         //var _l = app.shorter.unique(__data.values.value)
-                        params = {
-                            table: _table,
-                            e: __data.values.value,
-                            k: app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
-                            data: _linea.data
-                        }
-                        //params.table + "(?,?,?)", [params.data.ID, params.e, params.k]
-                        app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
+                        app.BOLETIN.Rutines.getUnique(app.BOLETIN.Rutines.getUnique, app.BOLETIN.SQL.db, function (_k) {
 
-                            if (_directivo.length == 0) {
-                                debugger
-                            } else {
-                                if (_directivo.length > 1) {
-                                    //debugger
-                                    x = 1
-                                }
-                                if (Active) {
-                                    app.process.stdout.write(app, options, '\x1b[32m', '', '')
-                                } else {
-                                    app.process.stdout.write(app, options, '\x1b[31m', '', '')
-                                }
-                                app.process.stdout.write(app, options, '', __data.values.Empresa ? "e" : __data.values.Auditor ? "a" : "d", '')
-                                app.process.stdout.write(app, options, '', '', '\x1b[0m')
-                                callback(__data, _directivo[0][0].Id, params, Active)
+                            params = {
+                                table: _table,
+                                e: __data.values.value,
+                                k: _k, //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
+                                data: _linea.data
                             }
-                        }, function (params) {
-                            callback(null)
+                            //params.table + "(?,?,?)", [params.data.ID, params.e, params.k]
+                            app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
+
+                                if (_directivo.length == 0) {
+                                    debugger
+                                } else {
+                                    if (_directivo.length > 1) {
+                                        //debugger
+                                        x = 1
+                                    }
+                                    if (Active) {
+                                        app.process.stdout.write(app, options, '\x1b[32m', '', '')
+                                    } else {
+                                        app.process.stdout.write(app, options, '\x1b[31m', '', '')
+                                    }
+                                    app.process.stdout.write(app, options, '', __data.values.Empresa ? "e" : __data.values.Auditor ? "a" : "d", '')
+                                    app.process.stdout.write(app, options, '', '', '\x1b[0m')
+                                    callback(__data, _directivo[0][0].Id, params, Active)
+                                }
+                            }, function (params) {
+                                callback(null)
+                            })
                         })
                         //})
                     } else {
@@ -869,7 +872,18 @@
                     return null
                 }
             },
-            analizeSimpleLine: function (_this, line,map, skey) {
+            getUnique: function (_this, db, callback) {
+                var _k = app.shorter.generate()
+                cadsql = "select * from borme_keys where _key=?"
+                db.query(cadsql, [_k], function (err, record) {
+                    if (record.length > 0) {
+                        _this(db, callback)
+                    } else {
+                        callback(_k)
+                    }
+                })
+            },
+            analizeSimpleLine: function (_db, _this, line,map, skey, callback) {
                 var patterns = _this._transforms.getPatern(_this._transforms)
                 var _items = this.getPosExploreItems(line, map.keys.arr, false)            //extraemos las posiciones donde existen palabras clave
 
@@ -904,18 +918,20 @@
                   //  var _k = app.shorter.generate()(skey)
                   //  var _l = app.shorter.unique(_e)
                   //  var _i = app.shorter.unique(app.shorter.unique(new Date().toString() + ""))
+                    this.getUnique(this.getUnique, _db, function (_k) {
+                        
+                        var _line = {
+                            id: _.trim(_Empresa[0]),
+                            e: _e,
+                            k: _k, //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length-1) - (8-_l.length) , 8 - _l.length) ,
+                            keys: _items,
+                            original: line,
+                            contenido: _this.explora(line, _items, _this.maps)
+                        }
+                        //acumulando los resultados en una matriz
 
-                    var _line = {
-                        id: _.trim(_Empresa[0]),
-                        e: _e,
-                        k: app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length-1) - (8-_l.length) , 8 - _l.length) ,
-                        keys: _items,
-                        original: line,
-                        contenido: _this.explora(line, _items, _this.maps)
-                    }
-                    //acumulando los resultados en una matriz
-
-                    return _line
+                        callback( _line )
+                    })
 
                 }
 

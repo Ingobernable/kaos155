@@ -123,24 +123,24 @@ module.exports = function (app, callback) {
                         options.Provincia = recordset[0][0].provincia
                         app.process.stdout.write(app, options, '\x1b[33m', '+', '\x1b[0m')
                         //analizamos la linea y obtenemos una estructura con su contenido
-                        _line = options.Rutines.analizeSimpleLine(options.Rutines, recordset[0][0].texto, options.Rutines.maps, options.Provincia)
-                        _line.data = recordset[0][0]
-                        //console.log(_line.k, "=", _line.e)
+                        options.Rutines.analizeSimpleLine(options.SQL.db, options.Rutines, recordset[0][0].texto, options.Rutines.maps, options.Provincia, function (_line) { 
+                            _line.data = recordset[0][0]
+                            //console.log(_line.k, "=", _line.e)
 
 
-                        //if (app.IA.find('BM', _line.k)==null)
-                        //    if (app.IA.setinMemory('BM', _line.k, 1245489, app.IA.find, "_ks") != null)
-                        //        debugger
-                        //app.IA.send('setinMemory', { type: '_E', array: [_line.e], compress: 'shorthash.unique' }, function (data) {
-                        //_line.data.ID_Empresa = data.data.array._id[0]
-                        //_line.addNew = data.data.array.add[0]
-                        options.parser.saveEmpresaDeMovimiento(_line, function () {
-                            options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + app.anyo + " set parser=1 where ID_BORME = ? ", [recordset[0][0].ID_BORME], function (err, record) {
-                                options.parser.Preceptos(options, type, callback)
+                            //if (app.IA.find('BM', _line.k)==null)
+                            //    if (app.IA.setinMemory('BM', _line.k, 1245489, app.IA.find, "_ks") != null)
+                            //        debugger
+                            //app.IA.send('setinMemory', { type: '_E', array: [_line.e], compress: 'shorthash.unique' }, function (data) {
+                            //_line.data.ID_Empresa = data.data.array._id[0]
+                            //_line.addNew = data.data.array.add[0]
+                            options.parser.saveEmpresaDeMovimiento(_line, function () {
+                                options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + app.anyo + " set parser=1 where ID_BORME = ? ", [recordset[0][0].ID_BORME], function (err, record) {
+                                    options.parser.Preceptos(options, type, callback)
+                                })
                             })
-                        })
                         //})
-
+                        })
                     } else {
                         callback(null, true)
                     }
