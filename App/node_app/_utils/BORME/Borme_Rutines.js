@@ -881,10 +881,14 @@
                 cadsql = "select * from borme_keys where _key=? or Nombre=?"
                 _db.query(cadsql, [_k,_name], function (err, record) {
                     if (record.length > 0) {
-                        if (record[0].Nombre.toLowerCase() == _name.toLowerCase()) {
+                        if (record[0].Nombre.toLowerCase() === _name.toLowerCase()) {
                             callback(record[0]._key)
                         } else {
-                            _this(_this, _name, _db, callback)
+                            if (record[0]._key == _k) {
+                                _this(_this, _name, _db, callback)
+                            }else{
+                                callback(_k)
+                            }
                         }
                     } else {
                         callback(_k)
