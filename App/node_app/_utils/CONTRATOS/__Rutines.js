@@ -260,7 +260,7 @@
                                 var _e = value.match(/\"(.*?)\"/g)
 
 
-                            debugger
+                            //debugger
                         }
 
                         var _vx = (value.toLowerCase().match(/\(([^()]*euros[^()]*)\)/) || [])
@@ -316,8 +316,8 @@
                                     ]))
                                 ).toLowerCase()
                             }
-                        }else {
-                            debugger
+                        //}else {
+                            //debugger
                         }
                     
                             
@@ -325,22 +325,12 @@
                     })
                     if (data.Empresa.indexOf("UTE ") == -1 && data.Empresa.indexOf(" UTE") == -1) {
 
-                        var _emp = lotes? _e: data.Empresa.split(";")
+                        var _emp = data.Empresa.split(";") //lotes ? (_e != null ? _e : data.Empresa.split(";")) : data.Empresa.split(";")
                         var _test = []
                         var _moneda = ""
                         for (n in _emp) {
 
-                            _empresa = options.Rutines.transforms(_emp[n], options.transforms.ADD(
-                                [
-                                    options.patterns.General,
-                                    options.patterns.Contratista,
-                                    options.patterns.especialChars,
-                                    options.patterns.exoticChars,
-                                    options.patterns.specialContratista,
-                                    options.patterns.sinBlancos,
-                                    options.patterns.sinPuntos
-                                ]))
-
+                            
 
                             //_empresa = _.deburr(_.camelCase(_emp[n])).toLowerCase()
                             //var _n = _empImp.indexOf(_empresa)
@@ -441,6 +431,17 @@
             }
             return _ret
 
+        },
+        localizeText: function (_arrayText, search) {
+            var _Text=""
+            for (i in _arrayText) {
+                if (_arrayText[i].toLowerCase() != null) {
+                    if (_arrayText[i].toLowerCase().indexOf(search.toLowerCase()) > -1) {
+                        _Text= _arrayText[i]
+                    }
+                }
+            }
+            return _Text
         },
         extract: function(_arrayText, search, transforms, simple) {
             var _arrT = []
@@ -607,7 +608,15 @@
                                         if (_arrT.length > 1) {
                                             if (_arrT[1].length > 1)
                                                 if ((_arrayText[i].toLowerCase().match(/lote número \d{1,2}\,/g) || []).length == 0) {
-                                                    return [this.transforms(_arrT[1].indexOf(' Desierto') > -1 ? null : _arrT[1], transforms)].join(";")
+                                                    if ((_arrayText[i].match(/"([^"]*)"|'([^']*)'|“[^]*”/g) ||[]).length > 0) {
+                                                        x = _arrayText[i].match(/"([^"]*)"|'([^']*)'|“[^]*”/g)
+                                                        var _j = ";"
+                                                        if (_arrayText[i].toLowerCase().indexOf("UTE ") > -1)
+                                                            _j=" "
+                                                        return this.transforms(_arrayText[i].match(/"([^"]*)"|'([^']*)'|“[^]*”/g).join(_j), transforms )
+                                                    } else {
+                                                        return this.transforms(_arrT[1].indexOf(' Desierto') > -1 ? null : _arrT[1], transforms)
+                                                    }
                                                 } else {
                                                     var _retT = []
                                                     var _t = _arrT[1].toLowerCase().replace(/lote número \d{1,3}\,/g, "").replace(/\"/g, "").split(".")
@@ -806,13 +815,13 @@
                                                     } else {
                                                         _ret[_ret.length] = _arrT[_n].toFixed(2)
                                                     }
-
-                                                    if (_ret.length > 0) {
-                                                        return _ret.join(';')
-                                                    } else {
-                                                        return null
-                                                    }
                                                 }
+                                                if (_ret.length > 0) {
+                                                    return _ret.join(';')
+                                                } else {
+                                                    return null
+                                                }
+                                                
                                             }
                                         }
                                     }
@@ -1086,7 +1095,8 @@
                     data._Imp = _imp * 1
                 }
             } else {
-               var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe.replace(".", "").replace(",", ".") : options.Rutines.get.importes(_text, data, options, options.patterns, _lotes)
+                var _i = options.Rutines.get.importes(_text, data, options, options.patterns, _lotes)
+               var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe.replace(".", "").replace(",", ".") : _i
                //if (!_lotes) {
                //     var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe.replace(".", "").replace(",", ".") : options.Rutines.get.importes(_text, data, options, options.patterns, _lotes)
                // } else {
@@ -1100,7 +1110,74 @@
             }
             return data
         },
-        getData: function (app,record,_analisis, _Empresa,_e) {
+        groupAnexos: function (options, text, key, importe, exclude, _sa) {
+            var _ret = []
+            var ikey = ""
+            _.forEach(text, function (line) {
+                if (line.toLowerCase().indexOf(key.toLowerCase()) > -1) {
+                    if (line.toLowerCase().indexOf(exclude.toLowerCase()) == -1) {
+                        _ret[_ret.length] = options.Rutines.transforms(_.trim(line.split(key)[1]), _sa).replace("SA;", "SA ")
+                    }
+                }
+                if (line.toLowerCase().indexOf(importe.toLowerCase()) == 0) {
+                    if (_ret.length > 0 && _ikey.length>0) {
+                        if (line.toLowerCase().indexOf(exclude.toLowerCase()) == -1) {
+                            var _i = line.split(_ikey)[1] 
+                            if (_i.indexOf("pesetas") > -1)
+                                _i = _.trim( _i.substr(0, _i.indexOf("pesetas")+7) )
+                            if (_i.indexOf("euros") > -1)
+                                _i = _.trim( _i.substr(0, _i.indexOf("euros") + 7) )
+
+                            _ret[_ret.length - 1] = _ret[_ret.length - 1] + "#" + options.Rutines.get.adaptImportes(options, _i, null, null) 
+                        }
+                    } else {
+                        if (line.toLowerCase().indexOf(exclude.toLowerCase()) > -1) {
+                            _ikey = line.split(":")[0] + ":"
+                        }
+                    }
+                }
+            })
+            return _ret.join(";").replaceAll(".;", ";").replace(".#","#")
+        },
+        getData: function (app, record, _analisis, _Empresa, _e) {
+            var Diccionario = function (type, text) {
+                var book = [
+                    {
+                        _k: 'Tramitacion', _v: [
+                            { _k: 'Ordinaria', _v: ['Ordinaria'] },
+                            { _k: 'Urgente', _v: ['Urgente'] },
+                            { _k: 'Anticipada', _v: ['Anticipada'] }, 
+                            { _k: 'Normal', _v: ['Normal'] }
+
+                        ]
+                    },
+                    {
+                        _k: 'Forma', _v: [
+                            { _k: 'Abierto', _v: ['Abierto'] },
+                            { _k: 'Concurso', _v: ['Concurso'] },
+                            { _k: 'Contrato', _v: ['Contrato'] },
+                            { _k: 'Público', _v: ['Público'] },
+                            { _k: 'Sin_publicidad', _v: ['Sin','publicidad'] }
+                        ]
+                    }
+                ]
+                var _text = text.replaceAll(".", "").split(" ")
+                var ret = 'Sin Definir'
+                _.forEach(book, function (vtype) {
+                    if (vtype._k == type) {
+                        _.forEach(vtype._v, function (value) {
+                            var _i = _.intersection(_text, value._v)
+                            if (_i.length > 0)
+                                ret = value._k
+                        })
+                    }
+                })
+                if (ret == 'Sin Definir')
+                    debugger
+
+                return ret
+            }
+
             return {
                     _counterContratos: 0,
                     type: app.Type,
@@ -1114,7 +1191,10 @@
                     materias: _analisis._a.materias.length > 0 ? _analisis._a.materias : _analisis._a.materias_cpv,
 
                     tipoBoletin: _analisis._a.tipo,
-                    tipoTramite: _analisis.data.Tramitacion == null ? "" : _analisis.data.Tramitacion.replace("..", "."), //options.Rutines.extract(_text, 'Tramitaci\u00F3n', options.transforms.ADD([options.patterns.General, options.patterns.sinPuntos, options.patterns.sinBlancoInicial]), true),
+
+                    tipoTramite: _analisis.data.Tramitacion == null ? "Sin Definir" : Diccionario('Tramitacion', _analisis.data.Tramitacion ) , //options.Rutines.extract(_text, 'Tramitaci\u00F3n', options.transforms.ADD([options.patterns.General, options.patterns.sinPuntos, options.patterns.sinBlancoInicial]), true),
+                    tipoForma: _analisis.data.Forma == null ? "Sin Definir" : Diccionario('Forma', _analisis.data.Forma),
+
                     precio: _analisis._a.precio,
                     ambitoGeo: _analisis._a.ambito_geografico,
                     //adjudicador: options.Rutines.extract(_text, 'Organismo',
@@ -1147,17 +1227,19 @@
                         if (state == 1) {
                             if (data.Empresa.indexOf('#') > -1) {
                                 //var t = 1
-                                var _e = data.Empresa.split(";")
-                                data._counterContratos = 1
-                                _.forEach(_e, function (value) {
-                                    var _i = value.split("#")
-                                    options.SQL.insert.contrato(options, data, data.cod, _i[0], _i[1], data._counterContratos, function (data, state) {
-                                        data._counterContratos++
-                                        if (data._counterContratos >= _e.length) {
+                                var _ext = data.Empresa.split(";")
+                                data._counterContratos = 0
+                                _.forEach(_ext, function (value) {
+                                    var _ixt = _.trim(value).split("#")
+                                    data._counterContratos++
+                                    options.SQL.insert.contrato(options, data, data.cod, _ixt[0], _ixt[1], data._counterContratos, function (data, state,_e) {
+                                       
+                                        if (_e >= data._counterContratos) {
                                             app.process.stdout.write(app, options, '\x1b[36m', data._counterContratos, '\x1b[0mE')
                                             callback(data, state)
                                         }
-                                    })
+                                    })               
+                                    
                                     
                                 })
                             } else {
@@ -1187,16 +1269,16 @@
             var analisis = function (arrIn, exclude, data) {
                 return _.intersection(_.difference(arrIn, exclude), data)
             }
-            var words = _.deburr(string.toLowerCase()).split(" ")
+            var words = _.deburr( string.toLowerCase().replace(".","").replace(",","") ).split(" ")
             var exclude = ["de", "la"]
             var _Educacion = ["universidad","universitat"]
-            var _Sanidad = ["social","salud","saude","salut", "hospital","tgss"]
-            var _Defensa = ["marina","armada","ejercito"]
+            var _Sanidad = ["social", "salud", "saude", "salut", "hospital", "tgss", "sanidad","insalud","primaria"]
+            var _Defensa = ["marina","armada","ejercito", "eva","militar","defensa"]
             var _Local = ["ayuntamiento"]
             var _Deportes = ["deportiva"]
             var _Diputacion = ["diputacion"]
-            var _Estado = ["consejeria", "hacienda", "presidencia", "agencia", "tributaria", "gobierno", "delegacion", "ine" , "empleo", "estado", "contratacion" ]
-            var _Fomento = ["reforma","consejeria","fomento" , "vivienda","adif","velocidad","portuaria","ferroviarias","carreteras","bomberos","hidrografica"]
+            var _Estado = ["policia","consejeria", "hacienda", "presidencia", "agencia", "tributaria", "gobierno", "delegacion", "ine" , "empleo", "estado", "contratacion" ]
+            var _Fomento = ["ambiente","reforma","consejeria","fomento" , "vivienda","adif","velocidad","portuaria","ferroviarias","carreteras","bomberos","hidrografica"]
             var _ID = ["supercomputacion", "investigaciones", "cientificas", "diseno","Comunicació"]
             var _Justicia = ["justicia"]
 
@@ -1244,7 +1326,7 @@
 
                 _.forEach(_stringArray, function (value, key) {
                     
-                    if (value == "." && _dospuntos > 0 && _punto > 0)
+                    if (value == "." && _dospuntos > 0 && _punto > 0 && (frase.indexOf(";") == -1 && frase.indexOf(",") == -1) )
                         recorta = true
 
                     if (value == "." && _dospuntos > 0 && _punto==0 )

@@ -31,9 +31,11 @@ CREATE TABLE `boletin` (
   `dia` varchar(2) NOT NULL,
   `mes` varchar(2) NOT NULL,
   `anyo` varchar(4) NOT NULL,
+  `_AREA` varchar(25) DEFAULT NULL,
   `_BOLETIN` varchar(3) DEFAULT NULL,
-  `_TRAMITE` varchar(3) DEFAULT NULL,
-  `_ADJUDICADOR` char(5) DEFAULT NULL,
+  `_TRAMITE` varchar(25) DEFAULT NULL,
+  `_FORMA` varchar(25) DEFAULT NULL,
+  `_ADJUDICADOR` char(6) DEFAULT NULL,
   `_PRECIO` varchar(2) DEFAULT NULL,
   `UTE` tinyint(4) NOT NULL DEFAULT '0',
   `Lotes` int(11) DEFAULT '0',
@@ -43,7 +45,7 @@ CREATE TABLE `boletin` (
   `JSON` json NOT NULL,
   PRIMARY KEY (`id`),
   KEY `BOLETIN` (`BOLETIN`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -108,21 +110,6 @@ CREATE TABLE `boletin_aux_pre` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `boletin_aux_tra`
---
-
-DROP TABLE IF EXISTS `boletin_aux_tra`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `boletin_aux_tra` (
-  `_auxcode` varchar(6) NOT NULL,
-  `Descripcion` varchar(255) DEFAULT NULL,
-  `_l` int(11) DEFAULT NULL,
-  PRIMARY KEY (`_auxcode`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `boletin_contratos`
 --
 
@@ -133,18 +120,18 @@ CREATE TABLE `boletin_contratos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `BOLETIN` varchar(25) NOT NULL,
   `counter` int(11) NOT NULL DEFAULT '1',
-  `_BormeEmpresa` varchar(254) DEFAULT NULL,
-  `_key` varchar(9) DEFAULT NULL,
+  `_key` varchar(12) DEFAULT NULL,
   `Empresa` varchar(254) NOT NULL,
   `importe` decimal(13,2) DEFAULT '0.00',
   `_acron` varchar(55) DEFAULT NULL,
   `_nif` varchar(9) DEFAULT NULL,
+  `_BormeSuggestEmpresa` varchar(254) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Bol_UNIQUE` (`BOLETIN`,`_key`),
   KEY `BOLETIN` (`BOLETIN`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Empresa` (`Empresa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

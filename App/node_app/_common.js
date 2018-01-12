@@ -247,7 +247,7 @@
                 }
             } else {
                 options.parser.Preceptos(options, type, function (data, ok) {
-                    if (ok == true) {
+                    if (!_.isNumber(ok) && ok == true) {
                         var _d = new Date()
                         if (app.anyo*1 < _d.getFullYear()) {
                             app.anyo = (app.anyo*1) + 1

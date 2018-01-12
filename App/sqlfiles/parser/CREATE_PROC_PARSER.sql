@@ -1,3 +1,20 @@
+-- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
+--
+-- Host: 127.0.0.1    Database: bbdd_kaos155
+-- ------------------------------------------------------
+-- Server version	5.7.20-log
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
 --
 -- Dumping routines for database 'bbdd_kaos155'
 --
@@ -11,7 +28,7 @@
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` FUNCTION `GET_NAME`( __key nvarchar(12)) RETURNS varchar(255) CHARSET utf8
+CREATE DEFINER=`root`@`localhost` FUNCTION `GET_NAME`( __key nvarchar(7)) RETURNS varchar(255) CHARSET utf8
 BEGIN
 	DECLARE _value nvarchar(255);
 	SET _value = (SELECT Nombre FROM borme_keys WHERE _key = __key);
@@ -511,7 +528,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BOLETIN`(
 	
@@ -526,7 +543,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BOLETIN`(
     IN _Anyo CHAR(4),
     
     IN _Tipo_BOLETIN nvarchar(255),
-	IN _Tipo_TRAMITE nvarchar(255),	    
+    
+	IN _Tipo_TRAMITE nvarchar(25),
+    IN _Tipo_FORMA nvarchar(25),
+    IN _Tipo_AREA nvarchar(25),
+    
 	IN _Tipo_PRECIO nvarchar(255),
 	IN _Tipo_adjudicador  nvarchar(255),
     
@@ -543,13 +564,12 @@ BEGIN
 	DECLARE _counter int;
 	DECLARE _Contador int;
 
-    DECLARE code_Tipo_TRAMITE nvarchar(23);
     DECLARE code_Tipo_BOLETIN nvarchar(22);    
     DECLARE code_Tipo_precio nvarchar(23);
     DECLARE code_Tipo_adjudicador nvarchar(26);
     
     SET code_Tipo_BOLETIN = _codeaux('BOL',_Tipo_BOLETIN);
-    SET code_Tipo_TRAMITE = _codeaux('TRA',_Tipo_TRAMITE);    
+   
     SET code_Tipo_precio = _codeaux('PRE',_Tipo_PRECIO);
     SET code_Tipo_adjudicador = _codeaux('ADJ', _Tipo_adjudicador);
         
@@ -565,7 +585,9 @@ BEGIN
 	anyo,
 	
 	_BOLETIN, 
-	_TRAMITE,            
+	_TRAMITE,
+    _FORMA,
+    _AREA,
 	_ADJUDICADOR,
 	_Precio,
     
@@ -579,7 +601,10 @@ BEGIN
 	_Anyo,
 	
 	code_Tipo_BOLETIN, 
-	code_Tipo_TRAMITE,	
+	_Tipo_TRAMITE,
+	_Tipo_FORMA,
+    _Tipo_AREA,
+    
 	code_Tipo_adjudicador,
 	code_Tipo_precio,
     _PDF,_objeto,_JSON);
@@ -609,11 +634,11 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_BOLETIN_Contrato`(_BOLETIN nvarchar(20), _keyEmpresa nvarchar(254), _Empresa text , _Importe nvarchar(14) , _key nvarchar(7), _acron nvarchar(55), _nif nvarchar(9), _counter int)
+CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_BOLETIN_Contrato`(_BOLETIN nvarchar(20), _keyEmpresa nvarchar(254), _Empresa text , _Importe nvarchar(14) , _key nvarchar(12), _acron nvarchar(55), _nif nvarchar(9), _counter int)
 BEGIN
-	INSERT IGNORE boletin_contratos (BOLETIN,_BormeEmpresa,Empresa,importe,_key,_acron,_nif, counter) VALUES (_BOLETIN,_keyEmpresa,_Empresa,_Importe,_key,_acron,_nif,_counter);
+	INSERT IGNORE boletin_contratos (BOLETIN,_BormeSuggestEmpresa,Empresa,importe,_key,_acron,_nif, counter) VALUES (_BOLETIN,_keyEmpresa,_Empresa,_Importe,_key,_acron,_nif,_counter);
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -658,7 +683,7 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_Name  nvarchar(250), _iKey  nvarchar(12),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT)
 BEGIN
-    INSERT borme_keys (_key,Nombre,_Auditor, Provincia,BOLETIN,_ID) VALUES(_iKey,_Name,1,_Provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Auditor = 1, Provincia= _provincia;
+    INSERT IGNORE borme_keys (_key,Nombre,_Auditor, Provincia,BOLETIN,_ID) VALUES(_iKey,_Name,1,_Provincia,_BOLETIN,_ID);
     SELECT LAST_INSERT_ID() as Id, _iKey as _key;
 END ;;
 DELIMITER ;
@@ -684,9 +709,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Diario`(
     IN _Anyo INT,
     IN _Provincia nvarchar(50),
     IN _Empresa_Id int,
-    IN _Empresa_key nvarchar(12),
+    IN _Empresa_key char(12),
     IN _Relacion_Id int,
-    IN _Relacion_key nvarchar(12),
+    IN _Relacion_key char(12),
     IN _T_Relacion INT,
     IN _Activo int,
     IN _type nvarchar(100), 
@@ -725,7 +750,7 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(12),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
 BEGIN
-    INSERT borme_keys (_key,Nombre,_Directivo,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Directivo = 1,Provincia=_provincia;
+    INSERT IGNORE borme_keys (_key,Nombre,_Directivo,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID);
     
 	SELECT LAST_INSERT_ID() as Id,_iKey as _key;
 END ;;
@@ -744,11 +769,9 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey nvarchar(12), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(12), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
 BEGIN
-    INSERT borme_keys (_key,Nombre,_Empresa,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID) ON DUPLICATE KEY UPDATE _Empresa = 1,Provincia=_provincia;
-    
-
+    INSERT IGNORE borme_keys (_key,Nombre,_Empresa,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID);
     SELECT LAST_INSERT_ID() as Id,_iKey as _key;
     
 END ;;
@@ -757,42 +780,25 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-
---
--- Final view structure for view `relations`
---
-
-/*!50001 DROP VIEW IF EXISTS `relations`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `relations` AS select `borme_relaciones`.`Empresa_key` AS `EKey`,`borme_relaciones`.`Relation_key` AS `RKey`,`GET_NAME`(`borme_relaciones`.`Empresa_key`) AS `Empresa`,`GET_NAME`(`borme_relaciones`.`Relation_key`) AS `Relacion`,`_type`(`bkm`.`_Empresa`,`bkm`.`_Directivo`,`bkm`.`_Auditor`) AS `EType`,`_type`(`bkr`.`_Empresa`,`bkr`.`_Directivo`,`bkr`.`_Auditor`) AS `RType`,`borme_relaciones`.`Motivo` AS `Motivo`,`borme_relaciones`.`Cargo` AS `Cargo`,`borme_relaciones`.`Activo` AS `Activo`,`borme_relaciones`.`Anyo` AS `anyo` from ((`borme_relaciones` left join `borme_keys` `bkm` on((`borme_relaciones`.`Empresa_key` = `bkm`.`_key`))) left join `borme_keys` `bkr` on((`borme_relaciones`.`Relation_key` = `bkr`.`_key`))) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `volumen`
---
-
-/*!50001 DROP VIEW IF EXISTS `volumen`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `volumen` AS select now() AS `now()`,`information_schema`.`tables`.`TABLE_SCHEMA` AS `TABLE_SCHEMA`,`information_schema`.`tables`.`TABLE_NAME` AS `TABLE_NAME`,`information_schema`.`tables`.`TABLE_ROWS` AS `TABLE_ROWS`,`information_schema`.`tables`.`AVG_ROW_LENGTH` AS `AVG_ROW_LENGTH`,`information_schema`.`tables`.`DATA_LENGTH` AS `DATA_LENGTH`,`information_schema`.`tables`.`INDEX_LENGTH` AS `INDEX_LENGTH`,`information_schema`.`tables`.`AUTO_INCREMENT` AS `AUTO_INCREMENT`,`information_schema`.`tables`.`ENGINE` AS `ENGINE` from `information_schema`.`tables` where ((`information_schema`.`tables`.`TABLE_SCHEMA` like 'bbdd%') and (`information_schema`.`tables`.`TABLE_ROWS` > 0)) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_Tree` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_Tree`(_ikey VARCHAR(7) , _itree JSON  )
+BEGIN
+ INSERT borme_tree (_key, _tree ) VALUES(_iKey,_itree) ON DUPLICATE KEY UPDATE _tree = _itree;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -803,4 +809,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-10 10:02:10
+-- Dump completed on 2018-01-12 14:09:52

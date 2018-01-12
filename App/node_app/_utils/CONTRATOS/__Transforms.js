@@ -99,7 +99,9 @@ module.exports = function (app) {
                         ]]
                 ],
                 Contratista: [
-
+                    ['F', { f: _this.replaceAll }, 'union temporal de empresas', 'UTE '],
+                    ['F', { f: _this.replaceAll }, '(Unión Temporal de Empresas)', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'unión temporal de empresas', 'UTE '],
 
                     ["F", { f: _this.replaceAll }, "Lote único", ""],
                     ["F", { f: _this.replaceAll }, "Ñ","&Ene;"],
@@ -144,7 +146,6 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, 'sociedadlimitada', ' sl.'],
                     ['F', { f: _this.replaceAll }, ', sociedadlimitada', ' sl.'],
 
-                    ['F', { f: _this.replaceAll }, 'union temporal de empresas', 'UTE '],
 
                     ['F', { f: _this.replaceAll }, ' S A', ' SA.'],
                     ['F', { f: _this.replaceAll }, ' S L', ' SL.'],

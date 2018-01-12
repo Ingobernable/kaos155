@@ -526,7 +526,7 @@
                         //var _k = app.shorter.unique(_linea.data.provincia)
                        // var _i = app.shorter.unique(new Date().toString()+"")
                         //var _l = app.shorter.unique(__data.values.value)
-                        app.BOLETIN.Rutines.getUnique(app.BOLETIN.Rutines.getUnique, app.BOLETIN.SQL.db, function (_k) {
+                        app.BOLETIN.Rutines.getUnique(app.BOLETIN.Rutines.getUnique, __data.values.value, app.BOLETIN.SQL.db, function (_k) {
 
                             params = {
                                 table: _table,
@@ -872,16 +872,20 @@
                     return null
                 }
             },
-            getUnique: function (_this, dbq, callback) {
-                var _k = app.shorter.generate()
+            getUnique: function (_this,_name, dbq, callback) {
+                var _k = app.shorter.process()
                 var _db = dbq
                 if (_db == null)
                     debugger
 
-                cadsql = "select * from borme_keys where _key=?"
-                _db.query(cadsql, [_k], function (err, record) {
+                cadsql = "select * from borme_keys where _key=? or Nombre=?"
+                _db.query(cadsql, [_k,_name], function (err, record) {
                     if (record.length > 0) {
-                        _this(_this,_db, callback)
+                        if (record[0].Nombre.toLowerCase() == _name.toLowerCase()) {
+                            callback(record[0]._key)
+                        } else {
+                            _this(_this, _name, _db, callback)
+                        }
                     } else {
                         callback(_k)
                     }
@@ -922,7 +926,7 @@
                   //  var _k = app.shorter.generate()(skey)
                   //  var _l = app.shorter.unique(_e)
                   //  var _i = app.shorter.unique(app.shorter.unique(new Date().toString() + ""))
-                    this.getUnique(this.getUnique, _db, function (_k) {
+                    this.getUnique(this.getUnique, _e, _db, function (_k) {
                         
                         var _line = {
                             id: _.trim(_Empresa[0]),

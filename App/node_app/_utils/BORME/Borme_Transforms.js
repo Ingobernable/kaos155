@@ -62,13 +62,16 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, 'AGRUPACION EUROPEA DE INTERES ECONOMICO', 'AEIE'],
 
                     ['F', { f: _this.replaceAll }, 'SOCIEDAD CIVIL PROFESIONAL', 'SCP'],
+
+
                     ['F', { f: _this.replaceAll }, 'UNION TEMPORAL DE EMPRESAS', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UNION TEMPORAL DE EMPRESA', 'UTE'],
 
                     ['F', { f: _this.replaceAll }, 'UTE LEY 18 1982', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UTE LEY 18 1982 N 1', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UTE LEY 18/1982 DE 26 DE MAYO', 'UTE'],
-                    ['F', { f: _this.replaceAll }, 'UTE LEY 18/1992 DE 26 DE MAYO', 'UTE'],
+                    ['F', { f: _this.replaceAll }, 'UTE LEY 18/1992 DE 26 DE MAYO', 'UTE'], // (UNION TEMPORAL DE EMPRESAS)
+                    
 
                     ['F', { f: _this.replaceAll }, 'UTE DE 26 DE MAYO', 'UTE'],
                     ['F', { f: _this.replaceAll }, 'UNION TEMPORAL DE EMPRESA LEY 18/ 1982', 'UTE'],

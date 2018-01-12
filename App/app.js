@@ -26,7 +26,7 @@ var App = {
     merge: require('merge'),
     inquirer: require('inquirer'),
     resolvePath: require('resolve-path'),
-    shorter: require('shortid'),
+    shorter: require('uniqid'),
     schedule: require('node-schedule')
     
 }
