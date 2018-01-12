@@ -305,4 +305,798 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-12 14:06:54
+--
+-- Dumping routines for database 'bbdd_kaos155'
+--
+/*!50003 DROP FUNCTION IF EXISTS `GET_NAME` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `GET_NAME`( __key nvarchar(7)) RETURNS varchar(255) CHARSET utf8
+BEGIN
+	DECLARE _value nvarchar(255);
+	SET _value = (SELECT Nombre FROM borme_keys WHERE _key = __key);
+
+RETURN _value;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `SPLIT_STR` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `SPLIT_STR`( s MEDIUMTEXT , del CHAR(1) , i INT) RETURNS text CHARSET utf8
+    DETERMINISTIC
+BEGIN
+
+        DECLARE n INT ;
+
+        
+        SET n = LENGTH(s) - LENGTH(REPLACE(s, del, '')) + 1;
+
+        IF i > n THEN
+            RETURN NULL ;
+        ELSE
+            RETURN SUBSTRING_INDEX(SUBSTRING_INDEX(s, del, i) , del , -1 ) ;        
+        END IF;
+
+    END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `UC_Words` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `UC_Words`( str VARCHAR(255) ) RETURNS varchar(255) CHARSET utf8
+BEGIN  
+  DECLARE c CHAR(1);  
+  DECLARE s VARCHAR(255);  
+  DECLARE i INT DEFAULT 1;  
+  DECLARE bool INT DEFAULT 1;  
+  DECLARE punct CHAR(17) DEFAULT ' ()[]{},.-_!@;:?/';  
+  SET s = LCASE( str );  
+  WHILE i < LENGTH( str ) DO  
+     BEGIN  
+       SET c = SUBSTRING( s, i, 1 );  
+       IF LOCATE( c, punct ) > 0 THEN  
+        SET bool = 1;  
+      ELSEIF bool=1 THEN  
+        BEGIN  
+          IF c >= 'a' AND c <= 'z' THEN  
+             BEGIN  
+               SET s = CONCAT(LEFT(s,i-1),UCASE(c),SUBSTRING(s,i+1));  
+               SET bool = 0;  
+             END;  
+           ELSEIF c >= '0' AND c <= '9' THEN  
+            SET bool = 0;  
+          END IF;  
+        END;  
+      END IF;  
+      SET i = i+1;  
+    END;  
+  END WHILE;  
+  RETURN s;  
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `_codeaux` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `_codeaux`(
+	
+	_Type char(3),
+	_Descripcion nvarchar(255)
+    
+) RETURNS varchar(8) CHARSET utf8
+BEGIN
+
+	DECLARE _counter INT;
+    DECLARE _IDReg nvarchar(6);
+	DECLARE _Ret nvarchar(8);
+    DECLARE _DESC nvarchar(255);
+    
+    SET _DESC = UC_Words(_Descripcion);
+    
+	IF LENGTH(_Descripcion)>0 THEN
+        IF _Type = 'ADJ' THEN
+			SET _counter= ( SELECT count(*) FROM boletin_aux_ADJ where  descripcion = _DESC );
+			IF _counter=0 THEN
+				SET _IDReg= (SELECT LPAD( (_auxcode*1)+1,6,0) FROM boletin_aux_ADJ order by _auxcode desc LIMIT 1 );
+				IF _IDReg IS NULL THEN
+					SET _IDReg = '000001';
+                END IF;    
+                INSERT INTO boletin_aux_ADJ (_auxcode, descripcion,_l) values ( _IDReg, _DESC, LENGTH(_DESC));
+				SET _Ret = _IDReg;
+			ELSE 
+				SET _Ret = (SELECT _auxcode FROM boletin_aux_ADJ where descripcion = _DESC );
+			END IF;    
+		END IF;
+        
+        IF _Type = 'PRE' THEN
+			SET _counter= ( SELECT count(*) FROM boletin_aux_PRE where  descripcion = _DESC );
+			IF _counter=0 THEN
+				SET _IDReg= (SELECT LPAD( (_auxcode*1)+1,2,0) FROM boletin_aux_PRE order by _auxcode desc LIMIT 1 );
+				IF _IDReg IS NULL THEN
+					SET _IDReg = '01';
+                END IF;    
+                INSERT INTO boletin_aux_PRE (_auxcode, descripcion,_l) values ( _IDReg, _DESC, LENGTH(_DESC));
+				SET _Ret = _IDReg;
+			ELSE 
+				SET _Ret = (SELECT _auxcode FROM boletin_aux_PRE where descripcion = _DESC );
+			END IF;    
+		END IF;
+        
+        IF _Type = 'BOL' THEN
+			SET _counter= ( SELECT count(*) FROM boletin_aux_BOL where  descripcion = _DESC );
+			IF _counter=0 THEN
+				SET _IDReg = (SELECT LPAD( (_auxcode*1)+1,3,0) FROM boletin_aux_BOL order by _auxcode desc LIMIT 1 );
+				IF _IDReg IS NULL THEN
+					SET _IDReg = '001';
+                END IF;    
+                INSERT INTO boletin_aux_BOL (_auxcode, descripcion,_l) values ( _IDReg, _DESC, LENGTH(_DESC));
+				SET _Ret = _IDReg;
+			ELSE 
+				SET _Ret = (SELECT _auxcode FROM boletin_aux_BOL where descripcion = _DESC );
+			END IF;    
+		END IF;
+        
+        IF _Type = 'TRA' THEN
+			SET _counter= ( SELECT count(*) FROM boletin_aux_TRA where  descripcion = _DESC );
+			IF _counter=0 THEN
+				SET _IDReg = (SELECT LPAD( (_auxcode*1)+1,3,0) FROM boletin_aux_TRA order by _auxcode desc LIMIT 1 );
+				IF _IDReg IS NULL THEN
+					SET _IDReg = '001';
+                END IF;    
+                INSERT INTO boletin_aux_TRA (_auxcode, descripcion,_l) values ( _IDReg, _DESC, LENGTH(_DESC));
+				SET _Ret = _IDReg;
+			ELSE 
+				SET _Ret = (SELECT _auxcode FROM boletin_aux_TRA where descripcion = _DESC );
+			END IF;    
+		END IF;
+	END IF;
+
+	RETURN TRIM(_Ret);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `_codeaux_ADJ` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `_codeaux_ADJ`(	
+	_Descripcion nvarchar(255)
+) RETURNS varchar(8) CHARSET utf8
+BEGIN
+
+	DECLARE _counter INT;
+    DECLARE _IDReg nvarchar(6);
+	DECLARE _Ret nvarchar(8);
+    DECLARE _DESC nvarchar(255);
+    
+    SET _DESC = UC_Words(_Descripcion);
+    
+ 	IF LENGTH(_DESC)>0 THEN
+		SET _counter= ( SELECT count(*) FROM boletin_adjcode where  descripcion = UC_Words(_DESC) );
+		IF _counter=0 THEN
+			SET _IDReg= (SELECT LPAD( (_auxcode*1)+1,6,0) FROM boletin_adjcode order by _auxcode desc LIMIT 1 );
+			INSERT INTO boletin_adjcode (_adjcode, descripcion,_l) values ( _IDReg, _DESC, LENGTH(_DESC));
+			SET _Ret = _IDReg;
+		ELSE 
+			SET _Ret = (SELECT _auxcode FROM boletin_adjcode where descripcion = _DESC );
+		END IF;
+    END IF;
+
+	RETURN TRIM(_Ret);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `_codeaux_BOL` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `_codeaux_BOL`(	
+	_Descripcion nvarchar(255)
+) RETURNS varchar(8) CHARSET utf8
+BEGIN
+
+	DECLARE _counter INT;
+    DECLARE _IDReg nvarchar(6);
+	DECLARE _Ret nvarchar(8);
+    
+ 	IF LENGTH(_Descripcion)>0 THEN
+		
+		SET _counter= ( SELECT count(*) FROM boletin_auxcode where _type='BOL' AND descripcion = UC_Words(_Descripcion) );
+		IF _counter=0 THEN
+			SET _IDReg= (SELECT LPAD(count(*)+1,3,0) FROM boletin_auxcode where _type='BOL' );
+			INSERT INTO boletin_auxcode (_auxcode,_type, descripcion,_l) values ( _IDReg, 'BOL', UC_Words(_Descripcion), LENGTH(UC_Words(_Descripcion)));
+			SET _Ret = _IDReg;
+		ELSE 
+			SET _Ret = (SELECT _auxcode FROM boletin_auxcode where _type='BOL' AND descripcion = UC_Words(_Descripcion) );
+		END IF;
+    END IF;
+
+	RETURN TRIM(_Ret);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `_codeaux_PRE` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `_codeaux_PRE`(	
+	_Descripcion nvarchar(255)
+) RETURNS varchar(8) CHARSET utf8
+BEGIN
+
+	DECLARE _counter INT;
+    DECLARE _IDReg nvarchar(6);
+	DECLARE _Ret nvarchar(8);
+    
+ 	IF LENGTH(_Descripcion)>0 THEN
+		
+		SET _counter= ( SELECT count(*) FROM boletin_auxcode where _type='PRE' AND descripcion = UC_Words(_Descripcion) );
+		IF _counter=0 THEN
+			SET _IDReg= (SELECT LPAD(count(*)+1,2,0) FROM boletin_auxcode where _type='PRE' );
+			INSERT INTO boletin_auxcode (_auxcode,_type, descripcion,_l) values ( _IDReg, 'PRE', UC_Words(_Descripcion), LENGTH(UC_Words(_Descripcion)));
+			SET _Ret = _IDReg;
+		ELSE 
+			SET _Ret = (SELECT _auxcode FROM boletin_auxcode where _type='PRE' AND descripcion = UC_Words(_Descripcion) );
+		END IF;
+    END IF;
+
+	RETURN TRIM(_Ret);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `_codeaux_TRA` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `_codeaux_TRA`(	
+	_Descripcion nvarchar(255)
+) RETURNS varchar(8) CHARSET utf8
+BEGIN
+
+	DECLARE _counter INT;
+    DECLARE _IDReg nvarchar(6);
+	DECLARE _Ret nvarchar(8);
+    
+ 	IF LENGTH(_Descripcion)>0 THEN
+		
+		SET _counter= ( SELECT count(*) FROM boletin_auxcode where _type='TRA' AND descripcion = UC_Words(_Descripcion) );
+		IF _counter=0 THEN
+			SET _IDReg= (SELECT LPAD((_auxcode*1)+1,3,0) FROM boletin_auxcode where _type='TRA' Order by _auxcode LIMIT 1 );
+			INSERT INTO boletin_auxcode (_auxcode,_type, descripcion,_l) values ( _IDReg, 'TRA', UC_Words(_Descripcion), LENGTH(UC_Words(_Descripcion)));
+			SET _Ret = _IDReg;
+		ELSE 
+			SET _Ret = (SELECT _auxcode FROM boletin_auxcode where _type='TRA' AND descripcion = UC_Words(_Descripcion) );
+		END IF;
+    END IF;
+
+	RETURN TRIM(_Ret);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `_type` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `_type`( Empresa int, Directivo int, Auditor int ) RETURNS int(11)
+BEGIN  
+  DECLARE _r int;  
+  IF Auditor >0 THEN
+	SET _r = 2;
+  ELSE
+	  IF Directivo >0 THEN
+		SET _r = 1;
+	  ELSE
+		  IF Empresa >0 THEN
+			SET _r = 0;
+		  END IF;
+	  END IF;
+  END IF;
+  RETURN _r;  
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `getLST_Aux` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getLST_Aux`( in _type nvarchar(5), IN _key nvarchar(255))
+BEGIN
+	IF LENGTH(_key)=0 THEN
+    
+		SELECT DISTINCT boletin.Tipo_Boletin as code, _tipo_contrato_aux.descripcion FROM boletin 
+			RIGHT JOIN _tipo_contrato_aux ON boletin.Tipo_Boletin = _tipo_contrato_aux.codigo 
+		WHERE boletin.Type = _type;
+        
+        SELECT DISTINCT boletin.Tipo_Tramite as code, _tipo_tramitacion_aux.descripcion FROM boletin 
+			RIGHT JOIN  _tipo_tramitacion_aux ON boletin.Tipo_Tramite = _tipo_tramitacion_aux.codigo 
+		WHERE boletin.Type= _type;
+ 
+		SELECT DISTINCT boletin.Tipo_Adjudicador as code, _adjudicador_aux.descripcion FROM boletin
+			RIGHT JOIN  _adjudicador_aux ON boletin.Tipo_Adjudicador = _adjudicador_aux.codigo 
+		WHERE boletin.Type= _type;
+        
+        SELECT DISTINCT boletin.COD_Ambito_Geografico as code, _ambito_geografico_aux.descripcion FROM boletin
+			INNER JOIN  _ambito_geografico_aux ON boletin.COD_Ambito_Geografico = _ambito_geografico_aux.codigo
+    	WHERE boletin.Type= _type;  
+        
+        SELECT DISTINCT boletin.COD_Tabla_Precio as code, _tabla_precio_contrato_aux.descripcion FROM boletin
+			INNER JOIN  _tabla_precio_contrato_aux ON boletin.COD_Tabla_Precio = _tabla_precio_contrato_aux.codigo
+		WHERE boletin.Type= _type;  
+ 
+ 
+    END IF;
+    
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `GetRelations` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetRelations`(
+	IN _type nvarchar(10),
+    IN _Id BIGINT
+)
+BEGIN
+	IF _type= 'Empresa' THEN 
+		SELECT  *	FROM relations_empresa WHERE idEmpresa = _Id;
+    END IF;
+    
+	IF _type= 'Directivo' THEN 
+		SELECT  *	FROM relations_directivo WHERE idDirectivo = _Id;
+    END IF;    
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `GetSearchLst` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `GetSearchLst`(
+	IN _search nvarchar(255)
+)
+BEGIN
+	DECLARE _xsearchEmpresa nvarchar(255);
+    
+    SET _xsearchEmpresa=CONCAT('%', UCASE(_search) , '%');
+    
+     
+	SELECT  Id,name, ActiveRelations, nBOE, nBOCM, Mark , Id as CompanyId, 0 as PersonId,1 as type	FROM empresa WHERE Name Like _xsearchEmpresa LIMIT 20;
+
+    
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `get_boletin` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `get_boletin`( IN Boletin nvarchar(20) )
+BEGIN
+
+SELECT boletin.id, BOLETIN,dia,mes,anyo,objeto_contrato,_tipo_contrato_aux.descripcion,_tipo_tramitacion_aux.descripcion,_adjudicador_aux.descripcion,_ambito_geografico_aux.descripcion,PDF,TEXTO,observaciones FROM boletin 
+	INNER JOIN _tipo_contrato_aux ON boletin.Tipo_Boletin = _tipo_contrato_aux.codigo 
+	INNER JOIN  _tipo_tramitacion_aux ON boletin.Tipo_Tramite = _tipo_tramitacion_aux.codigo 
+	INNER JOIN  _adjudicador_aux ON boletin.Tipo_Adjudicador = _adjudicador_aux.codigo 
+	INNER JOIN  _ambito_geografico_aux ON boletin.COD_Ambito_Geografico = _ambito_geografico_aux.codigo
+	INNER JOIN  _tabla_precio_contrato_aux ON boletin.COD_Tabla_Precio = _tabla_precio_contrato_aux.codigo
+
+WHERE BOLETIN= _Boletin;
+
+
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_BOLETIN` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BOLETIN`(
+	
+    IN _Type nvarchar(5),
+    IN _counterMaterias INT,
+
+    IN _BOLETIN nvarchar(18), 
+	IN _Objeto TEXT,
+    
+    IN _Dia CHAR(2),
+    IN _Mes CHAR(2),
+    IN _Anyo CHAR(4),
+    
+    IN _Tipo_BOLETIN nvarchar(255),
+    
+	IN _Tipo_TRAMITE nvarchar(25),
+    IN _Tipo_FORMA nvarchar(25),
+    IN _Tipo_AREA nvarchar(25),
+    
+	IN _Tipo_PRECIO nvarchar(255),
+	IN _Tipo_adjudicador  nvarchar(255),
+    
+	IN _PDF nvarchar(255), 
+    IN _Descripcion TEXT,    
+	IN _Materias nvarchar(255),
+    
+    IN _UTE INT, 
+    IN _LOTES INT,
+	IN _JSON TEXT    
+)
+BEGIN
+
+	DECLARE _counter int;
+	DECLARE _Contador int;
+
+    DECLARE code_Tipo_BOLETIN nvarchar(22);    
+    DECLARE code_Tipo_precio nvarchar(23);
+    DECLARE code_Tipo_adjudicador nvarchar(26);
+    
+    SET code_Tipo_BOLETIN = _codeaux('BOL',_Tipo_BOLETIN);
+   
+    SET code_Tipo_precio = _codeaux('PRE',_Tipo_PRECIO);
+    SET code_Tipo_adjudicador = _codeaux('ADJ', _Tipo_adjudicador);
+        
+/*			ALTA DE BOLETIN                   */     
+
+    INSERT IGNORE INTO boletin ( 
+	Type,
+	BOLETIN, 
+	UTE,
+    Lotes,
+	dia,
+	mes,
+	anyo,
+	
+	_BOLETIN, 
+	_TRAMITE,
+    _FORMA,
+    _AREA,
+	_ADJUDICADOR,
+	_Precio,
+    
+     PDF,Objeto_Contrato,JSON) VALUES ( 
+	_Type,
+	_BOLETIN, 
+	_UTE,
+    _LOTES,
+	_Dia,
+	_Mes,
+	_Anyo,
+	
+	code_Tipo_BOLETIN, 
+	_Tipo_TRAMITE,
+	_Tipo_FORMA,
+    _Tipo_AREA,
+    
+	code_Tipo_adjudicador,
+	code_Tipo_precio,
+    _PDF,_objeto,_JSON);
+	
+	SET _counter= last_insert_id() ;
+	SELECT _counter as ID;
+	
+	/*			ALTA DE MATERIAS DE BOLETIN                   */ 
+	SET _Contador = 0;    
+	while _Contador < _counterMaterias do	
+		INSERT IGNORE INTO boletin_materias (BOLETIN,COD_Materia) VALUES (_BOLETIN, (SELECT SPLIT_STR(_Materias, ';', _Contador+1)) );
+		SET _Contador = _Contador + 1;
+	END WHILE;
+            
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_BOLETIN_Contrato` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_BOLETIN_Contrato`(_BOLETIN nvarchar(20), _keyEmpresa nvarchar(254), _Empresa text , _Importe nvarchar(14) , _key nvarchar(12), _acron nvarchar(55), _nif nvarchar(9), _counter int)
+BEGIN
+	INSERT IGNORE boletin_contratos (BOLETIN,_BormeSuggestEmpresa,Empresa,importe,_key,_acron,_nif, counter) VALUES (_BOLETIN,_keyEmpresa,_Empresa,_Importe,_key,_acron,_nif,_counter);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_BOLETIN_Materia_Aux` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BOLETIN_Materia_Aux`(
+	IN _Codigo nvarchar(8),
+	IN _Descripcion nvarchar(255)  
+)
+BEGIN
+
+	INSERT IGNORE INTO boletin_aux_MAT(_auxcode, descripcion, _l) VALUES (_Codigo , TRIM(_Descripcion), LENGTH(_Descripcion) );    
+
+
+    
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_BORME_Auditor` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_Name  nvarchar(250), _iKey  nvarchar(12),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT)
+BEGIN
+    INSERT IGNORE borme_keys (_key,Nombre,_Auditor, Provincia,BOLETIN,_ID) VALUES(_iKey,_Name,1,_Provincia,_BOLETIN,_ID);
+    SELECT LAST_INSERT_ID() as Id, _iKey as _key;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_BORME_Diario` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Diario`(
+	IN _BOLETIN nvarchar(20) ,
+    IN _BOLETIN_ID int,
+    IN _Dia INT,
+    IN _Mes INT,
+    IN _Anyo INT,
+    IN _Provincia nvarchar(50),
+    IN _Empresa_Id int,
+    IN _Empresa_key char(12),
+    IN _Relacion_Id int,
+    IN _Relacion_key char(12),
+    IN _T_Relacion INT,
+    IN _Activo int,
+    IN _type nvarchar(100), 
+    IN _key nvarchar(100),
+    IN _value text
+    
+)
+BEGIN
+	DECLARE _counter int;
+    
+	IF _Empresa_Id>0 AND _Relacion_Id>0 THEN
+	
+			INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo,Mes,Dia)
+								  VALUES (_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo,_Mes,_Dia); 
+	else
+			INSERT IGNORE INTO borme_actos (Empresa_key,Acto,Motivo,Texto,Anyo,Mes,Dia,BOLETIN,_ID)
+								  VALUES (_Empresa_key,_type,_key,_value,_Anyo,_Mes,_Dia,_BOLETIN,_BOLETIN_ID); 		
+    END IF;  
+    
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_BORME_Directivo` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(12),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
+BEGIN
+    INSERT IGNORE borme_keys (_key,Nombre,_Directivo,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID);
+    
+	SELECT LAST_INSERT_ID() as Id,_iKey as _key;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_BORME_Empresa` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(12), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
+BEGIN
+    INSERT IGNORE borme_keys (_key,Nombre,_Empresa,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID);
+    SELECT LAST_INSERT_ID() as Id,_iKey as _key;
+    
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_Tree` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_Tree`(_ikey VARCHAR(7) , _itree JSON  )
+BEGIN
+ INSERT borme_tree (_key, _tree ) VALUES(_iKey,_itree) ON DUPLICATE KEY UPDATE _tree = _itree;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2018-01-12 14:09:52
