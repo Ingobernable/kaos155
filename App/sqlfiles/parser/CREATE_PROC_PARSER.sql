@@ -681,7 +681,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_Name  nvarchar(250), _iKey  nvarchar(12),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_Name  nvarchar(250), _iKey  nvarchar(55),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT)
 BEGIN
     INSERT IGNORE borme_keys (_key,Nombre,_Auditor, Provincia,BOLETIN,_ID) VALUES(_iKey,_Name,1,_Provincia,_BOLETIN,_ID);
     SELECT LAST_INSERT_ID() as Id, _iKey as _key;
@@ -709,9 +709,9 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Diario`(
     IN _Anyo INT,
     IN _Provincia nvarchar(50),
     IN _Empresa_Id int,
-    IN _Empresa_key char(12),
+    IN _Empresa_key char(55),
     IN _Relacion_Id int,
-    IN _Relacion_key char(12),
+    IN _Relacion_key char(55),
     IN _T_Relacion INT,
     IN _Activo int,
     IN _type nvarchar(100), 
@@ -748,7 +748,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(12),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _Name  nvarchar(250) , IN _ikey  nvarchar(55),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
 BEGIN
     INSERT IGNORE borme_keys (_key,Nombre,_Directivo,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID);
     
@@ -769,7 +769,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(12), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _Name  nvarchar(250), _iKey  nvarchar(55), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
 BEGIN
     INSERT IGNORE borme_keys (_key,Nombre,_Empresa,Provincia,BOLETIN,_ID ) VALUES(_iKey,_Name,1,_provincia,_BOLETIN,_ID);
     SELECT LAST_INSERT_ID() as Id,_iKey as _key;
@@ -809,4 +809,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-01-12 14:09:52
+-- Dump completed on 2018-01-12 21:35:11
