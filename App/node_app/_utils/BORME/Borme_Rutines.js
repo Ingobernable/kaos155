@@ -872,13 +872,20 @@
                     return null
                 }
             },
-            getUnique: function (_this,_name, dbq, callback) {
-                var _k = app.shorter.process()
-                var _db = dbq
+            getUnique: function (_this, _name, _db, callback) {
+                //var _p = _name.split("")
+                //var _s = ""
+                //var n = 0
+
+                //for (n == 0; n < _name.length; n++) {
+                //    _s = _s + _name.charCodeAt(n).toString(16)
+                //}
+
+                var _k = app.aguid(_name)
                 if (_db == null)
                     debugger
 
-                cadsql = "select * from borme_keys where _key=? or Nombre=?"
+                cadsql = "select * from borme_keys where _key=?"
                 _db.query(cadsql, [_k,_name], function (err, record) {
                     if (record.length > 0) {
                         if (record[0].Nombre.toLowerCase() === _name.toLowerCase()) {
