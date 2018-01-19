@@ -230,6 +230,7 @@ module.exports = function (app) {
                     ['F', { f: _this.deburr }],
                     ["F", { f: _this.replaceAll }, "&Ene;", "Ñ"],
                     ["F", { f: _this.replaceAll }, "&ene;", "ñ"],
+                    ["F", { f: _this.replaceAll }, "&amp;", "&"],
                    // ['F', { f: _this.replaceMatch }, '(È|É|Ê|Ë)', 'E'],
                    // ['F', { f: _this.replaceMatch }, '(Ì|Í|Î|Ï)', 'I'],
                    // ['F', { f: _this.replaceMatch }, '(Ò|Ó|Ô|Ö)', 'O'],

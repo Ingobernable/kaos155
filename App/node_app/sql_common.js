@@ -1,4 +1,5 @@
 ﻿module.exports = function (app, callback) {
+    var _ = app._
     callback({
 
         poolSql: [],

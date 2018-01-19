@@ -27,8 +27,14 @@ var App = {
     inquirer: require('inquirer'),
     resolvePath: require('resolve-path'),
     aguid: require('aguid'),
-    schedule: require('node-schedule')
-    
+    schedule: require('node-schedule'),
+    _returnfunc : function (app, options, data, ok) {
+        if (ok > 0) {
+            options._common.Actualize(options, options.Type, {}, app._returnfunc)
+        } else {
+            debugger
+        }
+    }   
 }
 
 String.prototype.Trim = function Trim(x) {
@@ -119,7 +125,7 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
                     _this = this
                     return require('./node_app/func_common.js')(app)
                 },
-                init: function (app, cb) {
+                init: function (app, _cb) {
                     //app._io = require('./node_www/IO.js')(app)
 
                     //= app._io.listen(require('socket.io').listen(80), require('./node_app/elasticIO.js')(app))
@@ -128,7 +134,7 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
                     require('./node_app/sql_common.js')(app, function (SQL) {
                         app.commonSQL = SQL
 
-                        cb({
+                        _cb({
                             PARSER: function (type) {
 
 
@@ -140,19 +146,21 @@ String.prototype.lastIndexOfRegex                   = function (regex) {
                                 require('./node_app/parser/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
                                     //options = objeto que realiza el escrapeo
                                     //app.BOE.SQL.db = objeto para acceder directamente a la db en todas las funciones y rutinas
-                                    app.BOLETIN = options
+                                    if (app.BOLETIN == null) {
+                                        app.BOLETIN = options
 
-                                    //realizamos el proceso de parseo
-                                    app._returnfunc = function (data, ok) {
-                                        if (ok > 0)
-                                            options._common.Actualize(options, type, {}, app._returnfunc)
+                                        app._io = require('./node_www/IO.js')(app)
+                                        require('./node_www/server_http.js')(app, function (io) {
+                                            if (app.process.stdout.io == null) {
+                                                app.process.stdout.io = io
+                                                //realizamos el proceso de parseo
+                                                options._common.Actualize(options, type, {}, app._returnfunc)
+                                            }
+                                        })
+                                    } else {
+                                        debugger
                                     }
 
-                                    app._io = require('./node_www/IO.js')(app)
-                                    require('./node_www/server_http.js')(app, function (io) {
-                                        app.process.stdout.io = io
-                                        options._common.Actualize(options, type, {}, app._returnfunc)
-                                    })
                                 })
                                 //})
 

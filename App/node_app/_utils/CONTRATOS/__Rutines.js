@@ -230,6 +230,9 @@
                             }
                         } else {
                             _imp = _dataimporte.Between('*', 's', 'pe', ".")
+                            if (_imp != null && _imp.indexOf(":") > -1)
+                                _imp = _imp.substr(_imp.indexOf(":") + 1, _imp.length)
+
                             if (_imp != null) {
                                 _imp = (_imp / 166.386).toFixed(2)
                             } else {
@@ -241,7 +244,7 @@
                                         if (_dataimporte.indexOf(";") > 0) {
                                             debugger
                                         } else {
-                                            _imp = data.presupuesto
+                                            _imp = "0.00"
                                         }
                                     }
                                 }
@@ -325,7 +328,7 @@
                     })
                     if (data.Empresa.indexOf("UTE ") == -1 && data.Empresa.indexOf(" UTE") == -1) {
 
-                        var _emp = data.Empresa.split(";") //lotes ? (_e != null ? _e : data.Empresa.split(";")) : data.Empresa.split(";")
+                        var _emp = _.isArray(data.Empresa) ? data.Empresa : data.Empresa.split(";") //lotes ? (_e != null ? _e : data.Empresa.split(";")) : data.Empresa.split(";")
                         var _test = []
                         var _moneda = ""
                         for (n in _emp) {
@@ -494,80 +497,102 @@
                             }
                         } else {
                             if (_arrayText[i].toLowerCase().indexOf('descripción') > 0 || _arrayText[i].toLowerCase().indexOf('contratista') > 0 || (_arrayText[i].match(/\d{1,3}(?:\.\d{3})*/)||[]).length==0 ||  (_arrayText[i].toLowerCase().indexOf('lote') == -1 && search.toLowerCase().indexOf('importe') == -1)) {
-                                var _c = _arrayText[i].match(/"([^"]*)"|'([^']*)'|“[^]*”|.[^]*,/g) || []
-                                if(_c.length == 1)
-                                    var _c = _arrayText[i].match(/"([^"]*)"|'([^']*)'|“[^]*”/g) || []
-
-                                var _pesetas = _arrayText[i].match(/\d{1,3}(?:\.\d{3})* de pesetas|\d{1,3}(?:\.\d{3})* pesetas/g) || []
-                                var _euros = _arrayText[i].match(/\d{1,3}(?:\.\d{3})* de euro|\d{1,3}(?:\.\d{3})* en euro\d{1,3}(?:\.\d{3})* euro|(?:\d+)((\d{1,3})*([\.\ ]\d{3})*)(\,\d+)? euros/g) || []
-                                if ((_pesetas.length > 0 || _euros.length > 0) && _c.length>0) {
-                                    if (_pesetas.length == _c.length || _euros.length == _c.length) {
-
-                                    } else {
-                                        _c = []
-                                        _pesetas = []
-                                        _euros = []
-                                        if (_arrayText[i].indexOf("Precio por") == -1) {
-                                            var _e = _arrayText[i].replaceAll(".,", ",")
-                                                                    .replaceAll("Ind.", "Sum")
-                                                                    .replaceAll("Sum.", "Sum")
-                                                                    .replaceAll("Lab.", "Lab")
-                                                                    .replace("S. C.", "SC")
-                                                                    .replace(/\"\w\.\ /g, '"')
-                                                                    .replaceAll('". ', '", ')
-                                                                    .replaceAll(" por un importe de", '",')
-                                                                    .replaceAll('""', '"')
-                                        
-                                            if (_e.match(/\:/g).length > 1) {
-                                                var _l = _e.split(/:(.+)/)[1].replaceAll(/ \w\./g, " ").replaceAll("Coop.", "Coop").replaceAll("Empresas y euros:", "").replaceAll("por importe de ", '", ').replace("Electricidad N.", "Electricidad N").replaceAll('", ",', '",').replaceAll(". Importe de Adjudicación", ";").replaceAll(". Importe de adjudicación", ";").replace(/:/g, ';').replace("Contratista;", "Contratista:").split('. ')
-                                            } else {
-                                                var _l = _e.replaceAll("Empresas y euros:", "").replaceAll("Coop.", "Coop").replaceAll("por importe de ", '", ').replaceAll(/ \w\./g, " ").replaceAll('", ",', '",').replaceAll(". Importe de Adjudicación", ";").replaceAll(". Importe de adjudicación", ";").replace("Contratista;", "Contratista:").split(":")[1].split('. ')
+                                var _text = _arrayText[i]
+                                var _x = _.compact(_text.replaceAll(").", ");").split(";"))
+                                var _pesetas = _text.match(/\d{1,3}(?:\.\d{3})* de pesetas|\d{1,3}(?:\.\d{3})* pesetas/g) || []
+                                var _euros = _text.match(/\d{1,3}(?:\.\d{3})* de euro|\d{1,3}(?:\.\d{3})* en euro\d{1,3}(?:\.\d{3})* euro|(?:\d+)((\d{1,3})*([\.\ ]\d{3})*)(\,\d+)? euros/g) || []
+                                if (_x.length == _euros.length) {
+                                    var _c =[]
+                                    _.forEach(_x, function (value) {
+                                        var _p = value.match(/"([^"]*)"|'([^']*)'|“[^]*”/g) || []
+                                        if (_p.length == 1) {
+                                            _c[_c.length] = _p[0]
+                                        } else {
+                                            var _p = value.replace("Contratistas:","").indexOfRegex(/\d{1,3}(?:\.\d{3})* de pesetas|\d{1,3}(?:\.\d{3})* pesetas|\d{1,3}(?:\.\d{3})* de euro|\d{1,3}(?:\.\d{3})* en euro\d{1,3}(?:\.\d{3})* euro|(?:\d+)((\d{1,3})*([\.\ ]\d{3})*)(\,\d+)? euros/)
+                                            if (_p>0){
+                                                _c[_c.length] = value.replace("Contratistas:", "").substr(0,_p).replace(/\:|\;/g,"")
                                             }
+                                        }
+                                    })
+                                } else {
 
-                                            if (_l.length > _c.length) {
-                                                _.forEach(_l, function (value) {
-                                                    if ((value.match(/"/g) || []).length % 2 == 1) {
-                                                        if (value.indexOf(" (") > 0) {
+                                    var _c = _text.match(/"([^"]*)"|'([^']*)'|“[^]*”|.[^]*,/g) || []
+                                    if (_c.length == 1)
+                                        var _c = _text.match(/"([^"]*)"|'([^']*)'|“[^]*”/g) || []
+                                }
+                                if ((_pesetas.length > 0 || _euros.length > 0) && _c.length>0) {
+                                    
+                                    if (_pesetas.length != _c.length && _euros.length != _c.length) {
+                                        //if (_x.length == _euros.length) {
+                                        //    _c=
+                                        //} else {
+                                            _c = []
+                                            _pesetas = []
+                                            _euros = []
+                                            if (_arrayText[i].indexOf("Precio por") == -1) {
+                                                var _e = _arrayText[i].replaceAll(".,", ",")
+                                                    .replaceAll("Ind.", "Sum")
+                                                    .replaceAll("Sum.", "Sum")
+                                                    .replaceAll("Lab.", "Lab")
+                                                    .replace("S. C.", "SC")
+                                                    .replace(/\"\w\.\ /g, '"')
+                                                    .replaceAll('". ', '", ')
+                                                    .replaceAll(" por un importe de", '",')
+                                                    .replaceAll('""', '"')
+
+                                                if (_e.match(/\:/g).length > 1) {
+                                                    var _l = _e.split(/:(.+)/)[1].replaceAll(/ \w\./g, " ").replaceAll("Coop.", "Coop").replaceAll("Empresas y euros:", "").replaceAll("por importe de ", '", ').replace("Electricidad N.", "Electricidad N").replaceAll('", ",', '",').replaceAll(". Importe de Adjudicación", ";").replaceAll(". Importe de adjudicación", ";").replace(/:/g, ';').replace("Contratista;", "Contratista:").split('. ')
+                                                } else {
+                                                    var _l = _e.replaceAll("Empresas y euros:", "").replaceAll("Coop.", "Coop").replaceAll("por importe de ", '", ').replaceAll(/ \w\./g, " ").replaceAll('", ",', '",').replaceAll(". Importe de Adjudicación", ";").replaceAll(". Importe de adjudicación", ";").replace("Contratista;", "Contratista:").split(":")[1].split('. ')
+                                                }
+
+                                                if (_l.length > _c.length) {
+                                                    _.forEach(_l, function (value) {
+                                                        if ((value.match(/"/g) || []).length % 2 == 1) {
+                                                            if (value.indexOf(" (") > 0) {
+                                                                value = ('"' + _.trim(value)).replaceAll(" (", '" (').replaceAll('""', '"')
+                                                            } else {
+                                                                //debugger
+                                                                value = ('"' + _.trim(value)).replaceAll('""', '"')
+                                                            }
+                                                        } else {
                                                             value = ('"' + _.trim(value)).replaceAll(" (", '" (').replaceAll('""', '"')
-                                                        } else {
-                                                            //debugger
-                                                            value = ('"' + _.trim(value)).replaceAll('""', '"')
-                                                        }
-                                                    } else {
-                                                        value = ('"' + _.trim(value)).replaceAll(" (", '" (').replaceAll('""', '"')
-                                                    }
-
-                                                    if (value.indexOf(" peseta") > 0) {
-                                                        
-                                                        var _fp = value.match(/\d{1,3}(?:\.\d{3})* de pesetas|en pesetas \d{1,3}(?:\.\d{3})*|\d{1,3}(?:\.\d{3})* pesetas/g)
-                                                        if (_fp.length > 0) {
-                                                            _pesetas[_pesetas.length] = _fp[0]
-                                                            _moneda = _fp[0]
-                                                        } else {
-                                                            _moneda = value.match(/\d{1,3}(?:\.\d{3})* de euro|\d{1,3}(?:\.\d{3})* en euro\d{1,3}(?:\.\d{3})* euro/g)[0] 
-                                                            _euros[_euros.length] = _moneda
-
-                                                        }
-                                                        if ((value.match(/"([^"]*)"|'([^']*)'|“[^]*”|.[^]*,/g) || []).length > 0) {
-                                                            _c[_c.length] = value.match(/"([^"]*)"|'([^']*)'|“[^]*”|.[^]*,/g)[0]
-                                                        } else {
-                                                            _c[_c.length] = value.substr(0, value.indexOf(_moneda)).replace('"', '').replaceAll(";", "")
                                                         }
 
-                                                    } else {
-                                                        if (value.indexOf(" euro") > 0) {
-                                                            _euros[_euros.length] = (value.match(/\d{1,3}(?:\.\d{3})* de euro|\d{1,3}(?:\.\d{3})* en euro\d{1,3}(?:\.\d{3})* euro|(?:\d+)((\d{1,3})*([\.\ ]\d{3})*)(\,\d+)? euros/g) || []).length > 0 ? value.match(/\d{1,3}(?:\.\d{3})* de euro|\d{1,3}(?:\.\d{3})* en euro\d{1,3}(?:\.\d{3})* euro|(?:\d+)((\d{1,3})*([\.\ ]\d{3})*)(\,\d+)? euros/g)[0] : " 0 euros"
+                                                        if (value.indexOf(" peseta") > 0) {
+
+                                                            var _fp = value.match(/\d{1,3}(?:\.\d{3})* de pesetas|en pesetas \d{1,3}(?:\.\d{3})*|\d{1,3}(?:\.\d{3})* pesetas/g)
+                                                            if (_fp.length > 0) {
+                                                                _pesetas[_pesetas.length] = _fp[0]
+                                                                _moneda = _fp[0]
+                                                            } else {
+                                                                _moneda = value.match(/\d{1,3}(?:\.\d{3})* de euro|\d{1,3}(?:\.\d{3})* en euro\d{1,3}(?:\.\d{3})* euro/g)[0]
+                                                                _euros[_euros.length] = _moneda
+
+                                                            }
                                                             if ((value.match(/"([^"]*)"|'([^']*)'|“[^]*”|.[^]*,/g) || []).length > 0) {
                                                                 _c[_c.length] = value.match(/"([^"]*)"|'([^']*)'|“[^]*”|.[^]*,/g)[0]
                                                             } else {
-                                                                _c[_c.length] = value.substr(0, value.indexOf(_euros[_euros.length - 1])).replace('"', '').replaceAll(";", "")
+                                                                _c[_c.length] = value.substr(0, value.indexOf(_moneda)).replace('"', '').replaceAll(";", "")
                                                             }
 
+                                                        } else {
+                                                            if (value.indexOf(" euro") > 0) {
+                                                                _euros[_euros.length] = (value.match(/\d{1,3}(?:\.\d{3})* de euro|\d{1,3}(?:\.\d{3})* en euro\d{1,3}(?:\.\d{3})* euro|(?:\d+)((\d{1,3})*([\.\ ]\d{3})*)(\,\d+)? euros/g) || []).length > 0 ? value.match(/\d{1,3}(?:\.\d{3})* de euro|\d{1,3}(?:\.\d{3})* en euro\d{1,3}(?:\.\d{3})* euro|(?:\d+)((\d{1,3})*([\.\ ]\d{3})*)(\,\d+)? euros/g)[0] : " 0 euros"
+                                                                if ((value.match(/"([^"]*)"|'([^']*)'|“[^]*”|.[^]*,/g) || []).length > 0) {
+                                                                    _c[_c.length] = value.match(/"([^"]*)"|'([^']*)'|“[^]*”|.[^]*,/g)[0]
+                                                                } else {
+                                                                    _c[_c.length] = value.substr(0, value.indexOf(_euros[_euros.length - 1])).replace('"', '').replaceAll(";", "")
+                                                                }
 
+
+                                                            }
                                                         }
-                                                    }
-                                                })
-                                                var x = 1
+                                                    })
+                                                    var x = 1
+
+                                                //}
+
                                             }
                                         }
                                     }
@@ -615,7 +640,7 @@
                                                             _j=" "
                                                         return this.transforms(_arrayText[i].match(/"([^"]*)"|'([^']*)'|“[^]*”/g).join(_j), transforms )
                                                     } else {
-                                                        return this.transforms(_arrT[1].indexOf(' Desierto') > -1 ? null : _arrT[1], transforms)
+                                                        return this.transforms(_arrT[1].indexOf(' Desierto') > -1 ? 'Desierto' : _arrT[1], transforms)
                                                     }
                                                 } else {
                                                     var _retT = []
@@ -686,7 +711,13 @@
                                         if (_arrT[n].indexOf(": ") > -1) {
                                             _arrT[n] = this.transforms(_arrT[n].split(": ")[1], transforms)
                                         } else {
-                                            _arrT[n] = _arrT[n] //this.transforms(_arrT[n].replace("PESETAS", "pesetas").replace("PESETAS", "euros").replace('", ', ";"), transforms)
+                                            var _i = this.transforms(_arrT[n], transforms)
+                                            if ((_i.match(/\d{1,3}(?:\.\d{1,103})*,\d{2}/g) || 0).length>0) {
+                                                _arrT[n] =_i.match(/\d{1,3}(?:\.\d{3})*,\d{2}/g)[0]
+                                            } else {
+                                                debugger
+                                                //_arrT[n] = _arrT[n] //this.transforms(_arrT[n].replace("PESETAS", "pesetas").replace("PESETAS", "euros").replace('", ', ";"), transforms)
+                                            }
                                         }
                                     }
                                     return _arrT.join(";")
@@ -701,15 +732,41 @@
                                     } else {
 
                                         if ((_arrayText[i].toLowerCase().indexOf('lotes') > -1 || _arrayText[i].toLowerCase().indexOf('lote número') > -1) && _arrayText[i].toLowerCase().indexOf('.') > -1 && _arrayText[i].indexOf(": ") > -1) {
-                                            _arrT = _arrayText[i].substr(_arrayText[i].indexOf(": ") + 1, _arrayText[i].length).split(". ")
-                                            
+                                            if ((_arrayText[i].toLowerCase().match(/pesetas,/g) || []).length || (_arrayText[i].toLowerCase().match(/euros,/g) || []).length > 0) {
+                                                _arrT = _arrayText[i].substr(_arrayText[i].indexOf(": ") + 1, _arrayText[i].length).split(", ")
+                                            } else {
+                                                _arrT = _arrayText[i].substr(_arrayText[i].indexOf(": ") + 1, _arrayText[i].length).split(". ")
+                                            }
                                             for (n in _arrT) {
-                                                if (_arrT[n].length>0)
+                                                if (_arrT[n].length > 0)
                                                     if (_arrT[n].toLowerCase().indexOf('lote número') > -1) {
-                                                        _ret[_ret.length] = this.transforms(_arrT[n].toLowerCase().replace(/lote número \d{1,2},/g, ""), transforms)
+                                                        if ((_arrT[n].toLowerCase().match(/lote número \d{1,2},/g) || []).length > 0) {
+                                                            _ret[_ret.length] = this.transforms(_arrT[n].toLowerCase().replace(/lote número \d{1,2},/g, ""), transforms)
+                                                        } else {
+                                                            if ((_arrT[n].toLowerCase().match(/lote número \d{1,2}:/g) || []).length > 0) {
+                                                                _ret[_ret.length] = this.transforms(_arrT[n].toLowerCase().replace(/lote número \d{1,2}:/g, ""), transforms)
+                                                            } else {
+                                                                if ((_arrT[n].toLowerCase().match(/lote número \d{1,2}/g) || []).length > 0) {
+                                                                    _ret[_ret.length] = this.transforms(_arrT[n].toLowerCase().replace(/lote número \d{1,2}/g, ""), transforms)
+                                                                } else {
+                                                                    if ((_arrT[n].toLowerCase().match(/lote números \d{1,2} y \d{1,2}/g) || []).length > 0) {
+                                                                        _ret[_ret.length] = this.transforms(_arrT[n].toLowerCase().replace(/lote números \d{1,2} y \d{1,2}/g, ""), transforms)
+                                                                    } else {
+                                                                        if ((_arrT[n].match(/Lote número (IX|IV|V?I{0,3})/g) || []).length > 0) {
+                                                                            _arrT[n] = _arrT[n].substr(_arrT[n].indexOfRegex(/Lote número (IX|IV|V?I{0,3})/g), _arrT[n].length)
+                                                                            _ret[_ret.length] = this.transforms(_arrT[n].replace(/Lote número (IX|IV|V?I{0,3})/g, ""), transforms)
+                                                                        } else {
+                                                                            debugger
+                                                                        }
+                                                                    }
+
+                                                                }
+                                                            }
+                                                        }
                                                     } else {
-                                                        if (_arrT[n].match(/\w/g).length == 0 || (_arrT[n].indexOf("pesetas") > 0 || _arrT[n].indexOf("euros") > 0))
+                                                        if (_arrT[n].match(/\w/g).length == 0 || (_arrT[n].indexOf("pesetas") > 0 || _arrT[n].indexOf("euros") > 0)) {
                                                             _ret[_ret.length] = this.transforms(_arrT[n], transforms)
+                                                        }
                                                     }
                                             }
                                             return _ret.join(";")
@@ -800,11 +857,11 @@
                                                                 _arrT[_n] = _arrT[_n].split("pesetas")[0]
                                                         }
 
-                                                        if (!_.isNumber(_arrT[_n].replace(".", "").replace(",", ".") * 1)) {
+                                                        if (!_.isNumber(_arrT[_n].replaceAll(/\./g, "").replace(",", ".") * 1)) {
                                                             _arrT[_n] = "0.00"
                                                         } else {
                                                             if (_arrT[_n].indexOf(",") > -1) {
-                                                                _arrT[_n] = _arrT[_n].replace(".", "").replace(",", ".") * 1
+                                                                _arrT[_n] = _arrT[_n].replace(/\./g, "").replace(",", ".") * 1
                                                             } else {
                                                                 _arrT[_n] = _arrT[_n] * 1
                                                             }
@@ -1095,18 +1152,23 @@
                     data._Imp = _imp * 1
                 }
             } else {
-                var _i = options.Rutines.get.importes(_text, data, options, options.patterns, _lotes)
+               var _i = options.Rutines.get.importes(_text, data, options, options.patterns, _lotes)
                var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe.replace(".", "").replace(",", ".") : _i
                //if (!_lotes) {
                //     var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe.replace(".", "").replace(",", ".") : options.Rutines.get.importes(_text, data, options, options.patterns, _lotes)
                // } else {
 
                 //}
-                if (_imp.indexOf(";") > -1) {
-                    data._Imp = _imp
-                } else {
-                    data._Imp = _imp * 1
-                }
+
+               if (_i != 0) {
+                   if (_imp.indexOf(";") > -1) {
+                       data._Imp = _imp
+                   } else {
+                       data._Imp = _imp * 1
+                   }
+               } else {
+                   data._Imp = 0
+               }
             }
             return data
         },
@@ -1132,7 +1194,7 @@
                         }
                     } else {
                         if (line.toLowerCase().indexOf(exclude.toLowerCase()) > -1) {
-                            _ikey = line.split(":")[0] + ":"
+                            _ikey = line.split(":")[0].split(" ")[0] //  + ":"
                         }
                     }
                 }
@@ -1144,25 +1206,42 @@
                 var book = [
                     {
                         _k: 'Tramitacion', _v: [
-                            { _k: 'Ordinaria', _v: ['Ordinaria'] },
-                            { _k: 'Urgente', _v: ['Urgente'] },
-                            { _k: 'Anticipada', _v: ['Anticipada'] }, 
-                            { _k: 'Normal', _v: ['Normal'] }
+                            { _k: 'Ordinaria', _v: ['Ordinaria', 'Ordinario', 'ordinaria', 'Ordinaria/anticipada', 'Ordinaria-anticipada', 'Ordinaria-Anticipada'] },
+                            { _k: 'Plan Nacional', _v: ['Plan', 'Nacional', 'PNSP'] },
+                            { _k: 'General', _v: ['General'] },
+                            { _k: 'Urgente', _v: ['Urgente', 'Urgencia'] },
+                            { _k: 'Emergencia', _v: ['Emergencia'] },
+                            { _k: 'Anticipada', _v: ['Anticipada',"Anticipado","anticipada"] },
+                            { _k: 'Normal', _v: ['Normal'] },
+                            { _k: 'Urgente', _v: ['Urgente', 'urgente','Anticipada-urgente'] },
+                            { _k: 'Contrato', _v: ['Contrato'] },
+                            { _k: 'Concurso', _v: ['Concurso'] },
+                            { _k: 'Negociado', _v: ['Procedimiento','negociado'] },
+                            { _k: 'Sin_publicidad', _v: ['Sin', 'publicidad'] },
+                            { _k: 'Real Decreto 2/2000', _v: ['Real', 'Decreto','2/2000','Legislativo'] }
 
                         ]
                     },
                     {
                         _k: 'Forma', _v: [
-                            { _k: 'Abierto', _v: ['Abierto'] },
-                            { _k: 'Concurso', _v: ['Concurso'] },
+                            { _k: 'Abierto', _v: ['Abierto','abierto'] },
+                            { _k: 'Concurso', _v: ['Concurso', 'ofertas'] },
+                            { _k: 'Convenio', _v: ['convenio'] },
                             { _k: 'Contrato', _v: ['Contrato'] },
+                            { _k: 'Ordinario', _v: ['Ordinario'] },
+                            { _k: 'Homologado', _v: ['Homologado'] },
+                            { _k: 'Prórroga', _v: ['Prórroga'] },
                             { _k: 'Público', _v: ['Público'] },
-                            { _k: 'Sin_publicidad', _v: ['Sin','publicidad'] }
+                            { _k: 'Restringido', _v: ['Restringido','Retringido'] },
+                            { _k: 'Negociado', _v: ['Negociado', 'negociado'] },
+                            { _k: 'Sin publicidad', _v: ['Sin', 'sin', 'publicidad'] },
+                            { _k: 'Plan Nacional', _v: ['Plan', 'Nacional', 'PNSP'] },
+                            { _k: 'Urgente', _v: ['Urgente'] }
                         ]
                     }
                 ]
-                var _text = text.replaceAll(".", "").split(" ")
-                var ret = 'Sin Definir'
+                var _text = text.replaceAll(".", "").replaceAll(",", "").split(" ")
+                var ret = ''
                 _.forEach(book, function (vtype) {
                     if (vtype._k == type) {
                         _.forEach(vtype._v, function (value) {
@@ -1172,12 +1251,22 @@
                         })
                     }
                 })
-                if (ret == 'Sin Definir')
-                    debugger
-
+                if (ret == '') {
+                    ret = "Sin Definir"
+                    //debugger
+                }
                 return ret
             }
-
+            var _xForma = "Sin Definir"
+            var _xTramite = "Sin Definir"
+            if (_analisis.data.Procedimiento != null || _analisis.data.Forma != null || _analisis.data.Tramitacion != null) {
+                if (_analisis.data.Procedimiento == null && _analisis.data.Forma == null && Diccionario('Forma', _analisis.data.Tramitacion).length > 0) {
+                    _xForma = Diccionario('Forma', _analisis.data.Tramitacion)
+                } else {
+                    _xTramite = _analisis.data.Tramitacion == null ? "Sin Definir" : Diccionario('Tramitacion', _analisis.data.Tramitacion)
+                    _xForma = _analisis.data.Procedimiento == null ? (Diccionario('Forma', _analisis.data.Forma) == null ? "Sin Definir" : Diccionario('Forma', _analisis.data.Forma)) : Diccionario('Forma', _analisis.data.Procedimiento)
+                }
+            }
             return {
                     _counterContratos: 0,
                     type: app.Type,
@@ -1192,8 +1281,8 @@
 
                     tipoBoletin: _analisis._a.tipo,
 
-                    tipoTramite: _analisis.data.Tramitacion == null ? "Sin Definir" : Diccionario('Tramitacion', _analisis.data.Tramitacion ) , //options.Rutines.extract(_text, 'Tramitaci\u00F3n', options.transforms.ADD([options.patterns.General, options.patterns.sinPuntos, options.patterns.sinBlancoInicial]), true),
-                    tipoForma: _analisis.data.Forma == null ? "Sin Definir" : Diccionario('Forma', _analisis.data.Forma),
+                    tipoTramite: _xTramite , //options.Rutines.extract(_text, 'Tramitaci\u00F3n', options.transforms.ADD([options.patterns.General, options.patterns.sinPuntos, options.patterns.sinBlancoInicial]), true),
+                    tipoForma: _xForma,
 
                     precio: _analisis._a.precio,
                     ambitoGeo: _analisis._a.ambito_geografico,
@@ -1216,13 +1305,13 @@
                     extra: {}
                     }
         },
-        saveDataBoletin: function (app,options,data, callback ) {
+        saveDataBoletin: function (app, options, data, _callback ) {
             if (data.Empresa != null) {
                 if (data.Empresa.length > 0 && (data._Imp >0 || data.Empresa.indexOf("#") > 0) ) {
                     //debugger
                     //options.Rutines.saveDataBoletin(app, options, data, callback)
 
-                    options.SQL.insert.boletin(options, data, function (data, state) {
+                    options.SQL.insert.boletin(options, data, function (data, state, error) {
                         
                         if (state == 1) {
                             if (data.Empresa.indexOf('#') > -1) {
@@ -1231,89 +1320,111 @@
                                 data._counterContratos = 0
                                 _.forEach(_ext, function (value) {
                                     var _ixt = _.trim(value).split("#")
+
                                     data._counterContratos++
-                                    options.SQL.insert.contrato(options, data, data.cod, _ixt[0], _ixt[1], data._counterContratos, function (data, state,_e) {
-                                       
-                                        if (_e >= data._counterContratos) {
+
+                                    options.SQL.insert.contrato(options, data, data.cod, _ixt[0], _ixt[1], data._counterContratos, function (data, state,_e, err) {
+                                        if (err)
+                                            app.process.stdout.write(app, options,'\x1b[36m')
+
+                                        if (_e >= data.Empresa.split(";").length) {
+                                            console.log(data.cod, value, _e, data._counterContratos,"SI CALL")
                                             app.process.stdout.write(app, options, '\x1b[36m', data._counterContratos, '\x1b[0mE')
-                                            callback(data, state)
+                                            //debugger
+                                            _callback(data, state)
+                                        } else {
+                                            console.log(data.cod, value, _e, data._counterContratos, "NO CALL", '\x1b[0mE')
                                         }
                                     })               
                                     
                                     
                                 })
                             } else {
-                                options.SQL.insert.contrato(options, data, data.cod, data.Empresa, _.isNumber(data._Imp) ? data._Imp.toFixed(2) : "0.00", 1, function (data, state) {
+                                var _importe = _.isNumber(data._Imp) ? data._Imp.toFixed(2) : ""
+                                options.SQL.insert.contrato(options, data, data.cod, data.Empresa, _importe , 1, function (data, state) {
                                     app.process.stdout.write(app, options, '\x1b[36m', data._counterContratos, '\x1b[0mE')
-                                    callback(data, state)
+                                    _callback(data, state)
                                 })
                             }
                             
                         } else {
-                            callback(data, state)
+                            _callback(data, state, error)
                         }
                     })
                 } else {
                     if (data._Imp > 0)
-                        callback(data, 5)
+                        _callback(data, 5,"CONTRATO EMPRESA LENGTH CERO")
                     if (data._Imp == 0)
-                        callback(data, 6)
+                        _callback(data, 6, "CONTRATO IMPORTE CERO" )
                     if (isNaN(data._Imp))
-                        callback(data, 7)
+                        _callback(data, 7, "CONTRATO IMPORTE NaN")
                 }
             } else {
-                callback(data, 8)
+                _callback(data, 8, "CONTRATO EMPRESA NULL")
             }
         },
-        analisis: function (type, string) {
+        analisis: function (_type, _string) {
+            var _resp = null
             var analisis = function (arrIn, exclude, data) {
                 return _.intersection(_.difference(arrIn, exclude), data)
             }
-            var words = _.deburr( string.toLowerCase().replace(".","").replace(",","") ).split(" ")
-            var exclude = ["de", "la"]
-            var _Educacion = ["universidad","universitat"]
-            var _Sanidad = ["social", "salud", "saude", "salut", "hospital", "tgss", "sanidad","insalud","primaria"]
-            var _Defensa = ["marina","armada","ejercito", "eva","militar","defensa"]
-            var _Local = ["ayuntamiento"]
-            var _Deportes = ["deportiva"]
-            var _Diputacion = ["diputacion"]
-            var _Estado = ["policia","consejeria", "hacienda", "presidencia", "agencia", "tributaria", "gobierno", "delegacion", "ine" , "empleo", "estado", "contratacion" ]
-            var _Fomento = ["ambiente","reforma","consejeria","fomento" , "vivienda","adif","velocidad","portuaria","ferroviarias","carreteras","bomberos","hidrografica"]
-            var _ID = ["supercomputacion", "investigaciones", "cientificas", "diseno","Comunicació"]
-            var _Justicia = ["justicia"]
-
             //debugger
-            var _resp =  {
-                            Local: analisis(words, exclude, _Local),
-                            Educacion: analisis(words, exclude, _Educacion),
-                            Sanidad: analisis(words, exclude, _Sanidad),
-                            Defensa: analisis(words, exclude, _Defensa),
-                            
-                            Diputacion: analisis(words, exclude, _Diputacion),
-                            Deportes: analisis(words, exclude, _Deportes),
-                            Estado: analisis(words, exclude, _Estado),
-                            Fomento: analisis(words, exclude, _Fomento),
-                            ID: analisis(words, exclude, _ID),
-                            Justicia: analisis(words, exclude, _Justicia),
-                        }
-            var _r =[]
-            _.forEach(_resp, function (value, key) {
-                if (value.length > 0)
-                    _r[_r.length] = { key: key, points: value.length , options:value }
-                
-            })
-            var _resp = null
-            var points = 0
-            _.forEach(_r, function (value) {
-                if (value.points > points) {
-                    _resp = value.key
+            if (_string != null) {
+                var words = _.deburr(_string.toLowerCase().replace('"', '').replace(".", "").replace(",", "")).split(" ")
+                var exclude = ["de", "la", "del"]
+                var _Educacion = ["mec", "universidad", "universitat", "educacion", "cultura", "deporte", "arte", "artes", "deportes", "biblioteca", "historico", "cultural"]
+                var _Sanidad = ["social", "salud", "saude", "salut", "hospital", "tgss", "sanidad", "insalud", "primaria", "hospitalario", "sanitaria", "inss", "061", "sanitarias", "hospital", "S.N.S.-O.", "insalud-hospital", "sociales", "servicios", "atencion", "primaria", "primaria-leon", "transfusio", "sn.s.-o."]
+                var _Defensa = ["malre", "marina", "armada", "artilleria", "aerea", "oficialia", "mayor", "ejercito", "coronel", "academia", "logistica", "eva", "militar", "defensa", "armamento", "maestranza", "mando", "guardia", "intendencia", "dic", "apoyo", "logistico", "cuartel", "ism", "defensa-famet", "Jefatura", "maritima", "suboficiales", "brunete", "division", "mecanizada", "(distec)", "secretaria", "general", "tecnica", "arsenal", "sdg", "cg", "ualog", "brigada", "paracaidista", "acuartelamiento", "aereo", "subdireccion", "adquisiciones", "construcciones", "navales"]
+                var _Local = ["ayuntamiento", "municipal", "mintra", "urbanistico", "consell", "comarcal", "cuidad", "autonoma", "ajuntament", "metropolitano"]
+                var _Deportes = ["deportiva"]
+                var _Diputacion = ["diputacion", "comunidad", "generalidad", "instituto", "catalan", "suelo", "generalitat", "comunidades", "ferroviaris", "cabildo", "consorcio", "regional", "transportes", "cortes"]
+                var _Estado = ["apuestas", "tribunal", "cuentas", "estado", "boletin", "senado", "policia", "consejeria", "hacienda", "presidencia", "agencia", "tributaria", "gobierno", "delegacion", "ine", "empleo", "estado", "contratacion", "estadistica", "trafico", "exteriores", "interior", "vicepresidencia", "economia", "metrologia", "mercado", "valores", "subsecretaria"]
+                var _Fomento = ["fomento-subsecretaria", "ambiente", "reforma", "consejeria", "fomento", "vivienda", "adif", "velocidad", "portuaria", "ferroviarias", "carreteras", "bomberos", "hidrografica", "agricultura", "parques", "naturaleza", "geografico", "agraria", "aprovisionamiento", "publicas", "consejo", "patentes", "consorci", "mantenimiento", "canales", "turismo", "radiotelevision", "consumo", "trabajo", "meteorologia", "energia", "tabacos", "zona", "franca", "cria", "caballar", "remonta", "agrarios", "museo", "geografica", "parque", "maquinaria", "garantia", "salarial", "residuos", "solidos"]
+                var _Autonomico = ["eusko", "jaurlaritza/gobierno", "junta", "andalucia", "asamblea", "madrid", "illes", "balears"]
+                var _ID = ["supercomputacion", "investigaciones", "cientificas", "diseno", "Comunicació", "ciencia", "tecnologia"]
+                var _Justicia = ["justicia"]
+                var _Aguas = ["canal", "isabel", "aguas"]
+                var _SA = ["sociedad", "anonima", "limitada"]
+                //debugger
+                var _resp = {
+                    Local: analisis(words, exclude, _Local),
+                    Educacion: analisis(words, exclude, _Educacion),
+                    Sanidad: analisis(words, exclude, _Sanidad),
+                    Defensa: analisis(words, exclude, _Defensa),
+
+                    Diputacion: analisis(words, exclude, _Diputacion),
+                    Deportes: analisis(words, exclude, _Deportes),
+                    Estado: analisis(words, exclude, _Estado),
+                    Fomento: analisis(words, exclude, _Fomento),
+                    ID: analisis(words, exclude, _ID),
+                    Autonomia: analisis(words, exclude, _Autonomico),
+                    Justicia: analisis(words, exclude, _Justicia),
+                    Aguas: analisis(words, exclude, _Aguas),
                 }
+                var _r = []
+                _.forEach(_resp, function (value, key) {
+                    if (value.length > 0)
+                        _r[_r.length] = { key: key, points: value.length, options: value }
 
-            })
-            if (_resp == null)
-                debugger
+                })
+                var _resp = null
+                var points = 0
+                _.forEach(_r, function (value) {
+                    if (value.points > points) {
+                        _resp = value.key
+                        points = value.points
+                    }
 
-            return _resp
+                })
+                if (_resp == null) {
+                    resp = "Sin Especificar"
+                    //if(words.length>1)
+                    //    debugger
+                }
+            }
+            return {
+                _t: _resp, _SA: analisis(words, exclude, _SA)
+            }
         },
         refineLineaText: function (options, _arr) {
             var into = ["Organismo", "Dependencia", "Descripci\u00F3n", "Tipo", "Lote", "Tramitaci\u00F3n", "Presupuesto", "Procedimiento", "Forma", "Importe", "Contratista", "Contratistas", "Nacionalidad", "explotaci\u00F3n", ".-"]

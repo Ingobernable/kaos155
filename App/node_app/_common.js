@@ -1,5 +1,5 @@
 ﻿module.exports = function (app, drop, callback) {
-
+    var _ = app._
     return {
 
         SQL: {
@@ -246,7 +246,8 @@
 
                 }
             } else {
-                options.parser.Preceptos(options, type, function (data, ok) {
+                //debugger
+                options.parser.Preceptos(options, type, function (data, ok, error) {
                     if (!_.isNumber(ok) && ok == true) {
                         var _d = new Date()
                         if (app.anyo*1 < _d.getFullYear()) {
@@ -261,10 +262,21 @@
                         if (ok == 0) {
                             callback(data, ok)
                         } else {
-                            options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + data.anyo + " SET parser=" + ok + " WHERE BOLETIN='" + data.cod + "'", function (err, record) {
+                            if (error) {
+                                console.log(error)
+                                var cadsql = "UPDATE _" + type.toLowerCase() + "_text_" + data.anyo + " SET parser=" + ok + ", _err=? WHERE BOLETIN='" + data.cod + "'"
+                            } else {
+                                var cadsql = "UPDATE _" + type.toLowerCase() + "_text_" + data.anyo + " SET parser=" + ok + " WHERE BOLETIN='" + data.cod + "'"
+                            }
+                            //console.log(cadsql)
+                            options.SQL.scrapDb.SQL.db.query(cadsql, [error], function (err, record) {
+                                if (err)
+                                    debugger
                                 cadsql = "UPDATE sumarios  SET parser = " + ok + " WHERE BOLETIN= '" + data.cod + "'"
                                 options.SQL.scrapDb.SQL.db.query(cadsql, function (err, record) {
-                                    callback(data, ok)
+                                    if (err)
+                                        debugger
+                                    callback(app, options, data, ok)
                                 })
                             })
                         }

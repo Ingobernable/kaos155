@@ -1,6 +1,7 @@
 module.exports = function (app, callback) {
 
     var options = {
+        Type: app.Type,
         Command: app.command,
         Rutines: require('../_utils/CONTRATOS/__Rutines.js')(app),
         transforms: require('../_utils/CONTRATOS/__Transforms.js')(app),
@@ -29,8 +30,11 @@ module.exports = function (app, callback) {
                 callback(data)
             },
             insert: {
-                boletin: function (options, data, callback) {
+                boletin: function (options, data, __callback) {
                     options.SQL.saveCodeMaterias(options, data, function (data) {
+                        data.area = data.area != null ? data.area._t : data.extra.area!=null ? data.extra.area._t : 'Sin definir'    // (data.area._SA.length==2) = entidad emisora SA
+                        if (data.area == null)
+                            data.area = "Sin definir"
 
                         params = [
                             app.Type,
@@ -49,7 +53,7 @@ module.exports = function (app, callback) {
                             data.tipoBoletin,
                             data.tipoTramite,
                             data.tipoForma,
-                            data.area != null ? data.area:data.extra.area,
+                            data.area,
 
                             data.precio,
                             data.adjudicador,
@@ -62,11 +66,11 @@ module.exports = function (app, callback) {
                             data.descripcion,
                             data.materias,
 
-                            data.UTE,
+                            data.UTE==null ? 0 : data.UTE,
                             data.Empresa.split(";").length,
                             JSON.stringify(data.extra)
                         ]
-
+                        console.log(data.cod, data.area, data.tipoTramite, data.tipoForma)
                         //
                         options.SQL.db.query('Call Insert_Data_BOLETIN(?,?, ?,?, ?,?,?, ?, ?,?,?, ?,?, ?,?,?, ?,?,?)', params, function (err, record) {
                             if (err != null) {
@@ -75,15 +79,15 @@ module.exports = function (app, callback) {
                                 options.SQL.scrapDb.SQL.db.query(cadSql, [data.cod, err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                     var x = err2
                                     var y = params
-                                    callback(data, 2)
+                                    __callback(data, 2, "ERROR.- DUPLICADO INSERT BOLETIN")
                                 })
                             } else {
-                                callback(data, 1)
+                                __callback(data, 1)
                             }
                         })
                     })
                 },
-                contrato: function (options, data, cod, empresa, importe, counter, callback) {
+                contrato: function (options, data, cod, empresa, importe, counter, _xcallback) {
                     var _acron = ""
                     var _nif = ""
                     var _key = ""
@@ -91,19 +95,24 @@ module.exports = function (app, callback) {
                         var _v = _.difference(a, b).join("").length
                         return _v<3
                     },
-                    writeContrato = function (cod, keyEmpresa, empresa, importe, _key, _acron, _nif, counter, callback) {
+                    writeContrato = function (area, anyo, type, cod, keyEmpresa, empresa, importe, _key, _acron, _nif, counter, _ycallback) {
                         if (_acron.length > 10) {
                             _acron = "?????"
                         }
-                        if (empresa.length > 3) {
-                            options.SQL.db.query('Call Insert_Data_BOLETIN_Contrato(?,?,?,?,?,?,?,?)', [cod, keyEmpresa, empresa, importe, _key, _acron, _nif, counter], function (err, record) {
+
+                        //if (importe * 1 == 0)
+                        //    debugger
+                        var _params = [area, anyo, type, cod, keyEmpresa, empresa, importe, _key, _acron, _nif, counter]
+                        if (empresa.length > 2 && importe !=null && importe.length>0 && importe!="NaN") {
+                            options.SQL.db.query('Call Insert_Data_BOLETIN_Contrato(?,?,?,?,?,?,?,?,?,?,?)', _params, function (err, record) {
                                 if (err != null) {
-                                    debugger
+                                    x = _params
+                                    //debugger
                                 }
-                                callback(data, 1, counter)
+                                _ycallback(data, 1, counter, err)
                             })
                         } else {
-                            callback(data, 1, counter)
+                            _ycallback(data, 1, counter, "ERROR IMPORTES" )
                         }
                     }
 
@@ -151,26 +160,30 @@ module.exports = function (app, callback) {
                     }
                     empresa = _.trim(empresa)
                     if (empresa.length > 4) {
+                        var _k = app.aguid(empresa)
 
                         options.SQL.db.query('SELECT * FROM bbdd_kaos155.borme_keys WHERE MATCH (Nombre) AGAINST (?) LIMIT 1', [empresa], function (err, record) {
                             var _key = ""
                             var suggestEmpresa = ""
 
                             if (record.length > 0) {
-                                var _words = empresa.split(" ")
-                                var _prop_words = record[0].Nombre.split(" ")
+                                var _words = empresa.toLowerCase().split(" ")
+                                var _prop_words = record[0].Nombre.toLowerCase().split(" ")
                                 
-                                if (empresa == record[0].Nombre || muy_aprox(_words, _prop_words))
+                                if (_k == record[0]._key || empresa == record[0].Nombre || muy_aprox(_words, _prop_words)) {
                                     _key = record[0]._key
 
-                                var suggestEmpresa = record[0].Nombre
-                                writeContrato(cod, suggestEmpresa, empresa, importe, _key, _acron, _nif, counter, callback)
+                                    var suggestEmpresa = record[0].Nombre
+                                } else {
+                                    var suggestEmpresa = record[0].Nombre + " (" + record[0]._key + ")"
+                                }
+                                writeContrato(data.area, data.anyo, options.Type, cod, suggestEmpresa, empresa, importe, _key, _acron, _nif, counter, _xcallback)
                             } else {
-                                writeContrato(cod, suggestEmpresa, empresa, importe, _key, _acron, _nif, counter, callback)
+                                writeContrato(data.area, data.anyo, options.Type, cod, suggestEmpresa, empresa, importe, _key, _acron, _nif, counter, _xcallback)
                             }
                         })
                     } else {
-                        callback(data, 2)
+                        _xcallback(data, 2,counter)   //Formato Empresa NO Valido < 3 caracteres
                     }
                 }
 
@@ -179,12 +192,16 @@ module.exports = function (app, callback) {
         parser: {
             Preceptos: function (options, type, callback) {
 
-                var consulta = function (type, _cb) {
+                var consulta = function (type, _cbx, _cb) {
+                    //debugger
                     options.SQL.scrapDb.SQL.db.query('call GetNextTextParser(?,?)', [type, app.anyo], function (err, record) {
-                        app.process.stdout.write(app, options, '\x1b[33m','+B','\x1b[0m')
-                        _cb(err, record)
+                        if (err)
+                            debugger
+                        app.process.stdout.write(app, options, '\x1b[33m', '+B', '\x1b[0m')
+                        _cb(err, record,_cbx )
                     })
                 }
+
                 clearEmpresa = function (e) {
                     //debugger
                     if (e.indexOf('NUMEROS DE ORDEN') > -1) {
@@ -193,7 +210,7 @@ module.exports = function (app, callback) {
                     }
                     return e
                 }
-                consulta(type, function (err, record) {
+                consulta(type, callback,  function (err, record,_cbx) {
                     var anexo = false
                     group = function (text, key, exclude) {
                         var _ret=[]
@@ -228,93 +245,107 @@ module.exports = function (app, callback) {
                         //    var _Empresa = (_Ex.match(/"([^"]*)"|'([^']*)'|“[^]*”|.[^]*,/g) || []).join(";") 
                         //}
                         //_Empresa = clearEmpresa(_Empresa.replaceAll(/^\d\) /, ""))
-                        if (_Empresa.toLowerCase() == "ver anexo") {
-                            var _Empresa = options.Rutines.groupAnexos(options, _text, "Contratista:", "Importe" , _Empresa, _sa) 
-                            var anexo = true
-                        }
-                        console.log(_analisis.data.Lotes, _Empresa)
-
-                        var _l = [false, false]
-                        if (_analisis.data.Lotes != null)
-                            _l[0] = ( (_.deburr(_analisis.data.Lotes.replace("..", "")) == "Si") || (_analisis.data.Lotes.match(/\d/g) || []).length > 0) 
-                        if (_analisis.data.Lote != null)
-                            _l[1] = ((_.deburr(_analisis.data.Lote.replace("..", "")) == "Si") || (_analisis.data.Lote.match(/\d/g) || []).length > 0) 
-
-                        if (_l[0] || _l[1] || _Empresa.split(";").length > 1 && ((_Empresa.indexOf("(UTE)") == -1 && _Empresa.indexOf(" UTE") == -1 && _Empresa.indexOf("UTE ") == -1) && !anexo) ) {
-                            //NO UTE SI LOTES y ver anexo
-                            //debugger
-                            var _e = _Empresa.split(";")
-                            var data = options.Rutines.findImpSplitList(options.Rutines.putData(options.Rutines.getData(app, record, _analisis, _Empresa,_e), _analisis), options, _text , _analisis, true)
-
-                            if (data.extra.adjudicador || data.extra.adj) {
-                                data.extra.area = options.Rutines.analisis('area', data.extra.adjudicador ? data.extra.adjudicador : data.extra.adj)
-                                if (data.extra.area == null)
-                                    debugger
+                        if (_analisis._a.observaciones.indexOf("Desierto") == -1 && _Empresa.indexOf("Desierto") == -1) {
+                            if (_Empresa.toLowerCase() == "ver anexo") {
+                                var _Empresa = options.Rutines.groupAnexos(options, _text, "Contratista:", "Importe", _Empresa, _sa)
+                                var anexo = true
                             }
+                            
 
-                            if (_Empresa.indexOf("#") == -1) {
-                                if (!_.isNumber(data._Imp)) {
-                                    var _i = data._Imp.split(";")
-                                } else {
-                                    var _i = _.compact(((data._Imp / _Empresa.split(";").length).toFixed(2) + ";").repeat(_Empresa.split(";").length).split(";")) //.splice(_Empresa.split(";").length)
+                            var _l = [false, false]
+                            if (_analisis.data.Lotes != null)
+                                _l[0] = ((_.deburr(_analisis.data.Lotes.replace("..", "")) == "Si") || (_analisis.data.Lotes.match(/\d/g) || []).length > 0)
+                            if (_analisis.data.Lote != null)
+                                _l[1] = ((_.deburr(_analisis.data.Lote.replace("..", "")) == "Si") || (_analisis.data.Lote.match(/\d/g) || []).length > 0)
+
+                            if (_l[0] || _l[1] || _Empresa.split(";").length > 1 && ((_Empresa.indexOf("(UTE)") == -1 && _Empresa.indexOf(" UTE") == -1 && _Empresa.indexOf("UTE ") == -1) && !anexo)) {
+                                //NO UTE SI LOTES y ver anexo
+                                //debugger
+                                var _e = _Empresa.split(";")
+                                var data = options.Rutines.findImpSplitList(options.Rutines.putData(options.Rutines.getData(app, record, _analisis, _Empresa, _e), _analisis), options, _text, _analisis, true)
+
+                                if (data.extra.adjudicador || data.extra.adj) {
+                                    data.extra.area = options.Rutines.analisis('area', data.extra.adjudicador ? data.extra.adjudicador : data.extra.adj)
+                                    if (data.extra.area == null)
+                                        debugger
                                 }
-                                var _p = 0
-                                _Empresa = ""
-                                if (_i.length == _e.length) {
-                                    _.forEach(_e, function (value) {
-                                        _Empresa = _Empresa + (_Empresa.length > 0 ? ';' : '') + value + "#" + _i[_p]
-                                        _p++
-                                    })
+
+                                if (_Empresa.indexOf("#") == -1) {
+                                    if (!_.isNumber(data._Imp)) {
+                                        var _i = data._Imp.split(";")
+                                    } else {
+                                        var _i = _.compact(((data._Imp / _Empresa.split(";").length).toFixed(2) + ";").repeat(_Empresa.split(";").length).split(";")) //.splice(_Empresa.split(";").length)
+                                    }
+                                    var _p = 0
+                                    _Empresa = ""
+                                    if (_i.length == _e.length) {
+                                        _.forEach(_e, function (value) {
+                                            _Empresa = _Empresa + (_Empresa.length > 0 ? ';' : '') + value + "#" + _i[_p]
+                                            _p++
+                                        })
+                                        data.Empresa = _Empresa
+                                        options.Rutines.saveDataBoletin(app, options, data, _cbx)
+
+                                    } else {
+                                        _cbx({ anyo: app.anyo, cod: record[0][0].BOLETIN }, 13,"NUMERO DE CONTRATISTAS e IMPORTES INCORRECTO")
+                                    }
+                                } else {
                                     data.Empresa = _Empresa
-                                    options.Rutines.saveDataBoletin(app, options, data, callback)
-
-                                } else {
-                                    callback({ anyo: app.anyo, cod: record[0][0].BOLETIN }, 13)
+                                    options.Rutines.saveDataBoletin(app, options, data, _cbx)
                                 }
-                            } else {
-                                data.Empresa = _Empresa
-                                options.Rutines.saveDataBoletin(app, options, data, callback)
-                            }
-                            //debugger
-                            //} else {
-                            //    debugger
-                            //}
-                        } else {
-                            var _e = _analisis.data.Contratista.replace("..", ".")
-                            if ((_e.match(/\"(.*?)\"/g) || []).length > 0)
-                                _e = _e.match(/\"(.*?)\"/g).join(";")
-
-
-
-                            var data = options.Rutines.getData(app, record, _analisis, _Empresa,_e)
-                            if (data.adjudicador) {
-                                data.area = options.Rutines.analisis('area', data.adjudicador)
-                            }
-
-                            if (data.Empresa.length > 0 && (data.Empresa.indexOf("(UTE)") == -1 && data.Empresa.indexOf(" UTE") == -1 && data.Empresa.indexOf("UTE ") == -1 )) {
-
-                                //data = options.Rutines.putData(data, _analisis)
-                                data = options.Rutines.findImpSplitList( options.Rutines.putData(data, _analisis), options, _text, _analisis , false)
-                                data._counterContratos++
                                 
-                                data.UTE = 0 //data._counterContratos == 1 && data.Empresa.indexOf('UTE') > -1 ? 1 : 0
-                                options.Rutines.saveDataBoletin(app, options, data, callback)
-
+                                //debugger
+                                //} else {
+                                //    debugger
+                                //}
                             } else {
-                                if (data.Empresa.length > 0) {
-                                    data.UTE = 1
-                                    //debugger
-                                    data.Empresa = _Empresa
-                                    data = options.Rutines.putData(data, _analisis)
-                                    var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe : options.Rutines.get.importes(_text, data, options, options.patterns, false)
-                                    data._Imp = _imp * 1
-                                    data._counterContratos++
-                                    options.Rutines.saveDataBoletin(app, options, data, callback)
-                                } else {
-                                    callback(data, 9)
+                                var _e = []
+                                if (_analisis.data.Contratista) {
+                                    var _e = _analisis.data.Contratista.replace("..", ".")
+                                    if ((_e.match(/\"(.*?)\"/g) || []).length > 0)
+                                        _e = _e.match(/\"(.*?)\"/g).join(";")
                                 }
-                                //callback(data, data.Empresa.length>0 ? 4 : 9)
+
+                                var data = options.Rutines.getData(app, record, _analisis, _Empresa, _e)
+                                if (data.adjudicador) {
+                                    data.area = options.Rutines.analisis('area', data.adjudicador)
+                                    if (data.area._t==null || data.area._t == "Sin definir")
+                                        if (_analisis._m.departamento != null) {
+                                            data.area = options.Rutines.analisis('area', _analisis._m.departamento)
+                                        } else {
+                                            data.area = options.Rutines.analisis('area', _analisis._m.titulo)
+                                        }
+                                    if (data.area == "Sin definir")
+                                        debugger
+                                }
+
+                                if (data.Empresa.length > 0 && (data.Empresa.indexOf("(UTE)") == -1 && data.Empresa.indexOf(" UTE") == -1 && data.Empresa.indexOf("UTE ") == -1)) {
+
+                                    //data = options.Rutines.putData(data, _analisis)
+                                    data = options.Rutines.findImpSplitList(options.Rutines.putData(data, _analisis), options, _text, _analisis, false)
+                                    data._counterContratos++
+
+                                    data.UTE = 0 //data._counterContratos == 1 && data.Empresa.indexOf('UTE') > -1 ? 1 : 0
+                                    options.Rutines.saveDataBoletin(app, options, data, _cbx)
+
+                                } else {
+                                    if (data.Empresa.length > 0) {
+                                        data.UTE = 1
+                                        //debugger
+                                        data.Empresa = _Empresa
+                                        data = options.Rutines.putData(data, _analisis)
+                                        var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe : options.Rutines.get.importes(_text, data, options, options.patterns, false)
+                                        data._Imp = _imp * 1
+                                        data._counterContratos++
+                                        options.Rutines.saveDataBoletin(app, options, data, _cbx)
+                                    } else {
+                                        _cbx(data, 9,"CONTRATISTA EN BLANCO" )       //Contratista en Blanco
+                                    }
+                                    //callback(data, data.Empresa.length>0 ? 4 : 9)
+                                }
                             }
+                        } else {
+                            _cbx({ anyo: app.anyo, cod: _analisis._m.identificador }, 10, "DESIERTO" )    // Desierto
                         }
                         
                         //}
