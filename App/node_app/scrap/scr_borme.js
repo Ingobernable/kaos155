@@ -124,7 +124,7 @@
                                                 lines = text.replace(/"/g, "").split('\n')
 
                                                 _lines = options.Rutines.scrapDataFromMap(options.Rutines, lines, options.Rutines.maps)
-                                                //debugger
+                                                
                                                 if (_lines != null) {
                                                     if (_lines.data.length == 0) {
                                                         debugger

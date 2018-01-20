@@ -216,31 +216,34 @@
                     Borme: {
                         text: function (options, data, callback) {
                             _linea = data.textExtend
-                            var _text = ""
-                            var _id = ""
+                            var _cadSql = ""
+                            var _s = ""
+
+                            app.process.stdout.write(app, options, '', _linea.PROVINCIA, '')
+
                             for (n in _linea.data) {
-                                _text = _text + (_text.length > 0 ? "#" : "") + _linea.data[n].original
-                                _id = _id + (_id.length > 0 ? "#" : "") + _linea.data[n].id
+                                //_text = _text + (_text.length > 0 ? "#" : "") + _linea.data[n].original
+                                //_id = _id + (_id.length > 0 ? "#" : "") + _linea.data[n].id
+                                _s = _s + "."
+
+                                var _f = "'" + data.desde.substr(6, 2) + "','" + data.desde.substr(4, 2) + "','" + data.desde.substr(0, 4) + "'"
+                                var _b = "'" + _linea.BORME + "'"
+                                var _t = "'" + _linea.data[n].original.replaceAll("'", "\\'") + "'"
+                                var _p = "'" + _linea.PROVINCIA + "'"
+                                var _i = "'" + _linea.data[n].id + "'"
+                                var __cadsql = "Call Insert_Text_BORME(" + _f + "," + _b + "," + _t + "," + _p + "," + _i + ");"
+
+                                _cadSql = _cadSql + __cadsql
+                                //app.process.stdout.write(app, options, '.' )
                             }
 
-                            var params = [
-                                _linea.data.length,                                                      //type
-                                "BORME",
-                                data.desde.substr(6, 2),                                                      //Dia
-                                data.desde.substr(4, 2),                                                      //Mes
-                                data.desde.substr(0, 4),                                                       //Anyo
-                                _linea.BORME,                                                                    //BOLETIN                                                                                                                   
-                                _text,                                                                      //Texto
-                                _linea.PROVINCIA,                                                    //PROVINCIA
-                                _id,
-                                ''
-                            ]
-                            app.process.stdout.write(app, options, '',_linea.PROVINCIA,'')
-                            options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', params, function (err, record) {
 
-                                app.process.stdout.write(app, options, '', String.fromCharCode(25), '')
+                            options.SQL.db.query(_cadSql, function (err, record) {
+                                app.process.stdout.write(app, options, '', _s, '')
+
+                                //app.process.stdout.write(app, options, '', String.fromCharCode(25), '')
                                 if (err != null) {
-                                    x = _text.length
+                                    debugger
                                     cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
                                     options.SQL.db.query(cadSql, [_linea.BORME, err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                         var x = err
