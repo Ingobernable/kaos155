@@ -1106,8 +1106,8 @@
                 _json[_c]= _v[0] + (( _v.indexOf(".") == _v.length-1)?"":".")
             }
         })
-
-        callback(_lines, _json)
+        //this.refineLineaText(options, _lines)
+        callback( this.refineLineaText(app.BOLETIN, _lines) , _json)
             //debugger
         },
         putData: function (data, _analisis) {

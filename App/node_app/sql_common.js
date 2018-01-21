@@ -247,7 +247,7 @@
                                     cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
                                     options.SQL.db.query(cadSql, [_linea.BORME, err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                         var x = err
-                                        var y = params
+                                        //var y = params
                                         callback(data)
                                     })
                                 } else {
