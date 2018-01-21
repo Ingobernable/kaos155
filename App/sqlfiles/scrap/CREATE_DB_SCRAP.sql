@@ -30,7 +30,7 @@ CREATE TABLE `anyosread` (
   `scrap` tinyint(1) DEFAULT 0,
   `parser` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`Type`,`Anyo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -45,7 +45,7 @@ CREATE TABLE `errores` (
   `SqlMensaje` text DEFAULT NULL,
   `SqlError` text DEFAULT NULL,
   PRIMARY KEY (`BOLETIN`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,7 +66,7 @@ CREATE TABLE `lastread` (
   `STOP` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`Type`,`Anyo`),
   UNIQUE KEY `_id_UNIQUE` (`_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,5 +89,5 @@ CREATE TABLE `sumarios` (
   PRIMARY KEY (`BOLETIN`),
   UNIQUE KEY `_Boletin` (`BOLETIN`),
   KEY `_Type` (`Type`,`Anyo`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
