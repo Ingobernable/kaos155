@@ -260,7 +260,7 @@
                             var _params = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
                                 
                             options.SQL.db.query(_cadsql, _params , function (err, _rec) {
-                                if (err != null || _rec[0][0] == null) {
+                                if (err != null) {
 
                                     cadSql = "CALL Insert_Error_Boletin(?,?,?)"
                                     options.SQL.scrapDb.SQL.db.query(cadSql, [params.data.BOLETIN + '#' + params.data.ID_BORME, err.sql, err.sqlMessage], function (err2) {
