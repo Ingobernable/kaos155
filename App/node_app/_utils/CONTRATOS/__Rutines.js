@@ -1307,7 +1307,7 @@
         },
         saveDataBoletin: function (app, options, data, _callback ) {
             if (data.Empresa != null) {
-                if (data.Empresa.length > 0 && (data._Imp >0 || data.Empresa.indexOf("#") > 0) ) {
+                if ((data.Empresa.length > 0 || data.Empresa.indexOf("#") > 0) && !isNaN(data._Imp) ) {   //&& (data._Imp >0 || data.Empresa.indexOf("#") > 0) ) {
                     //debugger
                     //options.Rutines.saveDataBoletin(app, options, data, callback)
 
@@ -1352,12 +1352,15 @@
                         }
                     })
                 } else {
-                    if (data._Imp > 0)
-                        _callback(data, 5,"CONTRATO EMPRESA LENGTH CERO")
-                    if (data._Imp == 0)
-                        _callback(data, 6, "CONTRATO IMPORTE CERO" )
-                    if (isNaN(data._Imp))
-                        _callback(data, 7, "CONTRATO IMPORTE NaN")
+                    if (data.Empresa.length > 0) {
+                        _callback(data, 5, "CONTRATO EMPRESA LENGTH CERO")
+                    } else {
+                        if (isNaN(data._Imp)) {
+                            _callback(data, 7, "CONTRATO IMPORTE NaN")
+                        } else {
+                            debugger
+                        }
+                    }
                 }
             } else {
                 _callback(data, 8, "CONTRATO EMPRESA NULL")

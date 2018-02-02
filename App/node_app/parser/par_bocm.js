@@ -506,7 +506,7 @@
     
 
    // app.commonSQL.getConnect({ SQL: { db: null } }, false, 'RELACIONES', function (_options) {
-    options.vConnect = app.VisualCif
+    
     app.commonSQL.init(options, 'PARSER', app._fileCredenciales + options.Command, function (options) {
         app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
             options.SQL.scrapDb = scrapdb

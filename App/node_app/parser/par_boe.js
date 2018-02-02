@@ -13,21 +13,32 @@ module.exports = function (app, callback) {
                 var _counter=0
                 var _exit = ""
                 //debugger
-                _.forEach(data.materias.split(";"), function (value) {
-                    if ((value.match(/^\d{3,8}/) || []).length > 0) {
-                        _code_materia = value.match(/\d{3,8}/)[0]
-                        _text_materia = value.substr(_code_materia.length+1, value.length)
-                        options.SQL.db.query('Call Insert_Data_BOLETIN_Materia_Aux(?,?)', [_code_materia, _text_materia], function (err, record) {
-                            if(err!=null)
-                                debugger
-                        }) 
-                        _exit = _exit + (_exit.length>0?";":"") + _code_materia
-                        _counter++
-                    }
-                })
-                data.materias = _exit
-                data._counterMaterias = _counter
-                callback(data)
+                var _materias = data.materias.split(";")
+                if (_materias.length > 0) {
+                    _.forEach(_materias, function (value) {
+                        if ((value.match(/^\d{3,8}/) || []).length > 0) {
+                            _code_materia = value.match(/\d{3,8}/)[0]
+                            _text_materia = value.substr(_code_materia.length + 1, value.length)
+
+                            options.SQL.db.query('Call Insert_Data_BOLETIN_Materia_Aux(?,?)', [_code_materia, _text_materia], function (err, record) {
+                                if (err != null)
+                                    debugger
+                                _counter++
+                                _exit = _exit + (_exit.length > 0 ? ";" : "") + _code_materia
+                                if (_counter = _materias.length) {
+                                    data.materias = _exit
+                                    data._counterMaterias = _counter
+                                    callback(data)
+                                }
+                            })
+                        }
+                    })
+                } else {
+                    data.materias = ""
+                    data._counterMaterias = _counter
+                    callback(data)
+                }
+
             },
             insert: {
                 boletin: function (options, data, __callback) {
@@ -55,7 +66,7 @@ module.exports = function (app, callback) {
                             data.tipoForma,
                             data.area,
 
-                            data.precio,
+                            //data.precio,
                             data.adjudicador,
                             
                             //app.shorter.unique(data.adjudicador),
@@ -72,7 +83,7 @@ module.exports = function (app, callback) {
                         ]
                         console.log(data.cod, data.area, data.tipoTramite, data.tipoForma)
                         //
-                        options.SQL.db.query('Call Insert_Data_BOLETIN(?,?, ?,?, ?,?,?, ?, ?,?,?, ?,?, ?,?,?, ?,?,?)', params, function (err, record) {
+                        options.SQL.db.query('Call Insert_Data_BOLETIN(?,?, ?,?, ?,?,?, ?, ?,?,?, ?, ?,?,?, ?,?,?)', params, function (err, record) {
                             if (err != null) {
                                 debugger
                                 cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"

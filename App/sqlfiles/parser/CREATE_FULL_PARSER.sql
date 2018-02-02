@@ -186,6 +186,7 @@ CREATE TABLE `borme_keys` (
   `_Empresa` tinyint(4) DEFAULT '0',
   `_Directivo` tinyint(4) DEFAULT '0',
   `_Auditor` tinyint(4) DEFAULT '0',
+  `_Financiera` tinyint(4) DEFAULT '0',
   `Provincia` varchar(25) DEFAULT NULL,
   `BOLETIN` varchar(20) DEFAULT NULL,
   `_ID` int(11) DEFAULT NULL,
