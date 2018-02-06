@@ -15,23 +15,25 @@ module.exports = function (app, callback) {
                 //debugger
                 var _materias = data.materias.split(";")
                 if (_materias.length > 0) {
+                    var cadsql = ""
                     _.forEach(_materias, function (value) {
                         if ((value.match(/^\d{3,8}/) || []).length > 0) {
                             _code_materia = value.match(/\d{3,8}/)[0]
                             _text_materia = value.substr(_code_materia.length + 1, value.length)
+                            _exit = _exit + (_exit.length > 0 ? ";" : "") + _code_materia
 
-                            options.SQL.db.query('Call Insert_Data_BOLETIN_Materia_Aux(?,?)', [_code_materia, _text_materia], function (err, record) {
-                                if (err != null)
-                                    debugger
-                                _counter++
-                                _exit = _exit + (_exit.length > 0 ? ";" : "") + _code_materia
-                                if (_counter = _materias.length) {
-                                    data.materias = _exit
-                                    data._counterMaterias = _counter
-                                    callback(data)
-                                }
-                            })
+                            cadsql = cadsql + "Call Insert_Data_BOLETIN_Materia_Aux('" + _code_materia + "','" + _text_materia +"');" 
+                            _counter++
                         }
+                    })
+                    options.SQL.db.query(cadsql, function (err, record) {
+                        if (err != null)
+                            debugger
+                        
+                        data.materias = _exit
+                        data._counterMaterias = _counter
+                        callback(data)
+
                     })
                 } else {
                     data.materias = ""
@@ -46,7 +48,7 @@ module.exports = function (app, callback) {
                         data.area = data.area != null ? data.area._t : data.extra.area!=null ? data.extra.area._t : 'Sin definir'    // (data.area._SA.length==2) = entidad emisora SA
                         if (data.area == null)
                             data.area = "Sin definir"
-
+                        var lotes = data.Empresa.split(";").length > 1 ? data.Empresa.split(";").length:0
                         params = [
                             app.Type,
                             data._counterMaterias,
@@ -78,7 +80,7 @@ module.exports = function (app, callback) {
                             data.materias,
 
                             data.UTE==null ? 0 : data.UTE,
-                            data.Empresa.split(";").length,
+                            lotes,
                             JSON.stringify(data.extra)
                         ]
                         console.log(data.cod, data.area, data.tipoTramite, data.tipoForma)
@@ -114,7 +116,8 @@ module.exports = function (app, callback) {
                         //if (importe * 1 == 0)
                         //    debugger
                         var _params = [area, anyo, type, cod, keyEmpresa, empresa, importe, _key, _acron, _nif, counter]
-                        if (empresa.length > 2 && importe !=null && importe.length>0 && importe!="NaN") {
+                        if (empresa.length > 2 && importe != null && importe.length > 0 && importe != "NaN") {
+                            //console.log(_params)
                             options.SQL.db.query('Call Insert_Data_BOLETIN_Contrato(?,?,?,?,?,?,?,?,?,?,?)', _params, function (err, record) {
                                 if (err != null) {
                                     x = _params
@@ -172,25 +175,37 @@ module.exports = function (app, callback) {
                     empresa = _.trim(empresa)
                     if (empresa.length > 4) {
                         var _k = app.aguid(empresa)
-
-                        options.SQL.db.query('SELECT * FROM bbdd_kaos155.borme_keys WHERE MATCH (Nombre) AGAINST (?) LIMIT 1', [empresa], function (err, record) {
-                            var _key = ""
-                            var suggestEmpresa = ""
-
+                        options.SQL.db.query('SELECT * FROM bbdd_kaos155.borme_keys WHERE _key = ?', [_k], function (err, record) {
                             if (record.length > 0) {
-                                var _words = empresa.toLowerCase().split(" ")
-                                var _prop_words = record[0].Nombre.toLowerCase().split(" ")
-                                
-                                if (_k == record[0]._key || empresa == record[0].Nombre || muy_aprox(_words, _prop_words)) {
-                                    _key = record[0]._key
-
-                                    var suggestEmpresa = record[0].Nombre
-                                } else {
-                                    var suggestEmpresa = record[0].Nombre + " (" + record[0]._key + ")"
-                                }
-                                writeContrato(data.area, data.anyo, options.Type, cod, suggestEmpresa, empresa, importe, _key, _acron, _nif, counter, _xcallback)
+                                writeContrato(data.area, data.anyo, options.Type, cod, '', empresa, importe, record[0]._key, _acron, _nif, counter, _xcallback)
                             } else {
-                                writeContrato(data.area, data.anyo, options.Type, cod, suggestEmpresa, empresa, importe, _key, _acron, _nif, counter, _xcallback)
+                                options.SQL.db.query('SELECT * FROM bbdd_kaos155.borme_keys WHERE MATCH (Nombre) AGAINST(? IN BOOLEAN MODE) LIMIT 1', ['+'+_.compact(empresa.split(" ")).join(" +")], function (err, record) {
+                                    if (!err) {
+                                        //debugger
+
+                                        var _key = ""
+                                        var suggestEmpresa = ""
+
+                                        if (record.length > 0) {
+                                            var _words = empresa.toLowerCase().split(" ")
+                                            var _prop_words = record[0].Nombre.toLowerCase().split(" ")
+
+                                            if (_k == record[0]._key || empresa == record[0].Nombre || muy_aprox(_words, _prop_words)) {
+                                                _key = record[0]._key
+
+                                                //var suggestEmpresa = record[0].Nombre
+                                            } else {
+                                                var suggestEmpresa = record[0].Nombre + " (" + record[0]._key + ")"
+                                            }
+                                            writeContrato(data.area, data.anyo, options.Type, cod, suggestEmpresa, empresa, importe, _key, _acron, _nif, counter, _xcallback)
+                                        } else {
+                                            writeContrato(data.area, data.anyo, options.Type, cod, '', empresa, importe, _key, _acron, _nif, counter, _xcallback)
+                                        }
+                                    } else {
+                                        writeContrato(data.area, data.anyo, options.Type, cod, '', empresa, importe, '' , _acron, _nif, counter, _xcallback)
+
+                                    }
+                                })
                             }
                         })
                     } else {
@@ -274,7 +289,8 @@ module.exports = function (app, callback) {
                                 //debugger
                                 var _e = _Empresa.split(";")
                                 var data = options.Rutines.findImpSplitList(options.Rutines.putData(options.Rutines.getData(app, record, _analisis, _Empresa, _e), _analisis), options, _text, _analisis, true)
-
+                                data.extra.text = _text
+                                    
                                 if (data.extra.adjudicador || data.extra.adj) {
                                     data.extra.area = options.Rutines.analisis('area', data.extra.adjudicador ? data.extra.adjudicador : data.extra.adj)
                                     if (data.extra.area == null)
@@ -318,6 +334,8 @@ module.exports = function (app, callback) {
                                 }
 
                                 var data = options.Rutines.getData(app, record, _analisis, _Empresa, _e)
+                                data.extra.text = _text
+
                                 if (data.adjudicador) {
                                     data.area = options.Rutines.analisis('area', data.adjudicador)
                                     if (data.area._t==null || data.area._t == "Sin definir")
@@ -346,7 +364,11 @@ module.exports = function (app, callback) {
                                         data.Empresa = _Empresa
                                         data = options.Rutines.putData(data, _analisis)
                                         var _imp = _analisis._a.importe.length > 0 ? _analisis._a.importe : options.Rutines.get.importes(_text, data, options, options.patterns, false)
-                                        data._Imp = _imp * 1
+                                        if (_.isString(_imp)) {
+                                            data._Imp = _imp.replaceAll(".","").replace(",",".") * 1
+                                        } else {
+                                            data._Imp = _imp
+                                        }
                                         data._counterContratos++
                                         options.Rutines.saveDataBoletin(app, options, data, _cbx)
                                     } else {

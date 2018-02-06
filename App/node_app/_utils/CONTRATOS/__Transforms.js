@@ -99,13 +99,20 @@ module.exports = function (app) {
                         ]]
                 ],
                 Contratista: [
+                    ['R', new RegExp(/^\d{1,3}\)/, "g"), ""],
                     ['F', { f: _this.replaceAll }, 'union temporal de empresas', 'UTE '],
                     ['F', { f: _this.replaceAll }, '(Unión Temporal de Empresas)', 'UTE'],
-                    ['F', { f: _this.replaceAll }, 'unión temporal de empresas', 'UTE '],
+                    ['F', { f: _this.replaceAll }, 'unión temporal de empresas', 'UTE '], 
+                    ['F', { f: _this.replaceAll }, 'Unión Temporal de Empresas', 'UTE '],
 
                     ["F", { f: _this.replaceAll }, "Lote único", ""],
                     ["F", { f: _this.replaceAll }, "Ñ","&Ene;"],
-                    ["F", { f: _this.replaceAll }, "ñ","&ene;"],
+                    ["F", { f: _this.replaceAll }, "ñ", "&ene;"],
+                    ["F", { f: _this.replaceAll }, "-", ""],
+                    ['F', { f: _this.replaceAll }, 'por importe de', ''],
+                    ['F', { f: _this.replaceAll }, 'por un importe de', ''],
+                    ['F', { f: _this.replaceAll }, 'Societat', 'Sociedad'],
+
                     ["F", { f: _this.removeFirstChar }, '" "'],
                     ['F', { f: _this.replaceAll }, ', SAU.', ' SA.'],
                     ['F', { f: _this.replaceAll }, 'S o c i e d a d A n ó n i -ma', ' SA.'],
@@ -145,8 +152,12 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, 'sociedadanomima', 'sa.'],
                     ['F', { f: _this.replaceAll }, 'sociedadlimitada', ' sl.'],
                     ['F', { f: _this.replaceAll }, ', sociedadlimitada', ' sl.'],
+                    
 
-
+                    ['F', { f: _this.replaceAll }, ',S.A.', ' SA.'],
+                    ['F', { f: _this.replaceAll }, ',S.L.', ' SL.'],
+                    ['F', { f: _this.replaceAll }, ', S.A.', ' SA.'],
+                    ['F', { f: _this.replaceAll }, ', S.L.', ' SL.'],
                     ['F', { f: _this.replaceAll }, ' S A', ' SA.'],
                     ['F', { f: _this.replaceAll }, ' S L', ' SL.'],
                     ['F', { f: _this.replaceAll }, '. S L', ' SL.'],
@@ -158,6 +169,8 @@ module.exports = function (app) {
                     ['F', { f: _this.replaceAll }, ' S L U', ' SL.'],
                     ['F', { f: _this.replaceAll }, 'S.L.', 'SL.'],
                     ['F', { f: _this.replaceAll }, 'S.A.', 'SA.'],
+                    ['F', { f: _this.replaceAll }, 'S.L', 'SL.'],
+                    ['F', { f: _this.replaceAll }, 'S.A', 'SA.'],
                     ['F', { f: _this.replaceAll }, ' S. A.', ' SA.'], 
                     ['F', { f: _this.replaceAll }, ', S A', ' SA.'],
                     ['F', { f: _this.replaceAll }, ' SAE', ' SA.'],
