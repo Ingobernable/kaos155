@@ -1,5 +1,5 @@
 ﻿module.exports = function (app, transforms) {
-       var _ = app._
+       const _ = app._
 
         function pointer  (point, cadena) {
             const _numero = " .0123456789"

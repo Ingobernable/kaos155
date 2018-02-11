@@ -130,7 +130,7 @@
 
                 app.neo4j.driver.onCompleted = function () {
                     console.log('Neo4js Driver created');
-                    debugger
+                    //debugger
                     app.credentials.savelogsparamstofile('ACCESO_neo4j', resp, null, function (_credenciales) {
                         main(myArgs, exit, callback)
                     })

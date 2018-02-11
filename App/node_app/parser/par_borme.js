@@ -56,7 +56,7 @@ module.exports = function (app, callback) {
             },
             saveDiarioMovimientos: function (_linea, _ret) {
                 var saveLineContenido = function (_e, _linea, _cb, _func) {
-                    const _this = this
+                    //const _this = this
                     //var line = _linea.contenido[e]
                     if (_e < _linea.contenido.length) {
                         if (options.Rutines.SQL[_linea.contenido[_e].type] == null)

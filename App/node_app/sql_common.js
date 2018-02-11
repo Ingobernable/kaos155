@@ -7,7 +7,7 @@
         //     debugger
         // },
         getConnect: function (options, type, callback, test) {
-            _this = this
+           // const _this = this
             var _exit = function (options, type, callback, test) {
                 callback(options, test)
             }
@@ -54,7 +54,7 @@
             });
         },
         testDB: function (options, con, resp, db, callback, close) {
-            var _this = this
+            const _xthis = this
             console.log("\x1b[32m testeando consistencia DB " + db + " \x1b[0m");
             con.query("SHOW Databases LIKE '" + db + "'", function (err, record) {
                 var _command = 'mysql -u' + resp.user + ' -p' + resp.password + ' -h' + resp.host + ' -D' + db + '< ' + app.path.normalize(__dirname + '/../sqlfiles/' + options.Command.toLowerCase() + '/CREATE_FULL_' + options.Command + '.sql')
@@ -62,14 +62,17 @@
                 if (record.length == 0) {
                     con.query("CREATE DATABASE IF NOT EXISTS " + db, function (err, result) {
                         console.log("\x1b[32m BASE DE DATOS \x1b[0m" + db + "\x1b[32m CREADA VACIA OK \x1b[0m");
-                        _this.mysqlCommand(_command, db, callback,close)
+                        _xthis.mysqlCommand(_command, db, callback, close)
+                       
                     })
                 } else {
                     var queryTables = "SELECT COUNT(*) as total FROM information_schema.tables WHERE table_schema = '" + db + "';"
                     con.query(queryTables, function (err, record) {
                         if (record[0].total < 3) {
-                            _this.mysqlCommand(_command, db, callback,close)
+                            _xthis.mysqlCommand(_command, db, callback, close)
+                            
                         } else {
+                           
                             callback()
                         }
                     })
@@ -78,12 +81,12 @@
             })
         },
         init: function (options, type, _file, callback) {
-            var _this = this
-            _this.encryptor = require('simple-encryptor')("bbdd_kaos155_text")
+            const _ithis = this
+            this.encryptor = require('simple-encryptor')("bbdd_kaos155_text")
 
             if (process.env['KAOS_MYSQL_' + options.Command + '_PASS']) {
 
-                _this.poolSql[type] = app.mysql.createPool({
+                this.poolSql[type] = app.mysql.createPool({
                     host: process.env['KAOS_MYSQL_' + options.Command + '_HOST'],
                     user: process.env['KAOS_MYSQL_' + options.Command + '_USER'],
                     password: process.env['KAOS_MYSQL_' + options.Command + '_PASS'],
@@ -92,7 +95,7 @@
                     waitForConnection: true,
                 })
 
-                _this.getConnect(options, type, callback)
+                this.getConnect(options, type, callback)
 
             } else {
 
@@ -122,7 +125,7 @@
                                 var _credenciales = {
                                     host: resp.host,
                                     user: resp.user,
-                                    password: _this.encryptor.encrypt(resp.password),
+                                    password: _ithis.encryptor.encrypt(resp.password),
                                     database: db,
                                     multipleStatements: true,
                                     waitForConnection: true,
@@ -135,7 +138,7 @@
                                     } else {
                                         console.log("\x1b[32m Conectado a mysql OK \x1b[0m");
 
-                                        _this.testDB(options, con, resp, db, function () {
+                                        _ithis.testDB(options, con, resp, db, function () {
                                             app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
                                                 console.log("\x1b[32m Nuevas credenciales de acceso mysql guardadas OK \x1b[0m");
                                                 _cb(_credenciales)
@@ -147,16 +150,15 @@
                         }
                         testIp(testIp, function (credenciales) {
 
-                            _this.poolSql[type] = app.mysql.createPool({
+                            _ithis.poolSql[type] = app.mysql.createPool({
                                 host: credenciales.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
                                 user: credenciales.user, // _sql.mySQL.user,
-                                password: _this.encryptor.decrypt(credenciales.password),
+                                password: _ithis.encryptor.decrypt(credenciales.password),
                                 database: credenciales.database,
                                 multipleStatements: true,
                                 waitForConnection: true,
                             })
-                            _this.getConnect(options, type, callback)
-
+                            _ithis.getConnect(options, type, callback)
                         })
                     } else {
                         try {
@@ -168,19 +170,18 @@
                             process.exit(1)
                         }
 
-                        if (_this.poolSql[type] == null) {
+                        if (_ithis.poolSql[type] == null) {
 
-                            _this.poolSql[type] = app.mysql.createPool({
+                            _ithis.poolSql[type] = app.mysql.createPool({
                                 host: _sql.host,
                                 user: _sql.user,
-                                password: _this.encryptor.decrypt(_sql.password),
+                                password: _ithis.encryptor.decrypt(_sql.password),
                                 database: _sql.database,
                                 multipleStatements: true,
                                 waitForConnection: true,
                             })
-
-                            _this.getConnect(options, type, callback, null)
-
+                            _sql = null
+                            _ithis.getConnect(options, type, callback, null)
                         } else {
                             callback(options)
                         }
@@ -215,7 +216,7 @@
                     },
                     Borme: {
                         text: function (options, data, callback) {
-                            _linea = data.textExtend
+                            const _linea = data.textExtend
                             var _cadSql = ""
                             var _s = ""
 
@@ -256,8 +257,8 @@
                             })
                         },
                         keys: function (options, params, callback, _cberror) {
-                            var _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)"
-                            var _params = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
+                            const _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)"
+                            const _params = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
 
                             options.SQL.db.query(_cadsql, _params , function (err, _rec) {
                                 if (err != null || _rec[0][0] == null) {
@@ -280,8 +281,6 @@
                             })
                         },
                         diario: function (options, params, callback) {
-
-
                             options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
                                 if (err)
                                     debugger
@@ -308,7 +307,7 @@
                                     if (!(_jsonData.Contratista != null && (_jsonData.Importe != null || _analisis._importe.length > 0))) {
                                         data.err = "FALTA CONTRATISTA o IMPORTES"
                                     }
-                                        var params = [
+                                        const params = [
                                             _text.length,
                                             boletin.split("-")[0],                                                      //type
                                             fecha.substr(6, 2),                                                      //Dia
@@ -349,7 +348,7 @@
                         }
                     },
                     Sumario: function (options, _sumario, _boletin, callback) {
-                        var cadsql = "INSERT INTO sumarios (_counter, Anyo, SUMARIO, BOLETIN, Type) VALUES ('" + (app._xData.TSUMARIOS[options.type] + 1) + "','" + app.anyo + "','" + _sumario + "', '" + _boletin + "','" + options.type + "')"
+                        const cadsql = "INSERT INTO sumarios (_counter, Anyo, SUMARIO, BOLETIN, Type) VALUES ('" + (app._xData.TSUMARIOS[options.type] + 1) + "','" + app.anyo + "','" + _sumario + "', '" + _boletin + "','" + options.type + "')"
                         options.SQL.db.query(cadsql, function (err, records) {
                             if (err) {
                                 x = cadsql
@@ -361,7 +360,7 @@
                         })
                     },
                     errores: function (options, Boletin, SqlError, SqlMensaje, callback) {
-                        cadSql = "CALL Insert_Error_Boletin(?,?,?)"
+                        const cadSql = "CALL Insert_Error_Boletin(?,?,?)"
                         options.SQL.db.query(cadSql, [Boletin, SqlError, SqlMensaje], function (err2) {
                             callback()
                         })
@@ -380,7 +379,7 @@
                         })
                     },
                     ScrapLabel: function (options, data, callback) {
-                        var _boletin = data._analisis[data.e][options.Type]
+                        const _boletin = data._analisis[data.e][options.Type]
                         options.SQL.db.query("UPDATE sumarios SET scrap=1 where BOLETIN='" + _boletin + "'", function (err, Record) {
                             callback(data)
                         })
@@ -388,7 +387,7 @@
                 },
                 select: {
                     Sumario: function (options, _boletin, callback) {
-                        var sumariosql = "SELECT * FROM sumarios WHERE type='" + options.type + "' AND BOLETIN='" + _boletin + "'"
+                        const sumariosql = "SELECT * FROM sumarios WHERE type='" + options.type + "' AND BOLETIN='" + _boletin + "'"
                         options.SQL.db.query(sumariosql, function (err, rows) {
                             callback(err, rows)
                         })
@@ -401,7 +400,7 @@
                 }
             },
             getCounter: function (app, _options, type, callback) {
-                _cadsql = "SELECT * FROM lastread WHERE Type = '" + type + "' AND Anyo = " + app.anyo
+                const _cadsql = "SELECT * FROM lastread WHERE Type = '" + type + "' AND Anyo = " + app.anyo
                 _options.SQL.db.query(_cadsql, function (err, Record) {
                     if (err)
                         debugger
