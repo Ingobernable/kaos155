@@ -32,7 +32,7 @@ module.exports = function (app) {
         },
         spliting: function (opc,string, _regexp) {
             //debugger
-            return Trim(string.split(_regexp)).join(';')
+            return _.trim(string.split(_regexp)).join(';')
         },
         removeFromLastChar: function (opc,string, char) {
             if (string.lastIndexOf(char) > -1) {

@@ -447,7 +447,7 @@ module.exports = function (app, callback) {
                                                     if (_text[_i].toLowerCase() != null) {
                                                         if (_text[_i].indexOf('.-') > -1) {
                                                             data.extra.cargo = _text[_i].split(".-")[1].split(',')[0].replace(/\"/g, "")
-                                                            data.extra.firma = _text[_i].split(".-")[1].split(',').length > 1 ? ''.Trim(_text[_i].split(".-")[1].split(',')[1]) : ''
+                                                            data.extra.firma = _text[_i].split(".-")[1].split(',').length > 1 ? _.trim(_text[_i].split(".-")[1].split(',')[1]) : ''
                                                         }
                                                     }
                                                 }

@@ -1,5 +1,5 @@
 ﻿module.exports = function (app, callback) { 
-
+    _ = app._
 
     var options = {
         Type: 'BOCM',

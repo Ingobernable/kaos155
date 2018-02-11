@@ -11,12 +11,13 @@
 
         SQL: { db: null },
         scrap: {
-            Secciones : function (options, url, data, callback) {
+            Secciones: function (options, url, data, callback) {
+                
                 app.Rutines(app).askToServer(options, url, data, function (options, body, data) {
                     //debugger
                     //try {
                         if (body != null) {
-                            var $ = app.cheerio.load(body, {
+                            const $ = app.cheerio.load(body, {
                                 withDomLvl1: true,
                                 normalizeWhitespace: true,
                                 xmlMode: true,
@@ -31,22 +32,19 @@
                                 callback(data)
                             } else {
                                 data.next = $('sumario meta fechaSig').html()
-                                data.Fdate = $('sumario meta pubDate').html() // = $('sumario meta fechaSig').html()
+                                data.Fdate = $('sumario meta pubDate').html() 
                                 data.SUMARIO_NEXT = "BORME-S-" + data.next.substr(6, 4) + data.next.substr(3, 2) + data.next.substr(0, 2)
 
-                                //debugger
-                               // options._common.SQL.commands.Sumario.update(options, data, function (options, data) {
-
-                                var _into = data.into==null?null: data.into //.split("#")[1] // * 1
+                                    let _into = data.into==null?null: data.into 
 
                                     if (data.Idate == null) {
                                         data.Idate = $('sumario meta pubDate').html()
                                     }
-                                    var _reg = []
-                                    //var _Sections = data.Secciones.split(",")
+                                    const _reg = []
+
                                     $('diario seccion').each(function (i, item) {
                                         seccion = { code: item.attribs.num, name: item.attribs.nombre }
-                                        //if (_Sections.indexOf(item.attribs.num) > -1)
+
                                         if (seccion.code == "A")
                                             $(item).find('emisor').each(function (b, borme) {
                                                 //emisor = borme.attribs.nombre
@@ -54,7 +52,7 @@
                                                     //// id = lst.attribs.id
                                                     var pdf = $(lst).find("urlPdf")[0].children[0].data
                                                     var titulo = $(lst).find("titulo")[0].children[0].data
-                                                    if(titulo.indexOf('ARABA')>-1) titulo="ÁLABA"
+                                                    if (titulo.indexOf('ARABA') > -1) titulo = "ÁLABA"
                                                     //$(lst).find("titulo").each(function (b, titular) {
                                                     if (titulo.indexOf('DE SOCIEDADES') == -1)
                                                         if (_into == null) {
@@ -65,13 +63,14 @@
                                                                 _into = data.into = null
                                                             } else {
                                                                 console.log(_into, lst.attribs.id)
-                                                                app.process.stdout.write(app, options, '','S ','')
+                                                                app.process.stdout.write(app, options, '', 'S ', '')
                                                             }
                                                         }
 
-                                               })
+                                                })
                                             })
                                     })
+
                                     data.id = url.uri.split('=')[1]
 
                                     data._list = []
@@ -79,31 +78,25 @@
                                     for (n in _reg) {
                                         data._list[data._list.length] = _reg[n].pdf
                                     }
-                                    //data._list = _reg
-                                    //retornamos la lista del contenido del sumario
                                     callback(data)
-                                //})
                             }
                         } else {
-                            debugger
+                            
                             data._list =[]
                             callback(data,true)
                         }
                 })
             },
             Preceptos: function (options, urlDoc, body, data, callback) {
-                var _this = this
+                const _this = this
                 var _lines = []
-                var xcadsql = null
 
-                var _file = app.PDFStore + urlDoc.split("/")[urlDoc.split("/").length - 1]
-                //var bocm = turl[turl.length - 1].split(".")[0]
+                const _file = app.PDFStore + urlDoc.split("/")[urlDoc.split("/").length - 1]
 
-                //punto de guardado del PDF precepto
                 if (body != null) {
                     app.mkdirp(app.PDFStore, function (err) {
                         app.fs.writeFile(_file, body, function (err) {
-                            var pdf = new app.pdftotext(_file)
+                            const pdf = new app.pdftotext(_file)
                             pdf.add_options(options.pdfOpc);
 
                             pdf.getText(function (err, text, cmd) {
@@ -112,16 +105,14 @@
                                     debugger
                                     console.error(err);
                                 } else {
-                                    //debugger
-
                                     var _fileText =  _file.split(".pdf")[0] + ".txt"
-                                    //console.log(_fileText)
+
                                     app.fs.readFile( _fileText , 'utf8', function (err, text) {
                                         app.fs.unlink(_fileText, function (err) {
                                             app.fs.unlink(_file,function(err){
 
                                                 options.DirEmpresas = []
-                                                lines = text.replace(/"/g, "").split('\n')
+                                                let lines = text.replace(/"/g, "").split('\n')
 
                                                 _lines = options.Rutines.scrapDataFromMap(options.Rutines, lines, options.Rutines.maps)
                                                 
@@ -131,14 +122,12 @@
                                                         callback(data, null)
                                                     } else {
                                                         data.textExtend = _lines
-                                                        //data.err = _data._err
+
                                                         app.commonSQL.SQL.commands.insert.Borme.text(options, data, function (data) {
                                                             callback(data)
                                                         })
 
-                                                        //app.commonSQL.SQL.commands.insert.Boletin.text(options, _lines, data, function (data) {
-                                                        //    callback(data)
-                                                        //})
+
 
                                                     }
 

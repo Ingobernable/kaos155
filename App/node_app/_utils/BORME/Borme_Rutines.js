@@ -2,7 +2,7 @@
        var _ = app._
 
         function pointer  (point, cadena) {
-            var _numero = " .0123456789"
+            const _numero = " .0123456789"
             while (_numero.indexOf(cadena.substr(point, 1)) > -1 && point > -1) {
                 point--
             }
@@ -11,7 +11,7 @@
 
         function titleCase(str) {
             str = str.toLowerCase();
-            var array = str.split(' ');
+            const array = str.split(' ');
             for (var c = 0; c < array.length; c++) {
                 array[c] = array[c].substr(0,1).toUpperCase() + array[c].substring(1);
             }
@@ -219,14 +219,14 @@
                     }
                 },
                 p_parrafo: function ($, charEnd, body) {
-                    var _lastParragraf = true
-                    var _arr = []
+                    const _lastParragraf = true
+                    const _arr = []
 
-                    var DOMParser = require('xmldom').DOMParser
-                    var xml = new DOMParser().parseFromString(body)
-                    var _json = app.Rutines().xmlToJson(xml)
-                    var _areas = []
-                    var _content = []
+                    const DOMParser = require('xmldom').DOMParser
+                    const xml = new DOMParser().parseFromString(body)
+                    const _json = app.Rutines().xmlToJson(xml)
+                    const _areas = []
+                    const _content = []
 
                     if (_json.documento.texto.dl != null) {
                         //debugger
@@ -326,17 +326,17 @@
             getConstitucion: function (cadena, _keys, _next, data) {
                 //var _ret = []
                 //debugger
-                var _op = ['Comienzo de operaciones:', 'Objeto social:', 'Domicilio:', 'Capital:']
-                var _pos = this.getPosExploreItems(cadena, _op)                             //sacamos el counjunto de posiciones segun plabras clave
-                var _s = this.extraeArrDeCadena(cadena, _pos, { keys: { arr: _keys } }, 'Constitucion')       //extraemos las cadenas de las subopciones
+                const _op = ['Comienzo de operaciones:', 'Objeto social:', 'Domicilio:', 'Capital:']
+                const _pos = this.getPosExploreItems(cadena, _op)                             //sacamos el counjunto de posiciones segun plabras clave
+                const _s = this.extraeArrDeCadena(cadena, _pos, { keys: { arr: _keys } }, 'Constitucion')       //extraemos las cadenas de las subopciones
            
                 return _s
             },
             getAmpliaCapital: function (cadena, _keys, _next, data) {
             
-                var _op = ['Capital:', 'Resultante_Suscrito:', 'Resultante_Desembolsado:', ' Suscrito:', 'Desembolsado:'] //0.100,00 Euros. Resultante Suscrito: 120.206,01 Euros.'
-                var _pos = this.getPosExploreItems(cadena, _op, false,"_")                             //sacamos el counjunto de posiciones segun plabras clave
-                var _s = this.extraeArrDeCadena(cadena, _pos, { keys: { arr: _keys } }, 'Ampliacion de Capital')       //extraemos las cadenas de las subopciones
+                const _op = ['Capital:', 'Resultante_Suscrito:', 'Resultante_Desembolsado:', ' Suscrito:', 'Desembolsado:'] //0.100,00 Euros. Resultante Suscrito: 120.206,01 Euros.'
+                const _pos = this.getPosExploreItems(cadena, _op, false,"_")                             //sacamos el counjunto de posiciones segun plabras clave
+                const _s = this.extraeArrDeCadena(cadena, _pos, { keys: { arr: _keys } }, 'Ampliacion de Capital')       //extraemos las cadenas de las subopciones
                 //debugger
                 return _s
             },
@@ -344,18 +344,19 @@
                 return [{ key: _keys.c, value: cadena }]
             },
             getDirectivos: function (type, cadena, _keys, _next, data) {
-                var cuenta = function (str) {
+                const cuenta = function (str) {
                     str = str.replace(/[^.]/g, "").length
                     return str;
                 }
-                var isEmpresa = function (cadena) {
-                    if (cadena.substr(_dir[d].length - 1, 1) != ".")
+                const isEmpresa = function (cadena) {
+                    if (cadena.substr(cadena.length - 1, 1) != ".")
                         cadena = cadena + '.'
 
                     return (cadena.indexOf('SOCIEDAD ANONIMA') > -1 || cadena.indexOf('SOCIEDAD LIMITADA') > -1 || cadena.indexOf(' SL.') > -1 || cadena.indexOf(' SA.') > -1)
                 }
 
-                var _ret = []
+                const _ret = []
+
                 var found = function (cargos, _cadena) {
                     var cad = _cadena
                     var _found = false
@@ -371,8 +372,9 @@
                     }
                     return { found: _found, cadena: cad }
                 }
-                var _f = found([], cadena)
-                cadena = _f.cadena
+
+                const _f = found([], cadena)
+                var cadena = _f.cadena
                 _found = false //_f.found
 
                 if (! _found ) {
@@ -385,13 +387,13 @@
                    // })
                 }
                 //var _head = cadena.replace(/S.L./g, 'SL.').replace(/S.A./g, 'SA.') //.split(".")
-                var _valores = cadena.replace(/S\.L\./g, 'SL.').replace(/S\.A\./g, 'SA.').replace(/\.\B/g, "#$").replace(/\. /g, "#$").trim().replace(/\./g, "#") + ' '
+                const _valores = []
 
                 //if(_valores.substr(_valores.length-1,1)==" ")
                 //    _valores.trim() + "$"
 
-                var _preval = _valores.split("#$ ")
-                var _valores = []
+                const _preval = (cadena.replace(/S\.L\./g, 'SL.').replace(/S\.A\./g, 'SA.').replace(/\.\B/g, "#$").replace(/\. /g, "#$").trim().replace(/\./g, "#") + ' ').split("#$ ")
+                //_valores = []
                 //debugger
                 for (i in _preval) {
                     if (_preval[i].length > 0) 
@@ -412,13 +414,13 @@
                         //     var item = _valores[i].trim().split(": ")
                         // }
                     
-                        var item = _valores[i].trim().split(": ")
+                        const item = _valores[i].trim().split(": ")
 
                         if (item.length > 0) {
                             if (item[1] != null){
                                 //debugger
 
-                                var _dir = item[1].trim().split(';')
+                                const _dir = item[1].trim().split(';')
                                 for (d in _dir) {
                                     _dir[d] = _dir[d]
                                     if (_dir[d].substr(_dir[d].length - 1, 1) == ".")
@@ -469,52 +471,22 @@
                         return string.charAt(0).toUpperCase() + string.slice(1);
                     }
                     var _e = 0
-                    var _table = "Directivo"
-                    //__data.values.Empresa = false
-                    if (__data.values.value == __data.values.value.toUpperCase()) {
-                        _table = "Empresa"
-                        __data.values.Empresa = true
-                    }
-                    if (__data.values.key.toUpperCase() == "AUDITOR") {
-                        _table = "Auditor"
-                        __data.values.Auditor = true
-                        //debugger
-                    }
+
+                    const _table = __data.values.value == __data.values.value.toUpperCase() ? "Empresa" : __data.values.key.toUpperCase() == "AUDITOR" ? "Auditor": "Directivo"
+                    __data.values.Empresa = _table == "Empresa"
+                    __data.values.Auditor = _table == "Auditor"
+                    
                     var _exclude = false
-                    var exclude = [
-                        'si, Fecha De Resolución',
-                        'no, Fecha De Resolución',
-                        'se aprueba el plan de liquidación',
-                        'quedan en suspenso',
-                        'las facultades de administración',
-                        'abierta la fase de liquidación',
-                        'determinar que las facultades de administración',
-                        'conversión del procedimiento',
-                        'anotacion preventiva de la declaracion',
-                        'se abre la fase de liquidación',
-                        'conversión del procedimiento abreviado'
-                        ]
+                    _.forEach(options.diccionario.exclude, function (value) {
+                        if (_.toLower(__data.values.value).indexOf(value) == 0)
+                            _exclude = true
+                    })
 
-                        _.forEach(exclude, function (value) {
-                            if (_.toLower(__data.values.value).indexOf(value) == 0)
-                                _exclude = true
-                        })
+                    _.forEach(options.diccionario.recorta, function (value) {
+                        if (_.toLower(__data.values.value).indexOf(value) > -1)
+                            __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf(value) - 1)
+                    })
 
-                    var recorta = ['administrador concursal',
-                        'liquidador concursal',
-                        'situación concursal',
-                        'datos registrales',
-                        'no definido por traspaso',
-                        'cambio de domicilio social',
-                        'Adaptación Ley 2/95',
-                        'auxiliar delegado concursal']
-
-                        _.forEach(recorta, function (value) {
-                            if (_.toLower(__data.values.value).indexOf(value) > -1)
-                                __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf(value) - 1)
-                        })
-
-                    //app.IA.send('setinMemory', { type: _t, array: [__data.values.value], compress: 'shorthash.unique' }, function (data) {
                     if (!_exclude) {                        
                         if (_table == "Directivo")
                             __data.values.value = capitalizeFirstLetter(__data.values.value)
@@ -522,40 +494,46 @@
                         if (__data.values.key.toLowerCase() == "juzgado")
                             __data.values.value = capitalizeFirstLetter(__data.values.key + " " + __data.values.value)
 
-                        //var _d = new Date()
-                        //var _k = app.shorter.unique(_linea.data.provincia)
-                       // var _i = app.shorter.unique(new Date().toString()+"")
-                        //var _l = app.shorter.unique(__data.values.value)
-                        app.BOLETIN.Rutines.getUnique(app.BOLETIN.Rutines.getUnique, __data.values.value, app.BOLETIN.SQL.db, function (_k) {
 
-                            params = {
+                        app.BOLETIN.Rutines.getUnique(app.BOLETIN.Rutines.getUnique, __data.values.value, app.BOLETIN.SQL.db, function (_k) {
+                            const go = function (options, params) {
+                                app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
+
+                                    if (_directivo.length == 0) {
+                                        debugger
+                                    } else {
+                                        if (_directivo.length > 1) {
+                                            //debugger
+                                            x = 1
+                                        }
+                                        if (Active) {
+                                            app.process.stdout.write(app, options, '\x1b[32m', '', '')
+                                        } else {
+                                            app.process.stdout.write(app, options, '\x1b[31m', '', '')
+                                        }
+                                        app.process.stdout.write(app, options, '', __data.values.Empresa ? "e" : __data.values.Auditor ? "a" : "d", '')
+                                        app.process.stdout.write(app, options, '', '', '\x1b[0m')
+                                        callback(__data, _directivo[0][0].Id, params, Active)
+                                    }
+                                }, function (params) {
+                                    callback(null)
+                                })
+                            }
+                            const params = {
                                 table: _table,
                                 e: __data.values.value,
-                                k: _k, //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
+                                k: _k.replaceAll("-",""), //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
                                 data: _linea.data
                             }
-                            //params.table + "(?,?,?)", [params.data.ID, params.e, params.k]
-                            app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
+                            
 
-                                if (_directivo.length == 0) {
-                                    debugger
-                                } else {
-                                    if (_directivo.length > 1) {
-                                        //debugger
-                                        x = 1
-                                    }
-                                    if (Active) {
-                                        app.process.stdout.write(app, options, '\x1b[32m', '', '')
-                                    } else {
-                                        app.process.stdout.write(app, options, '\x1b[31m', '', '')
-                                    }
-                                    app.process.stdout.write(app, options, '', __data.values.Empresa ? "e" : __data.values.Auditor ? "a" : "d", '')
-                                    app.process.stdout.write(app, options, '', '', '\x1b[0m')
-                                    callback(__data, _directivo[0][0].Id, params, Active)
-                                }
-                            }, function (params) {
-                                callback(null)
-                            })
+                            if (app.neo4j != null)
+                                app.neo4j.push.Object(options, _table, params)
+                            
+                            go(options, params)
+                            
+
+
                         })
                         //})
                     } else {
@@ -942,7 +920,7 @@
                         var _line = {
                             id: _.trim(_Empresa[0]),
                             e: _e,
-                            k: _k, //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length-1) - (8-_l.length) , 8 - _l.length) ,
+                            k: _k.replaceAll("-","") , //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length-1) - (8-_l.length) , 8 - _l.length) ,
                             keys: _items,
                             original: line,
                             contenido: _this.explora(line, _items, _this.maps)

@@ -17,21 +17,21 @@
                 var i = isNaN(data.importe * 1) ? 0 : data.importe * 1
                 var params = [
 
-                    data.id.substr(12, 2),                                      //Dia
-                    data.id.substr(10, 2),                                      //Mes
-                    data.id.substr(6, 4),                                       //Anyo
-                    data.id,                                                    //SUMARIO
-                    _analisis._BOLETIN.split("=")[1],                               //BOE
-                    app.Rutines(app).getCleanedString(_analisis._type),         //Tipo_BOE
-                    app.Rutines(app).getCleanedString(_analisis._tramitacion.split(" ")[0]),  //Tipo_TRAMITE
-                    app.Rutines(app).getCleanedString(_analisis._objeto),       //Objeto del contrato
+                    data.id.substr(12, 2),                                      
+                    data.id.substr(10, 2),                                      
+                    data.id.substr(6, 4),                                       
+                    data.id,                                                    
+                    _analisis._BOLETIN.split("=")[1],                               
+                    app.Rutines(app).getCleanedString(_analisis._type),         
+                    app.Rutines(app).getCleanedString(_analisis._tramitacion.split(" ")[0]),  
+                    app.Rutines(app).getCleanedString(_analisis._objeto),       
 
-                    _analisis.urlPdf,                                           //PDF                                                           
-                    data.textExtend.join("<br>").replace(/'/g, "\'"),             //Texto
+                    _analisis.urlPdf,                                                                                                     
+                    data.textExtend.join("<br>").replace(/'/g, "\'"),             
 
-                    data.contratista != null ? data.contratista.substr(0, 254).replace(/'/g, "\'") : null,          //_keys
+                    data.contratista != null ? data.contratista.substr(0, 254).replace(/'/g, "\'") : null,          
                     data.importe.indexOf(";") == -1 ? i.toFixed(2) : data.importe
-                    //''.Trim(data.importe.replace(/\n/g, "").replace(/'/g, '') ) //Importes
+
                 ]
                 var _ing = ""
                 for (i in data.extra) {

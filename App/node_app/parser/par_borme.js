@@ -5,36 +5,59 @@ module.exports = function (app, callback) {
         Command: app.command,
         Rutines: require('../_utils/BORME/Borme_Rutines.js')(app, require('../_utils/BORME/Borme_Transforms.js')(app)),
         pdfOpc: ['-nopgbrk', '-enc UTF-8'],
-        
+
+        diccionario: {
+            exclude: [
+                'si, Fecha De Resolución',
+                'no, Fecha De Resolución',
+                'se aprueba el plan de liquidación',
+                'quedan en suspenso',
+                'las facultades de administración',
+                'abierta la fase de liquidación',
+                'determinar que las facultades de administración',
+                'conversión del procedimiento',
+                'anotacion preventiva de la declaracion',
+                'se abre la fase de liquidación',
+                'conversión del procedimiento abreviado'
+            ],
+            recorta :['administrador concursal',
+                'liquidador concursal',
+                'situación concursal',
+                'datos registrales',
+                'no definido por traspaso',
+                'cambio de domicilio social',
+                'Adaptación Ley 2/95',
+                'auxiliar delegado concursal'
+            ]
+        },
+
         url: app.urlBORME,       
         _common: require('../_common.js')(app),
         SQL: { db: null },
         parser: {
-            //cif: require('../_utils/BORME/keys/Cif_Metaspider.js')(app),
+           
             saveEmpresaDeMovimiento: function (_linea, _cb) {
-                //var _ok =false
-                //var _this = this
-                //options.SQL.db.query("select * From borme_keys where _key=?", [_linea.k], function (err, record) { 
-                    //if (record.length == 0) { //|| record[0].cif == null || record[0].cif.length == 0) {
-                        _linea.table = "Empresa"
-                        //_this.cif.ask(_linea.k, _linea.e, function (cif) {
-                            _linea.cif = null
-                            app.commonSQL.SQL.commands.insert.Borme.keys(options, _linea, function (_linea, _rec) {
-                                app.process.stdout.write(app, options, '\x1b[1m\x1b[36m', 'E', '\x1b[0m')
-                                _linea.ID = _rec[0][0].Id
 
-                                options.parser.saveDiarioMovimientos(_linea, _cb)
+                _linea.table = "Empresa"
+                _linea.cif = null
 
-                            }, _cb)
-                        //})
-                    //}
+                app.neo4j.push.Object( options, _linea.table, _linea) //,  function (options, params) { 
+                app.commonSQL.SQL.commands.insert.Borme.keys(options, _linea, function (_linea, _rec) {
+                    app.process.stdout.write(app, options, '\x1b[1m\x1b[36m', 'E', '\x1b[0m')
+                    _linea.ID = _rec[0][0].Id
+
+                    options.parser.saveDiarioMovimientos(_linea, _cb)
+
+                }, _cb)
+
                 //})
+
 
             },
             saveDiarioMovimientos: function (_linea, _ret) {
                 var saveLineContenido = function (_e, _linea, _cb, _func) {
-                    var _this = this
-                    var line = _linea.contenido[e]
+                    const _this = this
+                    //var line = _linea.contenido[e]
                     if (_e < _linea.contenido.length) {
                         if (options.Rutines.SQL[_linea.contenido[_e].type] == null)
                             debugger
@@ -53,7 +76,7 @@ module.exports = function (app, callback) {
                             } else {
                                 //if (_line.data[e] == null)
                                 //    debugger
-                                var _idEmpresa = true
+                                //var _idEmpresa = true
                                 // if(idDirectivo>0)
                                 //      _idEmpresa = options.foundEmpresas(options.DirEmpresas, _linea.k)
                                 //if (_idEmpresa == null)
@@ -61,7 +84,8 @@ module.exports = function (app, callback) {
 
                                 //debugger
 
-                                params = [
+                                   
+                                const _params = [
                                     _linea.data.BOLETIN,
                                     _linea.id,
                                     _linea.data.dia,
@@ -79,26 +103,24 @@ module.exports = function (app, callback) {
                                     (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value)
                                 ]
 
-                                if (_Dl == null) {
-                                    debugger
-                                    console.log('_Dl = null error borme.js')
-                                }
-                                //
                                 //insertamos un dato en el diario de movimientos
-                                //
-                                app.commonSQL.SQL.commands.insert.Borme.diario(options, params, function (err, _record) {
+                                if (app.neo4j && params.k && _linea.k) 
+                                    app.neo4j.push.relation(options, _Dl.values ? _Dl.values.Auditor ? "Auditor" : "Directivo" : "Directivo", _linea, params, _Dl, Active)
+
+
+                                app.commonSQL.SQL.commands.insert.Borme.diario(options, _params, function (err, _record) {
                                     app.process.stdout.write(app, options, '\x1b[33m', '.', '\x1b[0m')
                                     //repitiendo el proceso para todos los datos de una linea
                                     _e++
                                     _func(_e, _linea, _cb, _func)
                                 })
+                               
                             }
 
                         })
                     } else {
-                        //salida de la rutina de PARSEO
-                        _cb(_linea)
-
+                        //salida de la rutina de PARSEO                         
+                         _cb(_linea)
                     }
                 }
                 //guardamos el contenido de la linea
@@ -122,18 +144,11 @@ module.exports = function (app, callback) {
                         options.f = recordset[0][0].mes + '/' + recordset[0][0].dia
                         options.Provincia = recordset[0][0].provincia
                         app.process.stdout.write(app, options, '\x1b[33m', '+', '\x1b[0m')
+
                         //analizamos la linea y obtenemos una estructura con su contenido
                         options.Rutines.analizeSimpleLine(options.SQL.db, options.Rutines, recordset[0][0].texto, options.Rutines.maps, options.Provincia, function (_line) { 
                             _line.data = recordset[0][0]
-                            //console.log(_line.k, "=", _line.e)
 
-
-                            //if (app.IA.find('BM', _line.k)==null)
-                            //    if (app.IA.setinMemory('BM', _line.k, 1245489, app.IA.find, "_ks") != null)
-                            //        debugger
-                            //app.IA.send('setinMemory', { type: '_E', array: [_line.e], compress: 'shorthash.unique' }, function (data) {
-                            //_line.data.ID_Empresa = data.data.array._id[0]
-                            //_line.addNew = data.data.array.add[0]
                             options.parser.saveEmpresaDeMovimiento(_line, function () {
                                 options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + app.anyo + " set parser=1 where ID_BORME = ? ", [recordset[0][0].ID_BORME], function (err, record) {
                                     options.parser.Preceptos(options, type, callback)
@@ -146,7 +161,25 @@ module.exports = function (app, callback) {
                     }
                 })
             }
-        }
+        },
+        isBanca: function (params) {
+            return params.e.toUpperCase().indexOf('BANCO ') > -1 || params.e.toUpperCase().indexOf('CAJA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('SEGUROS ') > -1
+        },
+        isSicav: function (params) {
+            //if (params.e.indexOf(' SICAV ') > -1)
+            //    debugger
+
+
+            //console.log(params.e)
+            return params.e.indexOf(' SICAV ') > -1
+        },
+        isUTE: function (params) {
+            if (params.e.indexOf(' UTE ') > -1)
+                debugger
+
+            //console.log(params.e)
+            return params.e.indexOf(' UTE ') > -1
+        },
     }
 
     options.Rutines.cargos = [] //dataCargos

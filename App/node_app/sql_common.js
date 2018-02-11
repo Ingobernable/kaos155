@@ -1,7 +1,7 @@
 ﻿module.exports = function (app, callback) {
     var _ = app._
     callback({
-
+        
         poolSql: [],
         // createfistConnect: function (options, type, callback, test) {
         //     debugger
@@ -258,7 +258,7 @@
                         keys: function (options, params, callback, _cberror) {
                             var _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)"
                             var _params = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
-                                
+
                             options.SQL.db.query(_cadsql, _params , function (err, _rec) {
                                 if (err != null || _rec[0][0] == null) {
 
@@ -275,12 +275,13 @@
                                     //})
                                     //_cberror(err)
                                 } else {
-
                                     callback(params, _rec)
                                 }
                             })
                         },
                         diario: function (options, params, callback) {
+
+
                             options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
                                 if (err)
                                     debugger
