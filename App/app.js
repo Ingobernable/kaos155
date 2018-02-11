@@ -1,5 +1,11 @@
 'use strict';
 
+const memwatch = require('memwatch-next');
+
+memwatch.on('leak', (info) => {
+    console.error('Fuga de memoria detectada: \ n', información);
+});
+
 const pjson = require('./package.json');
 console.log('kaos155 App - version -' + pjson.version + '.')
 
