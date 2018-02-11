@@ -3,7 +3,7 @@
 const memwatch = require('memwatch-next');
 
 memwatch.on('leak', (info) => {
-    console.error('Fuga de memoria detectada: \ n', información);
+    console.error('Fuga de memoria detectada: \ n', info);
 });
 
 const pjson = require('./package.json');
