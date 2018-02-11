@@ -88,7 +88,7 @@
                 };
 
                 const session = app.driver.session();
-                debugger
+
             })
             
         }
