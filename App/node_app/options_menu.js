@@ -95,7 +95,7 @@
 
     ////////////////////////////////////////////////////////////////////////
     if (app.fs.existsSync("./sqlfiles/neo4j")) {
-        if (app.fs.existsSync("./sqlfiles/X_ACCESO_neo4j.json")) {
+        if (app.fs.existsSync(__basedir + "/sqlfiles/X_ACCESO_neo4j.json")) {
 
 
             app.credentials.getlogsparamsfromfile('ACCESO_neo4j', function (err) {
