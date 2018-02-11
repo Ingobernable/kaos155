@@ -1,10 +1,10 @@
 ﻿module.exports = function (app, myArgs, callback) {
     
-    if (app.fs.existsSync("./sqlfiles/neo4js")) {
-        if (app.fs.existsSync("./sqlfiles/X_ACCESO_neo4js.json")) {
+    if (app.fs.existsSync("./sqlfiles/neo4j")) {
+        if (app.fs.existsSync("./sqlfiles/X_ACCESO_neo4j.json")) {
            // app.credentials.(app.path.normalize('sqlfiles/x_ACCESO_neo4js.json'), function (err, _JSON) {
                     
-                app.credentials.getlogsparamsfromfile('ACCESO_neo4js', function (err) {
+                app.credentials.getlogsparamsfromfile('ACCESO_neo4j', function (err) {
                     debugger
                 }, function (resp) {
                     app.neo4j = {
@@ -69,25 +69,25 @@
                 { type: 'password', name: 'password', message: 'neo4db password' }
 
             ]).then(function (resp) {
-                app.neo4j = require('neo4j-driver').v1
-                app.driver = app.neo4j.driver('bolt://' + resp.host, app.neo4j.auth.basic(resp.user, resp.password) , {
+                
+                app.neo4j.driver = require('neo4j-driver').v1.driver('bolt://' + resp.host, app.neo4j.auth.basic(resp.user, resp.password) , {
                     encrypted: 'ENCRYPTION_OFF'
                 })
 
-                app.driver.onCompleted = function() {
+                app.neo4j.driver.onCompleted = function() {
                     console.log('Neo4js Driver created');
                     debugger
-                    app.credentials.savelogsparamstofile('ACCESO_neo4js', resp, null, function (_credenciales) {
+                    app.credentials.savelogsparamstofile('ACCESO_neo4j', resp, null, function (_credenciales) {
                         //app.driver = app.neo4j.driver('bolt://' + resp.host, app.neo4j.auth.basic(resp.user, resp.password))
                         main(myArgs, exit, callback)
                     })
                 };
 
-                app.driver.onError= function(error) {
+                app.neo4j.driver.onError= function(error) {
                     console.log(error);
                 };
 
-                const session = app.driver.session();
+                app.neo4j.session = app.neo4j.driver.session();
 
             })
             
