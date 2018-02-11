@@ -15,6 +15,7 @@
     "inquirer": "^4.0.1",
     "ip": "^1.1.5",
     "lodash": "^4.17.4",
+    "memwatch-next":"^0.2.7",
     "merge": "^1.2.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.20.0",
