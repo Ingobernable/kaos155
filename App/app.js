@@ -1,12 +1,13 @@
 'use strict';
 
 global.__basedir = __dirname;
-//const memwatch = require('memwatch-next');
+const memwatch = require('memwatch-next');
 
-//memwatch.on('leak', (info) => {
-//    console.error('Fuga de memoria detectada:')
-//    console.error(info);
-//});
+memwatch.on('leak', (info) => {
+    console.error('Fuga de memoria detectada:')
+    console.error(info);
+    debugger
+});
 
 const pjson = require('./package.json');
 console.log('kaos155 App - version -' + pjson.version + '.')
