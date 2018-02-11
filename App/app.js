@@ -1,5 +1,6 @@
 'use strict';
 
+global.__basedir = __dirname;
 const memwatch = require('memwatch-next');
 
 memwatch.on('leak', (info) => {

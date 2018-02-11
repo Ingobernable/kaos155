@@ -5,7 +5,7 @@
         encryptor : require('simple-encryptor')("bbdd_kaos155_text"),
         getlogsparamsfromfile: function (_file, _cberr, _cb) {
             const _this = this
-            app.fs.readFile(app.path.normalize('../sqlfiles/x_' + _file + '.json'), function (err, _JSON) {
+            app.fs.readFile(app.path.normalize(__basedir + '/sqlfiles/x_' + _file + '.json'), function (err, _JSON) {
                 if (err) {
                     _cberr()
                 } else {
@@ -30,7 +30,7 @@
                 multipleStatements: true,
                 waitForConnection: true,
             }
-            app.fs.writeFile(app.path.normalize('../sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
+            app.fs.writeFile(app.path.normalize(__basedir + '/sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
                 console.log("\x1b[32m Nuevas credenciales de acceso "+_file+ " guardadas OK \x1b[0m");
                 _cb(_credenciales)
             })
