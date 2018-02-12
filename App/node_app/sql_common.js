@@ -1,13 +1,9 @@
 ﻿module.exports = function (app, callback) {
-    var _ = app._
+
     callback({
         
         poolSql: [],
-        // createfistConnect: function (options, type, callback, test) {
-        //     debugger
-        // },
         getConnect: function (options, type, callback, test) {
-           // const _this = this
             var _exit = function (options, type, callback, test) {
                 callback(options, test)
             }
@@ -36,20 +32,15 @@
 
         },
         mysqlCommand: function (_command, db, callback,close) {
-            const cp = require('child_process');
-            cp.exec(_command, (error, stdout, stderr) => {
+            app.child_process.exec(_command, (error, stdout, stderr) => {
                 if (error) {
                     console.log("\x1b[31m ERROR: la creación de la DB " + db + " ha fallado parcialmente")
                     console.log("para poder continuar, por favor lance desde su consola el comando \x1b[0m")
                     console.log(_command)
                     process.exit(1)
                 } else {
-                    console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
-                    //if (close)
-                    //    con.end()
-                    //app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
-                    callback()
-                    //})
+                   console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
+                   callback()
                 }
             });
         },
@@ -62,7 +53,7 @@
                 if (record.length == 0) {
                     con.query("CREATE DATABASE IF NOT EXISTS " + db, function (err, result) {
                         console.log("\x1b[32m BASE DE DATOS \x1b[0m" + db + "\x1b[32m CREADA VACIA OK \x1b[0m");
-                        _xthis.mysqlCommand(_command, db, callback, close)
+                        app.commonSQL.mysqlCommand(_command, db, callback, close)
                        
                     })
                 } else {
@@ -100,7 +91,7 @@
             } else {
 
                 app.fs.readFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), function (err, _JSON) {
-                    _cb = null
+                    var _cb = null
                     if (err) {
                         testIp = function (testIp, callback) {
 
@@ -112,9 +103,7 @@
 
                             ]).then(function (resp) {
 
-                                var db = "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : '')
-
-                                var con = app.mysql.createConnection({
+                                const con = app.mysql.createConnection({
                                     host: resp.host,
                                     user: resp.user,
                                     password: resp.password,
@@ -122,11 +111,11 @@
                                 })
 
                                 // var encryptor = require('simple-encryptor')(db);
-                                var _credenciales = {
+                                const _credenciales = {
                                     host: resp.host,
                                     user: resp.user,
                                     password: _ithis.encryptor.encrypt(resp.password),
-                                    database: db,
+                                    database: "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : ''),
                                     multipleStatements: true,
                                     waitForConnection: true,
                                 }
@@ -162,8 +151,8 @@
                         })
                     } else {
                         try {
-                            var _sql = JSON.parse(_JSON.toString())
-                            sqlPss = _sql.password
+                            JSON.parse(_JSON.toString())
+                            //sqlPss = JSON.parse(_JSON.toString()).password
                         }
                         catch (e) {
                             console.log('error en el fichero de Credenciales mysql, json no valido, sistema detenido', e)
@@ -173,14 +162,13 @@
                         if (_ithis.poolSql[type] == null) {
 
                             _ithis.poolSql[type] = app.mysql.createPool({
-                                host: _sql.host,
-                                user: _sql.user,
-                                password: _ithis.encryptor.decrypt(_sql.password),
-                                database: _sql.database,
+                                host: JSON.parse(_JSON.toString()).host,
+                                user: JSON.parse(_JSON.toString()).user,
+                                password: _ithis.encryptor.decrypt(JSON.parse(_JSON.toString()).password),
+                                database: JSON.parse(_JSON.toString()).database,
                                 multipleStatements: true,
                                 waitForConnection: true,
                             })
-                            _sql = null
                             _ithis.getConnect(options, type, callback, null)
                         } else {
                             callback(options)
@@ -196,8 +184,7 @@
                 create: function (cadsql, db, callback) {
                     db.query(cadsql, function (err, results) {
                         if (err) {
-                            x = cadsql
-                            console.log(err)
+                            console.log(cadsql,err)
 
                         }
                         callback()
@@ -221,18 +208,18 @@
                             var _s = ""
 
                             app.process.stdout.write(app, options, '', _linea.PROVINCIA, '')
-
+                            
                             for (n in _linea.data) {
                                 //_text = _text + (_text.length > 0 ? "#" : "") + _linea.data[n].original
                                 //_id = _id + (_id.length > 0 ? "#" : "") + _linea.data[n].id
                                 _s = _s + "."
 
-                                var _f = "'" + data.desde.substr(6, 2) + "','" + data.desde.substr(4, 2) + "','" + data.desde.substr(0, 4) + "'"
-                                var _b = "'" + _linea.BORME + "'"
-                                var _t = "'" + _linea.data[n].original.replaceAll("'", "\\'") + "'"
-                                var _p = "'" + _linea.PROVINCIA + "'"
-                                var _i = "'" + _linea.data[n].id + "'"
-                                var __cadsql = "Call Insert_Text_BORME(" + _f + "," + _b + "," + _t + "," + _p + "," + _i + ");"
+                                const _f = "'" + data.desde.substr(6, 2) + "','" + data.desde.substr(4, 2) + "','" + data.desde.substr(0, 4) + "'"
+                                const _b = "'" + _linea.BORME + "'"
+                                const _t = "'" + _linea.data[n].original.replaceAll("'", "\\'") + "'"
+                                const _p = "'" + _linea.PROVINCIA + "'"
+                                const _i = "'" + _linea.data[n].id + "'"
+                                const __cadsql = "Call Insert_Text_BORME(" + _f + "," + _b + "," + _t + "," + _p + "," + _i + ");"
 
                                 _cadSql = _cadSql + __cadsql
                                 //app.process.stdout.write(app, options, '.' )
@@ -293,8 +280,8 @@
                             //var i = isNaN(data.importe * 1) ? 0 : data.importe * 1
                             if (data.err != null) {
                                 app.process.stdout.write(app, options, '\x1b[31m','CNS','\x1b[0m')
-                                cadSql = "CALL Insert_Error_Boletin(?,?,?)"
-                                options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1],data._list[data.e], data.err], function (err2) {
+          
+                                options.SQL.db.query("CALL Insert_Error_Boletin(?,?,?)", [_analisis._BOLETIN.split("=")[1],data._list[data.e], data.err], function (err2) {
                                     callback(data)
                                 })
                             } else {
@@ -347,9 +334,8 @@
                             }
                         }
                     },
-                    Sumario: function (options, _sumario, _boletin, callback) {
-                        const cadsql = "INSERT INTO sumarios (_counter, Anyo, SUMARIO, BOLETIN, Type) VALUES ('" + (app._xData.TSUMARIOS[options.type] + 1) + "','" + app.anyo + "','" + _sumario + "', '" + _boletin + "','" + options.type + "')"
-                        options.SQL.db.query(cadsql, function (err, records) {
+                    Sumario: function (options, _sumario, _boletin, callback) { 
+                            options.SQL.db.query("INSERT INTO sumarios (_counter, Anyo, SUMARIO, BOLETIN, Type) VALUES ('" + (app._xData.TSUMARIOS[options.type] + 1) + "','" + app.anyo + "','" + _sumario + "', '" + _boletin + "','" + options.type + "')", function (err, records) {
                             if (err) {
                                 x = cadsql
                                 debugger
@@ -360,8 +346,7 @@
                         })
                     },
                     errores: function (options, Boletin, SqlError, SqlMensaje, callback) {
-                        const cadSql = "CALL Insert_Error_Boletin(?,?,?)"
-                        options.SQL.db.query(cadSql, [Boletin, SqlError, SqlMensaje], function (err2) {
+                            options.SQL.db.query("CALL Insert_Error_Boletin(?,?,?)", [Boletin, SqlError, SqlMensaje], function (err2) {
                             callback()
                         })
                     }
@@ -379,16 +364,15 @@
                         })
                     },
                     ScrapLabel: function (options, data, callback) {
-                        const _boletin = data._analisis[data.e][options.Type]
-                        options.SQL.db.query("UPDATE sumarios SET scrap=1 where BOLETIN='" + _boletin + "'", function (err, Record) {
+                        options.SQL.db.query("UPDATE sumarios SET scrap=1 where BOLETIN='" + data._analisis[data.e][options.Type] + "'", function (err, Record) {
                             callback(data)
                         })
                     }
                 },
                 select: {
                     Sumario: function (options, _boletin, callback) {
-                        const sumariosql = "SELECT * FROM sumarios WHERE type='" + options.type + "' AND BOLETIN='" + _boletin + "'"
-                        options.SQL.db.query(sumariosql, function (err, rows) {
+
+                         options.SQL.db.query("SELECT * FROM sumarios WHERE type='" + options.type + "' AND BOLETIN='" + _boletin + "'", function (err, rows) {
                             callback(err, rows)
                         })
                     },
@@ -400,20 +384,19 @@
                 }
             },
             getCounter: function (app, _options, type, callback) {
-                const _cadsql = "SELECT * FROM lastread WHERE Type = '" + type + "' AND Anyo = " + app.anyo
-                _options.SQL.db.query(_cadsql, function (err, Record) {
+ 
+               _options.SQL.db.query("SELECT * FROM lastread WHERE Type = '" + type + "' AND Anyo = " + app.anyo, function (err, Record) {
                     if (err)
                         debugger
                     if (Record.length == 0) {
-                        _cadsql = "INSERT INTO lastread (Type, Anyo, SUMARIO_NEXT) VALUES ('" + type + "'," + app.anyo + ",'" + type + '-' + (type != "BOCM" ? "S-" : "") + app.initDate + "')"  //2001
-                        _options.SQL.db.query(_cadsql, function (err, _data) {
+                        _options.SQL.db.query(_cadsql = "INSERT INTO lastread (Type, Anyo, SUMARIO_NEXT) VALUES ('" + type + "'," + app.anyo + ",'" + type + '-' + (type != "BOCM" ? "S-" : "") + app.initDate + "')", function (err, _data) {
                             app._xData.Sumario[type] = { SUMARIO_LAST: '', SUMARIO_NEXT: type + '-' + (type != "BOCM" ? "S-" : "") + app.initDate }
                         })
                     } else {
                         app._xData.Sumario[type] = Record[0]
                     }
-                    var _cadsql = "SELECT count(*) FROM sumarios WHERE Type='" + type + "' AND Anyo=" + app.anyo
-                    _options.SQL.db.query(_cadsql, function (err, Record) {
+
+                    _options.SQL.db.query("SELECT count(*) FROM sumarios WHERE Type='" + type + "' AND Anyo=" + app.anyo, function (err, Record) {
                         app._xData.TSUMARIOS[type] = Record[0]["count(*)"]
                         callback(_options)
                     })

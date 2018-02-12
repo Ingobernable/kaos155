@@ -1,13 +1,13 @@
 'use strict';
 
 global.__basedir = __dirname;
-const memwatch = require('memwatch-next');
+///const memwatch = require('memwatch-next');
 
-memwatch.on('leak', (info) => {
-    console.log('Fuga de memoria detectada:')
-    console.log(info);
-    debugger
-});
+//memwatch.on('leak', (info) => {
+//    console.log('Fuga de memoria detectada:')
+//    console.log(info);
+//    debugger
+//});
 
 const pjson = require('./package.json');
 console.log('kaos155 App - version -' + pjson.version + '.')
@@ -36,7 +36,7 @@ var App = {
     resolvePath: require('resolve-path'),
     aguid: require('aguid'),
     schedule: require('node-schedule'),
-
+    child_process:require('child_process'),
     
 
     _returnfunc : function (app, options, data, ok) {
@@ -133,8 +133,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
 
                     _cb({
                         PARSER: function (type) {                 
-                            const prefix = app.command.substr(0, 3).toLowerCase() + "_"
-                            require('./node_app/parser/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
+                                require('./node_app/parser/' + app.command.substr(0, 3).toLowerCase() + "_" + type.toLowerCase() + '.js')(app, function (options) {
                                 if (app.BOLETIN == null) {
                                     app.BOLETIN = options
 
