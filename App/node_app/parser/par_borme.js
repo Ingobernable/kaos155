@@ -1,5 +1,5 @@
 module.exports = function (app, callback) {
-
+    //debugger
     options = {
 
         Command: app.command,
@@ -41,7 +41,9 @@ module.exports = function (app, callback) {
                 _linea.table = "Empresa"
                 _linea.cif = null
 
-                app.neo4j.push.Object( options, _linea.table, _linea) //,  function (options, params) { 
+                if(app.neo4j)
+                    app.neo4j.push.Object(_linea) //,  function (options, params) {
+                
                 app.commonSQL.SQL.commands.insert.Borme.keys(options, _linea, function (_linea, _rec) {
                     app.process.stdout.write(app, options, '\x1b[1m\x1b[36m', 'E', '\x1b[0m')
                     _linea.ID = _rec[0][0].Id
@@ -90,7 +92,7 @@ module.exports = function (app, callback) {
 
                             //insertamos un dato en el diario de movimientos
                             if (app.neo4j && params.k && _linea.k)
-                                app.neo4j.push.relation(options, _Dl.values ? _Dl.values.Auditor ? "Auditor" : "Directivo" : "Directivo", _linea, params, _Dl, Active)
+                                app.neo4j.push.relation( _Dl.values ? _Dl.values.Auditor ? "Auditor" : "Directivo" : "Directivo", _linea, params, _Dl, Active)
 
 
                             app.commonSQL.SQL.commands.insert.Borme.diario(options, _params, function (err, _record) {
@@ -142,15 +144,6 @@ module.exports = function (app, callback) {
                     }
                 })
             }
-        },
-        isBanca: function (params) {
-            return params.e.toUpperCase().indexOf('BANCO ') > -1 || params.e.toUpperCase().indexOf('CAJA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('SEGUROS ') > -1
-        },
-        isSicav: function (params) {
-            return params.e.indexOf(' SICAV ') > -1
-        },
-        isUTE: function (params) {
-            return params.e.indexOf(' UTE ') > -1
         },
     }
 

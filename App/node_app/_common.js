@@ -1,5 +1,6 @@
 ﻿module.exports = function (app, drop, callback) {
-    var _ = app._
+    //var _ = app._
+    //debugger
     return {
 
         SQL: {
@@ -11,18 +12,19 @@
                         })
                     },
                     insert: function (options, data, callback) {
+                        var _boletin=""
                         var next = data.SUMARIO_NEXT //options.type + (options.type=="BOCM"?"":"-S-") + data.next.substr(6, 4) + data.next.substr(3, 2) + data.next.substr(0, 2)
                         if (data._analisis == null) {
                             if (data._list[data.e][data.type] == null) {
-                                var _boletin = data._list[data.e].split("=")[1]
+                                _boletin = data._list[data.e].split("=")[1]
                             } else {
-                                var _boletin = data._list[data.e][data.type].split("=")[1]
+                                _boletin = data._list[data.e][data.type].split("=")[1]
                             }
                         } else {
                             if (data._analisis[data.e]==null)
                                 debugger
 
-                            var _boletin = data._analisis[data.e][data.type] == null ? data._list[data.e].split("=")[1] : data._analisis[data.e][data.type]
+                            _boletin = data._analisis[data.e][data.type] == null ? data._list[data.e].split("=")[1] : data._analisis[data.e][data.type]
                         }
                         if (data._list.length > 0) {
 
@@ -58,15 +60,14 @@
                         }
                     },
                     get: function (options, data, callback) {
-                        var _this = this
-                        var Sumario = options.Sumario
+                        const Sumario = options.Sumario
                         //debugger
                         var url = options.url + 'diario_' + data.type.toLowerCase() + '/xml.php?id=' + Sumario
                         if (options.type == "BOCM")
                             if (Sumario.indexOf("-S-") == -1) {
-                                var url = options.url + '_Boletin_BOCM/' + Sumario.substr(5, 4) + "/" + Sumario.substr(9, 2) + "/" + Sumario.substr(11, 2) + "/" + Sumario + ".PDF"
+                                url = options.url + '_Boletin_BOCM/' + Sumario.substr(5, 4) + "/" + Sumario.substr(9, 2) + "/" + Sumario.substr(11, 2) + "/" + Sumario + ".PDF"
                             } else {
-                                var url = options.url + '_Boletin_BOCM/' + Sumario.substr(7, 4) + "/" + Sumario.substr(11, 2) + "/" + Sumario.substr(13, 2) + "/" + options.type + Sumario.substr(6, 9) + ".PDF"
+                                url = options.url + '_Boletin_BOCM/' + Sumario.substr(7, 4) + "/" + Sumario.substr(11, 2) + "/" + Sumario.substr(13, 2) + "/" + options.type + Sumario.substr(6, 9) + ".PDF"
                             }
                         //
                         //Cargamos y analizamos las secciones con el parseador concreto de cada TYPE de documento
@@ -74,16 +75,15 @@
                         // si el campo STOP estuviera a 1
                         //salimos del proceso
 
-                        cadsql = "SELECT STOP FROM lastread WHERE Type='" + options.type + "' AND anyo = " + app.anyo
-                        options.SQL.db.query(cadsql, function (err, record) {
+                        options.SQL.db.query("SELECT STOP FROM lastread WHERE Type='" + options.type + "' AND anyo = " + app.anyo, function (err, record) {
                             //debugger
                             if (record[0].STOP == 0) {
                                 options.scrap.Secciones(options, { encoding: null, method: "GET", uri: url, agent: false }, data, function (jsonData, repeat) {
                                     callback(jsonData, repeat)
                                 })
                             } else {
-                                cadsql = "UPDATE lastread set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + app.anyo
-                                options.SQL.db.query(cadsql, function (err, record) {
+                                
+                                options.SQL.db.query(cadsql = "UPDATE lastread set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + app.anyo, function (err, record) {
                                     console.log('proceso obligado a parar')
                                     process.exit(1)
                                 })
@@ -106,20 +106,21 @@
             }
         },
         parser: function (app) {
-            var _this = this
+            //const _this = this
             return {
                 NEW: function (options, data, analizer, callback) {
-                    var __this = this
-                    _this.SQL.commands.Sumario.insert(options, data, function (data, isrepeat) {
+                    const __this = this
+                    var turl = ""
+                    app.BOLETIN._common.SQL.commands.Sumario.insert(options, data, function (data, isrepeat) {
                         if (!isrepeat) {
                             if (data._analisis != null) {
-                                var turl = data._analisis[data.e].pdf != null ? data._analisis[data.e].pdf : data._list[data.e] //: //.split("/")
+                                turl = data._analisis[data.e].pdf != null ? data._analisis[data.e].pdf : data._list[data.e] //: //.split("/")
                             } else {
-                                var turl = data._list[data.e]
+                                turl = data._list[data.e]
                             }
                             __this.Search(options, turl, data, analizer, function (data, repeat, fail) {
                                 if (fail) {
-                                    _this.SQL.commands.Sumario.SetScrapLabel(options, data, function (data) {
+                                    app.BOLETIN._common.SQL.commands.Sumario.SetScrapLabel(options, data, function (data) {
                                         if (data.e < data._list.length - 1) {
                                             data.e++
                                             __this.NEW(options, data, analizer, callback)
@@ -163,13 +164,15 @@
         },
         Actualize: function ( options, type, data, callback) {
             //var _r = { BOCM: 5, BOE: 6, BORME: 8 }
-            var _this = this
+            //const _this = this
             if (options.Command == app.Commands[0]) {
-                var iyear = data.desde.substr(0, 4)
-                var imonth = data.desde.substr(4, 2)
-                var iday = data.desde.substr(6, 2)
-                var _DATE = new Date(imonth + "/" + iday + "/" + iyear)
-                var _AHORA = new Date()
+
+                const iyear = data.desde.substr(0, 4)
+                const imonth = data.desde.substr(4, 2)
+                const iday = data.desde.substr(6, 2)
+                const _DATE = new Date(imonth + "/" + iday + "/" + iyear)
+                const _AHORA = new Date()
+
                 if (app.update == null) {
                     if (iyear == app.anyo) {
                         if (_DATE < _AHORA) {
@@ -179,29 +182,29 @@
                             //
                             //Punto en el que llama a analiza un sumario correspondiente a un dia, con multiples subdocumentos
                             //
-                            _this.SQL.commands.Sumario.get(options, data, function (data, repeat) {
+                            this.SQL.commands.Sumario.get(options, data, function (data, repeat) {
                                 if (data._list == null) {
                                     if (!repeat) {
                                         options._common.SQL.commands.Sumario.update(options, data, function (data) {
                                             data.desde = app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8)
-                                            _this.Actualize(options, type, data)
+                                            options._common.Actualize(options, type, data)
                                         })
                                     } else {
-                                        _this.Actualize(options, type, data)
+                                        options._common.Actualize(options, type, data)
                                     }
                                 } else {
                                     if (data._list.length > 0) {
                                         data.e = 0
-                                        _this.parser(app).NEW(options, data, options.scrap.Preceptos, function (data) {
+                                        options._common.parser(app).NEW(options, data, options.scrap.Preceptos, function (data) {
                                             options._common.SQL.commands.Sumario.update(options, data, function () {
                                                 data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
-                                                _this.Actualize(options, type, data)
+                                                options._common.Actualize(options, type, data)
                                             })
                                         })
                                     } else {
                                         options._common.SQL.commands.Sumario.update(options, data, function () {
                                             data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
-                                            _this.Actualize(options, type, data)
+                                            options._common.Actualize(options, type, data)
                                         })
                                     }
                                 }
@@ -214,23 +217,20 @@
 
                             app.schedule.scheduleJob(date, function (y) {
                                 console.log('despertando ... ' + y + ' ... empezando a analizar ' + type)
-                                _this.Actualize(options, type, data)
+                                options._common.Actualize(options, type, data)
                             })
                         }
                     } else {
-
-                        cadsql = "UPDATE lastread SET Read_Complete = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo
-                        options.SQL.db.query(cadsql, function (err, record) {
-                            cadsql = "UPDATE anyosread SET " + options.Command.toLowerCase() + " = 1 WHERE Type='" + options.Type + "' AND Anyo = " + app.anyo
-                            options.SQL.db.query(cadsql, function (err, record) {
+                        options.SQL.db.query("UPDATE lastread SET Read_Complete = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo, function (err, record) {                            
+                            options.SQL.db.query("UPDATE anyosread SET " + options.Command.toLowerCase() + " = 1 WHERE Type='" + options.Type + "' AND Anyo = " + app.anyo, function (err, record) {
                                 console.log('obtención de datos ' + type + ' del año ' + app.anyo + ' terminó')
                                 process.exit(0)
                             })
                         })
                     }
                 } else {
-                    cadsql = "SELECT Read_Complete,SUMARIO FROM boletin LEFT JOIN lastread on boletin.anyo=lastread.anyo AND boletin.type=lastread.type WHERE boletin.BOLETIN='" + app.update + "'"
-                    options.SQL.db.query(cadsql, function (err, record) {
+                    //cadsql = 
+                    options.SQL.db.query("SELECT Read_Complete,SUMARIO FROM boletin LEFT JOIN lastread on boletin.anyo=lastread.anyo AND boletin.type=lastread.type WHERE boletin.BOLETIN='" + app.update + "'", function (err, record) {
                         if (record.length > 0) {
                             if (record[0].Read_Complete = 1) {
                                 debugger
@@ -248,7 +248,8 @@
             } else {
                 //debugger
                 options.parser.Preceptos(options, type, function (data, ok, error) {
-                    if (!_.isNumber(ok) && ok == true) {
+                    var cadsql = ""
+                    if (!app._.isNumber(ok) && ok == true) {
                         var _d = new Date()
                         if (app.anyo*1 < _d.getFullYear()) {
                             app.anyo = (app.anyo*1) + 1
@@ -262,18 +263,16 @@
                         if (ok == 0) {
                             callback(data, ok)
                         } else {
+                            
                             if (error) {
                                 console.log(error)
-                                var cadsql = "UPDATE _" + type.toLowerCase() + "_text_" + data.anyo + " SET parser=" + ok + ", _err=? WHERE BOLETIN='" + data.cod + "'"
-                            } else {
-                                var cadsql = "UPDATE _" + type.toLowerCase() + "_text_" + data.anyo + " SET parser=" + ok + " WHERE BOLETIN='" + data.cod + "'"
                             }
-                            //console.log(cadsql)
-                            options.SQL.scrapDb.SQL.db.query(cadsql, [error], function (err, record) {
+                            
+                            options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + data.anyo + " SET parser=" + ok + (error ? ", _err=?" : "") + "WHERE BOLETIN='" + data.cod + "'", [error], function (err, record) {
                                 if (err)
                                     debugger
-                                cadsql = "UPDATE sumarios  SET parser = " + ok + " WHERE BOLETIN= '" + data.cod + "'"
-                                options.SQL.scrapDb.SQL.db.query(cadsql, function (err, record) {
+
+                                options.SQL.scrapDb.SQL.db.query("UPDATE sumarios  SET parser = " + ok + " WHERE BOLETIN= '" + data.cod + "'", function (err, record) {
                                     if (err)
                                         debugger
                                     callback(app, options, data, ok)

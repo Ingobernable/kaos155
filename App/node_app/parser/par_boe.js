@@ -141,7 +141,7 @@ module.exports = function (app, callback) {
                     }
                     if ((empresa.match(/\((.*?)\)/) || []).length > 0) {
                         var _x = []
-                        var _r = empresa.split(/\((.*?)\)/)
+                        const _r = empresa.split(/\((.*?)\)/)
                         _.forEach(_r, function (value) {
                             if(value.length>0)
                                 _x[_x.length] = value
@@ -160,7 +160,7 @@ module.exports = function (app, callback) {
                     }
                     if (((empresa.match(/^\w\ \w \ /) || []).length > 0)) {
                         debugger
-                        var _x = empresa.split(/^\w\ \w/)
+                        _x = empresa.split(/^\w\ \w/)
                         empresa = _.trim(_x[1]) + empresa.substr(4, empresa.length)
                         _nif = _x[0]
                     }
@@ -273,8 +273,8 @@ module.exports = function (app, callback) {
                         //_Empresa = clearEmpresa(_Empresa.replaceAll(/^\d\) /, ""))
                         if (_analisis._a.observaciones.indexOf("Desierto") == -1 && _Empresa.indexOf("Desierto") == -1) {
                             if (_Empresa.toLowerCase() == "ver anexo") {
-                                var _Empresa = options.Rutines.groupAnexos(options, _text, "Contratista:", "Importe", _Empresa, _sa)
-                                var anexo = true
+                                _Empresa = options.Rutines.groupAnexos(options, _text, "Contratista:", "Importe", _Empresa, _sa)
+                                anexo = true
                             }
                             
 
@@ -326,14 +326,14 @@ module.exports = function (app, callback) {
                                 //    debugger
                                 //}
                             } else {
-                                var _e = []
+                                _e = []
                                 if (_analisis.data.Contratista) {
-                                    var _e = _analisis.data.Contratista.replace("..", ".")
+                                    _e = _analisis.data.Contratista.replace("..", ".")
                                     if ((_e.match(/\"(.*?)\"/g) || []).length > 0)
                                         _e = _e.match(/\"(.*?)\"/g).join(";")
                                 }
 
-                                var data = options.Rutines.getData(app, record, _analisis, _Empresa, _e)
+                                data = options.Rutines.getData(app, record, _analisis, _Empresa, _e)
                                 data.extra.text = _text
 
                                 if (data.adjudicador) {

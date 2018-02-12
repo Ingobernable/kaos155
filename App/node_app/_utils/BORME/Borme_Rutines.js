@@ -1,22 +1,4 @@
 ﻿module.exports = function (app, transforms) {
-       const _ = app._
-
-        function pointer  (point, cadena) {
-            const _numero = " .0123456789"
-            while (_numero.indexOf(cadena.substr(point, 1)) > -1 && point > -1) {
-                point--
-            }
-            return (point)
-        }
-
-        function titleCase(str) {
-            str = str.toLowerCase();
-            const array = str.split(' ');
-            for (var c = 0; c < array.length; c++) {
-                array[c] = array[c].substr(0,1).toUpperCase() + array[c].substring(1);
-            }
-            return array.join(' ');
-        }
 
         return {
             ////////////////////////////////////////////////////////////////////////////////////
@@ -264,7 +246,7 @@
 
 
                     $('p.parrafo').each(function (p, _parraf) {
-                        var _t = _.trim($($('p.parrafo')[p]).html())
+                        var _t = app._.trim($($('p.parrafo')[p]).html())
                         if (_t.length > 0) {
                             if (_t.indexOf(')') == 1 || _t.indexOf('.') == 1 || _lastParragraf) {
                                 _arr[_arr.length] = _t
@@ -322,7 +304,6 @@
                     string = string.substr(0, string.length - 2)
                 return string
             },
-
             getConstitucion: function (cadena, _keys, _next, data) {
                 //var _ret = []
                 //debugger
@@ -357,7 +338,7 @@
 
                 const _ret = []
 
-                var found = function (cargos, _cadena) {
+                const found = function (cargos, _cadena) {
                     var cad = _cadena
                     var _found = false
                 
@@ -367,68 +348,44 @@
                             var minus = cad.indexOf(cargos[i]) > -1
                             _found = true
                             var _rep = cargos[i].replace(/\ /g, "").replace(/\./g, "#")
-                            cad = cad.replaceAll(minus?cargos[i]:cargos[i].toUpperCase(), minus?_rep:_rep.toUpperCase() ).trim()
+                            cad = app._.trim(cad.replaceAll(minus?cargos[i]:cargos[i].toUpperCase(), minus?_rep:_rep.toUpperCase() ) ) //.trim()
                         }
                     }
                     return { found: _found, cadena: cad }
                 }
 
                 const _f = found([], cadena)
-                var cadena = _f.cadena
-                _found = false //_f.found
-
-                if (! _found ) {
+                cadena = _f.cadena
                 
-                    _cad = titleCase(_f.cadena.split(":")[0] + ":").trim()
-                    //this.cargos.push( _cad )
-                    cadena = found([_cad], cadena).cadena // this.cargos, cadena).cadena
-                   // app.fs.writeFile(app.path.resolve('../DataFiles/cargos.json'), JSON.stringify(this.cargos.sort()), function (err) {
-                   //     console.log('\n'+'AÑADIDO NUEVO CARGO ' + _cad + '/n')
-                   // })
-                }
-                //var _head = cadena.replace(/S.L./g, 'SL.').replace(/S.A./g, 'SA.') //.split(".")
+                _cad = app._.trim( this.titleCase(_f.cadena.split(":")[0] + ":") )
+                cadena = found([_cad], cadena).cadena
+
                 const _valores = []
-
-                //if(_valores.substr(_valores.length-1,1)==" ")
-                //    _valores.trim() + "$"
-
-                const _preval = (cadena.replace(/S\.L\./g, 'SL.').replace(/S\.A\./g, 'SA.').replace(/\.\B/g, "#$").replace(/\. /g, "#$").trim().replace(/\./g, "#") + ' ').split("#$ ")
-                //_valores = []
-                //debugger
+                const _preval = app._.trim(cadena.replace(/S\.L\./g, 'SL.').replace(/S\.A\./g, 'SA.').replace(/\.\B/g, "#$").replace(/\. /g, "#$").replace(/\./g, "#") + ' ').split("#$ ")
                 for (i in _preval) {
                     if (_preval[i].length > 0) 
-                        if (_preval[i].trim().indexOf(":") == -1) {
+                        if (app._.trim( _preval[i] ).indexOf(":") == -1) {
                             _valores[_valores.length - 1] = _valores[_valores.length - 1] + _preval[i]
                         } else {
-                            _valores[_valores.length] = _preval[i].trim().replace(/#/g, ".").replace(/\$/g, "")
+                            _valores[_valores.length] = app._.trim( _preval[i] ).replace(/#/g, ".").replace(/\$/g, "")
                         }
                 }
                 for (i in _valores) {
-                    //debugger
-                    if (_valores[i].trim().length > 0) {
-
-                        // if (_valores[i].trim().indexOf("#") > -1) {
-                        //     debugger
-                        //     
-                        // }else{
-                        //     var item = _valores[i].trim().split(": ")
-                        // }
-                    
-                        const item = _valores[i].trim().split(": ")
+                    if (app._.trim( _valores[i] ).length > 0) {
+                        const item = app._.trim( _valores[i]).split(": ")
 
                         if (item.length > 0) {
                             if (item[1] != null){
-                                //debugger
 
-                                const _dir = item[1].trim().split(';')
+                                const _dir = app._.trim(item[1]).split(';')
                                 for (d in _dir) {
                                     _dir[d] = _dir[d]
                                     if (_dir[d].substr(_dir[d].length - 1, 1) == ".")
                                         _dir[d] = _dir[d].substr(0, _dir[d].length - 1)
                                     _ret[_ret.length] = {
                                         Empresa: isEmpresa(_dir[d]),
-                                        key: titleCase(item[0].trim().replace(/#/g, ".")),
-                                        value: isEmpresa(_dir[d]) ? _dir[d] : titleCase(_dir[d])
+                                        key: this.titleCase(app._.trim(item[0]).replace(/#/g, ".")),
+                                        value: isEmpresa(_dir[d]) ? _dir[d] : this.titleCase(_dir[d])
                                     }
 
                                 }
@@ -436,7 +393,6 @@
                         }
                     }
                 }
-                //debugger
                 return _ret
 
             },
@@ -446,10 +402,10 @@
             // 
             SQL: {
                 Concurso: function (_linea, __data, callback) {
-                    callback({ type: __data.type, key: _.trim(__data.values.key.replace(".", "").replace(":", "")), value: _.upperFirst(__data.values.value.toLowerCase()) }, 0)
+                    callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: app._.upperFirst(__data.values.value.toLowerCase()) }, 0)
                 },
                 Varios: function (_linea, __data, callback) {
-                    callback({ type: __data.type, key: _.trim(__data.values.key.replace(".", "").replace(":", "")), value: _.upperFirst(__data.values.value.toLowerCase()) }, 0)
+                    callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: app._.upperFirst(__data.values.value.toLowerCase()) }, 0)
                 },
                 Constitucion: function (_linea, __data, callback) {
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
@@ -477,14 +433,14 @@
                     __data.values.Auditor = _table == "Auditor"
                     
                     var _exclude = false
-                    _.forEach(options.diccionario.exclude, function (value) {
-                        if (_.toLower(__data.values.value).indexOf(value) == 0)
+                    app._.forEach(options.diccionario.exclude, function (value) {
+                        if (app._.toLower(__data.values.value).indexOf(value) == 0)
                             _exclude = true
                     })
 
-                    _.forEach(options.diccionario.recorta, function (value) {
-                        if (_.toLower(__data.values.value).indexOf(value) > -1)
-                            __data.values.value = __data.values.value.substr(__data.values.value, _.toLower(__data.values.value).indexOf(value) - 1)
+                    app._.forEach(options.diccionario.recorta, function (value) {
+                        if (app._.toLower(__data.values.value).indexOf(value) > -1)
+                            __data.values.value = __data.values.value.substr(__data.values.value, app._.toLower(__data.values.value).indexOf(value) - 1)
                     })
 
                     if (!_exclude) {                        
@@ -528,7 +484,7 @@
                             
 
                             if (app.neo4j != null)
-                                app.neo4j.push.Object(options, _table, params)
+                                app.neo4j.push.Object(params)
                             
                             go(options, params)
                             
@@ -650,7 +606,7 @@
                     var _pos = this.getPosExploreItems(data, _keys)                             //sacamos el counjunto de posiciones segun plabras clave
                     var _s = this.extraeArrDeCadena(data, _pos, { keys: { arr: _keys } }, type)       //extraemos las cadenas de las subopciones
                 }
-                return _keys.length > 0 ? { c: type, f: _s } : { c: type, f: _.trim(data) }
+                return _keys.length > 0 ? { c: type, f: _s } : { c: type, f: app._.trim(data) }
             },
             extraeArrDeCadena: function (cadena, map, _keys, _t) {
                 //rutina clave que extrae de la cadena, el conjunto de datos entre palabras clave
@@ -671,7 +627,7 @@
                         _plength = cadena.length  - py // map[_e].c.length                                  //si es el último elemento calculamos la longitud del resto de la cadena
                     }
                 
-                    var _string = _.trim(cadena.substr(py, _plength) )                               //extrayendo el resultado
+                    var _string = app._.trim(cadena.substr(py, _plength) )                               //extrayendo el resultado
                     if (_string.substr(_string.length - 1, 1) == ".")
                         _string= _string.substr(0, _string.length - 1)
 
@@ -820,7 +776,7 @@
                                     _n++
                                 }
 
-                                _Empresa[1] = _this.transforms(_.trim(_Empresa[1]), patterns.Contratista) 
+                                _Empresa[1] = _this.transforms(app._.trim(_Empresa[1]) , patterns.Contratista) 
                                 if (_Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS") > -1)
                                     _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].length - _Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS"))
 
@@ -831,7 +787,7 @@
                                     _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].indexOf('SL.') + 2)
 
                                 _lines[_lines.length] = {
-                                    id: _.trim(_Empresa[0]),
+                                    id: app._.trim(_Empresa[0]),
                                     e: _Empresa[1].split(".")[0].replace(/%/g,'.'),
                                     keys: _items,
                                     original: lines[i],
@@ -851,18 +807,9 @@
                 }
             },
             getUnique: function (_this, _name, _db, callback) {
-                //var _p = _name.split("")
-                //var _s = ""
-                //var n = 0
-
-                //for (n == 0; n < _name.length; n++) {
-                //    _s = _s + _name.charCodeAt(n).toString(16)
-                //}
-
                 const _k = app.aguid(_name)
                 if (_db == null)
                     debugger
-
 
                 _db.query("select * from borme_keys where _key=?", [_k,_name], function (err, record) {
                     if (record.length > 0) {
@@ -899,7 +846,7 @@
                         _n++
                     }
 
-                    _Empresa[1] = _this.transforms(_.trim(_Empresa[1]), patterns.Contratista)
+                    _Empresa[1] = _this.transforms(app._.trim(_Empresa[1]), patterns.Contratista)
                     if (_Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS") > -1) {
                         _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].length - _Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS"))
                     }
@@ -919,7 +866,7 @@
                     this.getUnique(this.getUnique, _e, _db, function (_k) {
                         
                         var _line = {
-                            id: _.trim(_Empresa[0]),
+                            id: app._.trim(_Empresa[0]) ,
                             e: _e,
                             k: _k.replaceAll("-","") , //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length-1) - (8-_l.length) , 8 - _l.length) ,
                             keys: _items,
@@ -937,6 +884,7 @@
 
             },
             explora: function (cadena, keys, array) {
+
                 var _ret = []
                 var _i = 0
                 var _p = ""
@@ -965,6 +913,14 @@
                     debugger
 
                 return _ret
+            },
+            titleCase: function(str) {
+                str = str.toLowerCase();
+                const array = str.split(' ');
+                for (var c = 0; c < array.length; c++) {
+                    array[c] = array[c].substr(0, 1).toUpperCase() + array[c].substring(1);
+                }
+                return array.join(' ');
             }
         
         }

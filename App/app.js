@@ -6,7 +6,7 @@ const memwatch = require('memwatch-next');
 memwatch.on('leak', (info) => {
     console.log('Fuga de memoria detectada:')
     console.log(info);
-   //debugger
+  //debugger
 });
 
 const pjson = require('./package.json');

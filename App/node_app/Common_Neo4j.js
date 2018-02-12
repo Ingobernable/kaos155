@@ -1,43 +1,62 @@
 ﻿module.exports = function (app) {
 
     return {
-        obj: require('neo4j-driver').v1, driver: null, session: null, cyper: [], run: function (options, params) {
-            this.session.run(app.neo4j.cadNeoSql).subscribe({
-                onError: function (error) {
-                    //x = CyperString
-                    console.log(error);
-                }
-            })
+        obj: require('neo4j-driver').v1,
+        driver: null,
+        session: null,
+        push: {
+            run: function (string) {
+                //console.log(string)
+                //if (false) {
+                    app.neo4j.session.run(string)//.subscribe({
 
-        }, push: {
-            Object: function (options, table, params) {
-
-                const _banca = options.isBanca(params)
-                const _table = _banca ? "Financiera" : options.isSicav(params) ? "Sicav" : options.isUTE(params) ? "Ute" : table
-
-                app.neo4j.cadNeoSql = "MERGE (:" + _table + " { " + "id: '" + params.k + "'" + ",nombre:'" + params.e.replaceAll("'", "\\'") + "' })"
-                app.neo4j.run(options, params)
+                    //    onError: function (error) {
+                    //        debugger
+                     //       console.log(error);
+                     //   }
+                    //})
+                //}
             },
-            relation: function (options, table, origen, destino, OptionsDestino, active) {
-                //debugger
-                const _banca_origen = options.isBanca(origen)
-                const _banca_destino = options.isBanca(destino)
+            Object: function (params) {
+               // console.log(this.Get.Object(params))
 
-                const _tableOrigen = _banca_origen ? "Financiera" : options.isSicav(origen) ? "Sicav" : options.isUTE(origen) ? "Ute" : "Empresa"
-                const _tableDestino = _banca_destino ? "Financiera" : options.isSicav(destino) ? "Sicav" : options.isUTE(destino) ? "Ute" : table
-                const _relation = _tableDestino == 'Auditor' ? "AUDITADO_POR" : _banca_destino ? "FINANCIADO_POR" : (_tableOrigen == _tableDestino && _tableDestino != 'Directivo') ? "PARTICIPADO_POR" : "DIRECTIVO"
+                this.run( this.Get.Object(params) )
 
-                const _ko = origen.k
-                const _kd = destino.k
+            },
+            relation: function (table, origen, destino) { //, OptionsDestino, active) {
+               // console.log(this.Get.relation(table, origen, destino))
 
-                app.neo4j.cadNeoSql = "MATCH (emp:" + _tableOrigen + " {id:'" + _ko + "'}),(x:" + _tableDestino + " {id:'" + _kd + "'})"                                //cadNeoSql = cadNeoSql + " MERGE (emp)-[:" + OptionsDestino.values.key + " { tipo:'" + OptionsDestino.type + "', cargo:'" + OptionsDestino.values.key + "' ,activo:" + (active ? 1 : 0) + ",anyo:" + origen.data.BOLETIN.match(/[\d]{4}/)[0] + "}]-(x)"
-                if (_relation == "FINANCIADO_POR" || _relation == "DIRECTIVO") {
-                    app.neo4j.cadNeoSql = app.neo4j.cadNeoSql + " MERGE (x)-[r:" + _relation + "]-(emp)"
-                } else {
-                    app.neo4j.cadNeoSql = app.neo4j.cadNeoSql + " MERGE (emp)-[r:" + _relation + "]-(x)"
+                this.run( this.Get.relation(table, origen,destino) )
+            },
+            Get: {
+                Object: function (params) {
+                    return "MERGE (:" + (this.utils.isBanca(params) ? "Financiera" : this.utils.isSicav(params) ? "Sicav" : this.utils.isUTE(params) ? "Ute" : params.table) + " { " + "id: '" + params.k + "'" + ",nombre:'" + params.e.replaceAll("'", "\\'") + "' })"
+                },
+                relation: function (table, origen, destino) {
+                    return "MATCH (emp:" + this.utils._table(table, origen, "Empresa") + " {id:'" + origen.k + "'}),(x:" + this.utils._table(table, origen, destino) + " {id:'" + destino.k + "'})" + ((this.utils._relation(table, origen, destino) == "FINANCIADO_POR" || this.utils._relation(table, origen, destino) == "DIRECTIVO") ? " MERGE (x)-[r:" + this.utils._relation(table, origen, destino) + "]-(emp)" : " MERGE (emp)-[r:" + this.utils._relation(table, origen, destino) + "]-(x)")
+                }, utils: {
+                    isBanca: function (params) {
+                        if (params == null) {
+                            debugger
+                        } else {
+                            if (params.e == null)
+                                debugger
+                        }
+                        return params.e.toUpperCase().indexOf('BANCO ') > -1 || params.e.toUpperCase().indexOf('CAJA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('SEGUROS ') > -1
+                    },
+                    isSicav: function (params) {
+                        return params.e.indexOf(' SICAV ') > -1
+                    },
+                    isUTE: function (params) {
+                        return params.e.indexOf(' UTE ') > -1
+                    },
+                    _table: function (table, data) {
+                        return this.isBanca(data) ? "Financiera" : this.isSicav(data) ? "Sicav" : this.isUTE(data) ? "Ute" : table
+                    },
+                    _relation: function (table, origen, destino) {
+                        return this._table(table, destino) == 'Auditor' ? "AUDITADO_POR" : this.isBanca(destino) ? "FINANCIADO_POR" : (this._table("Empresa", origen) == this._table(table, destino) && this._table(table, destino) != 'Directivo') ? "PARTICIPADO_POR" : "DIRECTIVO"
+                    }
                 }
-
-                app.neo4j.run(options)
             }
         }
     }
