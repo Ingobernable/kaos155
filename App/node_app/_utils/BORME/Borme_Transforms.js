@@ -1,5 +1,6 @@
 ﻿
-module.exports = function (app) {
+module.exports = function (app, options) {
+
     return {
         ADD: function (_arraysIn) {
             var _arrOut = []

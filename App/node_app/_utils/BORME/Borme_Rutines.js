@@ -1,4 +1,4 @@
-﻿module.exports = function (app, transforms) {
+﻿module.exports = function (app, options, transforms) {
 
         return {
             ////////////////////////////////////////////////////////////////////////////////////

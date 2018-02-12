@@ -1,9 +1,9 @@
 module.exports = function (app, callback) {
     //debugger
-    options = {
+    const options = {
 
         Command: app.command,
-        Rutines: require('../_utils/BORME/Borme_Rutines.js')(app, require('../_utils/BORME/Borme_Transforms.js')(app)),
+        
         pdfOpc: ['-nopgbrk', '-enc UTF-8'],
 
         diccionario: {
@@ -148,6 +148,7 @@ module.exports = function (app, callback) {
     }
 
     //options.Rutines.cargos = [] //dataCargos
+    options.Rutines = require('../_utils/BORME/Borme_Rutines.js')(app, options, require('../_utils/BORME/Borme_Transforms.js')(app, options) ),
     app.commonSQL.init(options, 'PARSER', app._fileCredenciales + options.Command, function (options) {
         app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
             //debugger
