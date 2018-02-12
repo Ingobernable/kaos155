@@ -4,8 +4,8 @@ global.__basedir = __dirname;
 const memwatch = require('memwatch-next');
 
 memwatch.on('leak', (info) => {
-    console.error('Fuga de memoria detectada:')
-    console.error(info);
+    console.log('Fuga de memoria detectada:')
+    console.log(info);
     debugger
 });
 
