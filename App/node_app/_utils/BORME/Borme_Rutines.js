@@ -859,12 +859,12 @@
                 //    _s = _s + _name.charCodeAt(n).toString(16)
                 //}
 
-                var _k = app.aguid(_name)
+                const _k = app.aguid(_name)
                 if (_db == null)
                     debugger
 
-                cadsql = "select * from borme_keys where _key=?"
-                _db.query(cadsql, [_k,_name], function (err, record) {
+
+                _db.query("select * from borme_keys where _key=?", [_k,_name], function (err, record) {
                     if (record.length > 0) {
                         if (record[0].Nombre.toLowerCase() === _name.toLowerCase()) {
                             callback(record[0]._key)
@@ -881,14 +881,15 @@
                 })
             },
             analizeSimpleLine: function (_db, _this, line,map, skey, callback) {
-                var patterns = _this._transforms.getPatern(_this._transforms)
-                var _items = this.getPosExploreItems(line, map.keys.arr, false)            //extraemos las posiciones donde existen palabras clave
+                const patterns = _this._transforms.getPatern(_this._transforms)
+                const _items = this.getPosExploreItems(line, map.keys.arr, false)            //extraemos las posiciones donde existen palabras clave
+                var _Empresa = ""
 
                 if (_items != null) {
                     if (line.substr(0, _items[0].p).indexOf("(") > -1) {
-                        var _Empresa = line.substr(0, _items[0].p).split("(")[0]        //extreamos la empresa del comienzo de la cadena
+                        _Empresa = line.substr(0, _items[0].p).split("(")[0]        //extreamos la empresa del comienzo de la cadena
                     } else {
-                        var _Empresa = line.substr(0, _items[0].p)
+                        _Empresa = line.substr(0, _items[0].p)
                     }
                     _Empresa = _Empresa.split("-")                                      //desechando lo que no interesa
                     
@@ -911,7 +912,7 @@
                     }
 
 
-                    var _e = _Empresa[1].split(".")[0].replace(/%/g, '.')
+                    const _e = _Empresa[1].split(".")[0].replace(/%/g, '.')
                   //  var _k = app.shorter.generate()(skey)
                   //  var _l = app.shorter.unique(_e)
                   //  var _i = app.shorter.unique(app.shorter.unique(new Date().toString() + ""))
@@ -939,24 +940,24 @@
                 var _ret = []
                 var _i = 0
                 var _p = ""
+                var _func = null
+                var _t = null
+                var _v = null
+
                 for (_i in keys) {
                     _i = _i * 1
-
-                    var _func = null
-                    var _t = array.keys.arr[keys[_i].id]
+                    _t = array.keys.arr[keys[_i].id]
                     if (array.nameKeys[keys[_i].id] != null)
-                        var _func = array.nameKeys[keys[_i].id]
+                        _func = array.nameKeys[keys[_i].id]
 
                     if (_i < keys.length - 1 && _func != null) {
                         if (this[_func] != null) {
-                            var _trozo = cadena.substr(keys[_i].p + keys[_i].c.length, keys[_i + 1].p - keys[_i].p - keys[_i].c.length)
-                            var _v = this[_func](_trozo, keys[_i], (_i < keys.length - 1 ? keys[_i] : null), array)
+                            _v = this[_func]( cadena.substr(keys[_i].p + keys[_i].c.length, keys[_i + 1].p - keys[_i].p - keys[_i].c.length) , keys[_i], (_i < keys.length - 1 ? keys[_i] : null), array)
                             for (p in _v) {
-
                                 _ret[_ret.length] = { type: _func, values: _v[p] }
                             }
                         } else {
-                            debugger
+                            console.log('BormeRutines Excepcion: explora ' + _func )
                         }
                     }
                 }

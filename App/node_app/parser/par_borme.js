@@ -54,84 +54,65 @@ module.exports = function (app, callback) {
 
 
             },
-            saveDiarioMovimientos: function (_linea, _ret) {
-                var saveLineContenido = function (_e, _linea, _cb, _func) {
-                    //const _this = this
-                    //var line = _linea.contenido[e]
-                    if (_e < _linea.contenido.length) {
-                        if (options.Rutines.SQL[_linea.contenido[_e].type] == null)
-                            debugger
-                        //
-                        // !!! Magic Point 　　
-                        // ejecutamos una rutina especifica dependiendo del valor de Type
-                        // 
-                        options.Rutines.SQL[_linea.contenido[_e].type](_linea, _linea.contenido[_e], function (_Dl, idRelacion, params, Active) {
-                            if (params == null) {
-                                params = { k: null }
+            saveLineContenido : function (_e, _linea, _cb, _func) {
+                if (_e < _linea.contenido.length) {
+                    if (options.Rutines.SQL[_linea.contenido[_e].type] == null)
+                        debugger
+                    //
+                    // !!! Magic Point 　　
+                    // ejecutamos una rutina especifica dependiendo del valor de Type
+                    // 
+                    options.Rutines.SQL[_linea.contenido[_e].type](_linea, _linea.contenido[_e], function (_Dl, idRelacion, params, Active) {
+                        if (params == null) {
+                            params = { k: null }
+                        }
 
-                            }
+                        if (_Dl == null) {
+                            _cb(_linea)
+                        } else {
+                            const _params = [
+                                _linea.data.BOLETIN,
+                                _linea.id,
+                                _linea.data.dia,
+                                _linea.data.mes,
+                                _linea.data.BOLETIN.match(/[\d]{4}/)[0],
+                                _linea.data.provincia,
+                                _linea.ID,
+                                _linea.k,
+                                idRelacion,
+                                params.k,
+                                _Dl.values == null ? 0 : _Dl.values.Auditor ? 2 : _Dl.values.Empresa ? 0 : 1,
+                                (Active ? 1 : 0),
+                                _Dl.type ? _Dl.type : _Dl.values.type,
+                                _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
+                                (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value)
+                            ]
 
-                            if (_Dl == null || params == null) {
-                                _cb(_linea)
-                            } else {
-                                //if (_line.data[e] == null)
-                                //    debugger
-                                //var _idEmpresa = true
-                                // if(idDirectivo>0)
-                                //      _idEmpresa = options.foundEmpresas(options.DirEmpresas, _linea.k)
-                                //if (_idEmpresa == null)
-                                //    debugger
-
-                                //debugger
-
-                                   
-                                const _params = [
-                                    _linea.data.BOLETIN,
-                                    _linea.id,
-                                    _linea.data.dia,
-                                    _linea.data.mes,
-                                    _linea.data.BOLETIN.match(/[\d]{4}/)[0],
-                                    _linea.data.provincia,
-                                    _linea.ID,
-                                    _linea.k,
-                                    idRelacion,
-                                    params.k,
-                                    _Dl.values == null ? 0 : _Dl.values.Auditor ? 2 : _Dl.values.Empresa ? 0 : 1,
-                                    (Active ? 1 : 0),
-                                    _Dl.type ? _Dl.type : _Dl.values.type,
-                                    _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
-                                    (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value)
-                                ]
-
-                                //insertamos un dato en el diario de movimientos
-                                if (app.neo4j && params.k && _linea.k) 
-                                    app.neo4j.push.relation(options, _Dl.values ? _Dl.values.Auditor ? "Auditor" : "Directivo" : "Directivo", _linea, params, _Dl, Active)
+                            //insertamos un dato en el diario de movimientos
+                            if (app.neo4j && params.k && _linea.k)
+                                app.neo4j.push.relation(options, _Dl.values ? _Dl.values.Auditor ? "Auditor" : "Directivo" : "Directivo", _linea, params, _Dl, Active)
 
 
-                                app.commonSQL.SQL.commands.insert.Borme.diario(options, _params, function (err, _record) {
-                                    app.process.stdout.write(app, options, '\x1b[33m', '.', '\x1b[0m')
-                                    //repitiendo el proceso para todos los datos de una linea
-                                    _e++
-                                    _func(_e, _linea, _cb, _func)
-                                })
-                               
-                            }
+                            app.commonSQL.SQL.commands.insert.Borme.diario(options, _params, function (err, _record) {
+                                app.process.stdout.write(app, options, '\x1b[33m', '.', '\x1b[0m')
+                                //repitiendo el proceso para todos los datos de una linea
+                                _e++
+                                _func(_e, _linea, _cb, _func)
+                            })
 
-                        })
-                    } else {
-                        //salida de la rutina de PARSEO                         
-                         _cb(_linea)
-                    }
+                        }
+
+                    })
+                } else {
+                    //salida de la rutina de PARSEO                         
+                    _cb(_linea)
                 }
+            },
+            saveDiarioMovimientos: function (_linea, _ret) {
+                this.saveLineContenido(0, _linea, _ret, this.saveLineContenido)
                 //guardamos el contenido de la linea
-                saveLineContenido(0, _linea, _ret, saveLineContenido)
-
-
             },
             Preceptos: function (options, type, callback) {
-                //var _this = this
-                var _lines = []
-                //var _this = this
                 //obtenemos el siguiente texto a parsear
                 app.commonSQL.SQL.commands.select.NextTextParser(options, [type, app.anyo], function (err, recordset) {
                     if (recordset[0].length > 0) {
@@ -166,23 +147,14 @@ module.exports = function (app, callback) {
             return params.e.toUpperCase().indexOf('BANCO ') > -1 || params.e.toUpperCase().indexOf('CAJA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('SEGUROS ') > -1
         },
         isSicav: function (params) {
-            //if (params.e.indexOf(' SICAV ') > -1)
-            //    debugger
-
-
-            //console.log(params.e)
             return params.e.indexOf(' SICAV ') > -1
         },
         isUTE: function (params) {
-            if (params.e.indexOf(' UTE ') > -1)
-                debugger
-
-            //console.log(params.e)
             return params.e.indexOf(' UTE ') > -1
         },
     }
 
-    options.Rutines.cargos = [] //dataCargos
+    //options.Rutines.cargos = [] //dataCargos
     app.commonSQL.init(options, 'PARSER', app._fileCredenciales + options.Command, function (options) {
         app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
             //debugger
