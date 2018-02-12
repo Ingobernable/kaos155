@@ -210,19 +210,20 @@
                             app.process.stdout.write(app, options, '', _linea.PROVINCIA, '')
                             
                             for (n in _linea.data) {
-                                //_text = _text + (_text.length > 0 ? "#" : "") + _linea.data[n].original
-                                //_id = _id + (_id.length > 0 ? "#" : "") + _linea.data[n].id
+
                                 _s = _s + "."
 
-                                const _f = "'" + data.desde.substr(6, 2) + "','" + data.desde.substr(4, 2) + "','" + data.desde.substr(0, 4) + "'"
-                                const _b = "'" + _linea.BORME + "'"
-                                const _t = "'" + _linea.data[n].original.replaceAll("'", "\\'") + "'"
-                                const _p = "'" + _linea.PROVINCIA + "'"
-                                const _i = "'" + _linea.data[n].id + "'"
-                                const __cadsql = "Call Insert_Text_BORME(" + _f + "," + _b + "," + _t + "," + _p + "," + _i + ");"
 
-                                _cadSql = _cadSql + __cadsql
-                                //app.process.stdout.write(app, options, '.' )
+                                this.g = {
+                                    _f: "'" + data.desde.substr(6, 2) + "','" + data.desde.substr(4, 2) + "','" + data.desde.substr(0, 4) + "'",
+                                    _b: "'" + _linea.BORME + "'",
+                                    _t : "'" + _linea.data[n].original.replaceAll("'", "\\'") + "'",
+                                    _p : "'" + _linea.PROVINCIA + "'",
+                                    _i : "'" + _linea.data[n].id + "'"
+                                }
+
+                                _cadSql = _cadSql + "Call Insert_Text_BORME(" + this.g._f + "," + this.g._b + "," + this.g._t + "," + this.g._p + "," + this.g._i + ");"
+                               this.g = null
                             }
 
 
@@ -234,8 +235,6 @@
                                     debugger
                                     cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
                                     options.SQL.db.query(cadSql, [_linea.BORME, err.sqlMessage.replaceAll("'", "/'")], function (err2) {
-                                        var x = err
-                                        //var y = params
                                         callback(data)
                                     })
                                 } else {
@@ -244,10 +243,10 @@
                             })
                         },
                         keys: function (options, params, callback, _cberror) {
-                            const _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)"
-                            const _params = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
+                            //const _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)"
+                            //const _params = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
 
-                            options.SQL.db.query(_cadsql, _params , function (err, _rec) {
+                            options.SQL.db.query("CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)", [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME] , function (err, _rec) {
                                 if (err != null || _rec[0][0] == null) {
 
                                     cadSql = "CALL Insert_Error_Boletin(?,?,?)"
@@ -285,8 +284,8 @@
                                     callback(data)
                                 })
                             } else {
-                                var boletin = _analisis._BOLETIN.split("=").length > 1 ? _analisis._BOLETIN.split("=")[1] : _analisis._BOLETIN
-                                var fecha = boletin.split("-").length == 2 ? boletin.split("-")[1] : data.desde
+                                const boletin = _analisis._BOLETIN.split("=").length > 1 ? _analisis._BOLETIN.split("=")[1] : _analisis._BOLETIN
+                                const fecha = boletin.split("-").length == 2 ? boletin.split("-")[1] : data.desde
 
                                 options.Rutines.normalizeTextContrato(data.textExtend, options.keysContrato, function (_text, _jsonData) {
 
@@ -294,7 +293,8 @@
                                     if (!(_jsonData.Contratista != null && (_jsonData.Importe != null || _analisis._importe.length > 0))) {
                                         data.err = "FALTA CONTRATISTA o IMPORTES"
                                     }
-                                        const params = [
+
+                                    this.params = [
                                             _text.length,
                                             boletin.split("-")[0],                                                      //type
                                             fecha.substr(6, 2),                                                      //Dia
@@ -307,28 +307,29 @@
                                             JSON.stringify(_analisis.extra),
                                             _analisis._importe,                                                          //importe accesible?
                                             data.err == null ? '' : data.err
-                                        ]
+                                    ]
 
-                                        options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', params, function (err, record) {
-                                            if (err != null) {
-                                                app.process.stdout.write(app, options, '\x1b[31m','INS','\x1b[0m')
-                                                cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
-                                                options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
-                                                    var x = err
-                                                    var y = params
-                                                    callback(data)
-                                                })
+                                    options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', this.params, function (err, record) {
+                                        if (err != null) {
+                                            app.process.stdout.write(app, options, '\x1b[31m','INS','\x1b[0m')
+                                            cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
+                                            options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
+                                                var x = err
+                                                var y = params
+                                                callback(data)
+                                            })
+                                        } else {
+                                            if (data.err!=null) {
+                                                app.process.stdout.write(app, options, '\x1b[31m','ERR','\x1b[0m')
+                                                callback(data)
                                             } else {
-                                                if (data.err!=null) {
-                                                    app.process.stdout.write(app, options, '\x1b[31m','ERR','\x1b[0m')
-                                                    callback(data)
-                                                } else {
-                                                    app.process.stdout.write(app, options, '\x1b[32m','+','\x1b[0m')
-                                                    callback(data)
-                                                }
+                                                app.process.stdout.write(app, options, '\x1b[32m','+','\x1b[0m')
+                                                callback(data)
                                             }
-                                        })
-                                    //} else {
+                                        }
+                                    })
+
+                                    this.params = null
 
                                 })
                             }

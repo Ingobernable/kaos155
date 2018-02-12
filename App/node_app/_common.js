@@ -109,21 +109,18 @@
             //const _this = this
             return {
                 NEW: function (options, data, analizer, callback) {
-                    const __this = this
-                    var turl = ""
-                    app.BOLETIN._common.SQL.commands.Sumario.insert(options, data, function (data, isrepeat) {
+                    const _this = this
+                    
+                    options._common.SQL.commands.Sumario.insert(options, data, function (data, isrepeat) {
+                        
                         if (!isrepeat) {
-                            if (data._analisis != null) {
-                                turl = data._analisis[data.e].pdf != null ? data._analisis[data.e].pdf : data._list[data.e] //: //.split("/")
-                            } else {
-                                turl = data._list[data.e]
-                            }
-                            __this.Search(options, turl, data, analizer, function (data, repeat, fail) {
+
+                            _this.Search(options, (data._analisis != null ? (data._analisis[data.e].pdf != null ? data._analisis[data.e].pdf : data._list[data.e]) : data._list[data.e]) , data, analizer, function (data, repeat, fail) {
                                 if (fail) {
                                     app.BOLETIN._common.SQL.commands.Sumario.SetScrapLabel(options, data, function (data) {
                                         if (data.e < data._list.length - 1) {
                                             data.e++
-                                            __this.NEW(options, data, analizer, callback)
+                                            _this.NEW(options, data, analizer, callback)
                                         } else {
                                             callback(data)
                                         }
@@ -133,7 +130,7 @@
                                         if (!repeat) {
                                             data.e++
                                         }
-                                        __this.NEW(options, data, analizer, callback)
+                                        _this.NEW(options, data, analizer, callback)
 
                                     } else {
                                         callback(data)
@@ -144,7 +141,7 @@
                         } else { 
                             if (data.e < data._list.length - 1) {
                                data.e++
-                                __this.NEW(options, data, analizer, callback)
+                                _this.NEW(options, data, analizer, callback)
                             } else {
                                 callback(data)
                             }

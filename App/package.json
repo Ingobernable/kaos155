@@ -1,7 +1,7 @@
 {
   "name": "KAOS-155",
-  "version": "0.0.1",
-  "description": "SCRAP BBDD oficiales",
+  "version": "0.1.0",
+  "description": "SCRAP & PARSER BBDD oficiales",
   "main": "app.js",
   "author": {
     "name": "INGOBERLAB"

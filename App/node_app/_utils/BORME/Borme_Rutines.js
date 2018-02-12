@@ -688,7 +688,7 @@
                     return !isNaN(parseFloat(n)) && isFinite(n);
                 }
 
-                var patterns = _this._transforms.getPatern(_this._transforms)
+                var patterns = _this._transforms.getPatern(this._transforms)
                 var _xlines=[]
                 var Borme = null
                 var Provincia = null
