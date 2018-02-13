@@ -1,10 +1,13 @@
 'use strict';
-
+//////////////////////////////////////////////////////////////////////
+//
+// para activar la db de grafos neo4JS, crear una carpeta vacia App/sqlfiles/neo4j
+//
 global.__basedir = __dirname;
 const pjson = require('./package.json');
 console.log('kaos155 App - version -' + pjson.version + '.')
 
-if (true) {
+if (false) {
     var memwatch = require('memwatch-next');
 
     if (memwatch != null)

@@ -85,6 +85,22 @@ module.exports = function (app, callback) {
                         ]
                         console.log(data.cod, data.area, data.tipoTramite, data.tipoForma)
                         //
+                        if (app.neo4j) {
+                            app.neo4j.push.Object({ table: "_" + data.anyo, k: data.anyo })
+                            app.neo4j.push.Object({ table: "_" + data.area.toUpperCase(), k: data.area.toUpperCase() })
+                            app.neo4j.push.Object({ table: "_" + data.tipoBoletin, k: data.tipoBoletin })
+                            app.neo4j.push.Object({ table: "_" + data.tipoTramite, k: data.tipoTramite })
+                            app.neo4j.push.Object({ table: "_" + data.tipoForma, k: data.tipoForma })
+                            app.neo4j.push.Object({ table: "_boletin", k: data.cod })
+
+                            app.neo4j.push.run("MATCH (t:_" + data.anyo + "),(a:_" + data.area.toUpperCase() + ") MERGE (t)-[r:_area]-(a)")
+                            app.neo4j.push.run("MATCH (t:_" + data.area.toUpperCase() + "),(a:_boletin {id:'" + data.cod +"'}) MERGE (t)-[r:_contrato]-(a)")
+
+                            app.neo4j.push.run("MATCH (t:_boletin {id:'" + data.cod +"'}),(a:_" + data.tipoBoletin + ") MERGE (t)-[r:_tipo]-(a)")                            app.neo4j.push.run("MATCH (t:_" + data.tipoBoletin + "),(a:_" + data.tipoTramite + ") MERGE (t)-[r:_tramite]-(a)")
+                            app.neo4j.push.run("MATCH (t:_boletin {id:'" + data.cod + "'}),(a:_" + data.tipoTramite + ") MERGE (t)-[r:_tramite]-(a)")
+                            app.neo4j.push.run("MATCH (t:_boletin {id:'" + data.cod +"'}),(a:_" + data.tipoForma + ") MERGE (t)-[r:_fotma]-(a)")
+                        }
+                        //
                         options.SQL.db.query('Call Insert_Data_BOLETIN(?,?, ?,?, ?,?,?, ?, ?,?,?, ?, ?,?,?, ?,?,?)', params, function (err, record) {
                             if (err != null) {
                                 debugger
@@ -218,7 +234,7 @@ module.exports = function (app, callback) {
         parser: {
             Preceptos: function (options, type, callback) {
 
-                var consulta = function (type, _cbx, _cb) {
+                const consulta = function (type, _cbx, _cb) {
                     //debugger
                     options.SQL.scrapDb.SQL.db.query('call GetNextTextParser(?,?)', [type, app.anyo], function (err, record) {
                         if (err)
@@ -238,7 +254,7 @@ module.exports = function (app, callback) {
                 }
                 consulta(type, callback,  function (err, record,_cbx) {
                     var anexo = false
-                    group = function (text, key, exclude) {
+                    const group = function (text, key, exclude) {
                         var _ret=[]
                         _.forEach(text, function (line) {
                             if (line.toLowerCase().indexOf(key.toLowerCase())>-1) {
@@ -251,7 +267,7 @@ module.exports = function (app, callback) {
                     }
                     if (record[0].length > 0) {
                         app.process.stdout.write(app, options, '\x1b[36m', '.', '\x1b[0m')
-                        var _sa = options.transforms.ADD( [
+                        const _sa = options.transforms.ADD( [
                             options.patterns.General,
                             options.patterns.Contratista,
                             options.patterns.especialChars,
@@ -321,10 +337,6 @@ module.exports = function (app, callback) {
                                     options.Rutines.saveDataBoletin(app, options, data, _cbx)
                                 }
                                 
-                                //debugger
-                                //} else {
-                                //    debugger
-                                //}
                             } else {
                                 _e = []
                                 if (_analisis.data.Contratista) {
@@ -389,8 +401,8 @@ module.exports = function (app, callback) {
                 })
                 //app.Rutines(app).askToServer(app, { encoding: 'UTF-8', method: "GET", uri: options.url + urlDoc, agent: false }, data, function (app, body, data) {
                 //var xcadsql = null
-                contratos = function () {
-                    var contratos = []
+                const contratos = function () {
+                    //var contratos = []
                     if (body != null) {
 
                         var $ = app.Rutines(app).XmlToDom(body)                 // convertimos el texto xml en objetos DOM

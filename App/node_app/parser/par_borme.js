@@ -117,6 +117,9 @@ module.exports = function (app, callback) {
             Preceptos: function (options, type, callback) {
                 //obtenemos el siguiente texto a parsear
                 app.commonSQL.SQL.commands.select.NextTextParser(options, [type, app.anyo], function (err, recordset) {
+                    if (err)
+                        console.log(err)
+
                     if (recordset[0].length > 0) {
                         if (options.f != recordset[0][0].mes + '/' + recordset[0][0].dia)
                             app.process.stdout.write(app, options, '\x1b[36m', recordset[0][0].mes + '/' + recordset[0][0].dia, ':\x1b[0m')

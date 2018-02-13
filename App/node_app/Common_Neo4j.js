@@ -8,13 +8,13 @@
             run: function (string) {
                 //console.log(string)
                 //if (false) {
-                    app.neo4j.session.run(string)//.subscribe({
+                    app.neo4j.session.run(string).subscribe({
 
-                    //    onError: function (error) {
+                        onError: function (error) {
                     //        debugger
-                     //       console.log(error);
-                     //   }
-                    //})
+                            console.log(error);
+                        }
+                    })
                 //}
             },
             Object: function (params) {
@@ -30,25 +30,44 @@
             },
             Get: {
                 Object: function (params) {
-                    return "MERGE (:" + (this.utils.isBanca(params) ? "Financiera" : this.utils.isSicav(params) ? "Sicav" : this.utils.isUTE(params) ? "Ute" : params.table) + " { " + "id: '" + params.k + "'" + ",nombre:'" + params.e.replaceAll("'", "\\'") + "' })"
+                    return "MERGE (:" + (this.utils.isBanca(params) ? "Financiera" : this.utils.isSicav(params) ? "Sicav" : this.utils.isUTE(params) ? "Ute" : params.table) + (params.e || params.k ? ( " { " + (params.k ? ("id: '" + params.k + "'") : "") + (params.e && params.k ? "," : "") + (params.e? ("nombre:'" + params.e.replaceAll("'", "\\'") + "'" ) : "")  + " }"):"") + ")"
                 },
                 relation: function (table, origen, destino) {
                     return "MATCH (emp:" + this.utils._table("Empresa", origen) + " {id:'" + origen.k + "'}),(x:" + this.utils._table(table, destino) + " {id:'" + destino.k + "'})" + ((this.utils._relation(table, origen, destino) == "FINANCIADO_POR" || this.utils._relation(table, origen, destino) == "DIRECTIVO") ? " MERGE (x)-[r:" + this.utils._relation(table, origen, destino) + "]-(emp)" : " MERGE (emp)-[r:" + this.utils._relation(table, origen, destino) + "]-(x)")
                 }, utils: {
                     isBanca: function (params) {
                         if (params == null) {
-                            debugger
+                            return false
                         } else {
-                            if (params.e == null)
-                                debugger
+                            if (params.e == null) {
+                                return false
+                            } else {
+                                return params.e.toUpperCase().indexOf('BANCO ') > -1 || params.e.toUpperCase().indexOf('CAJA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('SEGUROS ') > -1
+                            }
                         }
-                        return params.e.toUpperCase().indexOf('BANCO ') > -1 || params.e.toUpperCase().indexOf('CAJA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('SEGUROS ') > -1
+                        
                     },
                     isSicav: function (params) {
-                        return params.e.indexOf(' SICAV ') > -1
+                        if (params == null) {
+                            return false
+                        } else {
+                            if (params.e == null) {
+                                return false
+                            } else {
+                                return params.e.indexOf(' SICAV ') > -1
+                            }
+                        }
                     },
                     isUTE: function (params) {
-                        return params.e.indexOf(' UTE ') > -1
+                        if (params == null) {
+                            return false
+                        } else {
+                            if (params.e == null) {
+                                return false
+                            } else {
+                                return params.e.indexOf(' UTE ') > -1
+                            }
+                        }
                     },
                     _table: function (table, data) {
                         return this.isBanca(data) ? "Financiera" : this.isSicav(data) ? "Sicav" : this.isUTE(data) ? "Ute" : table

@@ -265,7 +265,7 @@
                                 console.log(error)
                             }
                             
-                            options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + data.anyo + " SET parser=" + ok + (error ? ", _err=?" : "") + "WHERE BOLETIN='" + data.cod + "'", [error], function (err, record) {
+                            options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + data.anyo + " SET parser=" + ok + (error ? ", _err=?" : "") + " WHERE BOLETIN='" + data.cod + "'", [error], function (err, record) {
                                 if (err)
                                     debugger
 
