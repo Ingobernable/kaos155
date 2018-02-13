@@ -4,7 +4,7 @@ global.__basedir = __dirname;
 const pjson = require('./package.json');
 console.log('kaos155 App - version -' + pjson.version + '.')
 
-if (true) {
+if (false) {
     var memwatch = require('memwatch-next');
 
     if (memwatch != null)

@@ -127,7 +127,7 @@
                                     } else {
                                         console.log("\x1b[32m Conectado a mysql OK \x1b[0m");
 
-                                        _ithis.testDB(options, con, resp, db, function () {
+                                        _ithis.testDB(options, con, resp, "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : '') , function () {
                                             app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
                                                 console.log("\x1b[32m Nuevas credenciales de acceso mysql guardadas OK \x1b[0m");
                                                 _cb(_credenciales)

@@ -33,7 +33,7 @@
                     return "MERGE (:" + (this.utils.isBanca(params) ? "Financiera" : this.utils.isSicav(params) ? "Sicav" : this.utils.isUTE(params) ? "Ute" : params.table) + " { " + "id: '" + params.k + "'" + ",nombre:'" + params.e.replaceAll("'", "\\'") + "' })"
                 },
                 relation: function (table, origen, destino) {
-                    return "MATCH (emp:" + this.utils._table(table, origen, "Empresa") + " {id:'" + origen.k + "'}),(x:" + this.utils._table(table, origen, destino) + " {id:'" + destino.k + "'})" + ((this.utils._relation(table, origen, destino) == "FINANCIADO_POR" || this.utils._relation(table, origen, destino) == "DIRECTIVO") ? " MERGE (x)-[r:" + this.utils._relation(table, origen, destino) + "]-(emp)" : " MERGE (emp)-[r:" + this.utils._relation(table, origen, destino) + "]-(x)")
+                    return "MATCH (emp:" + this.utils._table("Empresa", origen) + " {id:'" + origen.k + "'}),(x:" + this.utils._table(table, destino) + " {id:'" + destino.k + "'})" + ((this.utils._relation(table, origen, destino) == "FINANCIADO_POR" || this.utils._relation(table, origen, destino) == "DIRECTIVO") ? " MERGE (x)-[r:" + this.utils._relation(table, origen, destino) + "]-(emp)" : " MERGE (emp)-[r:" + this.utils._relation(table, origen, destino) + "]-(x)")
                 }, utils: {
                     isBanca: function (params) {
                         if (params == null) {
