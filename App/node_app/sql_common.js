@@ -12,13 +12,13 @@
                     this.poolSql[type].getConnection(function (err, connection) {
                         // connected! (unless `err` is set)
                         if (err == null) {
-                            console.log('new connection ' + options.Command + ' mysql OK')
+                            console.log('new connection ' + type + ' mysql OK')
                             options.SQL.db = connection // _this.connection[type] = connection
                             _exit(options, type, callback)
                         } else {
 
                             console.log("\x1b[31m ERROR: al acceder a la DB ")
-                            console.log("elimine el fichero '" + app.path.normalize('sqlfiles/x_ACCESO_mysql_' + options.Command + '.json') + "'  \x1b[0m")
+                            console.log("elimine el fichero '" + app.path.normalize('sqlfiles/'+ options.Command + '/x_ACCESO_mysql_' + type + '.json') + "'  \x1b[0m")
                             console.log("y vuelva a ejecutar app.js")
                             process.exit(1)
                         }
@@ -44,11 +44,11 @@
                 }
             });
         },
-        testDB: function (options, con, resp, db, callback, close) {
+        testDB: function (options, con, resp, type, db, callback, close) {
             const _xthis = this
             console.log("\x1b[32m testeando consistencia DB " + db + " \x1b[0m");
             con.query("SHOW Databases LIKE '" + db + "'", function (err, record) {
-                var _command = 'mysql -u' + resp.user + ' -p' + resp.password + ' -h' + resp.host + ' -D' + db + '< ' + app.path.normalize(__dirname + '/../sqlfiles/' + options.Command.toLowerCase() + '/CREATE_FULL_' + options.Command + '.sql')
+                const _command = 'mysql -u' + resp.user + ' -p' + resp.password + ' -h' + resp.host + ' -D' + db + '<' + app.path.normalize(__dirname + '/../sqlfiles/' + options.Command.toLowerCase() + "/" + type + '/CREATE_FULL_' + type + '.sql')
 
                 if (record.length == 0) {
                     con.query("CREATE DATABASE IF NOT EXISTS " + db, function (err, result) {
@@ -71,17 +71,17 @@
                 }
             })
         },
-        init: function (options, type, _file, callback) {
+        init: function (options, type, callback) {
             const _ithis = this
             this.encryptor = require('simple-encryptor')("bbdd_kaos155_text")
 
-            if (process.env['KAOS_MYSQL_' + options.Command + '_PASS']) {
+            if (process.env['KAOS_MYSQL_' + type + '_PASS']) {
 
                 this.poolSql[type] = app.mysql.createPool({
-                    host: process.env['KAOS_MYSQL_' + options.Command + '_HOST'],
-                    user: process.env['KAOS_MYSQL_' + options.Command + '_USER'],
-                    password: process.env['KAOS_MYSQL_' + options.Command + '_PASS'],
-                    database: process.env['KAOS_MYSQL_' + options.Command + '_DB'],
+                    host: process.env['KAOS_MYSQL_' + type + '_HOST'],
+                    user: process.env['KAOS_MYSQL_' + type + '_USER'],
+                    password: process.env['KAOS_MYSQL_' + type + '_PASS'],
+                    database: process.env['KAOS_MYSQL_' + type + '_DB'],
                     multipleStatements: true,
                     waitForConnection: true,
                 })
@@ -90,16 +90,16 @@
 
             } else {
 
-                app.fs.readFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), function (err, _JSON) {
+                app.fs.readFile(app.path.normalize('sqlfiles/' + (type!="SCRAP"?"parser/":"") + type.toLowerCase() + '/cred_' + type + '.json'), function (err, _JSON) {
                     var _cb = null
                     if (err) {
-                        testIp = function (testIp, callback) {
+                        const testIp = function (testIp, callback) {
 
                             _cb = callback 
                             app.inquirer.prompt([
-                                        { type: 'input', name: 'host', message: 'mysql ' + options.Command + ' IP', default: 'localhost' },
-                                        { type: 'input', name: 'user', message: 'mysql ' + options.Command + ' user', default: 'root' },
-                                        { type: 'password', name: 'password', message: 'mysql ' + options.Command + ' password' }
+                                { type: 'input', name: 'host', message: 'mysql ' + type + ' IP', default: 'localhost' },
+                                { type: 'input', name: 'user', message: 'mysql ' + type + ' user', default: 'root' },
+                                { type: 'password', name: 'password', message: 'mysql ' + type + ' password' }
 
                             ]).then(function (resp) {
 
@@ -115,7 +115,7 @@
                                     host: resp.host,
                                     user: resp.user,
                                     password: _ithis.encryptor.encrypt(resp.password),
-                                    database: "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : ''),
+                                    database: "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : (type=="BORME"? ("_"+type.toLowerCase()) : "_contratos") ),
                                     multipleStatements: true,
                                     waitForConnection: true,
                                 }
@@ -125,14 +125,15 @@
                                         console.log('\x1b[31m las credenciales no parecen validas, vuelve a intentarlo \x1b[0m')
                                         testIp(testIp)
                                     } else {
-                                        console.log("\x1b[32m Conectado a mysql OK \x1b[0m");
+                                        console.log("\x1b[32m Conectado a " + type + " OK \x1b[0m");
 
-                                        _ithis.testDB(options, con, resp, "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : '') , function () {
-                                            app.fs.writeFile(app.path.normalize('sqlfiles/x_' + _file + '.json'), JSON.stringify(_credenciales), function (err, _JSON) {
+                                        _ithis.testDB(options, con, resp, type , "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() : "_contratos")) , function () {
+                                            app.fs.writeFile('sqlfiles/' + (type != "SCRAP" ? "parser/" : "") + type.toLowerCase() + '/cred_' + type + '.json', JSON.stringify(_credenciales), function (err, _JSON) {
                                                 console.log("\x1b[32m Nuevas credenciales de acceso mysql guardadas OK \x1b[0m");
                                                 _cb(_credenciales)
                                             })
                                         }, true)
+
                                     }
                                 });
                             })

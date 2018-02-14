@@ -8,29 +8,29 @@
             run: function (string) {
                 //console.log(string)
                 //if (false) {
-                    app.neo4j.session.run(string).subscribe({
+                app.neo4j.session.run(string).subscribe({
 
-                        onError: function (error) {
-                    //        debugger
-                            console.log(error);
-                        }
-                    })
+                    onError: function (error) {
+                        //        debugger
+                        console.log(error);
+                    }
+                })
                 //}
             },
             Object: function (params) {
-               // console.log(this.Get.Object(params))
+                // console.log(this.Get.Object(params))
 
-                this.run( this.Get.Object(params) )
+                this.run(this.Get.Object(params))
 
             },
             relation: function (table, origen, destino) { //, OptionsDestino, active) {
-               // console.log(this.Get.relation(table, origen, destino))
+                // console.log(this.Get.relation(table, origen, destino))
 
-                this.run( this.Get.relation(table, origen,destino) )
+                this.run(this.Get.relation(table, origen, destino))
             },
             Get: {
                 Object: function (params) {
-                    return "MERGE (:" + (this.utils.isBanca(params) ? "Financiera" : this.utils.isSicav(params) ? "Sicav" : this.utils.isUTE(params) ? "Ute" : params.table) + (params.e || params.k ? ( " { " + (params.k ? ("id: '" + params.k + "'") : "") + (params.e && params.k ? "," : "") + (params.e? ("nombre:'" + params.e.replaceAll("'", "\\'") + "'" ) : "")  + " }"):"") + ")"
+                    return "MERGE (:" + (this.utils.isBanca(params) ? "Financiera" : this.utils.isSicav(params) ? "Sicav" : this.utils.isUTE(params) ? "Ute" : params.table) + (params.e || params.k ? (" { " + (params.k ? ("id: '" + params.k + "'") : "") + (params.e && params.k ? "," : "") + (params.e ? ("nombre:'" + params.e.replaceAll("'", "\\'") + "'") : "") + " }") : "") + ")"
                 },
                 relation: function (table, origen, destino) {
                     return "MATCH (emp:" + this.utils._table("Empresa", origen) + " {id:'" + origen.k + "'}),(x:" + this.utils._table(table, destino) + " {id:'" + destino.k + "'})" + ((this.utils._relation(table, origen, destino) == "FINANCIADO_POR" || this.utils._relation(table, origen, destino) == "DIRECTIVO") ? " MERGE (x)-[r:" + this.utils._relation(table, origen, destino) + "]-(emp)" : " MERGE (emp)-[r:" + this.utils._relation(table, origen, destino) + "]-(x)")
@@ -45,7 +45,7 @@
                                 return params.e.toUpperCase().indexOf('BANCO ') > -1 || params.e.toUpperCase().indexOf('CAJA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('CAIXA ') > -1 || params.e.toUpperCase().indexOf('SEGUROS ') > -1
                             }
                         }
-                        
+
                     },
                     isSicav: function (params) {
                         if (params == null) {

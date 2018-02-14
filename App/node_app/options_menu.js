@@ -23,16 +23,14 @@
 
             }
         }
-        //} else {
-        //    var date = new Date()
-        //}
+
         callback(app, myArgs, date, automatic) // options
     }
     const getanyos = function (app, command, type, callback) {
         app.command = command
         require("./sql_common.js")(app, function (commonSQL) {
             app.commonSQL = commonSQL
-            app.commonSQL.init({ SQL: { db: null }, Command: 'SCRAP' }, 'SCRAP', app._fileCredenciales + 'SCRAP', function (scrapdb) {
+            app.commonSQL.init({ SQL: { db: null }, Command: 'SCRAP' }, 'SCRAP', function (scrapdb) {
                 scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosread WHERE Type='" + type + "' AND SCRAP = 1", function (err, record) { //+(command=='SCRAP' ? 1: 0) 
                     var anyos = []
                     if (command == 'SCRAP') {
@@ -92,62 +90,9 @@
         }
     }
 
-
+    main(myArgs, exit, callback)
     ////////////////////////////////////////////////////////////////////////
-    if (app.fs.existsSync("./sqlfiles/neo4j")) {
-        if (app.fs.existsSync(__basedir + "/sqlfiles/x_ACCESO_neo4j.json")) {
-
-
-            app.credentials.getlogsparamsfromfile('ACCESO_neo4j', function (err) {
-                debugger
-            }, function (resp) {
-                app.neo4j = require("./Common_Neo4j.js")(app)
-                
-
-                app.neo4j.driver = app.neo4j.obj.driver('bolt://' + resp.host, app.neo4j.obj.auth.basic(resp.user, resp.password), {
-                    encrypted: 'ENCRYPTION_OFF'
-                })
-                app.neo4j.driver.onCompleted = function () {
-                    main(myArgs, exit, callback)
-                }
-                app.neo4j.session = app.neo4j.driver.session();
-            })
-
-        } else {
-            app.inquirer.prompt([
-
-                { type: 'input', name: 'host', message: 'neo4db IP:port', default: 'localhost' },
-                { type: 'input', name: 'user', message: 'neo4db user', default: 'neo4j' },
-                { type: 'password', name: 'password', message: 'neo4db password' }
-
-            ]).then(function (resp) {
-
-                app.neo4j = require("./Common_Neo4j.js")(app)
-
-                app.neo4j.driver = app.neo4j.obj.driver('bolt://' + resp.host, app.neo4j.obj.auth.basic(resp.user, resp.password), {
-                    encrypted: 'ENCRYPTION_OFF'
-                })
-
-                app.neo4j.driver.onCompleted = function () {
-                    console.log('Neo4js Driver created');
-                    //debugger
-                    app.credentials.savelogsparamstofile('ACCESO_neo4j', resp, null, function (_credenciales) {
-                        main(myArgs, exit, callback)
-                    })
-                };
-
-                app.neo4j.driver.onError = function (error) {
-                    console.log(error);
-                };
-
-                app.neo4j.session = app.neo4j.driver.session();
-
-            })
-
-        }
-    } else {
-        main(myArgs, exit, callback)
-    }
+    
 
     
 

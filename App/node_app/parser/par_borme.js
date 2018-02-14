@@ -152,8 +152,8 @@ module.exports = function (app, callback) {
 
     //options.Rutines.cargos = [] //dataCargos
     options.Rutines = require('../_utils/BORME/Borme_Rutines.js')(app, options, require('../_utils/BORME/Borme_Transforms.js')(app, options) ),
-    app.commonSQL.init(options, 'PARSER', app._fileCredenciales + options.Command, function (options) {
-        app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
+    app.commonSQL.init(options, 'BORME' , function (options) {
+        app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', function (scrapdb) {
             //debugger
             options.SQL.scrapDb = scrapdb
             callback(options)

@@ -21,7 +21,7 @@ if (false) {
 var App = {
     version: pjson.version,
     //datos generales
-    _fileCredenciales: 'ACCESO_mysql_',
+    //_fileCredenciales: 'cred_',
     TypeBoletines: ["BORME", "BOE", "BOCM"],
     Commands: ['SCRAP', 'PARSER', 'EXIT'],
     Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
@@ -62,9 +62,11 @@ String.prototype.pad = function (size) {
 }
 
 String.prototype.Between = function (init, last, contains, not) {
-    const string = this.toString()
+    let string = this.toString()
     let _exit = ""
     let _i = 0
+    let pf = 0
+    let pi = 0
     while (string.indexOf(last, _i) > 0) {
         let _str = ""
         let pf = pi = string.indexOf(last, _i)
@@ -92,7 +94,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
     return match ? this.lastIndexOf(match[match.length - 1]) : -1;
 };
 
-    App.credentials= require('./node_app/credentials.js')(App)
+    App.credentials= require('./node_utils/credentials.js')(App)
     require("./node_app/options_menu.js")(App, process.argv.slice(2), function (app, myArgs, date, automatic) {
 
         let App = app.merge(app, {
@@ -133,7 +135,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 return require('./node_app/func_common.js')(app)
             },
             init: function (app, _cb) {
-                this.pdftotext = require('./node_app/_utils/pdftotext.js')
+                
                 require('./node_app/sql_common.js')(app, function (SQL) {
                     app.commonSQL = SQL
 
@@ -159,6 +161,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
 
                         },
                         SCRAP: function (type) {
+                            app.pdftotext = require('./node_app/_utils/pdftotext.js')
                             const prefix = app.command.substr(0, 3).toLowerCase() + "_"
                             require('./node_app/scrap/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
                                 app.BOLETIN = options
@@ -171,12 +174,6 @@ String.prototype.lastIndexOfRegex = function (regex) {
                                     })
                                 })
                             })
-                        },
-                        CREATE: function (datafile) {
-                            app.commonSQL.init({ SQL: { db: null } }, 'CREATE', function () {
-                                process.exit(1)
-                            })
-
                         }
                     })
 
@@ -243,9 +240,9 @@ String.prototype.lastIndexOfRegex = function (regex) {
                         write: function (app, options,_cini, string, _cfin) {
                             
                             process.stdout.write(_cini + string + _cfin)
-                            const cadsql = "SELECT * FROM lastread WHERE Type=? AND Anyo=?;" //sumarios (_counter, Anyo, SUMARIO, BOLETIN, Type) VALUES ('" + (app._xData.TSUMARIOS[options.type] + 1) + "','" + app.anyo + "','" + _sumario + "', '" + _boletin + "','" + options.type + "')"
+                           // const cadsql = "SELECT * FROM lastread WHERE Type=? AND Anyo=?;" //sumarios (_counter, Anyo, SUMARIO, BOLETIN, Type) VALUES ('" + (app._xData.TSUMARIOS[options.type] + 1) + "','" + app.anyo + "','" + _sumario + "', '" + _boletin + "','" + options.type + "')"
 
-                            options.SQL.scrapDb.SQL.db.query(cadsql, [app.Type, app.anyo], function (err, records) {
+                            options.SQL.scrapDb.SQL.db.query("SELECT * FROM lastread WHERE Type=? AND Anyo=?;", [app.Type, app.anyo], function (err, records) {
                                 if (err) {
                                     console.log(err)
                                 } else {

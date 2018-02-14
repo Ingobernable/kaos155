@@ -14,7 +14,7 @@ module.exports = function (app, callback) {
                 var _exit = ""
                 //debugger
                 var _materias = data.materias.split(";")
-                if (_materias.length > 0) {
+                if (_materias.length > 0 && data.materias.length>0) {
                     var cadsql = ""
                     _.forEach(_materias, function (value) {
                         if ((value.match(/^\d{3,8}/) || []).length > 0) {
@@ -28,6 +28,7 @@ module.exports = function (app, callback) {
                     })
                     options.SQL.db.query(cadsql, function (err, record) {
                         if (err != null)
+
                             debugger
                         
                         data.materias = _exit
@@ -44,7 +45,7 @@ module.exports = function (app, callback) {
             },
             insert: {
                 boletin: function (options, data, __callback) {
-                    options.SQL.saveCodeMaterias(options, data, function (data) {
+                   // options.SQL.saveCodeMaterias(options, data, function (data) {
                         data.area = data.area != null ? data.area._t : data.extra.area!=null ? data.extra.area._t : 'Sin definir'    // (data.area._SA.length==2) = entidad emisora SA
                         if (data.area == null)
                             data.area = "Sin definir"
@@ -86,19 +87,19 @@ module.exports = function (app, callback) {
                         console.log(data.cod, data.area, data.tipoTramite, data.tipoForma)
                         //
                         if (app.neo4j) {
-                            app.neo4j.push.Object({ table: "_" + data.anyo, k: data.anyo })
-                            app.neo4j.push.Object({ table: "_" + data.area.toUpperCase(), k: data.area.toUpperCase() })
-                            app.neo4j.push.Object({ table: "_" + data.tipoBoletin, k: data.tipoBoletin })
-                            app.neo4j.push.Object({ table: "_" + data.tipoTramite, k: data.tipoTramite })
-                            app.neo4j.push.Object({ table: "_" + data.tipoForma, k: data.tipoForma })
-                            app.neo4j.push.Object({ table: "_boletin", k: data.cod })
+                            //app.neo4j.push.Object({ table: "_" + data.anyo, k: data.anyo })
+                            //app.neo4j.push.Object({ table: "_" + data.area.replaceAll(" ", "_").toUpperCase(), k: data.area.toUpperCase() })
+                            //app.neo4j.push.Object({ table: "_" + data.tipoBoletin.replaceAll(" ", "_"), k: data.tipoBoletin })
+                            //app.neo4j.push.Object({ table: "_" + data.tipoTramite.replaceAll(" ", "_"), k: data.tipoTramite })
+                           // app.neo4j.push.Object({ table: "_" + data.tipoForma.replaceAll(" ","_") , k: data.tipoForma })
+                            app.neo4j.push.Object({ table: "_" + data.cod.split("-")[0] + data.anyo, k: data.cod }, ",tipo:'" + data.tipoBoletin + "',tramitacion:'" + data.tipoTramite + "',forma:'" + data.tipoForma + "', area:'" + data.area + "',adjudicador:'" + data.adjudicador + "',desc:'" + data.extra.desc.replaceAll("'", "\\'").replaceAll(".", "") + "',firma:'" + data.extra.firma.replaceAll("'", "\\'").replaceAll(".","") + "' ")
 
-                            app.neo4j.push.run("MATCH (t:_" + data.anyo + "),(a:_" + data.area.toUpperCase() + ") MERGE (t)-[r:_area]-(a)")
-                            app.neo4j.push.run("MATCH (t:_" + data.area.toUpperCase() + "),(a:_boletin {id:'" + data.cod +"'}) MERGE (t)-[r:_contrato]-(a)")
+                            //app.neo4j.push.run("MATCH (t:_" + data.anyo + "),(a:_" + data.area.replaceAll(" ", "_").toUpperCase() + ") MERGE (t)-[r:_area]-(a)")
+                            //app.neo4j.push.run("MATCH (t:_" + data.area.toUpperCase().replaceAll(" ", "_") + "),(a:_boletin {id:'" + data.cod +"'}) MERGE (a)-[r:_contrato]-(t)")
 
-                            app.neo4j.push.run("MATCH (t:_boletin {id:'" + data.cod +"'}),(a:_" + data.tipoBoletin + ") MERGE (t)-[r:_tipo]-(a)")                            app.neo4j.push.run("MATCH (t:_" + data.tipoBoletin + "),(a:_" + data.tipoTramite + ") MERGE (t)-[r:_tramite]-(a)")
-                            app.neo4j.push.run("MATCH (t:_boletin {id:'" + data.cod + "'}),(a:_" + data.tipoTramite + ") MERGE (t)-[r:_tramite]-(a)")
-                            app.neo4j.push.run("MATCH (t:_boletin {id:'" + data.cod +"'}),(a:_" + data.tipoForma + ") MERGE (t)-[r:_fotma]-(a)")
+                           // app.neo4j.push.run("MATCH (t:_boletin {id:'" + data.cod + "'}),(a:_" + data.tipoBoletin.replaceAll(" ", "_") + ") MERGE (t)-[r:_tipo]-(a)")
+                           // app.neo4j.push.run("MATCH (t:_boletin {id:'" + data.cod + "'}),(a:_" + data.tipoTramite.replaceAll(" ", "_") + ") MERGE (t)-[r:_tramite]-(a)")
+                           // app.neo4j.push.run("MATCH (t:_boletin {id:'" + data.cod + "'}),(a:_" + data.tipoForma.replaceAll(" ", "_") + ") MERGE (t)-[r:_forma]-(a)")
                         }
                         //
                         options.SQL.db.query('Call Insert_Data_BOLETIN(?,?, ?,?, ?,?,?, ?, ?,?,?, ?, ?,?,?, ?,?,?)', params, function (err, record) {
@@ -114,7 +115,7 @@ module.exports = function (app, callback) {
                                 __callback(data, 1)
                             }
                         })
-                    })
+                    //})
                 },
                 contrato: function (options, data, cod, empresa, importe, counter, _xcallback) {
                     var _acron = ""
@@ -132,12 +133,27 @@ module.exports = function (app, callback) {
                         //if (importe * 1 == 0)
                         //    debugger
                         var _params = [area, anyo, type, cod, keyEmpresa, empresa, importe, _key, _acron, _nif, counter]
-                        if (empresa.length > 2 && importe != null && importe.length > 0 && importe != "NaN") {
-                            //console.log(_params)
+                        if (empresa.length > 2 && importe != null && importe.length > 0 && importe != "NaN" && importe*1>99999) {
+                            if (app.neo4j && _key) {
+                                //app.neo4j.push.Object({ table: "_" + data.anyo, k: data.anyo })
+                                //app.neo4j.push.Object({ table: "_" + data.area.replaceAll(" ", "_").toUpperCase(), k: data.area.toUpperCase() })
+                                //app.neo4j.push.Object({ table: "_" + data.tipoBoletin.replaceAll(" ", "_"), k: data.tipoBoletin })
+                                //app.neo4j.push.Object({ table: "_" + data.tipoTramite.replaceAll(" ", "_"), k: data.tipoTramite })
+                               // app.neo4j.push.Object({ table: "_" + data.tipoForma.replaceAll(" ","_") , k: data.tipoForma })
+                               // app.neo4j.push.Object({ table: "_"+cod.split("-")[0]+anyo , k: cod })
+                                app.neo4j.push.Object({ table: "Empresa", k: _key, e: empresa.replaceAll("'", "\\'") })
+                                app.neo4j.push.run("MATCH (b:Empresa { id:'" + _key + "'}),(a:_" + cod.split("-")[0] + anyo + " {id:'" + cod + "'}) MERGE (a)-[r:_contrato {importe:"+importe+"}]-(b)")
+
+                                //app.neo4j.push.run("MATCH (t:_" + data.anyo + "),(a:_" + data.area.replaceAll(" ", "_").toUpperCase() + ") MERGE (t)-[r:_area]-(a)")
+                                //app.neo4j.push.run("MATCH (t:_" + data.area.toUpperCase().replaceAll(" ", "_") + "),(a:_boletin {id:'" + data.cod +"'}) MERGE (a)-[r:_contrato]-(t)")
+
+                               // app.neo4j.push.run("MATCH (t:_boletin {id:'" + data.cod + "'}),(a:_" + data.tipoBoletin.replaceAll(" ", "_") + ") MERGE (t)-[r:_tipo]-(a)")
+                               // app.neo4j.push.run("MATCH (t:_boletin {id:'" + data.cod + "'}),(a:_" + data.tipoTramite.replaceAll(" ", "_") + ") MERGE (t)-[r:_tramite]-(a)")
+                               // app.neo4j.push.run("MATCH (t:_boletin {id:'" + data.cod + "'}),(a:_" + data.tipoForma.replaceAll(" ", "_") + ") MERGE (t)-[r:_forma]-(a)")
+                            }
                             options.SQL.db.query('Call Insert_Data_BOLETIN_Contrato(?,?,?,?,?,?,?,?,?,?,?)', _params, function (err, record) {
                                 if (err != null) {
-                                    x = _params
-                                    //debugger
+                                    err = err.sqlMessage
                                 }
                                 _ycallback(data, 1, counter, err)
                             })
@@ -244,7 +260,7 @@ module.exports = function (app, callback) {
                     })
                 }
 
-                clearEmpresa = function (e) {
+                const clearEmpresa = function (e) {
                     //debugger
                     if (e.indexOf('NUMEROS DE ORDEN') > -1) {
                         x = e.replaceAll("NUMEROS DE ORDEN", ";")
@@ -552,7 +568,7 @@ module.exports = function (app, callback) {
     }
     options.patterns = options.transforms.getPatern(options.transforms)
 
-    app.commonSQL.init(options, 'PARSER', app._fileCredenciales + options.Command, function (options) {
+    app.commonSQL.init(options, 'PARSER', function (options) {
         app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
             options.SQL.scrapDb = scrapdb
             callback(options)
