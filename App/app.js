@@ -7,16 +7,6 @@ global.__basedir = __dirname;
 const pjson = require('./package.json');
 console.log('kaos155 App - version -' + pjson.version + '.')
 
-if (false) {
-    var memwatch = require('memwatch-next');
-
-    if (memwatch != null)
-        memwatch.on('leak', (info) => {
-            console.log('Fuga de memoria detectada:')
-            console.log(info);
-            //debugger
-        });
-}
 
 var App = {
     version: pjson.version,
