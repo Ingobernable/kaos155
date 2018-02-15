@@ -130,7 +130,7 @@ module.exports = function (app, callback) {
                                     host: resp.host,
                                     user: resp.user,
                                     password: _ithis.encryptor.encrypt(resp.password),
-                                    database: "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : (type=="BORME"? ("_"+type.toLowerCase()) : "_contratos") ),
+                                    database: "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : (type=="BORME"? ("_"+type) : "_contratos") ),
                                     multipleStatements: true,
                                     waitForConnection: true,
                                 }
