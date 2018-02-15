@@ -1,3 +1,4 @@
+'use strict';
 module.exports = function (app, callback) {
     //debugger
     const options = {
@@ -33,6 +34,7 @@ module.exports = function (app, callback) {
 
         url: app.urlBORME,       
         _common: require('../_common.js')(app),
+        neo4j: require('../../node_neo4j/common_neo4j.js')(app),
         SQL: { db: null },
         parser: {
            
@@ -41,20 +43,16 @@ module.exports = function (app, callback) {
                 _linea.table = "Empresa"
                 _linea.cif = null
 
-                if(app.neo4j)
-                    app.neo4j.push.Object(_linea) //,  function (options, params) {
+                    options.neo4j.push.Object(_linea, function (_linea) {  //,  function (options, params) {
                 
-                app.commonSQL.SQL.commands.insert.Borme.keys(options, _linea, function (_linea, _rec) {
-                    app.process.stdout.write(app, options, '\x1b[1m\x1b[36m', 'E', '\x1b[0m')
-                    _linea.ID = _rec[0][0].Id
+                        app.commonSQL.SQL.commands.insert.Borme.keys(options, _linea, function (_linea, _rec) {
+                            app.process.stdout.write(app, options, '\x1b[1m\x1b[36m', 'E', '\x1b[0m')
+                            _linea.ID = _rec[0][0].Id
 
-                    options.parser.saveDiarioMovimientos(_linea, _cb)
+                            options.parser.saveDiarioMovimientos(_linea, _cb)
 
-                }, _cb)
-
-                //})
-
-
+                        }, _cb)
+                    })
             },
             saveLineContenido : function (_e, _linea, _cb, _func) {
                 if (_e < _linea.contenido.length) {
@@ -72,35 +70,37 @@ module.exports = function (app, callback) {
                         if (_Dl == null) {
                             _cb(_linea)
                         } else {
-                            const _params = [
-                                _linea.data.BOLETIN,
-                                _linea.id,
-                                _linea.data.dia,
-                                _linea.data.mes,
-                                _linea.data.BOLETIN.match(/[\d]{4}/)[0],
-                                _linea.data.provincia,
-                                _linea.ID,
-                                _linea.k,
-                                idRelacion,
-                                params.k,
-                                _Dl.values == null ? 0 : _Dl.values.Auditor ? 2 : _Dl.values.Empresa ? 0 : 1,
-                                (Active ? 1 : 0),
-                                _Dl.type ? _Dl.type : _Dl.values.type,
-                                _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
-                                (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value)
-                            ]
+                            //const _params = 
 
-                            //insertamos un dato en el diario de movimientos
-                            if (app.neo4j && params.k && _linea.k)
-                                app.neo4j.push.relation( _Dl.values ? _Dl.values.Auditor ? "Auditor" : "Directivo" : "Directivo", _linea, params, _Dl, Active)
+                            
+                            //guardamos los datos
+                            options.neo4j.push.relation(_Dl.values ? _Dl.values.Auditor ? "Auditor" : "Directivo" : "Directivo", _linea, params, function () {
+                                    app.commonSQL.SQL.commands.insert.Borme.diario(options, [
+                                        _linea.data.BOLETIN,
+                                        _linea.id,
+                                        _linea.data.dia,
+                                        _linea.data.mes,
+                                        _linea.data.BOLETIN.match(/[\d]{4}/)[0],
+                                        _linea.data.provincia,
+                                        _linea.ID,
+                                        _linea.k,
+                                        idRelacion,
+                                        params.k,
+                                        _Dl.values == null ? 0 : _Dl.values.Auditor ? 2 : _Dl.values.Empresa ? 0 : 1,
+                                        (Active ? 1 : 0),
+                                        _Dl.type ? _Dl.type : _Dl.values.type,
+                                        _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
+                                        (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value)
+                                    ] , function (err, _record) {
+                                    app.process.stdout.write(app, options, '\x1b[33m', '.', '\x1b[0m')
+                                    //repitiendo el proceso para todos los datos de una linea
+                                    _e++
+                                    _func(_e, _linea, _cb, _func)
+                                })
+                            }, _Dl, Active)
 
 
-                            app.commonSQL.SQL.commands.insert.Borme.diario(options, _params, function (err, _record) {
-                                app.process.stdout.write(app, options, '\x1b[33m', '.', '\x1b[0m')
-                                //repitiendo el proceso para todos los datos de una linea
-                                _e++
-                                _func(_e, _linea, _cb, _func)
-                            })
+
 
                         }
 

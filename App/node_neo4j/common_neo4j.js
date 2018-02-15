@@ -1,32 +1,34 @@
 ﻿module.exports = function (app) {
 
     return {
-        obj: require('neo4j-driver').v1,
+        //obj: require('neo4j-driver').v1,
         driver: null,
         session: null,
         push: {
-            run: function (string) {
-                //console.log(string)
-                //if (false) {
-                app.neo4j.session.run(string).subscribe({
+            run: function (keyA, KeyB, string, _return,params) {
+ 
+                if (_return == null)
+                    debugger
 
-                    onError: function (error) {
-                        //        debugger
-                        console.log(error);
-                    }
+                app.BOLETIN.SQL.db.query("INSERT IGNORE INTO borme_grafos (_cypher,_keyA,_keyB) VALUES (?,?,?)", [string, keyA, KeyB ], function (err, record) {
+                    _return(params)
                 })
-                //}
-            },
-            Object: function (params) {
-                // console.log(this.Get.Object(params))
-
-                this.run(this.Get.Object(params))
 
             },
-            relation: function (table, origen, destino) { //, OptionsDestino, active) {
-                // console.log(this.Get.relation(table, origen, destino))
+            Object: function (params,_return) {
 
-                this.run(this.Get.relation(table, origen, destino))
+
+                this.run(params.k, null ,this.Get.Object(params), _return, params)
+
+            },
+            relation: function (table, origen, destino, _return, _Dl, Active) { 
+                if (origen.k && destino.k) {
+                    this.run(origen.k, destino.k, this.Get.relation(table, origen, destino), _return)
+                } else {
+                    if (_return == null)
+                        debugger
+                    _return()
+                }
             },
             Get: {
                 Object: function (params) {

@@ -1,4 +1,5 @@
-﻿module.exports = function (app, options, transforms) {
+﻿'use strict';
+module.exports = function (app, options, transforms) {
 
         return {
             ////////////////////////////////////////////////////////////////////////////////////
@@ -261,8 +262,8 @@
                 }
             },
             transforms: function (_array, _regexp) {
-                if (_regexp!=null)
-                    //for (i in _array) {
+                if (_regexp != null) {
+                    let p=0
                     for (p in _regexp) {
 
                         if (_regexp[p][0] == 'F') {
@@ -279,7 +280,7 @@
                         
                         
                     }
-                //}
+                }
                 return _array
             },
             extract: function (_arrayText, search, transforms) {
@@ -337,18 +338,20 @@
                 }
 
                 const _ret = []
+                let i = 0
 
                 const found = function (cargos, _cadena) {
-                    var cad = _cadena
-                    var _found = false
-                
-                    for (i in cargos) {
+                    let cad = _cadena
+                    let _found = false
+                    let _counter = 0
 
-                        if (cad.toUpperCase().indexOf(cargos[i].toUpperCase()) > -1) {
-                            var minus = cad.indexOf(cargos[i]) > -1
+                    for (_counter in cargos) {
+
+                        if (cad.toUpperCase().indexOf(cargos[_counter].toUpperCase()) > -1) {
+                            const minus = cad.indexOf(cargos[_counter]) > -1
                             _found = true
-                            var _rep = cargos[i].replace(/\ /g, "").replace(/\./g, "#")
-                            cad = app._.trim(cad.replaceAll(minus?cargos[i]:cargos[i].toUpperCase(), minus?_rep:_rep.toUpperCase() ) ) //.trim()
+                            var _rep = cargos[_counter].replace(/\ /g, "").replace(/\./g, "#")
+                            cad = app._.trim(cad.replaceAll(minus ? cargos[_counter] : cargos[_counter].toUpperCase(), minus?_rep:_rep.toUpperCase() ) ) //.trim()
                         }
                     }
                     return { found: _found, cadena: cad }
@@ -357,8 +360,8 @@
                 const _f = found([], cadena)
                 cadena = _f.cadena
                 
-                _cad = app._.trim( this.titleCase(_f.cadena.split(":")[0] + ":") )
-                cadena = found([_cad], cadena).cadena
+                //_cad = app._.trim( this.titleCase(_f.cadena.split(":")[0] + ":") )
+                cadena = found([ app._.trim(this.titleCase(_f.cadena.split(":")[0] + ":")) ], cadena).cadena
 
                 const _valores = []
                 const _preval = app._.trim(cadena.replace(/S\.L\./g, 'SL.').replace(/S\.A\./g, 'SA.').replace(/\.\B/g, "#$").replace(/\. /g, "#$").replace(/\./g, "#") + ' ').split("#$ ")
@@ -377,6 +380,7 @@
                         if (item.length > 0) {
                             if (item[1] != null){
 
+                                let d = 0
                                 const _dir = app._.trim(item[1]).split(';')
                                 for (d in _dir) {
                                     _dir[d] = _dir[d]
@@ -393,6 +397,7 @@
                         }
                     }
                 }
+                //_valores = null
                 return _ret
 
             },
@@ -423,15 +428,15 @@
                     callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
                 },
                 SaveDirectivo: function (_linea, __data, Active, callback) {
-                    var capitalizeFirstLetter= function(string) {
+                    const capitalizeFirstLetter= function(string) {
                         return string.charAt(0).toUpperCase() + string.slice(1);
                     }
                     var _e = 0
 
-                    const _table = __data.values.value == __data.values.value.toUpperCase() ? "Empresa" : __data.values.key.toUpperCase() == "AUDITOR" ? "Auditor": "Directivo"
-                    __data.values.Empresa = _table == "Empresa"
-                    __data.values.Auditor = _table == "Auditor"
-                    
+                    const _table = __data.values.key.toUpperCase() == "AUDITOR" ? "Auditor" : __data.values.value == __data.values.value.toUpperCase() ? "Empresa" :  "Directivo"
+                    __data.values.Empresa = (_table == "Empresa")
+                    __data.values.Auditor = (_table == "Auditor")
+                   
                     var _exclude = false
                     app._.forEach(options.diccionario.exclude, function (value) {
                         if (app._.toLower(__data.values.value).indexOf(value) == 0)
@@ -455,13 +460,8 @@
                             const go = function (options, params) {
                                 app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
 
-                                    if (_directivo.length == 0) {
-                                        debugger
-                                    } else {
-                                        if (_directivo.length > 1) {
-                                            //debugger
-                                            x = 1
-                                        }
+                                    if (_directivo.length > 0) {
+           
                                         if (Active) {
                                             app.process.stdout.write(app, options, '\x1b[32m', '', '')
                                         } else {
@@ -475,21 +475,15 @@
                                     callback(null)
                                 })
                             }
-                            const params = {
+                             
+                            
+                            options.neo4j.push.Object({
                                 table: _table,
                                 e: __data.values.value,
-                                k: _k.replaceAll("-",""), //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
+                                k: _k.replaceAll("-", ""), //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
                                 data: _linea.data
-                            }
+                            }, function (params) { go(options, params) })
                             
-
-                            if (app.neo4j != null)
-                                app.neo4j.push.Object(params)
-                            
-                            go(options, params)
-                            
-
-
                         })
                         //})
                     } else {
@@ -517,8 +511,10 @@
                 }
             },
             Constitucion: function ( cadena, _keys, _next, data) {
-                var _ret = []
-                var _values = this.getConstitucion(cadena, _keys, _next, data)
+                const _ret = []
+                const _values = this.getConstitucion(cadena, _keys, _next, data)
+                let _i = 0
+
                 for (_i in _values) {
                     //debugger
                     _ret[_ret.length] = { key: _values[_i].c.replace(":","") , value: _values[_i].f }
@@ -560,8 +556,10 @@
                 return this.getDirectivos('Reeleccion', cadena, _keys, _next, data)
             },       
             AmpliaCapital: function ( cadena, _keys, _next, data) {
-                var _ret = []
-                var _values = this.getAmpliaCapital(cadena, _keys, _next, data)
+                const _ret = []
+                const _values = this.getAmpliaCapital(cadena, _keys, _next, data)
+                let _i = 0
+
                 for (_i in _values) {
                     //debugger
                     _ret[_ret.length] = { key: _values[_i].c.replace(":", ""), value: _values[_i].f }
@@ -586,7 +584,7 @@
 
             actions: {
                 constitucion: function (data, keys) {
-                    var _k=keys.key.replace(/ /g, "_")
+                    const _k=keys.key.replace(/ /g, "_")
                     if (data[_k] == null)
                         data[_k] = []
 
@@ -603,10 +601,11 @@
                 //rutina para aplicar el mismo tratamiento a cada uno resultados de la cadena
                 //obtenido un bubconjunto de resultados
                 if (_keys.length > 0) {                                                          //si hay palabas clave para esta opcion
-                    var _pos = this.getPosExploreItems(data, _keys)                             //sacamos el counjunto de posiciones segun plabras clave
-                    var _s = this.extraeArrDeCadena(data, _pos, { keys: { arr: _keys } }, type)       //extraemos las cadenas de las subopciones
+                    const _pos = this.getPosExploreItems(data, _keys)                             //sacamos el counjunto de posiciones segun plabras clave
+                    const _s = this.extraeArrDeCadena(data, _pos, { keys: { arr: _keys } }, type)       //extraemos las cadenas de las subopciones
+                    return { c: type, f: _s }
                 }
-                return _keys.length > 0 ? { c: type, f: _s } : { c: type, f: app._.trim(data) }
+                return { c: type, f: app._.trim(data) }
             },
             extraeArrDeCadena: function (cadena, map, _keys, _t) {
                 //rutina clave que extrae de la cadena, el conjunto de datos entre palabras clave
@@ -616,11 +615,11 @@
                 //
                 var _parray = 0
                 var _plength = 0
-                var _explore = []
+                const _explore = []
                 //var _map = _keys.keys.arr                                                       //mapa de palabras clave
                 for (_parray in map) {                                                               //recorremos la array con los resultado de la posiciones
-
-                    var py= map[_parray].p + map[_parray].c.length                                                 //calculamos el punto inicial con la posicion en la cadena mas la longitud de la palabra clave
+            
+                    const py= map[_parray].p + map[_parray].c.length                                                 //calculamos el punto inicial con la posicion en la cadena mas la longitud de la palabra clave
                     if (_parray*1 != map.length - 1) {                                                        //si no es el último elemento
                         _plength = map[_parray * 1 + 1].p - map[_parray].p - map[_parray].c.length          //calculamos la longitud final en base a la siguiente palabra clave
                     } else {
@@ -650,12 +649,13 @@
                 //inspeccionamos la cadena buscando las posiciones donde aparecen las palabras clave
                 //devolviendo una array con los resultados OK ordenado por posiciones de las palabras clave en la cadena
                 //
+                let e = 0
                 if (extrachar != null)
                     cadena = " " + cadena.substr(1, cadena.length).replaceAll(" ", "_")
 
-                _explore = []
+                const _explore = []
                 for (e in Explore) {                                                            //para cada una de las palabras clave
-                    py = cadena.indexOf(Explore[e], 0)                                          //miramos si hay alguna coincidencia de la palabra clave
+                    const py = cadena.indexOf(Explore[e], 0)                                    //miramos si hay alguna coincidencia de la palabra clave
                     if (py > -1) {                                                              //si hubo coincidicencia
                         _explore[_explore.length] = onlyposdata ? {  p: py, l: Explore[e].length } : { c: Explore[e].replaceAll("_"," "), p: py, id: e * 1 }              //anotamos en la matriz de resultados una estructura
                     }
@@ -681,17 +681,19 @@
             scrapDataFromMap: function (_this, lines, map) {
                 if (lines.length == 0)
                     debugger
-                var exclusion = ['Núm. ','Actos inscritos', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'SECCIÓN', 'Empresarios', 'BOLETÍN OFICIAL DEL REGISTRO MERCANTIL', 'Pág.', 'http://www.boe.es','D.L.:' ]
-                var inclusion = ['cve:', 'A CORUÑA', 'LA CORUÑA', 'ARABA/ÁLAVA', 'ÁLAVA', 'ALBACETE', 'ALICANTE', 'ALMERÍA', 'ASTURIAS', 'ÁVILA', 'BADAJOZ', 'BARCELONA', 'BIZKAIA', 'BURGOS', 'CÁCERES', 'CÁDIZ', 'CANTABRIA', 'CASTELLÓN', 'CIUDAD REAL', 'CÓRDOBA', 'CUENCA', 'CEUTA', 'GIRONA', 'GRANADA', 'GUADALAJARA', 'GUIPÚZCOA', 'GIPUZKOA', 'HUELVA', 'HUESCA', 'ILLES BALEARS', 'ISLAS BALEARES', 'JAÉN', 'LA RIOJA', 'LAS PALMAS', 'LEÓN', 'LLEIDA', 'LUGO', 'MADRID', 'MÁLAGA', 'MELILLA', 'MURCIA', 'NAVARRA', 'ORENSE', 'OURENSE', 'PALENCIA', 'PONTEVEDRA', 'SALAMANCA', 'SEGOVIA', 'SEVILLA', 'SORIA', 'TARRAGONA', 'SANTA CRUZ DE TENERIFE', 'TERUEL', 'TOLEDO', 'VALENCIA', 'VALLADOLID', 'VIZCAYA', 'ZAMORA', 'ZARAGOZA']
-                var sinonimos = ['A CORUÑA#LA CORUÑA', 'ALABAÁLABA#ÁLAVA', 'ARABA/ÁLAVA#ÁLAVA', 'GUIPÚZCOA#GIPUZKOA', 'ILLES BALEARS#ISLAS BALEARES', 'OURENSE#ORENSE', 'BIZKAIA#VIZCAYA']
-                isNumeric = function (n) {
+
+                const exclusion = ['Núm. ','Actos inscritos', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'SECCIÓN', 'Empresarios', 'BOLETÍN OFICIAL DEL REGISTRO MERCANTIL', 'Pág.', 'http://www.boe.es','D.L.:' ]
+                const inclusion = ['cve:', 'A CORUÑA', 'LA CORUÑA', 'ARABA/ÁLAVA', 'ÁLAVA', 'ALBACETE', 'ALICANTE', 'ALMERÍA', 'ASTURIAS', 'ÁVILA', 'BADAJOZ', 'BARCELONA', 'BIZKAIA', 'BURGOS', 'CÁCERES', 'CÁDIZ', 'CANTABRIA', 'CASTELLÓN', 'CIUDAD REAL', 'CÓRDOBA', 'CUENCA', 'CEUTA', 'GIRONA', 'GRANADA', 'GUADALAJARA', 'GUIPÚZCOA', 'GIPUZKOA', 'HUELVA', 'HUESCA', 'ILLES BALEARS', 'ISLAS BALEARES', 'JAÉN', 'LA RIOJA', 'LAS PALMAS', 'LEÓN', 'LLEIDA', 'LUGO', 'MADRID', 'MÁLAGA', 'MELILLA', 'MURCIA', 'NAVARRA', 'ORENSE', 'OURENSE', 'PALENCIA', 'PONTEVEDRA', 'SALAMANCA', 'SEGOVIA', 'SEVILLA', 'SORIA', 'TARRAGONA', 'SANTA CRUZ DE TENERIFE', 'TERUEL', 'TOLEDO', 'VALENCIA', 'VALLADOLID', 'VIZCAYA', 'ZAMORA', 'ZARAGOZA']
+                const sinonimos = ['A CORUÑA#LA CORUÑA', 'ALABAÁLABA#ÁLAVA', 'ARABA/ÁLAVA#ÁLAVA', 'GUIPÚZCOA#GIPUZKOA', 'ILLES BALEARS#ISLAS BALEARES', 'OURENSE#ORENSE', 'BIZKAIA#VIZCAYA']
+
+                const isNumeric = function (n) {
                     return !isNaN(parseFloat(n)) && isFinite(n);
                 }
 
-                var patterns = _this._transforms.getPatern(this._transforms)
-                var _xlines=[]
-                var Borme = null
-                var Provincia = null
+                const patterns = _this._transforms.getPatern(this._transforms)
+                const _xlines=[]
+                const Borme = null
+                const Provincia = null
                 for (_l in lines) {
                     //debugger
                     line = lines[_l].replace(/^\s+|\s+$/gm,"")
@@ -860,22 +862,19 @@
 
 
                     const _e = _Empresa[1].split(".")[0].replace(/%/g, '.')
-                  //  var _k = app.shorter.generate()(skey)
-                  //  var _l = app.shorter.unique(_e)
-                  //  var _i = app.shorter.unique(app.shorter.unique(new Date().toString() + ""))
+
                     this.getUnique(this.getUnique, _e, _db, function (_k) {
                         
-                        var _line = {
-                            id: app._.trim(_Empresa[0]) ,
-                            e: _e,
-                            k: _k.replaceAll("-","") , //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length-1) - (8-_l.length) , 8 - _l.length) ,
-                            keys: _items,
-                            original: line,
-                            contenido: _this.explora(line, _items, _this.maps)
-                        }
-                        //acumulando los resultados en una matriz
 
-                        callback( _line )
+
+                            callback({
+                                id: app._.trim(_Empresa[0]),
+                                e: _e,
+                                k: _k.replaceAll("-", "") ,
+                                keys: _items,
+                                original: line,
+                                contenido: _this.explora(line, _items, _this.maps)
+                            } )
                     })
 
                 }
@@ -885,13 +884,13 @@
             },
             explora: function (cadena, keys, array) {
 
-                var _ret = []
-                var _i = 0
-                var _p = ""
-                var _func = null
-                var _t = null
-                var _v = null
-
+                const _ret = []
+                let _i = 0
+                let _p = ""
+                let _func = null
+                let _t = null
+                let _v = null
+                let p = 0
                 for (_i in keys) {
                     _i = _i * 1
                     _t = array.keys.arr[keys[_i].id]
@@ -912,11 +911,11 @@
                 if (keys.length == 0)
                     debugger
 
+                _func = _t =_v = _p = _i = p= null
                 return _ret
             },
             titleCase: function(str) {
-                str = str.toLowerCase();
-                const array = str.split(' ');
+                const array = str.toLowerCase().split(' ');
                 for (var c = 0; c < array.length; c++) {
                     array[c] = array[c].substr(0, 1).toUpperCase() + array[c].substring(1);
                 }

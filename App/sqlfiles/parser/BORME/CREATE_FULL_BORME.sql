@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_borme` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `bbdd_kaos155_borme`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: bbdd_kaos155_borme
@@ -36,10 +34,27 @@ CREATE TABLE `borme_actos` (
   `BOLETIN` varchar(20) DEFAULT NULL,
   `_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`,`Dia`,`Mes`,`Anyo`),
+  UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=79143 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `borme_grafos`
+--
+
+DROP TABLE IF EXISTS `borme_grafos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `borme_grafos` (
+  `_keyA` varchar(28) NOT NULL,
+  `_keyB` varchar(28) NOT NULL,
+  `_cypher` text,
+  `_inNeo` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`_keyA`,`_keyB`),
+  UNIQUE KEY `_keys` (`_keyA`,`_keyB`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -54,15 +69,15 @@ CREATE TABLE `borme_keys` (
   `Nombre` text,
   `_Empresa` tinyint(4) DEFAULT '0',
   `_Directivo` tinyint(4) DEFAULT '0',
-  `_Financiera` bit(1) DEFAULT b'0',
   `_Auditor` tinyint(4) DEFAULT '0',
+  `_Financiera` bit(1) DEFAULT b'0',
+  `_Sicav` bit(1) DEFAULT b'0',
   `Provincia` varchar(25) DEFAULT NULL,
   `BOLETIN` varchar(20) DEFAULT NULL,
   `_ID` int(11) DEFAULT NULL,
   `T_Relations` int(11) DEFAULT '0',
   PRIMARY KEY (`_key`),
-  FULLTEXT KEY `Name` (`Nombre`),
-  FULLTEXT KEY `Prov` (`Provincia`)
+  FULLTEXT KEY `Name` (`Nombre`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -87,7 +102,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=955359 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=122734 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -107,12 +122,16 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_NAME  n
 BEGIN
 	
 	SET @Financiera = 0;
-	/*IF INSTR(UPPER(_NAME),'BANCO')>0 OR INSTR(UPPER(_NAME),'CAJA')>0 OR INSTR(UPPER(_NAME),'CAIXA')>0 OR INSTR(UPPER(_NAME),'SEGUROS')>0 OR INSTR(UPPER(_NAME),'FINANCIERA')>0 OR INSTR(UPPER(_NAME),'CREDITO')>0 THEN
+	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 THEN
 		SET @Financiera = 1;
-	END IF;*/
-    
-    INSERT IGNORE borme_keys (_key,Nombre,_Auditor,_Financiera, Provincia,BOLETIN,_ID) VALUES(_iKey,_NAME,1,@Financiera,_Provincia,_BOLETIN,_ID);
-	INSERT IGNORE borme_Auditores(_key,Nombre) VALUES(_iKey,_Name);
+	END IF;
+ 
+ 	SET @Sicav = 0;
+	IF INSTR(UPPER(_NAME),' SICAV ')>0 THEN
+		SET @Sicav = 1;
+	END IF;
+	
+    INSERT IGNORE borme_keys (_key, Nombre, _Empresa, _Auditor, _Financiera, _Sicav ,BOLETIN,_ID) VALUES(_iKey,_NAME,1,1,@Financiera,@Sicav,_BOLETIN,_ID);
     SELECT LAST_INSERT_ID() as Id, _iKey as _key;
 END ;;
 DELIMITER ;
@@ -194,12 +213,20 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _NA
 BEGIN
 
 	SET @Financiera = 0;
-	/*IF INSTR(UPPER(_NAME),'BANCO')>0 OR INSTR(UPPER(_NAME),'CAJA')>0 OR INSTR(UPPER(_NAME),'CAIXA')>0 OR INSTR(UPPER(_NAME),'SEGUROS')>0 OR INSTR(UPPER(_NAME),'FINANCIERA')>0 OR INSTR(UPPER(_NAME),'CREDITO')>0 THEN
+	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 THEN
 		SET @Financiera = 1;
-	END IF;*/
-
-    INSERT IGNORE borme_keys (_key,Nombre,_Directivo,_Financiera,Provincia,BOLETIN,_ID ) VALUES(_iKey,_NAME,1,@Financiera,_provincia,_BOLETIN,_ID);
-    INSERT IGNORE borme_Directivos(_key,Nombre) VALUES(_iKey,_Name);
+	END IF;
+ 
+ 	SET @Sicav = 0;
+	IF INSTR(UPPER(_NAME),' SICAV ')>0 THEN
+		SET @Sicav = 1;
+	END IF;
+	
+	IF @Financiera=0 AND @Sicav=0 then
+		INSERT IGNORE borme_keys (_key,Nombre,_Directivo,_Financiera,_Sicav,BOLETIN,_ID ) VALUES(_iKey,_NAME,1,0,0,_BOLETIN,_ID);
+    ELSE
+ 		INSERT IGNORE borme_keys (_key,Nombre,_Empresa,_Directivo,_Financiera, _Sicav ,BOLETIN,_ID ) VALUES(_iKey,_NAME,1,0,@Financiera,@Sicav,_BOLETIN,_ID);
+    END IF;
     SELECT LAST_INSERT_ID() as Id, _iKey as _key;
 END ;;
 DELIMITER ;
@@ -224,9 +251,13 @@ BEGIN
 	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 THEN
 		SET @Financiera = 1;
 	END IF;
-    
-    INSERT IGNORE borme_keys (_key,Nombre,_Empresa,_Financiera,Provincia,BOLETIN,_ID ) VALUES(_iKey,_NAME,1,_provincia,@Financiera,_BOLETIN,_ID);
-    INSERT IGNORE borme_Empresas(_key,Nombre) VALUES(_iKey,_Name)    ;
+ 
+ 	SET @Sicav = 0;
+	IF INSTR(UPPER(_NAME),' SICAV ')>0 THEN
+		SET @Sicav = 1;
+	END IF;
+ 
+    INSERT IGNORE borme_keys (_key,Nombre,_Empresa,_Financiera,_Sicav, Provincia,BOLETIN,_ID ) VALUES(_iKey,_NAME,1,@Financiera, @sicav,_provincia,_BOLETIN,_ID);
     SELECT LAST_INSERT_ID() as Id, _iKey as _key;
     
 END ;;
@@ -245,4 +276,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-14  9:38:57
+-- Dump completed on 2018-02-15  2:11:50

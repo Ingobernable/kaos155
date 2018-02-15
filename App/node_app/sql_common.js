@@ -1,4 +1,5 @@
-﻿module.exports = function (app, callback) {
+﻿'use strict';
+module.exports = function (app, callback) {
 
     callback({
         

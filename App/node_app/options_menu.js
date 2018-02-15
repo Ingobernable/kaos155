@@ -1,4 +1,5 @@
-﻿module.exports = function (app, myArgs, callback) {
+﻿'use strict';
+module.exports = function (app, myArgs, callback) {
 
     const _exit = "EXIT"
     const exit = function (myArgs, callback, automatic) {
@@ -32,14 +33,15 @@
             app.commonSQL = commonSQL
             app.commonSQL.init({ SQL: { db: null }, Command: 'SCRAP' }, 'SCRAP', function (scrapdb) {
                 scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosread WHERE Type='" + type + "' AND SCRAP = 1", function (err, record) { //+(command=='SCRAP' ? 1: 0) 
-                    var anyos = []
+                    const anyos = []
+                    let i = 0
                     if (command == 'SCRAP') {
 
                         var date = new Date()
                         for (n = app.Mins[type]; n <= date.getFullYear(); n++) {
                             var ok = true
-                            for (p in record) {
-                                if (record[p].Anyo == n) {
+                            for (i in record) {
+                                if (record[i].Anyo == n) {
                                     ok = false
                                 }
                             }
@@ -47,8 +49,9 @@
                                 anyos[anyos.length] = n + ""
                         }
                     } else {
-                        for (p in record) {
-                            anyos[anyos.length] = record[p].Anyo + ""
+                        
+                        for (i in record) {
+                            anyos[anyos.length] = record[i].Anyo + ""
                         }
                     }
 
