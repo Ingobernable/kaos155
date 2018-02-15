@@ -138,7 +138,7 @@ module.exports = function (app, callback) {
                                 con.connect(function (err) {
                                     if (err) {
                                         console.log('\x1b[31m las credenciales no parecen validas, vuelve a intentarlo \x1b[0m')
-                                        testIp(testIp)
+                                        testIp(testIp,_cb)
                                     } else {
                                         console.log("\x1b[32m Conectado a " + type + " OK \x1b[0m");
 
