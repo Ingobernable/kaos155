@@ -90,7 +90,7 @@ module.exports = function (app, callback) {
             return app.path.normalize('sqlfiles/' + (type.toUpperCase() != "SCRAP" ? ("parser/" + type.toUpperCase()) : "scrap") + '/cred_' + type.toLowerCase() + '.json')
         },
         filedb: function (type) {
-            return "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() : "_contratos")
+            return "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() : "_contratos"))
         },
         init: function (options, type, callback) {
             const _ithis = this
