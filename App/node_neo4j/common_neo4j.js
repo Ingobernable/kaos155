@@ -1,10 +1,16 @@
 ﻿module.exports = function (app) {
 
     return {
-        //obj: require('neo4j-driver').v1,
+        obj: require('neo4j-driver').v1,
         driver: null,
         session: null,
+        insert: function (string, _back) {
+                this.session.run(string).then(function () {
+                    _back()
+                })
+        },
         push: {
+
             run: function (keyA, KeyB, string, _return,params) {
  
                 if (_return == null)

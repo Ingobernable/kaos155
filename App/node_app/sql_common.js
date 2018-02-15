@@ -95,6 +95,7 @@ module.exports = function (app, callback) {
         init: function (options, type, callback) {
             const _ithis = this
             const Command = options.Command
+            //debugger
 
             this.encryptor = require('simple-encryptor')("bbdd_kaos155_text")
 
@@ -118,7 +119,7 @@ module.exports = function (app, callback) {
                     if (err) {
                         const testIp = function (testIp, callback) {
 
-                            _cb = callback 
+                            //_cb = callback 
                             app.inquirer.prompt([
                                 { type: 'input', name: 'host', message: 'mysql ' + type + ' IP', default: 'localhost' },
                                 { type: 'input', name: 'user', message: 'mysql ' + type + ' user', default: 'root' },
@@ -153,7 +154,7 @@ module.exports = function (app, callback) {
                                         _ithis.testDB(options, con, resp, type, _ithis.filedb(Command,type) , function () {
                                             app.fs.writeFile(_ithis.fileCredenciales(type) , JSON.stringify(_credenciales), function (err, _JSON) {
                                                 console.log("\x1b[32m Nuevas credenciales de acceso mysql guardadas OK \x1b[0m");
-                                                _cb(_credenciales)
+                                                callback(_credenciales)
                                             })
                                         }, true)
 

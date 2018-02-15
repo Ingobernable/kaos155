@@ -99,9 +99,6 @@ module.exports = function (app, callback) {
                                 })
                             }, _Dl, Active)
 
-
-
-
                         }
 
                     })
