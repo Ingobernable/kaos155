@@ -250,9 +250,8 @@ module.exports = function (app, callback) {
 
                             options.SQL.db.query("CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)", [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME] , function (err, _rec) {
                                 if (err != null || _rec[0][0] == null) {
-
-                                    cadSql = "CALL Insert_Error_Boletin(?,?,?)"
-                                    options.SQL.scrapDb.SQL.db.query(cadSql, [params.data.BOLETIN + '#' + params.data.ID_BORME, err.sql, err.sqlMessage], function (err2) {
+                                    debugger
+                                    options.SQL.scrapDb.SQL.db.query("CALL Insert_Error_Boletin(?,?,?)", [params.data.BOLETIN + '#' + params.data.ID_BORME, err.sql, err.sqlMessage], function (err2) {
                                         app.process.stdout.write(app, options, '\x1b[31m', "x", '\x1b[0m')
                                         _cberror(params)
                                     })
