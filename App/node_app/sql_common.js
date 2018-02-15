@@ -86,6 +86,12 @@ module.exports = function (app, callback) {
                 }
             })
         },
+        fileCredenciales: function (type) {
+            return app.path.normalize('sqlfiles/' + (type.toUpperCase() != "SCRAP" ? ("parser/" + type.toUpperCase()) : "scrap") + '/cred_' + type.toLowerCase() + '.json'
+        },
+        filedb: function (type) {
+            return "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() : "_contratos")
+        },
         init: function (options, type, callback) {
             const _ithis = this
             this.encryptor = require('simple-encryptor')("bbdd_kaos155_text")
@@ -105,7 +111,7 @@ module.exports = function (app, callback) {
 
             } else {
 
-                app.fs.readFile(app.path.normalize('sqlfiles/' + (type != "SCRAP" ? ("parser/" + type.toUpperCase() ):"scrap")  + '/cred_' + type.toLowerCase() + '.json'), function (err, _JSON) {
+                app.fs.readFile( this.fileCredenciales(type) , function (err, _JSON) {
                     var _cb = null
                     if (err) {
                         const testIp = function (testIp, callback) {
@@ -130,7 +136,7 @@ module.exports = function (app, callback) {
                                     host: resp.host,
                                     user: resp.user,
                                     password: _ithis.encryptor.encrypt(resp.password),
-                                    database: "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : (type=="BORME"? ("_"+type) : "_contratos") ),
+                                    database: _ithis.filedb(type) ,
                                     multipleStatements: true,
                                     waitForConnection: true,
                                 }
@@ -142,8 +148,8 @@ module.exports = function (app, callback) {
                                     } else {
                                         console.log("\x1b[32m Conectado a " + type + " OK \x1b[0m");
 
-                                        _ithis.testDB(options, con, resp, type , "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() : "_contratos")) , function () {
-                                            app.fs.writeFile('sqlfiles/' + (type != "SCRAP" ? "parser/" : "") + type.toUpperCase() + '/cred_' + type.toLowerCase() + '.json', JSON.stringify(_credenciales), function (err, _JSON) {
+                                        _ithis.testDB(options, con, resp, type, _ithis.filedb(type) , function () {
+                                            app.fs.writeFile(_ithis.fileCredenciales(type) , JSON.stringify(_credenciales), function (err, _JSON) {
                                                 console.log("\x1b[32m Nuevas credenciales de acceso mysql guardadas OK \x1b[0m");
                                                 _cb(_credenciales)
                                             })
