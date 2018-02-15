@@ -5,14 +5,28 @@ module.exports = function (app, callback) {
         
         poolSql: [],
         getConnect: function (options, type, callback, test) {
-            var _exit = function (options, type, callback, test) {
+            const _this = this
+            const _exit = function (options, type, callback, test) {
                 callback(options, test)
             }
             if (this.poolSql[type] != null) {
                 if (options.SQL.db == null) {
+
                     this.poolSql[type].getConnection(function (err, connection) {
                         // connected! (unless `err` is set)
                         if (err == null) {
+                            const handle = function (connection,_hc) {
+                                connection.on('error', function (err) {
+                                    console.log('db error', err);
+                                    _this.poolSql[type].getConnection(function (err, connection) {
+                                        handle(connection, _hc)
+                                        options.SQL.db = connection
+                                    })
+                                })
+                            }
+
+                            handle(connection, handle)
+
                             console.log('new connection ' + type + ' mysql OK')
                             options.SQL.db = connection // _this.connection[type] = connection
                             _exit(options, type, callback)
