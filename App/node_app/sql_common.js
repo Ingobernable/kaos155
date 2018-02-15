@@ -89,8 +89,8 @@ module.exports = function (app, callback) {
         fileCredenciales: function (type) {
             return app.path.normalize('sqlfiles/' + (type.toUpperCase() != "SCRAP" ? ("parser/" + type.toUpperCase()) : "scrap") + '/cred_' + type.toLowerCase() + '.json')
         },
-        filedb: function (type) {
-            return "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() : "_contratos"))
+        filedb: function (Command,type) {
+            return "bbdd_kaos155" + (Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() : "_contratos"))
         },
         init: function (options, type, callback) {
             const _ithis = this
@@ -136,7 +136,7 @@ module.exports = function (app, callback) {
                                     host: resp.host,
                                     user: resp.user,
                                     password: _ithis.encryptor.encrypt(resp.password),
-                                    database: _ithis.filedb(type) ,
+                                    database: _ithis.filedb(options.Command, type) ,
                                     multipleStatements: true,
                                     waitForConnection: true,
                                 }
@@ -148,7 +148,7 @@ module.exports = function (app, callback) {
                                     } else {
                                         console.log("\x1b[32m Conectado a " + type + " OK \x1b[0m");
 
-                                        _ithis.testDB(options, con, resp, type, _ithis.filedb(type) , function () {
+                                        _ithis.testDB(options, con, resp, type, _ithis.filedb(options.Command,type) , function () {
                                             app.fs.writeFile(_ithis.fileCredenciales(type) , JSON.stringify(_credenciales), function (err, _JSON) {
                                                 console.log("\x1b[32m Nuevas credenciales de acceso mysql guardadas OK \x1b[0m");
                                                 _cb(_credenciales)
