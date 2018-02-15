@@ -91,7 +91,7 @@ module.exports = function (app, callback) {
 
             } else {
 
-                app.fs.readFile(app.path.normalize('sqlfiles/' + (type != "SCRAP" ? "parser/" : "") + type.toUpperCase() + '/cred_' + type + '.json'), function (err, _JSON) {
+                app.fs.readFile(app.path.normalize('sqlfiles/' + (type!="SCRAP"?("parser/"+ type.toLowerCase()):"scrap")  + '/cred_' + type + '.json'), function (err, _JSON) {
                     var _cb = null
                     if (err) {
                         const testIp = function (testIp, callback) {
