@@ -91,7 +91,7 @@ module.exports = function (app, callback) {
 
             } else {
 
-                app.fs.readFile(app.path.normalize('sqlfiles/' + (type!="SCRAP"?"parser/":"") + type.toLowerCase() + '/cred_' + type + '.json'), function (err, _JSON) {
+                app.fs.readFile(app.path.normalize('sqlfiles/' + (type != "SCRAP" ? "parser/" : "") + type.toUpperCase() + '/cred_' + type + '.json'), function (err, _JSON) {
                     var _cb = null
                     if (err) {
                         const testIp = function (testIp, callback) {
@@ -129,7 +129,7 @@ module.exports = function (app, callback) {
                                         console.log("\x1b[32m Conectado a " + type + " OK \x1b[0m");
 
                                         _ithis.testDB(options, con, resp, type , "bbdd_kaos155" + (options.Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() : "_contratos")) , function () {
-                                            app.fs.writeFile('sqlfiles/' + (type != "SCRAP" ? "parser/" : "") + type.toLowerCase() + '/cred_' + type + '.json', JSON.stringify(_credenciales), function (err, _JSON) {
+                                            app.fs.writeFile('sqlfiles/' + (type != "SCRAP" ? "parser/" : "") + type.toUpperCase() + '/cred_' + type + '.json', JSON.stringify(_credenciales), function (err, _JSON) {
                                                 console.log("\x1b[32m Nuevas credenciales de acceso mysql guardadas OK \x1b[0m");
                                                 _cb(_credenciales)
                                             })
