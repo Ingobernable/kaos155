@@ -26,7 +26,7 @@
 
             ]).then(function (resp) {
 
-                app.grafos =  require("./Common_grafos.js")(app)
+                app.grafos =  require("./common_grafos.js")(app)
                 app.grafos.obj.driver = app.grafos_sys.driver('bolt://' + resp.host, app.grafos_sys.auth.basic(resp.user, resp.password), { encrypted: 'ENCRYPTION_OFF' })
                 app.grafos.obj.driver.onCompleted = function () {
                     console.log('grafoss Driver created');
