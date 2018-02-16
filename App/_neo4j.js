@@ -23,11 +23,11 @@ var App = {
             App.credentials = require('./node_utils/credentials.js')(App)
             require("./node_grafos/menu_console.js")(App, function (app) {
                 require('./node_app/sql_common.js')(app, function (SQL) {
-
+                    SQL.Command = app.Command
                     SQL.init(SQL, 'GRAFOS', function (options) {
 
                         const query = function (options, exec, _back) {
-                            options.SQL.db.query("SELECT _cypher,_keyA,_keyB FROM cypher_data_grafos where _parse = 0 limit 1", function (err, record) {
+                            options.SQL.db.query("SELECT _cypher,_keyA,_keyB FROM cypher_data_grafos where _parse = 0 order by _date limit 1", function (err, record) {
                                 if (err)
                                     console.log(err)
 

@@ -32,7 +32,8 @@ CREATE TABLE `cypher_data_grafos` (
   `_parse` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`_keyA`,`_keyB`),
   KEY `_iparse` (`_parse`),
-  UNIQUE KEY `_ikeys` (`_keyA`,`_keyB`)
+  KEY `_idate` (`_date`),
+  UNIQUE KEY `_id` (`_keyA`,`_keyB`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
