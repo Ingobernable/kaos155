@@ -5,23 +5,27 @@ module.exports = function (app, myArgs, callback) {
     const exit = function (myArgs, callback, automatic) {
 
         //if (automatic) {
-        if (myArgs[1] != 'BORME') {
+        if (myArgs[0] != _exit) {
+            if (myArgs[0] != 'GRAFOS') {
+                if (myArgs[1] != 'BORME') {
 
-            var date = new Date(myArgs[2].substr(0, 4), 0, 1) //myArgs[2])
+                    var date = new Date(myArgs[2].substr(0, 4), 0, 1) //myArgs[2])
 
-            if (date.getDay() == 0) {
-                date.setDate(date.getDate() + 1)
-            }
-        } else {
+                    if (date.getDay() == 0) {
+                        date.setDate(date.getDate() + 1)
+                    }
+                } else {
 
-            var date = new Date(myArgs[2].substr(0, 4), 0, 2) //myArgs[2])
-            if (date.getDay() == 6) {
-                date.setDate(date.getDate() + 1)
+                    var date = new Date(myArgs[2].substr(0, 4), 0, 2) //myArgs[2])
+                    if (date.getDay() == 6) {
+                        date.setDate(date.getDate() + 1)
 
-            }
-            if (date.getDay() == 0) {
-                date.setDate(date.getDate() + 1)
+                    }
+                    if (date.getDay() == 0) {
+                        date.setDate(date.getDate() + 1)
 
+                    }
+                }
             }
         }
 
@@ -61,28 +65,77 @@ module.exports = function (app, myArgs, callback) {
         })
     }
 
-    const main = function (myArgs, exit, callback) {
+    const main = function (_commands, myArgs, exit, callback) {
         if (myArgs.length == 0) {
             // myArgs = require("/node_app/options_menu")() //['SCRAP','BOE', '2010'] //, 'BOE-B-2003-31017' ]
 
             app.inquirer.prompt([{ type: 'list', name: 'value', message: 'command', choices: app.Commands }])
                 .then(function (command) {
+                    
                     if (command.value != _exit) {
                         myArgs[0] = command.value
-                        app.inquirer.prompt([{ type: 'list', name: 'value', message: 'tipo', choices: ['BORME', 'BOE', 'BOCM'] }])
-                            .then(function (type) {
-                                getanyos(app, command.value, type.value, function (app, anyos) {
+                        if (_commands.indexOf(command.value) < _commands.length - 2) {
+                            app.inquirer.prompt([{ type: 'list', name: 'value', message: 'tipo', choices: ['BORME', 'BOE', 'BOCM'] }])
+                                .then(function (type) {
+                                    getanyos(app, command.value, type.value, function (app, anyos) {
 
-                                    app.inquirer.prompt([{ type: 'list', name: 'anyo', message: 'anyo ', choices: anyos }])
-                                        .then(function (resp) {
-                                            //debugger
-                                            myArgs = [command.value, type.value, resp.anyo]
+                                        app.inquirer.prompt([{ type: 'list', name: 'anyo', message: 'anyo ', choices: anyos }])
+                                            .then(function (resp) {
+                                                //debugger
+                                                myArgs = [command.value, type.value, resp.anyo]
+                                                exit(myArgs, callback, false)
+                                            })
+                                    })
+                                })
+                        } else {
+                            app.grafos = { obj: require("../node_grafos/common_grafos.js")(app) }
+                            app.grafos_sys = require('neo4j-driver').v1
+                            myArgs = [command.value, null, null]
+                            if (app.fs.existsSync(__basedir + "/sqlfiles/grafos/cred_grafos.json")) {
+                                app.credentials.getparamsfromfile('grafos/cred_grafos', function (err) {
+                                    debugger
+                                }, function (resp) {
+
+                                    app.grafos.obj.driver = app.grafos_sys.driver('bolt://' + resp.host, app.grafos_sys.auth.basic(resp.user, resp.password), {
+                                        encrypted: 'ENCRYPTION_OFF'
+                                    })
+                                    app.grafos.obj.driver.onCompleted = function () {
+                                        //debugger
+                                        exit(myArgs, callback, false)
+                                    }
+                                    app.grafos.obj.session = app.grafos.obj.driver.session();
+                                })
+
+                            } else {
+                                app.inquirer.prompt([
+
+                                    { type: 'input', name: 'host', message: 'neo4db IP:port', default: 'localhost' },
+                                    { type: 'input', name: 'user', message: 'neo4db user', default: 'grafos' },
+                                    { type: 'password', name: 'password', message: 'neo4db password' }
+
+                                ]).then(function (resp) {
+
+                                    //app.grafos = require("./common_grafos.js")(app)
+                                    app.grafos.obj.driver = app.grafos_sys.driver('bolt://' + resp.host, app.grafos_sys.auth.basic(resp.user, resp.password), { encrypted: 'ENCRYPTION_OFF' })
+                                    app.grafos.obj.driver.onCompleted = function () {
+                                        console.log('grafoss Driver created');
+                                        //debugger
+                                        app.credentials.saveparamstofile('grafos/cred_grafos', resp, null, function (_credenciales) {
                                             exit(myArgs, callback, false)
                                         })
+                                    };
+                                    app.grafos.obj.driver.onError = function (error) {
+                                        console.log(error);
+                                        process.exit(1)
+                                    };
+                                    app.grafos.obj.session = app.grafos.obj.driver.session();
+
                                 })
-                            })
+                            }
+                        }
                     } else {
-                        process.exit(1)
+                        myArgs = [command.value,null,null]
+                        exit(myArgs, callback, false)
                     }
                 })
 
@@ -93,7 +146,7 @@ module.exports = function (app, myArgs, callback) {
         }
     }
 
-    main(myArgs, exit, callback)
+    main(app.Commands ,myArgs, exit, callback)
     ////////////////////////////////////////////////////////////////////////
 
 

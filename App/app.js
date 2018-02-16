@@ -13,7 +13,7 @@ var App = {
     //datos generales
     //_fileCredenciales: 'cred_',
     TypeBoletines: ["BORME", "BOE", "BOCM"],
-    Commands: ['SCRAP', 'PARSER', 'EXIT'],
+    Commands: ['SCRAP', 'PARSER', 'GRAFOS', 'EXIT'],
     Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
 
     //Plugins
@@ -167,6 +167,43 @@ String.prototype.lastIndexOfRegex = function (regex) {
                         },
                         GRAFOS: function (type) {
 
+                            require('./node_app/sql_common.js')(app, function (SQL) {
+                                SQL.Command = app.Command
+                                SQL.init(SQL, 'GRAFOS', function (options) {
+
+                                    const query = function (options, exec, _back) {
+                                        options.SQL.db.query("SELECT _cypher,_keyA,_keyB FROM cypher_data_grafos where _parse = 0 limit 1", function (err, record) {
+                                            if (err)
+                                                console.log(err)
+
+                                            if (record.length > 0) {
+                                                app.grafos.obj.insert(record[0]._cypher, function () {
+                                                    console.log(record[0]._cypher)
+                                                    options.SQL.db.query("Update cypher_data_grafos SET _parse = 1 where _keyA=? AND _keyB=?", [record[0]._keyA, record[0]._keyB], function (err, record) {
+                                                        if (err)
+                                                            console.log(err)
+
+                                                        exec(options, exec, _back)
+                                                    })
+                                                })
+                                            } else {
+                                                _back()
+                                            }
+
+                                        })
+                                    }
+                                    query(options, query, function () {
+                                        debugger
+                                    })
+
+                                })
+                            })
+
+
+                        },
+                        EXIT: function (type) {
+                            console.log('EXIT !')
+                            process.exit(0)
                         }
                     })
 
@@ -178,25 +215,25 @@ String.prototype.lastIndexOfRegex = function (regex) {
                 process.exit(i)
             },
             parameters: function (app, myArgs, callback) {
-
-                if (app.SqlIP != null && app.SqlIP != 'localhost') {
-                    if (app.SqlIP.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g).length != 1) {
+                if (app.Commands.indexOf(myArgs[0]) < app.Commands.length - 2) {
+                    if (app.SqlIP != null && app.SqlIP != 'localhost') {
+                        if (app.SqlIP.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g).length != 1) {
+                            app.SqlIP = 'localhost'
+                        }
+                    } else {
                         app.SqlIP = 'localhost'
                     }
-                } else {
-                    app.SqlIP = 'localhost'
-                }
 
-                if (app.Commands.indexOf(myArgs[0]) == -1) {
-                    app.logStop(1, 'comando no valido falta SCRAP PARSE BORME')
+                    if (app.Commands.indexOf(myArgs[0]) == -1) {
+                        app.logStop(1, 'comando no valido falta SCRAP PARSE GRAFOS')
 
-                } else {
+                    } else {
 
-                    if (app.TypeBoletines.indexOf(myArgs[1]) == -1) {
-                        app.logStop(2, 'parametros no validos falta BOCM BOE BORME')
+                        if (myArgs[1] != null && app.TypeBoletines.indexOf(myArgs[1]) == -1) {
+                            app.logStop(2, 'parametros no validos falta BORME BOE BOCM')
+                        }
                     }
                 }
-
                 app.Type = myArgs[1]
                 callback(app)
             },
@@ -250,27 +287,32 @@ String.prototype.lastIndexOfRegex = function (regex) {
 
         })
         App.parameters(App, myArgs, function (app) {
-            if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {
-                myArgs[2] = (date.getFullYear() + '').pad(4) + '0212'
-            } else {
-                if (myArgs[1] == 'BORME' && app.Mins[myArgs[0]] == app.anyo) {
-                    myArgs[2] = (date.getFullYear() + '').pad(4) + "0102"
+            if (app.Commands.indexOf(myArgs[0]) < app.Commands.length - 2) {
+                const date = new Date()
+                if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {
+                    myArgs[2] = (date.getFullYear() + '').pad(4) + '0212'
                 } else {
-                    myArgs[2] = (date.getFullYear() + '').pad(4) + (date.getMonth() + 1 + '').pad(2) + (date.getDate() + '').pad(2)
+                    if (myArgs[1] == 'BORME' && app.Mins[myArgs[0]] == app.anyo) {
+                        myArgs[2] = (date.getFullYear() + '').pad(4) + "0102"
+                    } else {
+                        myArgs[2] = (date.getFullYear() + '').pad(4) + (date.getMonth() + 1 + '').pad(2) + (date.getDate() + '').pad(2)
 
+                    }
                 }
-            }
 
-            if (app.Mins[myArgs[1]] <= app.anyo) {
-                app.initDate = myArgs[2]
-                console.log('MySQL IP:' + app.SqlIP)
-                console.log('PROCESS:' + app.Type)
-                console.log('Anyo:' + app.anyo)
+                if (app.Mins[myArgs[1]] <= app.anyo) {
+                    app.initDate = myArgs[2]
+                    console.log('MySQL IP:' + app.SqlIP)
+                    console.log('PROCESS:' + app.Type)
+                    console.log('Anyo:' + app.anyo)
 
-                app.init(app, function (_f) { _f[myArgs[0]](app.Type) })
+                    app.init(app, function (_f) { _f[myArgs[0]](app.Type) })
 
+                } else {
+                    console.log('no se puede analizar ' + myArgs[1] + ' con fecha anterior a ' + app.Mins[myArgs[1]])
+                }
             } else {
-                console.log('no se puede analizar ' + myArgs[1] + ' con fecha anterior a ' + app.Mins[myArgs[1]])
+                app.init(app, function (_f) { _f[myArgs[0]](app.Type) })
             }
 
         })
