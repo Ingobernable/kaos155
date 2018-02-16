@@ -153,7 +153,7 @@ module.exports = function (app, callback) {
     app.commonSQL.init(options, 'BORME', function (options) {
         app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', function (scrapdb) {
             options.SQL.scrapDb = scrapdb
-            app.commonSQL.init({ SQL: { db: null } }, 'GRAFOS', function (grafosdb) {
+            app.commonSQL.init({ SQL: { db: null }, Command: options.Command }, 'GRAFOS', function (grafosdb) {
                 options.SQL.grafosDb = grafosdb               
                 callback(options)
             })
