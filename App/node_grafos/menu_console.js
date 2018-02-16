@@ -6,7 +6,7 @@
             app.credentials.getparamsfromfile('grafos/cred_grafos', function (err) {
                 debugger
             }, function (resp) {
-                app.grafos = { obj: require("./Common_grafos.js")(app) }
+                app.grafos = { obj: require("./common_grafos.js")(app) }
                 app.grafos.obj.driver = app.grafos_sys.driver('bolt://' + resp.host, app.grafos_sys.auth.basic(resp.user, resp.password), {
                     encrypted: 'ENCRYPTION_OFF'
                 })
