@@ -74,7 +74,7 @@ module.exports = function (app, callback) {
                 } else {
                     var queryTables = "SELECT COUNT(*) as total FROM information_schema.tables WHERE table_schema = '" + db + "';"
                     con.query(queryTables, function (err, record) {
-                        if (record[0].total < 3) {
+                        if (record[0].total == 0 ) {
                             _xthis.mysqlCommand(_command, db, callback, close)
                             
                         } else {
@@ -90,7 +90,7 @@ module.exports = function (app, callback) {
             return app.path.normalize('sqlfiles/' + (type.toUpperCase() != "SCRAP" ? ("parser/" + type.toUpperCase()) : "scrap") + '/cred_' + type.toLowerCase() + '.json')
         },
         filedb: function (Command,type) {
-            return "bbdd_kaos155" + (Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() : "_contratos"))
+            return "bbdd_kaos155" + (Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() :  (type == "GRAFOS" ? "_" + type.toLowerCase()  : "_contratos")))
         },
         init: function (options, type, callback) {
             const _ithis = this

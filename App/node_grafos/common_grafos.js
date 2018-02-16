@@ -16,7 +16,7 @@
                 if (_return == null)
                     debugger
 
-                app.BOLETIN.SQL.db.query("INSERT IGNORE INTO borme_grafos (_cypher,_keyA,_keyB) VALUES (?,?,?)", [string, keyA, KeyB ], function (err, record) {
+                app.BOLETIN.SQL.grafosDb.SQL.db.query("INSERT IGNORE INTO cypher_data_grafos (_cypher,_keyA,_keyB) VALUES (?,?,?)", [string, keyA, KeyB ], function (err, record) {
                     _return(params)
                 })
 

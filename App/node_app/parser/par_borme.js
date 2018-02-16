@@ -34,7 +34,7 @@ module.exports = function (app, callback) {
 
         url: app.urlBORME,       
         _common: require('../_common.js')(app),
-        neo4j: require('../../node_neo4j/common_neo4j.js')(app),
+        grafos: require('../../node_grafos/common_grafos.js')(app),
         SQL: { db: null },
         parser: {
            
@@ -43,7 +43,7 @@ module.exports = function (app, callback) {
                 _linea.table = "Empresa"
                 _linea.cif = null
 
-                    options.neo4j.push.Object(_linea, function (_linea) {  //,  function (options, params) {
+                    options.grafos.push.Object(_linea, function (_linea) {  //,  function (options, params) {
                 
                         app.commonSQL.SQL.commands.insert.Borme.keys(options, _linea, function (_linea, _rec) {
                             app.process.stdout.write(app, options, '\x1b[1m\x1b[36m', 'E', '\x1b[0m')
@@ -74,7 +74,7 @@ module.exports = function (app, callback) {
 
                             
                             //guardamos los datos
-                            options.neo4j.push.relation(_Dl.values ? _Dl.values.Auditor ? "Auditor" : "Directivo" : "Directivo", _linea, params, function () {
+                            options.grafos.push.relation(_Dl.values ? _Dl.values.Auditor ? "Auditor" : "Directivo" : "Directivo", _linea, params, function () {
                                     app.commonSQL.SQL.commands.insert.Borme.diario(options, [
                                         _linea.data.BOLETIN,
                                         _linea.id,
@@ -149,11 +149,14 @@ module.exports = function (app, callback) {
 
     //options.Rutines.cargos = [] //dataCargos
     options.Rutines = require('../_utils/BORME/Borme_Rutines.js')(app, options, require('../_utils/BORME/Borme_Transforms.js')(app, options) ),
-    app.commonSQL.init(options, 'BORME' , function (options) {
+
+    app.commonSQL.init(options, 'BORME', function (options) {
         app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', function (scrapdb) {
-            //debugger
             options.SQL.scrapDb = scrapdb
-            callback(options)
+            app.commonSQL.init({ SQL: { db: null } }, 'GRAFOS', function (grafosdb) {
+                options.SQL.grafosDb = grafosdb               
+                callback(options)
+            })
 
         })
     })

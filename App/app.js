@@ -1,7 +1,7 @@
 'use strict';
 //////////////////////////////////////////////////////////////////////
 //
-// para activar la db de grafos neo4JS, crear una carpeta vacia App/sqlfiles/neo4j
+// para activar la db de grafos grafosS, crear una carpeta vacia App/sqlfiles/grafos
 //
 global.__basedir = __dirname;
 const pjson = require('./package.json');
@@ -85,7 +85,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
 };
 
     App.credentials= require('./node_utils/credentials.js')(App)
-    require("./node_app/options_menu.js")(App, process.argv.slice(2), function (app, myArgs, date, automatic) {
+    require("./node_app/menu_console.js")(App, process.argv.slice(2), function (app, myArgs, date, automatic) {
 
         let App = app.merge(app, {
             command: myArgs[0],
@@ -164,6 +164,9 @@ String.prototype.lastIndexOfRegex = function (regex) {
                                     })
                                 })
                             })
+                        },
+                        GRAFOS: function (type) {
+
                         }
                     })
 

@@ -49,7 +49,7 @@ module.exports = function (app, myArgs, callback) {
                                 anyos[anyos.length] = n + ""
                         }
                     } else {
-                        
+
                         for (i in record) {
                             anyos[anyos.length] = record[i].Anyo + ""
                         }
@@ -95,8 +95,8 @@ module.exports = function (app, myArgs, callback) {
 
     main(myArgs, exit, callback)
     ////////////////////////////////////////////////////////////////////////
-    
 
-    
+
+
 
 }
