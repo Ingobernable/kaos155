@@ -2,9 +2,9 @@ CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_grafos` /*!40100 DEFAULT CHARACTER 
 USE `bbdd_kaos155_grafos`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: bbdd_kaos155_text
+-- Host: 54.37.77.26    Database: bbdd_kaos155_grafos
 -- ------------------------------------------------------
--- Server version	5.7.20-log
+-- Server version	5.5.5-10.2.12-MariaDB-10.2.12+maria~stretch-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -27,15 +27,51 @@ DROP TABLE IF EXISTS `cypher_data_grafos`;
 CREATE TABLE `cypher_data_grafos` (
   `_keyA` varchar(28) NOT NULL,
   `_keyB` varchar(28) NOT NULL,
-  `_cypher` text,
-  `_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `_parse` tinyint(4) DEFAULT '0',
-  PRIMARY KEY (`_keyA`,`_keyB`),
+  `_cypher` text DEFAULT NULL,
+  `_date` timestamp NULL DEFAULT current_timestamp(),
+  `_parse` tinyint(4) DEFAULT 0,
+  PRIMARY KEY (`_keyB`,`_keyA`),
+  UNIQUE KEY `_id` (`_keyA`,`_keyB`),
   KEY `_iparse` (`_parse`),
-  KEY `_idate` (`_date`),
-  UNIQUE KEY `_id` (`_keyA`,`_keyB`)
+  KEY `_idate` (`_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping routines for database 'bbdd_kaos155_grafos'
+--
+/*!50003 DROP PROCEDURE IF EXISTS `parser_data_cypher` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `parser_data_cypher`()
+BEGIN
+	DECLARE __cypher text;
+	DECLARE __keyA text;
+	DECLARE __keyB text;
+        
+	DECLARE CR_grafos CURSOR
+		FOR SELECT _cypher,_keyA,_keyB FROM cypher_data_grafos where _parse = 0 limit 1;
+    
+    OPEN CR_grafos;
+	FETCH CR_grafos INTO __cypher,__keyA,__keyB;
+    UPDATE cypher_data_grafos SET _parse = 1 where _keyA=__keyA AND _keyB=__keyB; 
+    
+    CLOSE CR_grafos;
+    
+    SELECT __cypher;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -46,4 +82,4 @@ CREATE TABLE `cypher_data_grafos` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-15  1:59:34
+-- Dump completed on 2018-02-17 10:17:52

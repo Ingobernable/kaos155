@@ -172,22 +172,18 @@ String.prototype.lastIndexOfRegex = function (regex) {
                                 SQL.init(SQL, 'GRAFOS', function (options) {
 
                                     const query = function (options, exec, _back) {
-                                        options.SQL.db.query("SELECT _cypher,_keyA,_keyB FROM cypher_data_grafos where _parse = 0 limit 1", function (err, record) {
-                                            if (err)
+                                        options.SQL.db.query("CALL parser_data_cypher();", function (err, record) {
+                                            if (err) {
                                                 console.log(err)
-
-                                            if (record.length > 0) {
-                                                app.grafos.obj.insert(record[0]._cypher, function () {
-                                                    console.log(record[0]._cypher)
-                                                    options.SQL.db.query("Update cypher_data_grafos SET _parse = 1 where _keyA=? AND _keyB=?", [record[0]._keyA, record[0]._keyB], function (err, record) {
-                                                        if (err)
-                                                            console.log(err)
-
+                                            } else {
+                                                if (record.length > 0) {
+                                                    app.grafos.obj.insert(record[0][0].__cypher, function () {
+                                                        console.log(record[0][0].__cypher)
                                                         exec(options, exec, _back)
                                                     })
-                                                })
-                                            } else {
-                                                _back()
+                                                } else {
+                                                    _back()
+                                                }
                                             }
 
                                         })
