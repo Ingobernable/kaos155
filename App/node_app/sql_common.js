@@ -87,7 +87,7 @@ module.exports = function (app, callback) {
             })
         },
         fileCredenciales: function (type) {
-            return app.path.normalize('sqlfiles/' + (type.toUpperCase() != "SCRAP" ? ("parser/" + type.toUpperCase()) : "scrap") + '/cred_' + type.toLowerCase() + '.json')
+            return app.path.normalize('sqlfiles/' + 'cred_' + type.toLowerCase() + '.json')
         },
         filedb: function (Command,type) {
             return "bbdd_kaos155" + (Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() :  (type == "GRAFOS" ? "_" + type.toLowerCase()  : "_contratos")))

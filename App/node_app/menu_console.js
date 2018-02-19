@@ -91,8 +91,8 @@ module.exports = function (app, myArgs, callback) {
                             app.grafos = { obj: require("../node_grafos/common_grafos.js")(app) }
                             app.grafos_sys = require('neo4j-driver').v1
                             myArgs = [command.value, null, null]
-                            if (app.fs.existsSync(__basedir + "/sqlfiles/grafos/cred_grafos.json")) {
-                                app.credentials.getparamsfromfile('grafos/cred_grafos', function (err) {
+                            if (app.fs.existsSync(__basedir + "/sqlfiles/cred_grafos.json")) {
+                                app.credentials.getparamsfromfile('cred_grafos', function (err) {
                                     debugger
                                 }, function (resp) {
 
@@ -103,6 +103,11 @@ module.exports = function (app, myArgs, callback) {
                                         //debugger
                                         exit(myArgs, callback, false)
                                     }
+                                    app.grafos.obj.driver.onError = function (error) {
+                                        console.log("neo4j error:error.message");
+                                        console.log("elimine el fichero kaos155\\App\\sqlfiles\\cred_grafos.json");
+                                        process.exit(1)
+                                    };
                                     app.grafos.obj.session = app.grafos.obj.driver.session();
                                 })
 
@@ -120,7 +125,7 @@ module.exports = function (app, myArgs, callback) {
                                     app.grafos.obj.driver.onCompleted = function () {
                                         console.log('grafoss Driver created');
                                         //debugger
-                                        app.credentials.saveparamstofile('grafos/cred_grafos', resp, null, function (_credenciales) {
+                                        app.credentials.saveparamstofile('cred_grafos', resp, null, function (_credenciales) {
                                             exit(myArgs, callback, false)
                                         })
                                     };

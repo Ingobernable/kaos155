@@ -903,15 +903,17 @@ module.exports = function (app, options, transforms) {
                             for (p in _v) {
                                 _ret[_ret.length] = { type: _func, values: _v[p] }
                             }
+                            _func = null
                         } else {
-                            console.log('BormeRutines Excepcion: explora ' + _func )
+                            console.log('BormeRutines Excepcion: explora ' + _func)
+                            _func = null
                         }
                     }
                 }
                 if (keys.length == 0)
                     debugger
 
-                _func = _t =_v = _p = _i = p= null
+                _t =_v = _p = _i = p= null
                 return _ret
             },
             titleCase: function(str) {

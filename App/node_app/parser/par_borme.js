@@ -97,7 +97,7 @@ module.exports = function (app, callback) {
                                     _e++
                                     _func(_e, _linea, _cb, _func)
                                 })
-                            }, _Dl, Active)
+                            }, _Dl, Active, _linea.data.BOLETIN + "#" + _linea.data.ID_BORME)
 
                         }
 

@@ -14,6 +14,7 @@
                     //debugger
                     _callback(app)
                 }
+
                 app.grafos.obj.session = app.grafos.obj.driver.session();
             })
         

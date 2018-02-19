@@ -2,9 +2,9 @@ CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_grafos` /*!40100 DEFAULT CHARACTER 
 USE `bbdd_kaos155_grafos`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
--- Host: 54.37.77.26    Database: bbdd_kaos155_grafos
+-- Host: 127.0.0.1    Database: bbdd_kaos155_grafos
 -- ------------------------------------------------------
--- Server version	5.5.5-10.2.12-MariaDB-10.2.12+maria~stretch-log
+-- Server version	5.7.20-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -25,12 +25,15 @@ DROP TABLE IF EXISTS `cypher_data_grafos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cypher_data_grafos` (
+  `boletin` varchar(25) DEFAULT NULL,
   `_keyA` varchar(28) NOT NULL,
   `_keyB` varchar(28) NOT NULL,
-  `_cypher` text DEFAULT NULL,
-  `_date` timestamp NULL DEFAULT current_timestamp(),
-  `_parse` tinyint(4) DEFAULT 0,
-  PRIMARY KEY (`_keyB`,`_keyA`),
+  `_cypher` text,
+  `_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `_parse` tinyint(4) DEFAULT '0',
+  `command` varchar(5) DEFAULT NULL,
+  `r` varchar(13) CHARACTER SET utf8 DEFAULT NULL,
+  PRIMARY KEY (`_keyA`,`_keyB`),
   UNIQUE KEY `_id` (`_keyA`,`_keyB`),
   KEY `_iparse` (`_parse`),
   KEY `_idate` (`_date`)
@@ -82,4 +85,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-17 10:17:52
+-- Dump completed on 2018-02-18 10:26:23
