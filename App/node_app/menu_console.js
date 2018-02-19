@@ -92,7 +92,7 @@ module.exports = function (app, myArgs, callback) {
                             app.grafos_sys = require('neo4j-driver').v1
                             myArgs = [command.value, null, null]
                             if (app.fs.existsSync(__basedir + "/sqlfiles/cred_grafos.json")) {
-                                app.credentials.getparamsfromfile('cred_grafos', function (err) {
+                                app.credentials.getparamsfromfile('cred_neo4j', function (err) {
                                     debugger
                                 }, function (resp) {
 
@@ -125,7 +125,7 @@ module.exports = function (app, myArgs, callback) {
                                     app.grafos.obj.driver.onCompleted = function () {
                                         console.log('grafoss Driver created');
                                         //debugger
-                                        app.credentials.saveparamstofile('cred_grafos', resp, null, function (_credenciales) {
+                                        app.credentials.saveparamstofile('cred_neo4j', resp, null, function (_credenciales) {
                                             exit(myArgs, callback, false)
                                         })
                                     };
