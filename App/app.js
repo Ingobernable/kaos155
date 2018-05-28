@@ -158,6 +158,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
                                 app.commonSQL.SQL.getCounter(app, options, type, function (options) {
                                     app._io = require('./node_www/IO.js')(app)
                                     require('./node_www/server_http.js')(app, function (io) {
+                                        debugger
                                         app.process.stdout.io = io
                                         var _desde = app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8)
                                         if(_desde.length==0)
