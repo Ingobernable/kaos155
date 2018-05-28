@@ -352,7 +352,7 @@ module.exports = function (app, callback) {
                                         }
                                     })
 
-                                    this.params = null
+                                    _this.params = null
 
                                 })
                             }
