@@ -207,12 +207,14 @@
                                 }
                             })
                         } else {
-                            var date = new Date(iyear * 1, (imonth * 1) - 1, iday * 1, 23, 0, 0);
-
+                            _AHORA =_AHORA.setDate(_AHORA.getDate() + 1); 
+                            //var date = new Date(_AHORA.getFullYear(), (_AHORA.getMonth() * 1) - 1, iday * 1, 23, 0, 0);
+                            debugger
                             console.log('el año no ha acabado pero si los sumarios')
-                            console.log('continuaremos el ' + date.toString())
+                            console.log('continuaremos el ' + _AHORA.toString())
 
-                            app.schedule.scheduleJob(date, function (y) {
+                            app.schedule.scheduleJob(_AHORA, function (y) {
+                                debugger
                                 console.log('despertando ... ' + y + ' ... empezando a analizar ' + type)
                                 options._common.Actualize(options, type, data)
                             })
