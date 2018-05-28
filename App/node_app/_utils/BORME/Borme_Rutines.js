@@ -696,7 +696,7 @@ module.exports = function (app, options, transforms) {
                 const Provincia = null
 
                 var _l = 0
-                var lines = ""
+                var line = ""
                 var  _e = 0
                 var  _excluye = null
                 var i = 0
