@@ -79,7 +79,7 @@ module.exports = function (app, myArgs, callback) {
                         if (_commands.indexOf(command.value) < _commands.length - 2) {
                             app.inquirer.prompt([{ type: 'list', name: 'value', message: 'tipo', choices: ['BORME', 'BOE', 'BOCM'] }])
                                 .then(function (type) {
-                                    debugger
+                                    //debugger
                                     getanyos(app, command.value, type.value, function (app, anyos) {
 
                                         app.inquirer.prompt([{ type: 'list', name: 'anyo', message: 'anyo ', choices: anyos }])
