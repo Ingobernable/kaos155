@@ -83,9 +83,9 @@
             })
         },
         xmlToJson: function (xml) {
-debugger
+//debugger
             // Create the return object
-            var _this = this
+            var _this = this.xmlToJson
 
             var obj = {};
 
