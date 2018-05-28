@@ -300,7 +300,7 @@ module.exports = function (app, callback) {
                     },
                     Boletin: {
                         text: function (options, _analisis, data, callback) {
-                            //var i = isNaN(data.importe * 1) ? 0 : data.importe * 1
+                            var _this = this
                             if (data.err != null) {
                                 app.process.stdout.write(app, options, '\x1b[31m','CNS','\x1b[0m')
           
@@ -318,7 +318,7 @@ module.exports = function (app, callback) {
                                         data.err = "FALTA CONTRATISTA o IMPORTES"
                                     }
 
-                                    this.params = [
+                                    _this.params = [
                                             _text.length,
                                             boletin.split("-")[0],                                                      //type
                                             fecha.substr(6, 2),                                                      //Dia
@@ -333,11 +333,10 @@ module.exports = function (app, callback) {
                                             data.err == null ? '' : data.err
                                     ]
 
-                                    options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', this.params, function (err, record) {
+                                    options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', _this.params, function (err, record) {
                                         if (err != null) {
                                             app.process.stdout.write(app, options, '\x1b[31m','INS','\x1b[0m')
-                                            cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
-                                            options.SQL.db.query(cadSql, [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
+                                            options.SQL.db.query("INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)", [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                                 var x = err
                                                 var y = params
                                                 callback(data)
