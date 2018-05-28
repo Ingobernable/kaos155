@@ -171,8 +171,8 @@
                 const _AHORA = new Date()
 
                 if (app.update == null) {
-                    if (iyear == app.anyo) {
-                        if (_DATE < _AHORA) {
+                    if (iyear == app.anyo || iyear.length==0) {
+                        if (_DATE < _AHORA && iyear.length>0) {
                             options.type = type.toUpperCase()
                             options.Sumario = data.type.toUpperCase() + "-" + (type != "BOCM" ? "S-" : "") + iyear + imonth + iday
                             data._list = []
