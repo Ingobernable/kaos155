@@ -692,8 +692,8 @@ module.exports = function (app, options, transforms) {
 
                 const patterns = _this._transforms.getPatern(this._transforms)
                 const _xlines=[]
-                const Borme = null
-                const Provincia = null
+                var Borme = null
+                var Provincia = null
 
                 var _l = 0
                 var line = ""
