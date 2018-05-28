@@ -694,7 +694,12 @@ module.exports = function (app, options, transforms) {
                 const _xlines=[]
                 const Borme = null
                 const Provincia = null
-                let _l = 0
+
+                var _l = 0
+                var lines = ""
+                var  _e = 0
+                var  _excluye = null
+                var i = 0
 
                 for (_l in lines) {
                     //debugger
@@ -749,7 +754,7 @@ module.exports = function (app, options, transforms) {
                         var _e = _xlines[_l].substr(_xlines[_l].length - 4, 4)
                         if ( ((_e.charAt(0)>="0" &&  _e.charAt(0)<="9") && (_e.charAt(1)>="0" &&  _e.charAt(1)<="9") && _e.substr(2,2)==").") )  {
                             var _xline = cadena + (cadena.length > 0 ? ' ' : '') + _xlines[_l]
-                                        _xcline = _xline.split("-")[0]
+                            var _xcline = _xline.split("-")[0]
                             if(!isNaN(parseFloat(_xcline)) && isFinite(_xcline))
                                 lines[lines.length] = _xline
                             cadena=""
