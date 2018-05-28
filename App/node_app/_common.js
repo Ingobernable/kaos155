@@ -163,7 +163,7 @@
             //var _r = { BOCM: 5, BOE: 6, BORME: 8 }
             //const _this = this
             if (options.Command == app.Commands[0]) {
-
+                debugger
                 const iyear = data.desde.substr(0, 4)
                 const imonth = data.desde.substr(4, 2)
                 const iday = data.desde.substr(6, 2)
