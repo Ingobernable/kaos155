@@ -414,7 +414,7 @@ module.exports = function (app, callback) {
                     if (err)
                         debugger
                     if (Record.length == 0) {
-                        _options.SQL.db.query(_cadsql = "INSERT INTO lastread (Type, Anyo, SUMARIO_NEXT) VALUES ('" + type + "'," + app.anyo + ",'" + type + '-' + (type != "BOCM" ? "S-" : "") + app.initDate + "')", function (err, _data) {
+                        _options.SQL.db.query("INSERT INTO lastread (Type, Anyo, SUMARIO_NEXT) VALUES ('" + type + "'," + app.anyo + ",'" + type + '-' + (type != "BOCM" ? "S-" : "") + app.initDate + "')", function (err, _data) {
                             app._xData.Sumario[type] = { SUMARIO_LAST: '', SUMARIO_NEXT: type + '-' + (type != "BOCM" ? "S-" : "") + app.initDate }
                         })
                     } else {
