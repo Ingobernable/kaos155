@@ -160,9 +160,9 @@ String.prototype.lastIndexOfRegex = function (regex) {
                                     require('./node_www/server_http.js')(app, function (io) {
                                         app.process.stdout.io = io
                                         var _desde = app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8)
-                                        if(_desde.length>0)
+                                        if(_desde.length==0)
                                             var _last = app._xData.Sumario[type].SUMARIO_LAST.substr(app._lb[type], 8)
-                                            
+
                                         var _data =  { desde: _desde.length>0?_desde:_last, into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() }
                                         //debugger
                                         options._common.Actualize(options, type,_data)
