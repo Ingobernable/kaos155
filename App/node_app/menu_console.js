@@ -39,6 +39,7 @@ module.exports = function (app, myArgs, callback) {
                 scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosread WHERE Type='" + type + "' AND SCRAP = 1", function (err, record) { //+(command=='SCRAP' ? 1: 0) 
                     const anyos = []
                     let i = 0
+                    let n= 0
                     if (command == 'SCRAP') {
 
                         var date = new Date()
@@ -77,6 +78,7 @@ module.exports = function (app, myArgs, callback) {
                         if (_commands.indexOf(command.value) < _commands.length - 2) {
                             app.inquirer.prompt([{ type: 'list', name: 'value', message: 'tipo', choices: ['BORME', 'BOE', 'BOCM'] }])
                                 .then(function (type) {
+                                    debugger
                                     getanyos(app, command.value, type.value, function (app, anyos) {
 
                                         app.inquirer.prompt([{ type: 'list', name: 'anyo', message: 'anyo ', choices: anyos }])

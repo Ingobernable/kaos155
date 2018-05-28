@@ -58,15 +58,19 @@ BEGIN
 	DECLARE __cypher text;
 	DECLARE __keyA text;
 	DECLARE __keyB text;
-        
+    
+    
+    
 	DECLARE CR_grafos CURSOR
 		FOR SELECT _cypher,_keyA,_keyB FROM cypher_data_grafos where _parse = 0 limit 1;
     
-    OPEN CR_grafos;
-	FETCH CR_grafos INTO __cypher,__keyA,__keyB;
-    UPDATE cypher_data_grafos SET _parse = 1 where _keyA=__keyA AND _keyB=__keyB; 
+    START TRANSACTION;
+		OPEN CR_grafos;
+		FETCH CR_grafos INTO __cypher,__keyA,__keyB;
+		UPDATE cypher_data_grafos SET _parse = 1 where _keyA=__keyA AND _keyB=__keyB; 
+    COMMIT;
     
-    CLOSE CR_grafos;
+	CLOSE CR_grafos;
     
     SELECT __cypher;
 END ;;
