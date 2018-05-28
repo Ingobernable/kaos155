@@ -694,6 +694,8 @@ module.exports = function (app, options, transforms) {
                 const _xlines=[]
                 const Borme = null
                 const Provincia = null
+                let _l = 0
+
                 for (_l in lines) {
                     //debugger
                     line = lines[_l].replace(/^\s+|\s+$/gm,"")
