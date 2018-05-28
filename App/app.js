@@ -292,20 +292,26 @@ String.prototype.lastIndexOfRegex = function (regex) {
         App.parameters(App, myArgs, function (app) {
             debugger
             if (app.Commands.indexOf(myArgs[0]) < app.Commands.length - 2) {
-                const date = new Date()
-                if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {
-                    myArgs[2] = (date.getFullYear() + '').pad(4) + '0212'
-                } else {
-                    if (myArgs[1] == 'BORME' && app.Mins[myArgs[0]] == app.anyo) {
-                        myArgs[2] = (date.getFullYear() + '').pad(4) + "0102"
-                    } else {
-                        myArgs[2] = (date.getFullYear() + '').pad(4) + (date.getMonth() + 1 + '').pad(2) + (date.getDate() + '').pad(2)
+                //const date = new Date()
+                //myArgs[2] = myArgs[2] + "0102"
+                //if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {
+                //    myArgs[2] = (date.getFullYear() + '').pad(4) + '0212'
+                //} else {
+                //    if (myArgs[1] == 'BOE' && app.Mins[myArgs[1]] == app.anyo) {
+                //        myArgs[2] = (date.getFullYear() + '').pad(4) + "0102"
+                //    } else {
+                //        if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {
+                //            myArgs[2] = (date.getFullYear() + '').pad(4) + "0102"
+                //        } else {
+                //            myArgs[2] = (date.getFullYear() + '').pad(4) + (date.getMonth() + 1 + '').pad(2) + (date.getDate() + '').pad(2)
+    //
+                //        }
 
-                    }
-                }
+                //    }
+                //}
 
                 if (app.Mins[myArgs[1]] <= app.anyo) {
-                    app.initDate = myArgs[2]
+                    app.initDate = myArgs[2] + (myArgs[1] == 'BOCM'? app.Mins[myArgs[1]] == app.anyo ? "0212":"0102":"0102")
                     console.log('MySQL IP:' + app.SqlIP)
                     console.log('PROCESS:' + app.Type)
                     console.log('Anyo:' + app.anyo)
