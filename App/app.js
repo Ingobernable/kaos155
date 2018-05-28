@@ -290,6 +290,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
 
         })
         App.parameters(App, myArgs, function (app) {
+            debugger
             if (app.Commands.indexOf(myArgs[0]) < app.Commands.length - 2) {
                 const date = new Date()
                 if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {
