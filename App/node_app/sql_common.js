@@ -335,8 +335,10 @@ module.exports = function (app, callback) {
 
                                     options.SQL.db.query('Call Insert_Text_BOLETIN(?,?,?,?,?,?,?,?,?,?)', _this.params, function (err, record) {
                                         if (err != null) {
+                                            debugger
                                             app.process.stdout.write(app, options, '\x1b[31m','INS','\x1b[0m')
                                             options.SQL.db.query("INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)", [_analisis._BOLETIN.split("=")[1], err.sqlMessage.replaceAll("'", "/'")], function (err2) {
+                                                debugger
                                                 //var x = err
                                                 //var y = params
                                                 callback(data)
