@@ -218,6 +218,7 @@
                             })
                         }
                     } else {
+                        debugger
                         options.SQL.db.query("UPDATE lastread SET Read_Complete = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo, function (err, record) {                            
                             options.SQL.db.query("UPDATE anyosread SET " + options.Command.toLowerCase() + " = 1 WHERE Type='" + options.Type + "' AND Anyo = " + app.anyo, function (err, record) {
                                 console.log('obtención de datos ' + type + ' del año ' + app.anyo + ' terminó')
