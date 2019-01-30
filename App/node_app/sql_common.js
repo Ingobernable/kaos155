@@ -29,11 +29,11 @@ module.exports = function (app, callback) {
 
                             console.log('new connection ' + type + ' mysql OK')
                             options.SQL.db = connection // _this.connection[type] = connection
-                            _exit(options, type, callback)
+                            _exit(options, type, callback,test)
                         } else {
 
                             console.log("\x1b[31m ERROR: al acceder a la DB ")
-                            console.log("elimine el fichero '" + app.path.normalize('sqlfiles/'+ options.Command + '/x_ACCESO_mysql_' + type + '.json') + "'  \x1b[0m")
+                            console.log("elimine el fichero '" + app.path.normalize('sqlfiles/'+ options.Command + '/cred_' + type + '.json') + "'  \x1b[0m")
                             console.log("y vuelva a ejecutar app.js")
                             process.exit(1)
                         }
@@ -46,7 +46,8 @@ module.exports = function (app, callback) {
             }
 
         },
-        mysqlCommand: function (_command, db, callback,close) {
+        mysqlCommand: function (_command, db, callback, close) {
+            debugger
             app.child_process.exec(_command, (error, stdout, stderr) => {
                 if (error) {
                     console.log("\x1b[31m ERROR: la creación de la DB " + db + " ha fallado parcialmente")
@@ -62,6 +63,7 @@ module.exports = function (app, callback) {
         testDB: function (options, con, resp, type, db, callback, close) {
             const _xthis = this
             console.log("\x1b[32m testeando consistencia DB " + db + " \x1b[0m");
+            debugger
             con.query("SHOW Databases LIKE '" + db + "'", function (err, record) {
                 const _command = 'mysql -u' + resp.user + ' -p' + resp.password + ' -h' + resp.host + ' -D' + db + '<' + app.path.normalize(__dirname + '/../sqlfiles/' + options.Command.toLowerCase() + "/" + type + '/CREATE_FULL_' + type + '.sql')
 
@@ -93,9 +95,11 @@ module.exports = function (app, callback) {
             return "bbdd_kaos155" + (Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() :  (type == "GRAFOS" ? "_" + type.toLowerCase()  : "_contratos")))
         },
         init: function (options, type, callback) {
+            //debugger
             const _ithis = this
             const Command = options.Command
-            //debugger
+            if(Command == null)
+                debugger
 
             this.encryptor = require('simple-encryptor')("bbdd_kaos155_text")
 
@@ -114,7 +118,7 @@ module.exports = function (app, callback) {
 
             } else {
 
-                app.fs.readFile( this.fileCredenciales(type) , function (err, _JSON) {
+                app.fs.readFile(this.fileCredenciales(Command) , function (err, _JSON) {
                     var _cb = null
                     if (err) {
                         const testIp = function (testIp, callback) {
@@ -139,7 +143,7 @@ module.exports = function (app, callback) {
                                     host: resp.host,
                                     user: resp.user,
                                     password: _ithis.encryptor.encrypt(resp.password),
-                                    database: _ithis.filedb(Command, type) ,
+                                    database: _ithis.filedb(Command,type) ,
                                     multipleStatements: true,
                                     waitForConnection: true,
                                 }
@@ -168,7 +172,7 @@ module.exports = function (app, callback) {
                                 host: credenciales.host, //_sql.mySQL.host, //, //'localhost', //'66.70.184.214',
                                 user: credenciales.user, // _sql.mySQL.user,
                                 password: _ithis.encryptor.decrypt(credenciales.password),
-                                database: credenciales.database,
+                                database: _ithis.filedb(Command, type), //credenciales.database,
                                 multipleStatements: true,
                                 waitForConnection: true,
                             })
@@ -190,11 +194,11 @@ module.exports = function (app, callback) {
                                 host: JSON.parse(_JSON.toString()).host,
                                 user: JSON.parse(_JSON.toString()).user,
                                 password: _ithis.encryptor.decrypt(JSON.parse(_JSON.toString()).password),
-                                database: JSON.parse(_JSON.toString()).database,
+                                database: _ithis.filedb(Command, type),
                                 multipleStatements: true,
                                 waitForConnection: true,
                             })
-                            _ithis.getConnect(options, type, callback, null)
+                            _ithis.getConnect(options, type, callback, JSON.parse(_JSON.toString()) )
                         } else {
                             callback(options)
                         }
@@ -258,7 +262,7 @@ module.exports = function (app, callback) {
                                 //app.process.stdout.write(app, options, '', String.fromCharCode(25), '')
                                 if (err != null) {
                                     debugger
-                                    cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
+                                    const cadSql = "INSERT INTO errores (BOLETIN, SqlError) VALUES (?,?)"
                                     options.SQL.db.query(cadSql, [_linea.BORME, err.sqlMessage.replaceAll("'", "/'")], function (err2) {
                                         callback(data)
                                     })

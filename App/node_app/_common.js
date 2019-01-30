@@ -168,7 +168,7 @@
                 const imonth = data.desde.substr(4, 2)
                 const iday = data.desde.substr(6, 2)
                 const _DATE = new Date(imonth + "/" + iday + "/" + iyear)
-                const _AHORA = new Date()
+                var _AHORA = new Date()
 
                 if (app.update == null) {
                     if (iyear == app.anyo || iyear.length==0) {
@@ -180,40 +180,45 @@
                             //Punto en el que llama a analiza un sumario correspondiente a un dia, con multiples subdocumentos
                             //
                             this.SQL.commands.Sumario.get(options, data, function (data, repeat) {
-                                if (data._list == null) {
-                                    if (!repeat) {
-                                        options._common.SQL.commands.Sumario.update(options, data, function (data) {
-                                            data.desde = app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8)
+                                if (data != null) {
+                                    if (data._list == null) {
+                                        if (!repeat) {
+                                            options._common.SQL.commands.Sumario.update(options, data, function (data) {
+                                                data.desde = app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8)
+                                                options._common.Actualize(options, type, data)
+                                            })
+                                        } else {
                                             options._common.Actualize(options, type, data)
-                                        })
+                                        }
                                     } else {
-                                        options._common.Actualize(options, type, data)
-                                    }
-                                } else {
-                                    if (data._list.length > 0) {
-                                        data.e = 0
-                                        options._common.parser(app).NEW(options, data, options.scrap.Preceptos, function (data) {
+                                        if (data._list.length > 0) {
+                                            data.e = 0
+                                            options._common.parser(app).NEW(options, data, options.scrap.Preceptos, function (data) {
+                                                options._common.SQL.commands.Sumario.update(options, data, function () {
+                                                    data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
+                                                    options._common.Actualize(options, type, data)
+                                                })
+                                            })
+                                        } else {
                                             options._common.SQL.commands.Sumario.update(options, data, function () {
                                                 data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
                                                 options._common.Actualize(options, type, data)
                                             })
-                                        })
-                                    } else {
-                                        options._common.SQL.commands.Sumario.update(options, data, function () {
-                                            data.desde = data.SUMARIO_NEXT.substr(app._lb[type], 8)
-                                            options._common.Actualize(options, type, data)
-                                        })
+                                        }
                                     }
+                                } else {
+                                    console.log('error estructural en curl .- sistema detenido')
+                                    process.exit(0)
                                 }
                             })
                         } else {
-                            _AHORA = _AHORA.setDate(_AHORA.getDate() + 1); 
-                            var date = new Date(_AHORA.getFullYear(), _AHORA.getMonth()  - 1, _AHORA.getDate(), 23, 0, 0);
+                            var _NewAHORA = new Date((new Date()).valueOf() + 1000 * 3600 * 24); //_AHORA.setDate(_AHORA.getDate() + 1); 
+                            var date = new Date(_NewAHORA.getFullYear(), _NewAHORA.getMonth() - 1, _NewAHORA.getDate(), 23, 0, 0);
                             debugger
                             console.log('el año no ha acabado pero si los sumarios')
-                            console.log('continuaremos el ' + _AHORA.toString())
+                            console.log('continuaremos el ' + _NewAHORA.toString())
 
-                            app.schedule.scheduleJob(_AHORA, function (y) {
+                            app.schedule.scheduleJob(date, function (y) {
                                 debugger
                                 console.log('despertando ... ' + y + ' ... empezando a analizar ' + type)
                                 options._common.Actualize(options, type, data)

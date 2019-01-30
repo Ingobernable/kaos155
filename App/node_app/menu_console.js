@@ -2,7 +2,7 @@
 module.exports = function (app, myArgs, callback) {
 
     const _exit = "EXIT"
-    const exit = function (myArgs, callback, automatic) {
+    const exit = function (myArgs, callback, automatic, test) {
 
         //if (automatic) {
         if (myArgs[0] != _exit) {
@@ -29,13 +29,13 @@ module.exports = function (app, myArgs, callback) {
             }
         }
 
-        callback(app, myArgs, date, automatic) // options
+        callback(app, myArgs, date, automatic,test ) // options
     }
     const getanyos = function (app, command, type, callback) {
         app.command = command
         require("./sql_common.js")(app, function (commonSQL) {
             app.commonSQL = commonSQL
-            app.commonSQL.init({ SQL: { db: null }, Command: 'SCRAP' }, 'SCRAP', function (scrapdb) {
+            app.commonSQL.init({ SQL: { db: null }, Command: 'SCRAP' }, 'SCRAP', function (scrapdb, test) {
                 scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosread WHERE Type='" + type + "' AND SCRAP = 1", function (err, record) { //+(command=='SCRAP' ? 1: 0) 
                 //debugger    
                 const anyos = []
@@ -61,7 +61,7 @@ module.exports = function (app, myArgs, callback) {
                         }
                     }
 
-                    callback(app, anyos)
+                    callback(app, anyos, test)
                 })
             })
         })
@@ -80,13 +80,13 @@ module.exports = function (app, myArgs, callback) {
                             app.inquirer.prompt([{ type: 'list', name: 'value', message: 'tipo', choices: ['BORME', 'BOE', 'BOCM'] }])
                                 .then(function (type) {
                                     //debugger
-                                    getanyos(app, command.value, type.value, function (app, anyos) {
+                                    getanyos(app, command.value, type.value, function (app, anyos, test) {
 
                                         app.inquirer.prompt([{ type: 'list', name: 'anyo', message: 'anyo ', choices: anyos }])
                                             .then(function (resp) {
                                                 //debugger
                                                 myArgs = [command.value, type.value, resp.anyo]
-                                                exit(myArgs, callback, false)
+                                                exit(myArgs, callback, false, test)
                                             })
                                     })
                                 })

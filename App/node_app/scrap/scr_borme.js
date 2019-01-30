@@ -16,6 +16,7 @@
                 app.Rutines(app).askToServer(options, url, data, function (options, body, data) {
                     //debugger
                     //try {
+                    if (options != null) {
                         if (body != null) {
                             const $ = app.cheerio.load(body, {
                                 withDomLvl1: true,
@@ -32,59 +33,62 @@
                                 callback(data)
                             } else {
                                 data.next = $('sumario meta fechaSig').html()
-                                data.Fdate = $('sumario meta pubDate').html() 
+                                data.Fdate = $('sumario meta pubDate').html()
                                 data.SUMARIO_NEXT = "BORME-S-" + data.next.substr(6, 4) + data.next.substr(3, 2) + data.next.substr(0, 2)
 
-                                    let _into = data.into==null?null: data.into 
+                                let _into = data.into == null ? null : data.into
 
-                                    if (data.Idate == null) {
-                                        data.Idate = $('sumario meta pubDate').html()
-                                    }
-                                    const _reg = []
+                                if (data.Idate == null) {
+                                    data.Idate = $('sumario meta pubDate').html()
+                                }
+                                const _reg = []
 
-                                    $('diario seccion').each(function (i, item) {
-                                        seccion = { code: item.attribs.num, name: item.attribs.nombre }
+                                $('diario seccion').each(function (i, item) {
+                                    seccion = { code: item.attribs.num, name: item.attribs.nombre }
 
-                                        if (seccion.code == "A")
-                                            $(item).find('emisor').each(function (b, borme) {
-                                                //emisor = borme.attribs.nombre
-                                                $(borme).find('item').each(function (b, lst) {
-                                                    //// id = lst.attribs.id
-                                                    var pdf = $(lst).find("urlPdf")[0].children[0].data
-                                                    var titulo = $(lst).find("titulo")[0].children[0].data
-                                                    if (titulo.indexOf('ARABA') > -1) titulo = "ÁLABA"
-                                                    //$(lst).find("titulo").each(function (b, titular) {
-                                                    if (titulo.indexOf('DE SOCIEDADES') == -1)
-                                                        if (_into == null) {
+                                    if (seccion.code == "A")
+                                        $(item).find('emisor').each(function (b, borme) {
+                                            //emisor = borme.attribs.nombre
+                                            $(borme).find('item').each(function (b, lst) {
+                                                //// id = lst.attribs.id
+                                                var pdf = $(lst).find("urlPdf")[0].children[0].data
+                                                var titulo = $(lst).find("titulo")[0].children[0].data
+                                                if (titulo.indexOf('ARABA') > -1) titulo = "ÁLABA"
+                                                //$(lst).find("titulo").each(function (b, titular) {
+                                                if (titulo.indexOf('DE SOCIEDADES') == -1)
+                                                    if (_into == null) {
+                                                        _reg[_reg.length] = { BORME: lst.attribs.id, pdf: pdf, titulo: titulo }
+                                                    } else {
+                                                        if (_into == lst.attribs.id) {
                                                             _reg[_reg.length] = { BORME: lst.attribs.id, pdf: pdf, titulo: titulo }
+                                                            _into = data.into = null
                                                         } else {
-                                                            if (_into == lst.attribs.id) {
-                                                                _reg[_reg.length] = { BORME: lst.attribs.id, pdf: pdf, titulo: titulo }
-                                                                _into = data.into = null
-                                                            } else {
-                                                                console.log(_into, lst.attribs.id)
-                                                                app.process.stdout.write(app, options, '', 'S ', '')
-                                                            }
+                                                            console.log(_into, lst.attribs.id)
+                                                            app.process.stdout.write(app, options, '', 'S ', '')
                                                         }
+                                                    }
 
-                                                })
                                             })
-                                    })
+                                        })
+                                })
 
-                                    data.id = url.uri.split('=')[1]
+                                data.id = url.uri.split('=')[1]
 
-                                    data._list = []
-                                    data._analisis = _reg
-                                    for (n in _reg) {
-                                        data._list[data._list.length] = _reg[n].pdf
-                                    }
-                                    callback(data)
+                                data._list = []
+                                data._analisis = _reg
+                                for (n in _reg) {
+                                    data._list[data._list.length] = _reg[n].pdf
+                                }
+                                callback(data)
                             }
                         } else {
-                            
-                            data._list =[]
-                            callback(data,true)
+
+                            data._list = []
+                            callback(data, true)
                         }
+                    } else {
+                        callback(null, false)
+                    }
                 })
             },
             Preceptos: function (options, urlDoc, body, data, callback) {
@@ -150,7 +154,7 @@
     }
 
     options.Rutines = require('../_utils/BORME/Borme_Rutines.js')(app, options, require('../_utils/BORME/Borme_Transforms.js')(app, options)),
-    app.commonSQL.init(options, options.Type , function (options) {
+    app.commonSQL.init(options, options.Command , function (options) {
         app.commonSQL.SQL.commands.insert.AnyoRead(options, options.SQL.db, app.command , function (options) {
             options.SQL.scrapDb = { SQL: { db: options.SQL.db } }
             callback(options)

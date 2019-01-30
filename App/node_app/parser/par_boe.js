@@ -568,10 +568,14 @@ module.exports = function (app, callback) {
     }
     options.patterns = options.transforms.getPatern(options.transforms)
 
-    app.commonSQL.init(options, 'PARSER', function (options) {
-        app.commonSQL.init({ SQL: { db: null } }, 'SCRAP', app._fileCredenciales + "SCRAP", function (scrapdb) {
+    app.commonSQL.init(options, 'BOE', function (options) {
+        app.commonSQL.init({ SQL: { db: null }, Command: options.Command }, 'SCRAP', function (scrapdb) {
             options.SQL.scrapDb = scrapdb
-            callback(options)
+            app.commonSQL.init({ SQL: { db: null }, Command: options.Command }, 'GRAFOS', function (grafosdb) {
+                options.SQL.grafosDb = grafosdb
+                callback(options)
+            })
+
         })
     })
 

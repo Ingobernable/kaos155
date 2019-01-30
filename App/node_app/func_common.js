@@ -7,6 +7,7 @@
         lastupdate: Date.now(),
         askToServer: function (options, requestOptions, data, callback) {
             //debugger
+            var _this = this
             if (requestOptions.uri.file == null) {
                
                 this.lastupdate = Date.now()
@@ -27,6 +28,13 @@
                 }
                     //console.log("\n" + app.moment().format('MMM D, HH:MM:SS') + "->" + requestOptions.uri)
                 //leemos el documento SUMARIO
+
+                //opciones para evitar los errores de certificado
+                //29/01/2019
+                requestOptions.rejectUnauthorized = false
+                requestOptions.requestCert= true
+                requestOptions.agent = false
+
                 app.request.get(requestOptions, function (error, response, body) {
                     if (!error && response.statusCode == 200) {
                     //if (body != null) {
@@ -54,10 +62,11 @@
                         //debugger
                         console.log("ERROR " + requestOptions.uri )
                         setTimeout(function () { 
-                            console.log('delay ok.')
+
+                            console.log(error==null?'delay ok.' : error)
                             //if (response.statusCode == 404)
                             //    debugger
-                            callback(_this, null, data, response==null?null:response.statusCode)
+                            callback(error!=null?null:_this, null, data, response==null?null:response.statusCode)
                         }, app.timeDelay)
 
                     }
