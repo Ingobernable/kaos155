@@ -35,7 +35,7 @@ var App = {
     aguid: require('aguid'),
     schedule: require('node-schedule'),
     child_process:require('child_process'),
-    
+    os: require("os"),
 
     _returnfunc : function (app, options, data, ok) {
         if (ok > 0) {
@@ -89,8 +89,8 @@ String.prototype.lastIndexOfRegex = function (regex) {
     App.credentials= require('./node_utils/credentials.js')(App)
     require("./node_app/menu_console.js")(App, process.argv.slice(2), function (app, myArgs, date, automatic, test) {
 
-
-        var machineId = require("os").networkInterfaces().Ethernet[0].mac 
+        if()
+            var machineId = App.os.networkInterfaces() ? App.os.networkInterfaces().Ethernet[0].mac : App.os.networkInterfaces().eth0[0].mac
 
 
         const client = app.net.connect({ port: 80, host: "google.com" }, function() {
