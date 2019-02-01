@@ -4,7 +4,7 @@ module.exports = function (app, myArgs, callback) {
     const _exit = "EXIT"
     const exit = function (myArgs, callback, automatic, test) {
 
-        //if (automatic) {
+        debugger
         if (myArgs[0] != _exit) {
             if (myArgs[0] != 'GRAFOS') {
                 if (myArgs[1] != 'BORME') {
