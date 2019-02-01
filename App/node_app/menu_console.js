@@ -148,6 +148,7 @@ module.exports = function (app, myArgs, callback) {
                 })
 
         } else {
+            debugger
             require('./sql_common.js')(app, function (SQL) {
                 exit(myArgs, callback, true)
             })
