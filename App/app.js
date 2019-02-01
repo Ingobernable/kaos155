@@ -90,7 +90,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
     require("./node_app/menu_console.js")(App, process.argv.slice(2), function (app, myArgs, date, automatic, test) {
 
         
-        var machineId = App.os.networkInterfaces().Ethernet ? App.os.networkInterfaces().Ethernet[0].mac : App.os.networkInterfaces().eth0[0].mac
+        //var machineId = App.os.networkInterfaces().Ethernet ? App.os.networkInterfaces().Ethernet[0].mac : App.os.networkInterfaces().eth0[0].mac
 
 
         const client = app.net.connect({ port: 80, host: "google.com" }, function() {
@@ -98,7 +98,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
             console.log('MyPORT=' + client.localPort);
             //debugger
             let App = app.merge(app, {
-                idMachine: machineId,
+                //idMachine: machineId,
                 command: myArgs[0],
 
                 update: myArgs[3],
