@@ -151,6 +151,7 @@ module.exports = function (app, myArgs, callback) {
         else {
             debugger
             require('./sql_common.js')(app, function (SQL) {
+                debugger
                 getanyos(app, command.value, type.value, function (app, anyos, test) {
                     exit(myArgs, callback, true, test)
                 })
