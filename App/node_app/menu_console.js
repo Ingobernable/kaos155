@@ -36,7 +36,7 @@ module.exports = function (app, myArgs, callback) {
         require("./sql_common.js")(app, function (commonSQL) {
             app.commonSQL = commonSQL
             app.commonSQL.init({ SQL: { db: null }, Command: 'SCRAP' }, 'SCRAP', function (scrapdb, test) {
-                scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosread WHERE Type='" + type + "' AND SCRAP = 1", function (err, record) { //+(command=='SCRAP' ? 1: 0) 
+                scrapdb.SQL.db.query("SELECT DISTINCT Anyo FROM anyosread WHERE Type='" + type + "' AND " + command +" = " + (command=='SCRAP'? 1:0) , function (err, record) { //+(command=='SCRAP' ? 1: 0) 
                 //debugger    
                 const anyos = []
                     let i = 0

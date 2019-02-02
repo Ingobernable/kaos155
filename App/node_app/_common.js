@@ -223,6 +223,10 @@
                                 console.log('despertando ... ' + y + ' ... empezando a analizar ' + type)
                                 options._common.Actualize(options, type, data)
                             })
+                            options.Command = "PARSER"
+                            console.log('iniciando el Parser de los datos')
+                            options._common.Actualize(options, type, data)
+                            
                         }
                     } else {
                         debugger
