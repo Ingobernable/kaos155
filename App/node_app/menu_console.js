@@ -153,9 +153,10 @@ module.exports = function (app, myArgs, callback) {
             require('./sql_common.js')(app, function (SQL) {
                 debugger
                 getanyos(app, myArgs[0], myArgs[1], function (app, anyos, test) {
+                    var found = false
                     app._.each(anyos, function (anyo) {
                         if (anyo == myArgs[2]) {
-                            
+                            found =true
                         }
                         
                         
