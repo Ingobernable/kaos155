@@ -346,7 +346,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
                         console.log('MySQL IP:' + app.SqlIP)
                         console.log('PROCESS:' + app.Type)
                         console.log('Anyo:' + app.anyo)
-                        console.log(myArgs)
+                        console.log('Args:' + myArgs)
 
                         app.init(app, function (_f) { _f[myArgs[0]](app.Type) })
 
