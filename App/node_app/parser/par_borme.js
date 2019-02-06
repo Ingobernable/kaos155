@@ -37,16 +37,24 @@ module.exports = function (app, callback) {
         grafos: require('../../node_grafos/common_grafos.js')(app),
         SQL: { db: null },
         parser: {
-           
+            printOut: function (app, options, _ci, _data, _cf) {
+                app.process.stdout.write(app, options, _ci, _data, _cf)
+                //if (!app.forever || !process.send) {
+                //    app.process.stdout.write(app, options, _ci, _data, _cf)
+                //} else {
+                //    process.send({ data: _data , ci:_ci, cf:_cf })
+                //}
+            },          
             saveEmpresaDeMovimiento: function (_linea, _cb) {
-
+                //const _that = this
                 _linea.table = "Empresa"
                 _linea.cif = null
 
                     options.grafos.push.Object(_linea, function (_linea) {  //,  function (options, params) {
                 
                         app.commonSQL.SQL.commands.insert.Borme.keys(options, _linea, function (_linea, _rec) {
-                            app.process.stdout.write(app, options, '\x1b[1m\x1b[36m', 'E', '\x1b[0m')
+                            options.parser.printOut(app, options, '\x1b[33m', '.', '\x1b[0m')
+                            //app.process.stdout.write(app, options, '\x1b[1m\x1b[36m', 'E', '\x1b[0m')
                             _linea.ID = _rec[0][0].Id
 
                             options.parser.saveDiarioMovimientos(_linea, _cb)
@@ -54,7 +62,8 @@ module.exports = function (app, callback) {
                         }, _cb)
                     })
             },
-            saveLineContenido : function (_e, _linea, _cb, _func) {
+            saveLineContenido: function (_e, _linea, _cb, _func) {
+                //var _that = this
                 if (_e < _linea.contenido.length) {
                     if (options.Rutines.SQL[_linea.contenido[_e].type] == null)
                         debugger
@@ -91,8 +100,11 @@ module.exports = function (app, callback) {
                                         _Dl.type ? _Dl.type : _Dl.values.type,
                                         _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
                                         (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value)
-                                    ] , function (err, _record) {
-                                    app.process.stdout.write(app, options, '\x1b[33m', '.', '\x1b[0m')
+                                    ], function (err, _record) {
+                                        //if (_that == null)
+                                        //    debugger
+                                            options.parser.printOut(app, options, '\x1b[33m', '.', '\x1b[0m')
+                                    //app.process.stdout.write(app, options, '\x1b[33m', '.', '\x1b[0m')
                                     //repitiendo el proceso para todos los datos de una linea
                                     _e++
                                     _func(_e, _linea, _cb, _func)
@@ -113,20 +125,25 @@ module.exports = function (app, callback) {
             },
             Preceptos: function (options, type, callback) {
                 //obtenemos el siguiente texto a parsear
+
+                var _this = this
                 app.commonSQL.SQL.commands.select.NextTextParser(options, [type, app.anyo], function (err, recordset) {
                     if (err)
                         console.log(err)
 
                     if (recordset[0].length > 0) {
                         if (options.f != recordset[0][0].mes + '/' + recordset[0][0].dia)
-                            app.process.stdout.write(app, options, '\x1b[36m', recordset[0][0].mes + '/' + recordset[0][0].dia, ':\x1b[0m')
+                            _this.printOut(app, options, '\x1b[36m', recordset[0][0].mes + '/' + recordset[0][0].dia, '\x1b[0m')
 
                         if (options.Provincia != recordset[0][0].provincia)
-                            app.process.stdout.write(app, options,'' ,recordset[0][0].provincia,'')
+                            _this.printOut(app, options, '', recordset[0][0].provincia, '')
+                        //app.process.stdout.write(app, options,'' ,recordset[0][0].provincia,'')
 
                         options.f = recordset[0][0].mes + '/' + recordset[0][0].dia
                         options.Provincia = recordset[0][0].provincia
-                        app.process.stdout.write(app, options, '\x1b[33m', '+', '\x1b[0m')
+
+                        //var _d = '+'
+                        _this.printOut(app, options, '\x1b[33m', '+', '\x1b[0m')
 
                         //analizamos la linea y obtenemos una estructura con su contenido
                         options.Rutines.analizeSimpleLine(options.SQL.db, options.Rutines, recordset[0][0].texto, options.Rutines.maps, options.Provincia, function (_line) { 

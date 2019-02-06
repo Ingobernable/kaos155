@@ -168,11 +168,11 @@
                 const imonth = data.desde.substr(4, 2)
                 const iday = data.desde.substr(6, 2)
                 const _DATE = new Date(imonth + "/" + iday + "/" + iyear)
-                var _AHORA = new Date()
+                //var _AHORA = new Date()
 
                 if (app.update == null) {
                     if (iyear == app.anyo || iyear.length==0) {
-                        if (_DATE < _AHORA && iyear.length>0) {
+                        if (_DATE < new Date() && iyear.length>0) {
                             options.type = type.toUpperCase()
                             options.Sumario = data.type.toUpperCase() + "-" + (type != "BOCM" ? "S-" : "") + iyear + imonth + iday
                             data._list = []
@@ -216,16 +216,21 @@
                             var date = new Date(_NewAHORA.getFullYear(), _NewAHORA.getMonth() - 1, _NewAHORA.getDate(), 23, 0, 0);
                             debugger
                             console.log('el año no ha acabado pero si los sumarios')
-                            console.log('continuaremos el ' + _NewAHORA.toString())
+                            console.log('iniciando el PARSER de los datos')
 
-                            app.schedule.scheduleJob(date, function (y) {
-                                debugger
-                                console.log('despertando ... ' + y + ' ... empezando a analizar ' + type)
-                                options._common.Actualize(options, type, data)
+                            const parser = app.child_process.fork('app.js', [ "PARSER", type, "FOR-EVER"])
+                            parser.process.on('exit', function (code) {
+                                
+                                    console.log('proceso de PARSER teminado')
+                                    console.log('continuaremos el ' + _NewAHORA.toString())
+
+                                    app.schedule.scheduleJob(date, function (y) {
+                                        debugger
+                                        console.log('despertando ... ' + y + ' ... empezando a analizar ' + type)
+                                        options._common.Actualize(options, type, data)
+                                    })
+
                             })
-                            options.Command = "PARSER"
-                            console.log('iniciando el Parser de los datos')
-                            options._common.Actualize(options, type, data)
                             
                         }
                     } else {

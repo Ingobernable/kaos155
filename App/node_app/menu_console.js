@@ -2,9 +2,10 @@
 module.exports = function (app, myArgs, callback) {
 
     const _exit = "EXIT"
+    
     const exit = function (myArgs, callback, automatic, test) {
 
-        debugger
+        //debugger
         if (myArgs[0] != _exit) {
             if (myArgs[0] != 'GRAFOS') {
                 if (myArgs[1] != 'BORME') {
@@ -149,22 +150,28 @@ module.exports = function (app, myArgs, callback) {
 
         } 
         else {
-            debugger
+            //debugger
             require('./sql_common.js')(app, function (SQL) {
-                debugger
+                //debugger
                 getanyos(app, myArgs[0], myArgs[1], function (app, anyos, test) {
-                    var found = false
-                    app._.each(anyos, function (anyo) {
-                        if (anyo == myArgs[2]) {
-                            found =true
+                    if (myArgs[2] != "FOR-EVER") {
+                        var found = false
+                        app._.each(anyos, function (anyo) {
+                            if (anyo == myArgs[2]) {
+                                found = true
+                            }
+
+
+                        })
+                        if (found) {
+                            exit(myArgs, callback, true, test)
+                        } else {
+                            console.log(myArgs[2] + ' año no valido')
                         }
-                        
-                        
-                    })
-                    if (found) {
-                        exit(myArgs, callback, true, test)
                     } else {
-                        console.log(myArgs[2] + ' año no valido')
+                        app.forever = true
+                        myArgs[2] = anyos[0]
+                        exit(myArgs, callback, true, test)
                     }
                 })
             })

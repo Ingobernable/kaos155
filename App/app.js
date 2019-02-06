@@ -43,7 +43,8 @@ var App = {
         } else {
             debugger
         }
-    }   
+    }, 
+    forever: false,
 }
 
 
@@ -100,7 +101,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
             let App = app.merge(app, {
                 //idMachine: machineId,
                 command: myArgs[0],
-
+                
                 update: myArgs[3],
                 anyo: !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
                 Command: myArgs[0],
@@ -148,21 +149,25 @@ String.prototype.lastIndexOfRegex = function (regex) {
                                 require('./node_app/scrap/' + prefix + type.toLowerCase() + '.js')(app, function (options) {
                                     app.BOLETIN = options
                                     app.commonSQL.SQL.getCounter(app, options, type, function (options) {
-                                        app._io = require('./node_www/IO.js')(app)
-                                        require('./node_www/server_http.js')(app, function (io) {
-                                            debugger
-                                            app.process.stdout.io = io
-                                            var _desde = app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8)
-                                            if (_desde.length == 0)
-                                                var _last = app._xData.Sumario[type].SUMARIO_LAST.substr(app._lb[type], 8)
+                                        //debugger
 
-                                            var _data = { desde: _desde.length > 0 ? _desde : _last, into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() }
-                                            //debugger
+                                        var _desde = app._xData.Sumario[type].SUMARIO_NEXT.substr(app._lb[type], 8)
+                                        if (_desde.length == 0)
+                                            var _last = app._xData.Sumario[type].SUMARIO_LAST.substr(app._lb[type], 8)
 
-                                            //comienza la rutina de SCRAP (Extracción de data BOE en pdf y convertir en registros TEXTO (bbdd_kaos155_text))
+                                        var _data = { desde: _desde.length > 0 ? _desde : _last, into: app._xData.Sumario[type].ID_LAST, type: type, Secciones: "5A", hasta: new Date() }
+                                        if (!app.forever) {
+                                            app._io = require('./node_www/IO.js')(app)
+                                            require('./node_www/server_http.js')(app, function (io) {
+                                                debugger
+                                                app.process.stdout.io = io
+                                                //comienza la rutina de SCRAP (Extracción de data en pdf y convertir en registros TEXTO (bbdd_kaos155_text))
+                                                options._common.Actualize(options, type, _data)
+
+                                            })
+                                        } else {
                                             options._common.Actualize(options, type, _data)
-
-                                        })
+                                        }
                                     })
                                 })
                             },
@@ -170,21 +175,23 @@ String.prototype.lastIndexOfRegex = function (regex) {
                                 require('./node_app/parser/' + app.command.substr(0, 3).toLowerCase() + "_" + type.toLowerCase() + '.js')(app, function (options) {
                                     if (app.BOLETIN == null) {
                                         app.BOLETIN = options
+                                        if (!app.forever) {
+                                            app._io = require('./node_www/IO.js')(app)
+                                            require('./node_www/server_http.js')(app, function (io) {
+                                                if (app.process.stdout.io == null) {
+                                                    app.process.stdout.io = io
 
-                                        app._io = require('./node_www/IO.js')(app)
-                                        require('./node_www/server_http.js')(app, function (io) {
-                                            if (app.process.stdout.io == null) {
-                                                app.process.stdout.io = io
-
-                                                options._common.Actualize(options, type, {}, app._returnfunc)
-                                            }
-                                        })
+                                                    options._common.Actualize(options, type, {}, app._returnfunc)
+                                                }
+                                            })
+                                        } else {
+                                            options._common.Actualize(options, type, {}, app._returnfunc)
+                                        }
                                     } else {
                                         debugger
                                     }
 
                                 })
-
                             },
                             
                             GRAFOS: function (type) {
@@ -298,13 +305,13 @@ String.prototype.lastIndexOfRegex = function (regex) {
                             process.stdout.write(_cini + string + _cfin)
                             // const cadsql = "SELECT * FROM lastread WHERE Type=? AND Anyo=?;" //sumarios (_counter, Anyo, SUMARIO, BOLETIN, Type) VALUES ('" + (app._xData.TSUMARIOS[options.type] + 1) + "','" + app.anyo + "','" + _sumario + "', '" + _boletin + "','" + options.type + "')"
 
-                            options.SQL.scrapDb.SQL.db.query("SELECT * FROM lastread WHERE Type=? AND Anyo=?;", [app.Type, app.anyo], function (err, records) {
-                                if (err) {
-                                    console.log(err)
-                                } else {
-                                    app.process.stdout.io.emit('graphData', { code: string, color: { _i: _cini, _f: _cfin }, record: { SUMARIO: records[0].SUMARIO_NEXT, LAST_ID: records[0].ID_LAST } })
-                                }
-                            })
+                            //options.SQL.scrapDb.SQL.db.query("SELECT * FROM lastread WHERE Type=? AND Anyo=?;", [app.Type, app.anyo], function (err, records) {
+                            //    if (err) {
+                            //        console.log(err)
+                            //    } else {
+                            //        app.process.stdout.io.emit('graphData', { code: string, color: { _i: _cini, _f: _cfin }, record: { SUMARIO: records[0].SUMARIO_NEXT, LAST_ID: records[0].ID_LAST } })
+                            //    }
+                            //})
 
                         }
                     }
@@ -339,6 +346,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
                         console.log('MySQL IP:' + app.SqlIP)
                         console.log('PROCESS:' + app.Type)
                         console.log('Anyo:' + app.anyo)
+                        console.log(myArgs)
 
                         app.init(app, function (_f) { _f[myArgs[0]](app.Type) })
 
@@ -346,6 +354,7 @@ String.prototype.lastIndexOfRegex = function (regex) {
                         console.log('no se puede analizar ' + myArgs[1] + ' con fecha anterior a ' + app.Mins[myArgs[1]])
                     }
                 } else {
+                    
                     app.init(app, function (_f) { _f[myArgs[0]](app.Type) })
                 }
 
