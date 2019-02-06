@@ -219,7 +219,7 @@
                             console.log('iniciando el PARSER de los datos')
 
                             const parser = app.child_process.fork('app.js', [ "PARSER", type, "FOR-EVER"])
-                            parser.process.on('exit', function (code) {
+                            parser.on('exit', function (code) {
                                 
                                     console.log('proceso de PARSER teminado')
                                     console.log('continuaremos el ' + _NewAHORA.toString())
