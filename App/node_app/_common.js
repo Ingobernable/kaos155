@@ -222,7 +222,7 @@
                             parser.on('exit', function (code) {
                                 
                                     console.log('proceso de PARSER teminado')
-                                    console.log('continuaremos el ' + _NewAHORA.toString())
+                                    console.log('continuaremos el ' + date.toString())
 
                                     app.schedule.scheduleJob(date, function (y) {
                                         debugger
