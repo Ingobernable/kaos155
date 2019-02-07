@@ -213,7 +213,7 @@
                             })
                         } else {
                             var _NewAHORA = new Date((new Date()).valueOf() + 1000 * 3600 * 24); //_AHORA.setDate(_AHORA.getDate() + 1); 
-                            var date = new Date(_NewAHORA.getFullYear(), _NewAHORA.getMonth() - 1, _NewAHORA.getDate(), 23, 0, 0);
+                            var date = new Date(_NewAHORA.getFullYear(), _NewAHORA.getMonth() , _NewAHORA.getDate(), 23, 0, 0);
                             debugger
                             console.log('el año no ha acabado pero si los sumarios')
                             console.log('iniciando el PARSER de los datos')
