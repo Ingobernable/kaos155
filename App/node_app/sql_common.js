@@ -29,11 +29,11 @@ module.exports = function (app, callback) {
 
                             console.log('new connection ' + type + ' mysql OK')
                             options.SQL.db = connection // _this.connection[type] = connection
-                            _exit(options, type, callback,test)
+                            _exit(options, type, callback,connection.config)
                         } else {
 
                             console.log("\x1b[31m ERROR: al acceder a la DB ")
-                            console.log("elimine el fichero '" + app.path.normalize('sqlfiles/'+ options.Command + '/cred_' + type + '.json') + "'  \x1b[0m")
+                            console.log("elimine el fichero '" + this.fileCredenciales(type, Command) + "'  \x1b[0m")
                             console.log("y vuelva a ejecutar app.js")
                             process.exit(1)
                         }
@@ -65,7 +65,7 @@ module.exports = function (app, callback) {
             console.log("\x1b[32m testeando consistencia DB " + db + " \x1b[0m");
             debugger
             con.query("SHOW Databases LIKE '" + db + "'", function (err, record) {
-                const _command = 'mysql -u' + resp.user + ' -p' + resp.password + ' -h' + resp.host + ' -D' + db + '<' + app.path.normalize(__dirname + '/../sqlfiles/' + options.Command.toLowerCase() + "/" + type + '/CREATE_FULL_' + type + '.sql')
+                const _command = 'mysql -u' + resp.user + ' -p' + resp.password + ' -h' + resp.host  + '<' + app.path.normalize(__dirname + '/../sqlfiles/' + options.Command.toLowerCase() + "/" + type + '/CREATE_FULL_' + type + '.sql')
 
                 if (record.length == 0) {
                     con.query("CREATE DATABASE IF NOT EXISTS " + db, function (err, result) {
@@ -88,8 +88,11 @@ module.exports = function (app, callback) {
                 }
             })
         },
-        fileCredenciales: function (type) {
-            return app.path.normalize('sqlfiles/' + 'cred_' + type.toLowerCase() + '.json')
+        fileCredenciales: function (type, Command) {
+            //if(Command="parser")
+                return app.path.normalize('sqlfiles/' + Command.toLowerCase() + '/cred_' + type.toLowerCase() + '.json')
+            //if (Command = "scrap")
+            //    return app.path.normalize('sqlfiles/' + Command.toLowerCase() + '\cred_' + type.toLowerCase() + '.json')
         },
         filedb: function (Command,type) {
             return "bbdd_kaos155" + (Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() :  (type == "GRAFOS" ? "_" + type.toLowerCase()  : "_contratos")))
@@ -117,8 +120,8 @@ module.exports = function (app, callback) {
                 this.getConnect(options, type, callback)
 
             } else {
-
-                app.fs.readFile(this.fileCredenciales(Command) , function (err, _JSON) {
+                //debugger
+                app.fs.readFile(this.fileCredenciales(type,Command) , function (err, _JSON) {
                     var _cb = null
                     if (err) {
                         const testIp = function (testIp, callback) {
@@ -156,7 +159,7 @@ module.exports = function (app, callback) {
                                         console.log("\x1b[32m Conectado a " + type + " OK \x1b[0m");
 
                                         _ithis.testDB(options, con, resp, type, _ithis.filedb(Command,type) , function () {
-                                            app.fs.writeFile(_ithis.fileCredenciales(type) , JSON.stringify(_credenciales), function (err, _JSON) {
+                                            app.fs.writeFile(_ithis.fileCredenciales(type,Command) , JSON.stringify(_credenciales), function (err, _JSON) {
                                                 console.log("\x1b[32m Nuevas credenciales de acceso mysql guardadas OK \x1b[0m");
                                                 callback(_credenciales)
                                             })
@@ -274,8 +277,13 @@ module.exports = function (app, callback) {
                         keys: function (options, params, callback, _cberror) {
                             //const _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)"
                             //const _params = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
-
-                            options.SQL.db.query("CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)", [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME] , function (err, _rec) {
+                            const _p = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
+                            var _cadsql = _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)"
+                            if (params.table == "Auditor") {
+                                _p.push(params.empresa ? 1 : 0)
+                                _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?,?)"
+                            }
+                            options.SQL.db.query(_cadsql, _p , function (err, _rec) {
                                 if (err != null || _rec[0][0] == null) {
                                     debugger
                                     options.SQL.scrapDb.SQL.db.query("CALL Insert_Error_Boletin(?,?,?)", [params.data.BOLETIN + '#' + params.data.ID_BORME, err.sql, err.sqlMessage], function (err2) {
@@ -295,7 +303,7 @@ module.exports = function (app, callback) {
                             })
                         },
                         diario: function (options, params, callback) {
-                            options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
+                            options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
                                 if (err)
                                     debugger
                                 callback(err, _rec)

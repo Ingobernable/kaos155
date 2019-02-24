@@ -29,7 +29,7 @@
 
                             if ($('error').length > 0) {
                                 data._list = []
-                                data.SUMARIO_NEXT = app.moment(data.SUMARIO_NEXT, "YYYYMMDD").add(1, 'days').format('YYYYMMDD');
+                                data.SUMARIO_NEXT = "BORME-S-" + app.moment(data.SUMARIO_LAST, "YYYYMMDD").add(1, 'days').format('YYYYMMDD');
                                 callback(data)
                             } else {
                                 data.next = $('sumario meta fechaSig').html()

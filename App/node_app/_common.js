@@ -164,10 +164,12 @@
             //const _this = this
             if (options.Command == app.Commands[0]) {
                 //debugger
+                //if (data.desde.length > 0) {
                 const iyear = data.desde.substr(0, 4)
                 const imonth = data.desde.substr(4, 2)
                 const iday = data.desde.substr(6, 2)
                 const _DATE = new Date(imonth + "/" + iday + "/" + iyear)
+
                 //var _AHORA = new Date()
 
                 if (app.update == null) {
@@ -266,8 +268,9 @@
                     if (!app._.isNumber(ok) && ok == true) {
                         var _d = new Date()
                         if (app.anyo*1 < _d.getFullYear()) {
-                            app.anyo = (app.anyo*1) + 1
-                            callback(app, 1)
+                            app.anyo = (app.anyo * 1) + 1
+                            //if(app.forever)
+                                callback(app, options, data, app.forever)
 
                         } else {
                             process.exit(0)

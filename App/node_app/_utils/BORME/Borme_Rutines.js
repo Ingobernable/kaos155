@@ -7,6 +7,9 @@ module.exports = function (app, options, transforms) {
             // rutina para sacar de una cadena los datos desde un mapkey
             //
             maps: {
+                //Tempresas: ['UTE.', 'SC.', 'SRL', 'SLL.', 'SAL.', 'S.Coop.C', 'S.Coop', 'AEIE', 'SCP', 'CITYCE', 'SA.', 'SL.', 'S.C.C', 'S.C.V'],
+                Empresas: ['UTE', 'SC', 'SRL','SLL','SAL','S.Coop.C','S.Coop','AEIE','SCP','CITYCE','SA','SL','S.C.C','S.C.V'],
+                Replace: [["S.c", "SC"], [" Adaptación Ley 2/95", ""], ["apo.man.soli", ""], ["apo.sol", ""], ["cons.del.man", ""], ["A.u.dsl", ""], ["Sociedad Limit", ""], ["miem.com.ej", ""], ["C.j.csl", "C.j.c SL"], ["presidente", ""], ["cons.del.man", ""], ["apo.sol", ""], ["apo.manc", ""], ["secrenoconsj", ""], ["delegado", ""], ["cons.del.sol", ""], ["SL.P", "SL"], ["SL.U", "SL"], ["S.I.C.A.V","SICAV"]],
                 keys: {
                     arr: [
                         'Constitución.',
@@ -65,10 +68,10 @@ module.exports = function (app, options, transforms) {
                         'Reactivación de la sociedad',
                         'reactivación De La Sociedad (art242 Del Reglamento Del Registro Mercantil)',
 
-                        'Cierre provisional hoja registral por baja en el índice de Entidades Jurídicas.',
-                        'Cierre provisional hoja registral por revocación del NIFde Entidades Jurídicas',
-                        'Cierre provisional hoja registral art. 137.2 Ley 43/1995 Impuesto de Sociedades.',
-                        'Cierre provisional de la hoja registral por revocación del NIF',
+                        'Cierre provisional',
+                        //'Cierre provisional hoja registral por revocación del NIFde Entidades Jurídicas',
+                        //'Cierre provisional hoja registral art. 137.2 Ley 43/1995 Impuesto de Sociedades.',
+                       // 'Cierre provisional de la hoja registral por revocación del NIF',
 
                         'Acuerdo de ampliación de capital social sin ejecutar.',
                         'Objeto social:',
@@ -87,12 +90,17 @@ module.exports = function (app, options, transforms) {
                         'Administrador Concursal.',
 
                         'Fe de erratas:',
+
                         'Adaptada segun D.T. 2 apartado 2 Ley 2/95.',
                         'Resoluciones:',
                         'Otros conceptos:',
-                        'Datos registrales',
+
+                        
+                        'Datos registrales.',
                         'Datos registralesT',
                         'datos Registralest',
+                        'Datos registrales',
+                        'registrales.'
                     ]
                 }, nameKeys: [
                     'Constitucion',
@@ -147,9 +155,9 @@ module.exports = function (app, options, transforms) {
                     'Varios',
 
                     'Extincion',
-                    'Extincion',
-                    'Extincion',
-                    'Extincion',
+                    //'Extincion',
+                    //'Extincion',
+                    //'Extincion',
 
                     'Varios',
                     'Varios',
@@ -159,14 +167,16 @@ module.exports = function (app, options, transforms) {
                     'Varios',
                     'Varios',
 
-
-                    'Nombramiento',
 
                     'Extincion',
                     'Extincion',
                     'Extincion',
                     'Concurso',
+                    'Erratas',
                     null,
+                    null,
+                    null,
+
                     null,
                     null,
                     null,
@@ -326,6 +336,7 @@ module.exports = function (app, options, transforms) {
                 return [{ key: _keys.c, value: cadena }]
             },
             getDirectivos: function (type, cadena, _keys, _next, data) {
+                const _COriginal = cadena
                 const cuenta = function (str) {
                     str = str.replace(/[^.]/g, "").length
                     return str;
@@ -334,7 +345,7 @@ module.exports = function (app, options, transforms) {
                     if (cadena.substr(cadena.length - 1, 1) != ".")
                         cadena = cadena + '.'
 
-                    return (cadena.indexOf('SOCIEDAD ANONIMA') > -1 || cadena.indexOf('SOCIEDAD LIMITADA') > -1 || cadena.indexOf(' SL.') > -1 || cadena.indexOf(' SA.') > -1)
+                    return (cadena.indexOf('SOCIEDAD ANONIMA') > -1 || cadena.indexOf('SOCIEDAD LIMITADA') > -1 || cadena.indexOf(' SL.') > -1 || cadena.indexOf(' SA.') > -1 || cadena.indexOf('SAT ') > -1 || cadena.indexOf('SAU.') > -1 || cadena.indexOf('S.COOP') > -1)
                 }
 
                 const _ret = []
@@ -356,17 +367,53 @@ module.exports = function (app, options, transforms) {
                     }
                     return { found: _found, cadena: cad }
                 }
-
+                if (cadena.toUpperCase() == cadena)
+                    cadena = cadena.capitalizeAllFirstLetter()
                 const _f = found([], cadena)
                 cadena = _f.cadena
                 
                 //_cad = app._.trim( this.titleCase(_f.cadena.split(":")[0] + ":") )
                 cadena = found([ app._.trim(this.titleCase(_f.cadena.split(":")[0] + ":")) ], cadena).cadena
 
+
                 const _valores = []
-                const _preval = app._.trim(cadena.replace(/S\.L\./g, 'SL.').replace(/S\.A\./g, 'SA.').replace(/\.\B/g, "#$").replace(/\. /g, "#$").replace(/\./g, "#") + ' ').split("#$ ")
+                const _search = cadena.match(/[a-z]\. [A-Z]/g)
+                app._.each(_search, function (o) {
+                    cadena = cadena.replaceAll(o,o.replaceAll(" ",""))
+                })
+                var _m = cadena.match(/\s[A-Z][.]\s[A-Z][.]\s(SL|SA)/g)
+                app._.each(app._.uniq(_m), function (o) {
+                    //for (o in app._.uniq(_m)) {
+                        const _x = (" " + o.replaceAll(" ", "") + " ")
+                        cadena = cadena.replaceAll(o, _x.replaceAll(/[.]S/,". S").replaceAll(".","_"))
+                    //}
+                })
+                cadena = this.transforms(app._.trim(cadena), this._transforms.getPatern(this._transforms).Directivos)
+                
+                //cadena = this.analizeEmpresaName(cadena, this._transforms.getPatern(this._transforms))
+
+                cadena = cadena.replace(/S\W COOP\W/g, "/S_COOP_")
+                    .replace(/AND\.\W/g, " ")
+                    .replace(/w SA\W/g, " SA.")
+                    .replace(/w SL\W/g, " SL.")
+                    .replace(/S\.L\./g, 'SL.')
+                    .replace(/S\.A\./g, 'SA.')
+
+                    .replace(/\.\B/g, "#$")
+                    .replace(/\. /g, "#$")
+                    .replace(/\./g, "#") 
+                    .replace(/\_/g, ".")
+                //if (cadena != _c)
+                //    debugger
+
+                const _preval = app._.trim((cadena+' ')).split("#$ ")
+
                 for (i in _preval) {
-                    if (_preval[i].length > 0) 
+
+                    if (_preval[i].length < 5)
+                        debugger
+
+                    if (_preval[i].length > 4) 
                         if (app._.trim( _preval[i] ).indexOf(":") == -1) {
                             _valores[_valores.length - 1] = _valores[_valores.length - 1] + _preval[i]
                         } else {
@@ -383,14 +430,23 @@ module.exports = function (app, options, transforms) {
                                 let d = 0
                                 const _dir = app._.trim(item[1]).split(';')
                                 for (d in _dir) {
-                                    _dir[d] = _dir[d]
+                                    //_dir[d] = _dir[d]
                                     if (_dir[d].substr(_dir[d].length - 1, 1) == ".")
                                         _dir[d] = _dir[d].substr(0, _dir[d].length - 1)
-                                    _ret[_ret.length] = {
-                                        Empresa: isEmpresa(_dir[d]),
-                                        key: this.titleCase(app._.trim(item[0]).replace(/#/g, ".")),
-                                        value: isEmpresa(_dir[d]) ? _dir[d] : this.titleCase(_dir[d])
+
+                                    
+                                    _dir[d] = _dir[d].replaceAll("/", "").replace(/(|%|_)/g, ".") //.replaceAll("%", ".").replaceAll("_", ".")
+                                    const _isEmpresa = isEmpresa(_dir[d])
+                                    const _r = {
+                                        Empresa: _isEmpresa,
+                                        key: this.titleCase(app._.trim(item[0]).replace(/(#|%)/g, ".")),
+                                        value: _isEmpresa ? _dir[d].toUpperCase() : this.titleCase(_dir[d].replaceAll(".", ""))
                                     }
+                                    if (_r.value == _dir[d].toUpperCase() && !_isEmpresa)
+                                        debugger
+                                    if (_r.value.indexOf("%")>-1 && !_isEmpresa)
+                                        debugger
+                                    _ret.push(_r )
 
                                 }
                             }
@@ -432,8 +488,20 @@ module.exports = function (app, options, transforms) {
                         return string.charAt(0).toUpperCase() + string.slice(1);
                     }
                     var _e = 0
+                    
+                    __data.values.value = __data.values.value.replaceAll("#$", "")
+                    
+                    var _lesp = __data.values.value.lastIndexOf('#')
+                    var _l = __data.values.value.length
+                    if (_l - _lesp < 4)
+                        __data.values.value = __data.values.value.substr(0, _lesp )
 
-                    const _table = __data.values.key.toUpperCase() == "AUDITOR" ? "Auditor" : __data.values.value == __data.values.value.toUpperCase() ? "Empresa" :  "Directivo"
+                    var _esp = __data.values.value.indexOf('#')
+                    if (_esp > -1)
+                        __data.values.value = __data.values.value.replaceAll("#", ".")
+                    
+
+                    var _table = __data.values.key.toUpperCase() == "AUDITOR" ? "Auditor" : __data.values.value == __data.values.value.toUpperCase() ? "Empresa" :  "Directivo"
                     __data.values.Empresa = (_table == "Empresa")
                     __data.values.Auditor = (_table == "Auditor")
                    
@@ -448,43 +516,102 @@ module.exports = function (app, options, transforms) {
                             __data.values.value = __data.values.value.substr(__data.values.value, app._.toLower(__data.values.value).indexOf(value) - 1)
                     })
 
-                    if (!_exclude) {                        
-                        if (_table == "Directivo")
-                            __data.values.value = capitalizeFirstLetter(__data.values.value)
-                                
-                        if (__data.values.key.toLowerCase() == "juzgado")
-                            __data.values.value = capitalizeFirstLetter(__data.values.key + " " + __data.values.value)
+                    if (!_exclude) {
 
 
-                        app.BOLETIN.Rutines.getUnique(app.BOLETIN.Rutines.getUnique, __data.values.value, app.BOLETIN.SQL.db, function (_k) {
-                            const go = function (options, params) {
-                                app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
+                        if (__data.values.value.indexOf('#') > -1)
+                            debugger
+                        //__data.values.value = __data.values.value.replaceAll("#",".")
+                        if (__data.values.value.indexOf('Administrad') > -1 && _table!="Auditor")
+                            debugger
 
-                                    if (_directivo.length > 0) {
-           
-                                        if (Active) {
-                                            app.process.stdout.write(app, options, '\x1b[32m', '', '')
-                                        } else {
-                                            app.process.stdout.write(app, options, '\x1b[31m', '', '')
-                                        }
-                                        app.process.stdout.write(app, options, '', __data.values.Empresa ? "e" : __data.values.Auditor ? "a" : "d", '')
-                                        app.process.stdout.write(app, options, '', '', '\x1b[0m')
-                                        callback(__data, _directivo[0][0].Id, params, Active)
-                                    }
-                                }, function (params) {
-                                    callback(null)
-                                })
+                        //if (_table == "Directivo")
+                        //    __data.values.value = capitalizeFirstLetter(__data.values.value)
+
+
+                        
+                        //if (__data.values.key.toLowerCase() == "juzgado")
+                        //    __data.values.value = capitalizeFirstLetter(__data.values.key + " " + __data.values.value)
+
+                        if (__data.values.value.indexOf(":") > -1 && __data.values.value.indexOf(".") > 0)
+                            if (__data.values.value.indexOf(":") > __data.values.value.indexOf("."))
+                                __data.values.value = __data.values.value.substr(0,__data.values.value.indexOf("."))
+
+                            //debugger
+                        if (__data.values.value.indexOf(".") > -1) {
+                            var _p = app._.findIndex(options.Rutines.maps.Replace, function (o) {
+                                return __data.values.value.toUpperCase().indexOf(o[0].toUpperCase()) > -1
+                            })
+                            if (_p > -1) {
+                                __data.values.value = __data.values.value.toUpperCase().replaceAll(options.Rutines.maps.Replace[_p][0].toUpperCase(), options.Rutines.maps.Replace[_p][1].toUpperCase())
                             }
-                             
-                            
-                            options.grafos.push.Object({
-                                table: _table,
-                                e: __data.values.value,
-                                k: _k.replaceAll("-", ""), //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
-                                data: _linea.data
-                            }, function (params) { go(options, params) })
-                            
-                        })
+                            if (__data.values.value.lastIndexOf(".") == __data.values.value.length - 1)
+                                __data.values.value = __data.values.value.substr(0, __data.values.value.lastIndexOf("."))
+
+
+                        }
+  
+                        const _emp = app._.findIndex(options.Rutines.maps.Empresas, function (o) { return __data.values.value.toUpperCase().indexOf(" " + o.toUpperCase()) > -1 })
+                        
+                        if (_emp > -1 ) {
+                            const _cl = options.Rutines.maps.Empresas[_emp]
+                            const _e = __data.values.value.toUpperCase().lastIndexOf(" " + _cl)
+                            if (_e + 1 + _cl.length == __data.values.value.length) {
+
+                                __data.values.value = __data.values.value.substr(0, _e + 1 + _cl.length).toUpperCase()
+                                _table = "Empresa"
+                                __data.values.Empresa = true
+                            } 
+                            //__data.values.Directivo=false
+                        } else {
+                            if (!__data.values.Auditor) {
+                                _table = "Directivo"
+                                __data.values.value = capitalizeFirstLetter(__data.values.value)
+                            }
+                        }
+                        if (__data.values.value.length > 4) {
+                            app.BOLETIN.Rutines.getUnique(app.BOLETIN.Rutines.getUnique, __data.values.value, app.BOLETIN.SQL.db, function (_k) {
+                                const go = function (options, params) {
+                                    app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
+
+                                        if (_directivo.length > 0) {
+
+                                            if (Active) {
+                                                app.process.stdout.write(app, options, '\x1b[32m', '', '')
+                                            } else {
+                                                app.process.stdout.write(app, options, '\x1b[31m', '', '')
+                                            }
+                                            app.process.stdout.write(app, options, '', __data.values.Empresa ? "e" : __data.values.Auditor ? "a" : "d", '')
+                                            app.process.stdout.write(app, options, '', '', '\x1b[0m')
+                                            callback(__data, _directivo[0][0].Id, params, Active)
+                                        }
+                                    }, function (params) {
+                                        callback(null)
+                                    })
+                                }
+
+
+                                options.grafos.push.Object({
+                                    table: _table,
+                                    empresa: __data.values.Empresa ? true : false,
+                                    e: __data.values.value,
+                                    k: _k.replaceAll("-", ""), //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
+                                    data: _linea.data
+                                }, function (params) {
+                                    go(options, params)
+                                })
+
+                            })
+                        } else {
+                            if (Active) {
+                                app.process.stdout.write(app, options, '\x1b[32m', '', '')
+                            } else {
+                                app.process.stdout.write(app, options, '\x1b[31m', '', '')
+                            }
+                            app.process.stdout.write(app, options, '',  "?", '')
+                            app.process.stdout.write(app, options, '', '', '\x1b[0m')
+                            callback(__data, 0, null, false)
+                        }
                         //})
                     } else {
                         callback(__data, 0, null, false)
@@ -508,7 +635,10 @@ module.exports = function (app, options, transforms) {
                 },
                 Cancela: function (_linea, __data,  callback) {
                     this.SaveDirectivo(_linea, __data, false, callback)
-                }
+                },
+                Erratas: function (_linea, __data, callback) {
+                    callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: __data.values.value }, 0)
+                },
             },
             Constitucion: function ( cadena, _keys, _next, data) {
                 const _ret = []
@@ -540,7 +670,7 @@ module.exports = function (app, options, transforms) {
                 return [{ key: 'Disolucion', value: cadena }]
             },
             Extincion: function ( cadena, _keys, _next, data) {
-                return [{ key: 'Extincion', value: null }] //, cadena, _keys, _next, data)
+                return [{ key: 'Extincion', value: cadena.trim() }] //, cadena, _keys, _next, data)
             },
             Varios: function (cadena, _keys, _next, data) {
                 return [{ key: _keys.c, value: cadena }]
@@ -562,7 +692,7 @@ module.exports = function (app, options, transforms) {
 
                 for (_i in _values) {
                     //debugger
-                    _ret[_ret.length] = { key: _values[_i].c.replace(":", ""), value: _values[_i].f }
+                    _ret.push( { key: _values[_i].c.replace(":", ""), value: _values[_i].f } )
                 }
                 return _ret
             },
@@ -573,14 +703,18 @@ module.exports = function (app, options, transforms) {
             ModificaEstatutos:function(_this , _keys, data){},
             ReduceCapital:function(_this , _keys, data){},
             SetSociedadUnipersonal: function (_this, data) { },
-            DeclaraSociedadUnipersonal: function (_this, data) {
+            DeclaraSociedadUnipersonal: function (cadena, _keys, _next, data) {
                 return { data: _keys, string: data }
             },
             SetSocioUnico:function(_this , _keys, data){},
             SetDatosRegistrales:function(_this , _keys, data){},
             UnsetUnipersonal: function (_this, data) { },
-
-            erratas: function (_this, data) { },
+            DatosRegistro: function (cadena, _keys, _next, data) {
+                return [{ key: 'DatosRgistro', value: cadena.trim() }]
+            },
+            Erratas: function (cadena, _keys, _next, data) {
+                return [{ key: 'Erratas', value: cadena.trim() }]
+            },
 
             actions: {
                 constitucion: function (data, keys) {
@@ -626,7 +760,7 @@ module.exports = function (app, options, transforms) {
                         _plength = cadena.length  - py // map[_e].c.length                                  //si es el último elemento calculamos la longitud del resto de la cadena
                     }
                 
-                    var _string = app._.trim(cadena.substr(py, _plength) )                               //extrayendo el resultado
+                    var _string = app._.trim(cadena.substr(py, _plength).replaceAll(":","") )                               //extrayendo el resultado
                     if (_string.substr(_string.length - 1, 1) == ".")
                         _string= _string.substr(0, _string.length - 1)
 
@@ -656,8 +790,13 @@ module.exports = function (app, options, transforms) {
                 const _explore = []
                 for (e in Explore) {                                                            //para cada una de las palabras clave
                     const py = cadena.indexOf(Explore[e], 0)                                    //miramos si hay alguna coincidencia de la palabra clave
-                    if (py > -1) {                                                              //si hubo coincidicencia
-                        _explore[_explore.length] = onlyposdata ? {  p: py, l: Explore[e].length } : { c: Explore[e].replaceAll("_"," "), p: py, id: e * 1 }              //anotamos en la matriz de resultados una estructura
+                    if (py > -1) {
+                        const _exp = Explore[e]
+                        if (!app._.find(_explore, function (o) {
+                            return o.c.indexOf(_exp) > -1
+                        })) {                                                              //si hubo coincidicencia
+                            _explore.push( onlyposdata ? { p: py, l: _exp.length } : { c: _exp.replaceAll("_", " ").replaceAll(".", "").replaceAll(":", ""), p: py, id: e * 1 }  )            //anotamos en la matriz de resultados una estructura
+                        }
                     }
                 }
                 return _explore.length>0?this.sortBy(_explore,'p') : null                           //devolvemos el resultado ordenado por posiciones
@@ -820,7 +959,7 @@ module.exports = function (app, options, transforms) {
                 if (_db == null)
                     debugger
 
-                _db.query("select * from borme_keys where _key=?", [_k,_name], function (err, record) {
+                _db.query("select * from borme_keys where _key=?", [_k], function (err, record) {
                     if (record.length > 0) {
                         if (record[0].Nombre.toLowerCase() === _name.toLowerCase()) {
                             callback(record[0]._key)
@@ -836,8 +975,17 @@ module.exports = function (app, options, transforms) {
                     }
                 })
             },
-            analizeSimpleLine: function (_db, _this, line,map, skey, callback) {
-                const patterns = _this._transforms.getPatern(_this._transforms)
+            analizeSimpleLine: function (options, line,  skey, recordset, callback) {
+                
+                const _db = options.SQL.db
+                //const _this = options.Rutines
+                const map = options.Rutines.maps
+                
+                //const patterns = _this._transforms.getPatern(_this._transforms)
+
+                //if (line.indexOf(":") > -1)
+                //    debugger
+
                 const _items = this.getPosExploreItems(line, map.keys.arr, false)            //extraemos las posiciones donde existen palabras clave
                 var _Empresa = ""
 
@@ -855,24 +1003,11 @@ module.exports = function (app, options, transforms) {
                         _n++
                     }
 
-                    _Empresa[1] = _this.transforms(app._.trim(_Empresa[1]), patterns.Contratista)
-                    if (_Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS") > -1) {
-                        _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].length - _Empresa[1].indexOf("UNION TEMPORAL DE EMPRESAS"))
-                    }
-                    if (_Empresa[1].indexOf('SA.') > -1) {
-                        _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].indexOf('SA.') + 2)
-                    }
-
-                    if (_Empresa[1].indexOf('SL.') > -1) {
-                        _Empresa[1] = _Empresa[1].substr(0, _Empresa[1].indexOf('SL.') + 2)
-                    }
-
-
-                    const _e = _Empresa[1].split(".")[0].replace(/%/g, '.')
-
-                    this.getUnique(this.getUnique, _e, _db, function (_k) {
+                    var _e = this.analizeEmpresaName(_Empresa[1], this._transforms.getPatern(this._transforms))
+                    
+                    this.getUnique(this.getUnique, _e , _db, function (_k) {
                         
-
+                        
 
                             callback({
                                 id: app._.trim(_Empresa[0]),
@@ -880,8 +1015,9 @@ module.exports = function (app, options, transforms) {
                                 k: _k.replaceAll("-", "") ,
                                 keys: _items,
                                 original: line,
-                                contenido: _this.explora(line, _items, _this.maps)
-                            } )
+                                contenido: options.Rutines.explora(line, _items, options),
+                                provincia: options.Provincia
+                            }, skey, recordset)
                     })
 
                 }
@@ -889,9 +1025,41 @@ module.exports = function (app, options, transforms) {
 
 
             },
-            explora: function (cadena, keys, array) {
+            analizeEmpresaName: function (_NEmpresa, patterns) {
+                 _NEmpresa = this.transforms(app._.trim( _NEmpresa), patterns.Contratista)
+                if ( _NEmpresa.indexOf("UNION TEMPORAL DE EMPRESAS") > -1) {
+                     _NEmpresa =  _NEmpresa.substr(0,  _NEmpresa.length -  _NEmpresa.indexOf("UNION TEMPORAL DE EMPRESAS"))
+                }
+                if ( _NEmpresa.indexOf('SA.') > -1) {
+                     _NEmpresa =  _NEmpresa.substr(0,  _NEmpresa.indexOf('SA.') + 2)
+                }
+
+                if ( _NEmpresa.indexOf('SL.') > -1) {
+                     _NEmpresa =  _NEmpresa.substr(0,  _NEmpresa.indexOf('SL.') + 2)
+                }
+
+
+                var _e =  _NEmpresa.split(".")[0].replace(/%/g, '.')
+
+                if (_e.indexOf(".") > -1) {
+                    var _p = app._.findIndex(options.Rutines.maps.Replace, function (o) {
+                        return _e.toUpperCase().indexOf(o[0].toUpperCase()) > -1
+                    })
+                    if (_p > -1) {
+                        _e = _e.toUpperCase().replaceAll(options.Rutines.maps.Replace[_p][0].toUpperCase(), options.Rutines.maps.Replace[_p][1].toUpperCase())
+                        console.log(_e)
+                    }
+                    if (_e.lastIndexOf(".") == _e.length - 1)
+                        _e = _e.substr(0, _e.lastIndexOf("."))
+
+
+                }
+                return _e
+            },
+            explora: function (cadena, keys, options) {
 
                 const _ret = []
+                const array = options.Rutines.maps
                 let _i = 0
                 let _p = ""
                 let _func = null
@@ -906,9 +1074,10 @@ module.exports = function (app, options, transforms) {
 
                     if (_i < keys.length - 1 && _func != null) {
                         if (this[_func] != null) {
-                            _v = this[_func]( cadena.substr(keys[_i].p + keys[_i].c.length, keys[_i + 1].p - keys[_i].p - keys[_i].c.length) , keys[_i], (_i < keys.length - 1 ? keys[_i] : null), array)
+                            const _lo = array.keys.arr[keys[_i].id].length
+                            _v = this[_func]( cadena.substr(keys[_i].p + _lo, keys[_i + 1].p - keys[_i].p - _lo) , keys[_i], (_i < keys.length - 2 ? keys[_i+1] : null), array)
                             for (p in _v) {
-                                _ret[_ret.length] = { type: _func, values: _v[p] }
+                                _ret.push( { type: _func, values: _v[p] } )
                             }
                             _func = null
                         } else {
@@ -916,6 +1085,17 @@ module.exports = function (app, options, transforms) {
                             _func = null
                         }
                     }
+                    if (_i == keys.length-1) {
+                        //if (this[_func] != null) {
+                            var _lo = array.keys.arr[keys[_i].id].length
+                            //_v = this[_func](cadena.substr(keys[_i].p + _lo), keys[_i],  keys[_i] , array)
+                            //for (p in _v) {
+                            if (keys[_i].c.toLowerCase().indexOf("registrales")>-1)
+                            _ret.DatosRegistrales = cadena.substr(keys[_i].p + _lo).trim() 
+                            _ret.provincia = options.Provincia
+                            //}
+                            _func = null
+                        }
                 }
                 if (keys.length == 0)
                     debugger

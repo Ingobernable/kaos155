@@ -84,7 +84,17 @@ module.exports = function (app, callback) {
                             
                             //guardamos los datos
                             options.grafos.push.relation(_Dl.values ? _Dl.values.Auditor ? "Auditor" : "Directivo" : "Directivo", _linea, params, function () {
-                                    app.commonSQL.SQL.commands.insert.Borme.diario(options, [
+                                if (!_linea.contenido.DatosRegistrales) {
+                                    _linea.contenido.DatosRegistrales = null
+                                    debugger
+                                } else {
+                                    if (_linea.contenido.DatosRegistrales.length > 100) {
+                                        _linea.contenido.DatosRegistrales = _linea.contenido.DatosRegistrales.substr(0, 100)
+                                        debugger
+                                    }
+                                }
+
+                                app.commonSQL.SQL.commands.insert.Borme.diario(options, [
                                         _linea.data.BOLETIN,
                                         _linea.id,
                                         _linea.data.dia,
@@ -99,7 +109,8 @@ module.exports = function (app, callback) {
                                         (Active ? 1 : 0),
                                         _Dl.type ? _Dl.type : _Dl.values.type,
                                         _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
-                                        (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value)
+                                        (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value),
+                                         _linea.contenido.DatosRegistrales     
                                     ], function (err, _record) {
                                         //if (_that == null)
                                         //    debugger
@@ -146,16 +157,55 @@ module.exports = function (app, callback) {
                         _this.printOut(app, options, '\x1b[33m', '+', '\x1b[0m')
 
                         //analizamos la linea y obtenemos una estructura con su contenido
-                        options.Rutines.analizeSimpleLine(options.SQL.db, options.Rutines, recordset[0][0].texto, options.Rutines.maps, options.Provincia, function (_line) { 
-                            _line.data = recordset[0][0]
+                        var _textos = []
+                       
+                        var _t = recordset[0][0].texto
+                        while (_t.indexOf((recordset[0][0].ID_BORME + 1+_textos.length) + " - ") > -1) {
+                            const _e = _t.indexOf((recordset[0][0].ID_BORME + 1 + _textos.length) + " - ")
+                            var _long = 0
+                            if (_e > -1) {
+                                if (_t.indexOf((recordset[0][0].ID_BORME + 2 + _textos.length) + " - ") > -1) {
+                                    _long = _t.indexOf((recordset[0][0].ID_BORME + 2 + _textos.length) + " - ") - _e 
+                                    _textos.push(_t.substr(0, _e))
+                                    _t = _t.substr(_t, _long - _e)
+                                } else {
+                                    _textos.push(_t.substr(0, _e))
+                                    _textos.push( _t.substr(_e, _t.length - _e) )
+                                }
+                                
+             
+                                
+                            }
+                        }
+                        if (_textos.length == 0)
+                            _textos = [recordset[0][0].texto]
 
-                            options.parser.saveEmpresaDeMovimiento(_line, function () {
-                                options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + app.anyo + " set parser=1 where ID_BORME = ? ", [recordset[0][0].ID_BORME], function (err, record) {
-                                    options.parser.Preceptos(options, type, callback)
+                        var _n = 0
+
+                        const _analizer = function (options,_textos,_n, analizer, callback, type, recordset) {
+                            //for (_n == 0; _n <= _textos.length-1; _n++) {
+                            options.Rutines.analizeSimpleLine(options, _textos[_n], _n, recordset, function (_line, _n, recordset) {
+                                _line.data = recordset[0][0]
+                                _line.data.texto = _textos[_n]
+                                options.parser.saveEmpresaDeMovimiento(_line, function () {
+                                    if (_n == _textos.length - 1) {
+                                        callback(options,type,recordset)
+                                    } else {
+                                        analizer(options, _textos, _n+1, analizer, callback, type, recordset)
+                                    }
                                 })
+                                //})
+                            }, recordset)
+                        }
+                        _analizer(options, _textos, 0, _analizer, function (options, type, recordset) {
+                            options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + app.anyo + " set parser=1 where ID_BORME = ? ", [recordset[0][0].ID_BORME], function (err) {
+                                if (err)
+                                    debugger
+                                options.parser.Preceptos(options, type, callback)
                             })
-                        //})
-                        })
+                        },type, recordset)
+                        //}
+
                     } else {
                         callback(null, true)
                     }

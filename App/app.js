@@ -38,10 +38,11 @@ var App = {
     os: require("os"),
 
     _returnfunc : function (app, options, data, ok) {
-        if (ok > 0) {
+        if (ok || app.forever) {
             options._common.Actualize(options, options.Type, {}, app._returnfunc)
         } else {
-            debugger
+            console.log("año " + app.anyo - 1 + " terminado")
+            process.exit(0)
         }
     }, 
     forever: false,
@@ -86,7 +87,17 @@ String.prototype.lastIndexOfRegex = function (regex) {
     const match = this.match(regex);
     return match ? this.lastIndexOf(match[match.length - 1]) : -1;
 };
+String.prototype.capitalizeFirstLetter = function () {
 
+    return this.charAt(0).toUpperCase() + this.toLowerCase().slice(1);
+}
+String.prototype.capitalizeAllFirstLetter = function () {
+    var container = this.trim().split(" ")
+    container.forEach( function (i, e) {
+        container[e] = i.capitalizeFirstLetter()
+    })
+    return container.join(" ")
+}
     App.credentials= require('./node_utils/credentials.js')(App)
     require("./node_app/menu_console.js")(App, process.argv.slice(2), function (app, myArgs, date, automatic, test) {
 
