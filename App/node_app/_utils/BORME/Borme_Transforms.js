@@ -191,7 +191,27 @@ module.exports = function (app, options) {
                     ['R', new RegExp(/\*$/, "g"), "."]
 
                     //["F", { f: _this.removeLastChar }, "."],
-                ]
+                ],
+                recortes: ['admmancom',
+                            'admsolid',
+                            'admunico',
+                            'apoderado',
+                            'apomanc',
+                            'apomansoli',
+                            'aposol',
+                            'audccon',
+                            'audccon',
+                            'audsupl',
+                            'condelegado',
+                            'consejero',
+                            'liquidador',
+                            'liquisoli',
+                            'miemcomej',
+                            'presidente',
+                            'secretario',
+                            'socio Miembr',
+                            'socio Único',
+                            'socuniprof']
             }
         }
     }

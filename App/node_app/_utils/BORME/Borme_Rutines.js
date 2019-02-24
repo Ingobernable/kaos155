@@ -347,7 +347,13 @@ module.exports = function (app, options, transforms) {
 
                     return (cadena.indexOf('SOCIEDAD ANONIMA') > -1 || cadena.indexOf('SOCIEDAD LIMITADA') > -1 || cadena.indexOf(' SL.') > -1 || cadena.indexOf(' SA.') > -1 || cadena.indexOf('SAT ') > -1 || cadena.indexOf('SAU.') > -1 || cadena.indexOf('S.COOP') > -1)
                 }
-
+                const _k = function (_isEmpresa,key,cadena) {
+                    return {
+                        Empresa: _isEmpresa,
+                        key: key,
+                        value: _isEmpresa ? cadena.toUpperCase() : cadena
+                    }
+                }
                 const _ret = []
                 let i = 0
 
@@ -435,15 +441,34 @@ module.exports = function (app, options, transforms) {
                                         _dir[d] = _dir[d].substr(0, _dir[d].length - 1)
 
                                     
-                                    _dir[d] = _dir[d].replaceAll("/", "").replace(/(|%|_)/g, ".") //.replaceAll("%", ".").replaceAll("_", ".")
+                                    _dir[d] = _dir[d].replaceAll("/", "").replace(/(%|_)/g, ".") //.replaceAll("%", ".").replaceAll("_", ".")
+
                                     const _isEmpresa = isEmpresa(_dir[d])
-                                    const _r = {
-                                        Empresa: _isEmpresa,
-                                        key: this.titleCase(app._.trim(item[0]).replace(/(#|%)/g, ".")),
-                                        value: _isEmpresa ? _dir[d].toUpperCase() : this.titleCase(_dir[d].replaceAll(".", ""))
+                                    const _map = this._transforms.getPatern(this._transforms)
+
+                                    var _c = ""
+
+                                    if (!_isEmpresa) {
+                                        var _d = this.titleCase(_dir[d].replaceAll(".", ""))
+                                        var _p = app._.findIndex(this._transforms.getPatern(this._transforms).recortes, function (e) {
+                                            return _d.indexOf(e) > -1
+                                        })
+                                        if (_p > -1) {
+                                            _c = _d.replaceAll(_map.recortes[_p], "")
+                                        } else {
+                                            _c = _d
+                                        }
+                                    } else {
+                                        _c = _dir[d].toUpperCase()
                                     }
+
+                                    
+                                    var _key = this.titleCase(app._.trim(item[0]).replace(/(#|%)/g, "."))
+                                    var _r = _k(_isEmpresa, _key, _c)
+         
                                     if (_r.value == _dir[d].toUpperCase() && !_isEmpresa)
                                         debugger
+
                                     if (_r.value.indexOf("%")>-1 && !_isEmpresa)
                                         debugger
                                     _ret.push(_r )
