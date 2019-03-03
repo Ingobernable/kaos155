@@ -2,7 +2,7 @@
     //var _ = app._
     //debugger
     return {
-
+        io_client:require("socket.io-client")(app.ip_IA),
         SQL: {
             commands: {
                 Sumario: {
@@ -85,7 +85,8 @@
                                 
                                 options.SQL.db.query(cadsql = "UPDATE lastread set STOP=0 WHERE Type='" + options.type + "' AND anyo = " + app.anyo, function (err, record) {
                                     console.log('proceso obligado a parar')
-                                    process.exit(1)
+                                    app.exit(function () { process.exit(1) })
+                                    //process.exit(1)
                                 })
                             }
                         })
@@ -210,7 +211,8 @@
                                     }
                                 } else {
                                     console.log('error estructural en curl .- sistema detenido')
-                                    process.exit(0)
+                                    app.exit(function () { process.exit(0) })
+                                    //process.exit(0)
                                 }
                             })
                         } else {
@@ -240,7 +242,8 @@
                         options.SQL.db.query("UPDATE lastread SET Read_Complete = 1 WHERE Type='" + type + "' AND Anyo = " + app.anyo, function (err, record) {                            
                             options.SQL.db.query("UPDATE anyosread SET " + options.Command.toLowerCase() + " = 1 WHERE Type='" + options.Type + "' AND Anyo = " + app.anyo, function (err, record) {
                                 console.log('obtención de datos ' + type + ' del año ' + app.anyo + ' terminó')
-                                process.exit(0)
+                                app.exit(function () { process.exit(0) })
+                                //process.exit(0)
                             })
                         })
                     }
@@ -252,11 +255,13 @@
                                 debugger
                             } else {
                                 console.log('el escrapeo ' + type + ' del año ' + app.anyo + ' no ha concluido')
-                                process.exit(0)
+                                app.exit(function () { process.exit(0) })
+                                //process.exit(0)
                             }
                         } else {
                             console.log('documento ' + app.update + ' del año ' + app.anyo + ' no encontrado')
-                            process.exit(0)
+                            app.exit(function () { process.exit(0) })
+                            //process.exit(0)
                         }
                     })
 
@@ -273,7 +278,8 @@
                                 callback(app, options, data, app.forever)
 
                         } else {
-                            process.exit(0)
+                            app.exit(function () { process.exit(0) })
+                            //process.exit(0)
                         }
 
                     } else {

@@ -412,7 +412,8 @@ module.exports = function (app, callback) {
                         //}
                     } else {
                         console.log('no hay mas boletines, proceso concluido OK')
-                        process.exit(0)
+                        app.exit(function () { process.exit(0) })
+                        //process.exit(0)
                     }
                 })
                 //app.Rutines(app).askToServer(app, { encoding: 'UTF-8', method: "GET", uri: options.url + urlDoc, agent: false }, data, function (app, body, data) {

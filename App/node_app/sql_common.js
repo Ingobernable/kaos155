@@ -35,7 +35,8 @@ module.exports = function (app, callback) {
                             console.log("\x1b[31m ERROR: al acceder a la DB ")
                             console.log("elimine el fichero '" + this.fileCredenciales(type, Command) + "'  \x1b[0m")
                             console.log("y vuelva a ejecutar app.js")
-                            process.exit(1)
+                            app.exit(function () { process.exit(1) })
+                            //process.exit(1)
                         }
                     })
                 } else {
@@ -53,7 +54,8 @@ module.exports = function (app, callback) {
                     console.log("\x1b[31m ERROR: la creación de la DB " + db + " ha fallado parcialmente")
                     console.log("para poder continuar, por favor lance desde su consola el comando \x1b[0m")
                     console.log(_command)
-                    process.exit(1)
+                    //process.exit(1)
+                    app.exit(function () { process.exit(1) })
                 } else {
                    console.log('tablas y procedimientos de ' + db + ' creados, continuamos .....')
                    callback()
@@ -188,7 +190,8 @@ module.exports = function (app, callback) {
                         }
                         catch (e) {
                             console.log('error en el fichero de Credenciales mysql, json no valido, sistema detenido', e)
-                            process.exit(1)
+                            app.exit(function () { process.exit(1) })
+                            //process.exit(1)
                         }
 
                         if (_ithis.poolSql[type] == null) {
@@ -298,6 +301,10 @@ module.exports = function (app, callback) {
                                     //})
                                     //_cberror(err)
                                 } else {
+                                    //punto para ejecutar procesos ._busqueda de contratos key: _rec[0][0]
+                                    if (_rec[1].insertId > 0 && options._common.io_client.connected)
+                                        options._common.io_client.emit('add', params)
+
                                     callback(params, _rec)
                                 }
                             })

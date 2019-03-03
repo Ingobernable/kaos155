@@ -10,10 +10,11 @@ console.log('kaos155 App - version -' + pjson.version + '.')
 
 var App = {
     version: pjson.version,
+    ip_IA:'http://localhost:8080',
     //datos generales
     //_fileCredenciales: 'cred_',
     TypeBoletines: ["BORME", "BOE", "BOCM"],
-    Commands: ['SCRAP', 'PARSER', 'GRAFOS', 'EXIT'],
+    Commands: ['SCRAP', 'PARSER', 'GRAFOS', 'IA', 'EXIT'],
     Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
 
     //Plugins
@@ -36,13 +37,20 @@ var App = {
     schedule: require('node-schedule'),
     child_process:require('child_process'),
     os: require("os"),
-
+    exit: function (_func) {
+        console.log("Pulse una tecla para terminar");
+        process.stdin.setRawMode(true);
+        process.stdin.resume();
+        process.stdin.on('data', _func );
+    },
     _returnfunc : function (app, options, data, ok) {
         if (ok || app.forever) {
             options._common.Actualize(options, options.Type, {}, app._returnfunc)
         } else {
-            console.log("año " + app.anyo - 1 + " terminado")
-            process.exit(0)
+            console.log("año " + (app.anyo - 1) + " terminado")
+            
+            app.exit( function () { process.exit(0) } )
+            
         }
     }, 
     forever: false,
@@ -114,7 +122,7 @@ String.prototype.capitalizeAllFirstLetter = function () {
                 command: myArgs[0],
                 
                 update: myArgs[3],
-                anyo: !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
+                anyo: myArgs[0]=='IA'? null: !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
                 Command: myArgs[0],
 
 
@@ -154,6 +162,25 @@ String.prototype.capitalizeAllFirstLetter = function () {
                         app.commonSQL = SQL
 
                         _cb({
+                            IA: function () {
+                                //app.Command = 'PARSER'
+                                //app.SQL= { db: null }
+                                //app.commonSQL.init(app, 'BORME', function (options) {
+                                //SQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'PARSER', function (options) {
+
+                                        app._io = require('./node_IA/socket_IO.js')(app)
+                                        app._io.listen(require('socket.io')(8080), function (io) {
+                                            console.log("Sistema a la escucha")
+                                            debugger
+                                        })
+
+                                        //var cadsql = "CALL Insert_Data_Tree(?,?)"
+                                        //options.SQL.db.query(cadsql, [_key, JSON.stringify(app.response)], function (err, recordTree) {
+                                        //process.exit(code)
+                                        //})
+                                    //})
+                                //})
+                            },
                             SCRAP: function (type) {
                                 app.pdftotext = require('./node_app/_utils/pdftotext.js')
                                 const prefix = app.command.substr(0, 3).toLowerCase() + "_"
@@ -239,7 +266,8 @@ String.prototype.capitalizeAllFirstLetter = function () {
                             },
                             EXIT: function (type) {
                                 console.log('EXIT !')
-                                process.exit(0)
+                                app.exit(function () { process.exit(0) })
+                                //process.exit(0)
                             }
                         })
 
@@ -248,13 +276,13 @@ String.prototype.capitalizeAllFirstLetter = function () {
                 logStop: function (i, text) {
                     console.log(i + '.-' + text)
                     console.log('SISTEMA DETENIDO')
-                    process.exit(i)
+                    app.exit(function () { process.exit(1) })
                 },
                 parameters: function (app, myArgs, callback) {
-                    if (app.Commands.indexOf(myArgs[0]) < app.Commands.length - 2) {
+                    if (app.Commands.indexOf(myArgs[0]) <= app.Commands.length - 2) {
                         app.Type = myArgs[1]
                         if (app.Commands.indexOf(myArgs[0]) == -1) {
-                            app.logStop(1, 'comando no valido falta SCRAP PARSE GRAFOS')
+                            app.logStop(1, 'comando no valido falta SCRAP PARSE GRAFOS IA EXIT')
 
                         } else {
 
@@ -333,7 +361,7 @@ String.prototype.capitalizeAllFirstLetter = function () {
         
             App.parameters(App, myArgs, function (app) {
                 //debugger
-                if (app.Commands.indexOf(myArgs[0]) < app.Commands.length - 2) {
+                if (app.Commands.indexOf(myArgs[0]) < app.Commands.length - 3) {
                     //const date = new Date()
                     //myArgs[2] = myArgs[2] + "0102"
                     //if (myArgs[1] == 'BOCM' && app.Mins[myArgs[1]] == app.anyo) {

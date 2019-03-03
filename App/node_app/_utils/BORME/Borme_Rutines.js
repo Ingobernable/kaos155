@@ -416,8 +416,8 @@ module.exports = function (app, options, transforms) {
 
                 for (i in _preval) {
 
-                    if (_preval[i].length < 5)
-                        debugger
+                    //if (_preval[i].length < 5)
+                    //    debugger
 
                     if (_preval[i].length > 4) 
                         if (app._.trim( _preval[i] ).indexOf(":") == -1) {
@@ -595,6 +595,10 @@ module.exports = function (app, options, transforms) {
                             }
                         }
                         if (__data.values.value.length > 4) {
+                            const _m = __data.values.value.match(/(SL\.|SA\.)/g)
+                            if (_m)
+                                __data.values.value = __data.values.value.substr(0, __data.values.value.indexOf(_m[0])+2)
+
                             app.BOLETIN.Rutines.getUnique(app.BOLETIN.Rutines.getUnique, __data.values.value, app.BOLETIN.SQL.db, function (_k) {
                                 const go = function (options, params) {
                                     app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {

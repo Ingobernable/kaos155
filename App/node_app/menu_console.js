@@ -6,7 +6,7 @@ module.exports = function (app, myArgs, callback) {
     const exit = function (myArgs, callback, automatic, test) {
 
         //debugger
-        if (myArgs[0] != _exit) {
+        if (myArgs[0] != _exit && myArgs[0] != 'IA') {
             if (myArgs[0] != 'GRAFOS') {
                 if (myArgs[1] != 'BORME') {
 
@@ -110,7 +110,8 @@ module.exports = function (app, myArgs, callback) {
                                     app.grafos.obj.driver.onError = function (error) {
                                         console.log("neo4j error:error.message");
                                         console.log("elimine el fichero kaos155\\App\\sqlfiles\\cred_grafos.json");
-                                        process.exit(1)
+                                        app.exit(function () { process.exit(1) })
+                                        //process.exit(1)
                                     };
                                     app.grafos.obj.session = app.grafos.obj.driver.session();
                                 })
@@ -135,7 +136,8 @@ module.exports = function (app, myArgs, callback) {
                                     };
                                     app.grafos.obj.driver.onError = function (error) {
                                         console.log(error);
-                                        process.exit(1)
+                                        app.exit(function () { process.exit(1) })
+                                        //process.exit(1)
                                     };
                                     app.grafos.obj.session = app.grafos.obj.driver.session();
 
@@ -154,24 +156,30 @@ module.exports = function (app, myArgs, callback) {
             require('./sql_common.js')(app, function (SQL) {
                 //debugger
                 getanyos(app, myArgs[0], myArgs[1], function (app, anyos, test) {
-                    if (myArgs[2] != "FOR-EVER") {
-                        var found = false
-                        app._.each(anyos, function (anyo) {
-                            if (anyo == myArgs[2]) {
-                                found = true
-                            }
-
-
-                        })
-                        if (found) {
+                    if (myArgs[0] == "IA") {
+                        exit(myArgs, callback, true, test)
+                    } else {
+                        if (myArgs[2] == "FOR-EVER") {
+                            app.forever = true
+                            myArgs[2] = anyos[0]
                             exit(myArgs, callback, true, test)
                         } else {
-                            console.log(myArgs[2] + ' año no valido')
+
+                            var found = false
+                            app._.each(anyos, function (anyo) {
+                                if (anyo == myArgs[2]) {
+                                    found = true
+                                }
+
+
+                            })
+                            if (found) {
+                                exit(myArgs, callback, true, test)
+                            } else {
+                                console.log(myArgs[2] + ' año no valido')
+                            }
+                        
                         }
-                    } else {
-                        app.forever = true
-                        myArgs[2] = anyos[0]
-                        exit(myArgs, callback, true, test)
                     }
                 })
             })

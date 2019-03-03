@@ -15,7 +15,8 @@ module.exports = function (app) {
                     }
                     catch (e) {
                         console.log('error en el fichero de Credenciales ' + _file + '  no valido, sistema detenido', e)
-                        process.exit(1)
+                        app.exit(function () { process.exit(1) })
+                        //process.exit(1)
                     }
                     _sql.password = _this.encryptor.decrypt(_sql.password)
                     _cb(_sql)

@@ -1,6 +1,6 @@
 {
   "name": "KAOS-155",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "SCRAP & PARSER BBDD oficiales",
   "main": "app.js",
   "author": {
@@ -9,6 +9,7 @@
   "dependencies": {
     "aguid": "^2.0.0",
     "cheerio": "^1.0.0-rc.2",
+    "child_process": "^1.0.2",
     "express": "^4.16.2",
     "hashids": "^1.1.4",
     "iconv-lite": "^0.4.19",
@@ -27,6 +28,7 @@
     "serve-static": "^1.13.1",
     "simple-encryptor": "^1.1.1",
     "socket.io": "^2.0.4",
+    "socket.io-client": "^2.2.0",
     "urlencode": "^1.1.0",
     "xmldom": "^0.1.27"
   }
