@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_borme` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `bbdd_kaos155_borme`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: bbdd_kaos155_borme
@@ -39,7 +41,7 @@ CREATE TABLE `borme_actos` (
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`),
   KEY `DatosRegistrales` (`DatosRegistrales`)
-) ENGINE=InnoDB AUTO_INCREMENT=7241003 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10105921 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -61,10 +63,12 @@ CREATE TABLE `borme_keys` (
   `BOLETIN` varchar(20) DEFAULT NULL,
   `_ID` int(11) DEFAULT NULL,
   `T_Relations` int(11) DEFAULT '0',
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`_key`),
+  UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `T_Relaciones` (`T_Relations`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1550993 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,7 +94,7 @@ CREATE TABLE `borme_relaciones` (
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`),
   KEY `DatosRegistrales` (`DatosRegistrales`)
-) ENGINE=InnoDB AUTO_INCREMENT=12077626 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12079121 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -119,6 +123,23 @@ CREATE TABLE `borme_stadistics` (
   `Diciembre` int(11) DEFAULT '0',
   `Total` int(11) DEFAULT '0',
   PRIMARY KEY (`Provincia`,`Anyo`,`Acto`,`Motivo`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `ia_data_contratos`
+--
+
+DROP TABLE IF EXISTS `ia_data_contratos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ia_data_contratos` (
+  `_key` varchar(36) NOT NULL,
+  `_type` varchar(45) DEFAULT NULL,
+  `_counter` int(11) DEFAULT NULL,
+  `_importe` double DEFAULT NULL,
+  PRIMARY KEY (`_key`),
+  UNIQUE KEY `UNIQUE` (`_key`,`_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -297,39 +318,43 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_NAME  nvarchar(250), _iKey  nvarchar(55),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT,_empresa INT)
 BEGIN
-	
-	SET @Directivo = _EMPRESA = 0 ;
-    SET @Empresa = _EMPRESA = 1;
-	SET @Financiera = 0;
-    SET @Auditor= 0;
-    SET @Sicav = 0;
-    
-	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 THEN
-		SET @Financiera = 1;
-        SET @Directivo = 0;
-		SET @Empresa = 1;
-	END IF;
- 
- 	SET @Sicav = 0;
-	IF INSTR(UPPER(_NAME),' SICAV ')>0 OR INSTR(UPPER(_NAME),' SICAV.')>0 THEN
-		SET @Sicav = 1;
-        SET @Directivo = 0;
-		SET @Empresa = 1;
-	END IF;
-	
-    IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
-		SET @Auditor= 1;
-        SET @Directivo = 0;
-		SET @Empresa = 1;
-	END IF;
+	SET @repeat = (SELECT count(*) FROM borme_keys WHERE _key = _iKey);
+	IF @repeat = 0 THEN	
+		SET @Directivo = _EMPRESA = 0 ;
+		SET @Empresa = _EMPRESA = 1;
+		SET @Financiera = 0;
+		SET @Auditor= 0;
+		SET @Sicav = 0;
+		
+		IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 THEN
+			SET @Financiera = 1;
+			SET @Directivo = 0;
+			SET @Empresa = 1;
+		END IF;
+	 
+		SET @Sicav = 0;
+		IF INSTR(UPPER(_NAME),' SICAV ')>0 OR INSTR(UPPER(_NAME),' SICAV.')>0 THEN
+			SET @Sicav = 1;
+			SET @Directivo = 0;
+			SET @Empresa = 1;
+		END IF;
+		
+		IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
+			SET @Auditor= 1;
+			SET @Directivo = 0;
+			SET @Empresa = 1;
+		END IF;
 
-		INSERT IGNORE borme_keys (_key, Nombre, _Empresa,_Directivo, _Auditor, _Financiera, _Sicav ,BOLETIN,_ID) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,_BOLETIN,_ID);
+			INSERT INTO borme_keys (_key, Nombre, _Empresa,_Directivo, _Auditor, _Financiera, _Sicav ,BOLETIN,_ID) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,_BOLETIN,_ID);
 
-    SELECT LAST_INSERT_ID() as Id, _iKey as _key;
+		SELECT 1 as _add, _iKey as _key;
+    ELSE
+		SELECT 0 as _add, _iKey as _key;
+    END IF;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -443,37 +468,41 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _NAME  nvarchar(250) , IN _ikey  nvarchar(55),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
 BEGIN
-
-	SET @Directivo = 1;
-    SET @Empresa = 0;
-	SET @Financiera = 0;
-    SET @Auditor= 0;
-	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 THEN
-		SET @Financiera = 1;
-        SET @Directivo = 0;
-		SET @Empresa = 1;
-	END IF;
- 
- 	SET @Sicav = 0;
-	IF INSTR(UPPER(_NAME),' SICAV ')>0 OR INSTR(UPPER(_NAME),' SICAV.')>0 THEN
-		SET @Sicav = 1;
-        SET @Directivo = 0;
-		SET @Empresa = 1;
-	END IF;
-	
-    IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
-		SET @Auditor= 1;
-        SET @Directivo = 0;
-		SET @Empresa = 1;
-	END IF;
-    
-	INSERT IGNORE borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ,BOLETIN,_ID ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,_BOLETIN,_ID);
-    
-    SELECT LAST_INSERT_ID() as Id, _iKey as _key;
+	SET @repeat = (SELECT count(*) FROM borme_keys WHERE _key = _iKey);
+	IF @repeat = 0 THEN
+		SET @Directivo = 1;
+		SET @Empresa = 0;
+		SET @Financiera = 0;
+		SET @Auditor= 0;
+		IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 THEN
+			SET @Financiera = 1;
+			SET @Directivo = 0;
+			SET @Empresa = 1;
+		END IF;
+	 
+		SET @Sicav = 0;
+		IF INSTR(UPPER(_NAME),' SICAV ')>0 OR INSTR(UPPER(_NAME),' SICAV.')>0 THEN
+			SET @Sicav = 1;
+			SET @Directivo = 0;
+			SET @Empresa = 1;
+		END IF;
+		
+		IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
+			SET @Auditor= 1;
+			SET @Directivo = 0;
+			SET @Empresa = 1;
+		END IF;
+		
+		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ,BOLETIN,_ID ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,_BOLETIN,_ID);
+		
+		SELECT 1 as _add, _iKey as _key;
+    ELSE
+		SELECT 0 as _add, _iKey as _key;
+    END IF;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -488,32 +517,37 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _NAME  nvarchar(250), _iKey  nvarchar(55), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
 BEGIN
+	SET @repeat = (SELECT count(*) FROM borme_keys WHERE _key = _iKey);
+	IF @repeat = 0 THEN
+		SET @Directivo = 0;
+		SET @Empresa = 1;
+		SET @Financiera = 0;
+		SET @Auditor=0;
+		SET @Sicav = 0;
 
-	SET @Directivo = 0;
-    SET @Empresa = 1;
-	SET @Financiera = 0;
-    SET @Auditor=0;
-    SET @Sicav = 0;
-    
-	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 THEN
-		SET @Financiera = 1;
-	END IF;
- 
- 	
-	IF INSTR(UPPER(_NAME),' SICAV ')>0 THEN
-		SET @Sicav = 1;
-	END IF;
+		
+		IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 THEN
+			SET @Financiera = 1;
+		END IF;
+	 
+		
+		IF INSTR(UPPER(_NAME),' SICAV ')>0 THEN
+			SET @Sicav = 1;
+		END IF;
 
-	IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
-		SET @Auditor= 1;
-	END IF;
-	
-	INSERT IGNORE borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ,BOLETIN,_ID ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,_BOLETIN,_ID);
-    SELECT LAST_INSERT_ID() as Id, _iKey as _key;
+		IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
+			SET @Auditor= 1;
+		END IF;
+		
+		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ,BOLETIN,_ID ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,_BOLETIN,_ID);
+		SELECT 1 as _add, _iKey as _key;
+    ELSE
+		SELECT 0 as _add, _iKey as _key;
+    END IF;
     
 END ;;
 DELIMITER ;
@@ -603,4 +637,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-03  8:58:39
+-- Dump completed on 2019-03-09 19:57:05

@@ -1,10 +1,10 @@
-CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_contratos` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_contratos` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `bbdd_kaos155_contratos`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
--- Host: 54.37.76.134    Database: bbdd_kaos155_contratos
+-- Host: 127.0.0.1    Database: bbdd_kaos155_contratos
 -- ------------------------------------------------------
--- Server version	5.5.5-10.2.15-MariaDB-10.2.15+maria~stretch-log
+-- Server version	5.7.20-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -35,14 +35,14 @@ CREATE TABLE `boletin` (
   `_TRAMITE` varchar(25) DEFAULT NULL,
   `_FORMA` varchar(25) DEFAULT NULL,
   `_ADJUDICADOR` char(6) DEFAULT NULL,
-  `UTE` tinyint(4) NOT NULL DEFAULT 0,
-  `Lotes` int(11) DEFAULT 0,
-  `Objeto_Contrato` text DEFAULT NULL,
+  `UTE` tinyint(4) NOT NULL DEFAULT '0',
+  `Lotes` int(11) DEFAULT '0',
+  `Objeto_Contrato` text,
   `PDF` varchar(255) NOT NULL,
   `JSON` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `boletin` (`BOLETIN`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=462 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -56,8 +56,6 @@ CREATE TABLE `boletin_adjudicador` (
   `_key` varchar(6) NOT NULL,
   `_area` varchar(25) DEFAULT NULL,
   `Nombre` varchar(255) DEFAULT NULL,
-  `Importe_2017` decimal(13,2) NOT NULL DEFAULT 0.00,
-  `Counter_2017` int(11) NOT NULL DEFAULT 0,
   `_l` int(11) DEFAULT NULL,
   PRIMARY KEY (`_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -74,10 +72,10 @@ CREATE TABLE `boletin_contratos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `_type` varchar(5) DEFAULT NULL,
   `BOLETIN` varchar(25) NOT NULL,
-  `counter` int(11) NOT NULL DEFAULT 1,
+  `counter` int(11) NOT NULL DEFAULT '1',
   `_key` varchar(36) DEFAULT NULL,
   `Empresa` varchar(254) NOT NULL,
-  `importe` decimal(13,2) DEFAULT 0.00,
+  `importe` decimal(13,2) DEFAULT '0.00',
   `_acron` varchar(55) DEFAULT NULL,
   `_nif` varchar(9) DEFAULT NULL,
   `_BormeSuggestEmpresa` varchar(254) DEFAULT NULL,
@@ -87,7 +85,7 @@ CREATE TABLE `boletin_contratos` (
   KEY `BOLETIN` (`BOLETIN`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Empresa` (`Empresa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=419 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,8 +98,10 @@ DROP TABLE IF EXISTS `boletin_totales`;
 CREATE TABLE `boletin_totales` (
   `_key` varchar(6) NOT NULL,
   `_type` varchar(5) NOT NULL,
-  `Counter_2001` int(11) NOT NULL DEFAULT 0,
-  `Importe_2001` decimal(13,2) NOT NULL DEFAULT 0.00,
+  `Counter_2001` int(11) NOT NULL DEFAULT '0',
+  `Importe_2001` decimal(13,2) NOT NULL DEFAULT '0.00',
+  `Counter_2002` int(11) NOT NULL DEFAULT '0',
+  `Importe_2002` decimal(13,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`_key`,`_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -120,7 +120,6 @@ CREATE TABLE `boletin_totales` (
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` FUNCTION `GET_NAME`( __key nvarchar(36)) RETURNS varchar(255) CHARSET utf8
-    DETERMINISTIC
 BEGIN
 	DECLARE _value nvarchar(255);
 	SET _value = (SELECT Nombre FROM borme_keys WHERE _key = __key);
@@ -140,7 +139,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` FUNCTION `SPLIT_STR`( s MEDIUMTEXT , del CHAR(1) , i INT) RETURNS text CHARSET utf8
     DETERMINISTIC
@@ -171,10 +170,9 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` FUNCTION `UC_Words`( str VARCHAR(255) ) RETURNS varchar(255) CHARSET utf8
-    DETERMINISTIC
 BEGIN  
   DECLARE c CHAR(1);  
   DECLARE s VARCHAR(255);  
@@ -226,7 +224,6 @@ CREATE DEFINER=`root`@`%` FUNCTION `_codeaux`(
     _extra nvarchar(255)
     
 ) RETURNS varchar(8) CHARSET utf8
-    DETERMINISTIC
 BEGIN
 
 	DECLARE _counter INT;
@@ -273,7 +270,6 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` FUNCTION `_type`( Empresa int, Directivo int, Auditor int, Financiera int) RETURNS int(11)
-    DETERMINISTIC
 BEGIN  
   DECLARE _r int; 
   IF Financiera >0 THEN
@@ -306,7 +302,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `get_boletin`( IN Boletin nvarchar(20) )
 BEGIN
@@ -527,6 +523,100 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sum_KeyTotales` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `sum_KeyTotales`(_Key nvarchar(35),_LstTypes nvarchar(255))
+BEGIN
+
+  DECLARE v_type nVARCHAR(5);
+        DECLARE v_name VARCHAR(120);
+		DECLARE _fin INTEGER DEFAULT 0;
+		DECLARE fields_cursor CURSOR FOR 
+			SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'bbdd_kaos155_contratos' AND TABLE_NAME = 'boletin_totales' and COLUMN_NAME regexp CONCAT('[0-9]') ;
+
+		DECLARE CONTINUE HANDLER FOR NOT FOUND SET _fin=1;
+
+
+  SET @nTypes = length(_LstTypes)-length(replace(_LstTypes,',',''))+1;
+  set @pType=1;
+
+	
+    
+            
+
+      
+
+
+
+		  SET @c='';
+		  SET @t='';
+			SET @f='';
+			SET @p='';
+        
+		OPEN fields_cursor;
+		get_fields: LOOP
+			FETCH fields_cursor INTO v_name;
+				IF _fin = 1 THEN
+					LEAVE get_fields;
+				END IF;
+
+		    -- SELECT v_name, substr(v_name,1,7);
+			IF substr(v_name,1,7)='Counter' THEN
+				SET @c= CONCAT(@c,IF(length(@c)>0,'+',''),v_name); -- CONCAT('UPDATE boletin_counter SET ', @FieldA ,'=' , @FieldA ,'+1,', @FieldB ,'=', @FieldB,'+', _Importe ,' WHERE _type="', _type , '" AND _key ="', _key ,'";');
+			ELSE
+				SET @t= CONCAT(@t,IF(length(@t)>0,'+',''),v_name);
+			END IF;
+
+
+		  END LOOP get_fields;
+          if length(@c)+length(@t)>0 THEN 
+            WHILE @pType <= @nTypes DO
+				  SET v_type = (SELECT SPLIT_STR(_LstTypes,',',@pType));
+				  
+				  -- select @nTypes,v_type,_LstTypes,@pType;
+				  SET @pType = @pType+1;
+				  -- SELECT @c;
+				  SET @cox= CONCAT(" (SELECT ", @c," FROM boletin_totales WHERE _key='",_key,"' AND _type='",v_type,"') as _COUNTER ");
+				  SET @tox= CONCAT(" (SELECT ", @t," FROM boletin_totales WHERE _key='",_key,"' AND _type='",v_type,"') as _IMPORTE ");
+				  -- SET @tox= CONCAT(' (SELECT ', @t,' FROM boletin_totales WHERE _key="',_key,'" AND _type="',v_type,'") as _IMPORTE ');
+				  -- SET @t= CONCAT(' (SELECT ', @t,' FROM boletin_totales WHERE _key="',_key,'") as ',v_type,'_IMPORTE ');
+				  -- SET @t= CONCAT(@t,' as ',v_type,'_IMPORTE');
+				  SET @f= CONCAT( @f, IF(length(@f)>0,',',''), @cox, IF(length(@tox)>0,',',''), @tox);
+				  
+                  
+				  SET @p= CONCAT('SELECT "',_key ,'" as _key,"', v_type ,'" as type', IF(length(@f)>0,',','') , @f );
+				  -- SELECT @p,@f,@cox,@tox;
+                  SET @f="";
+		 
+				 PREPARE stmt1 FROM @p;
+				 EXECUTE stmt1;  
+				 DEALLOCATE PREPARE stmt1; 				
+			end while;
+
+        
+        end if;
+        
+
+     
+	  -- SELECT @p;
+     
+
+    
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -537,4 +627,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-05-29  0:56:59
+-- Dump completed on 2019-03-09 19:57:50

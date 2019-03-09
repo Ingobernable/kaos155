@@ -2,7 +2,7 @@
 module.exports = function (app, callback) {
 
     callback({
-        
+       
         poolSql: [],
         getConnect: function (options, type, callback, test) {
             const _this = this
@@ -33,7 +33,7 @@ module.exports = function (app, callback) {
                         } else {
 
                             console.log("\x1b[31m ERROR: al acceder a la DB ")
-                            console.log("elimine el fichero '" + this.fileCredenciales(type, Command) + "'  \x1b[0m")
+                            console.log("elimine el fichero '" + _this.fileCredenciales(type, options.Command) + "'  \x1b[0m")
                             console.log("y vuelva a ejecutar app.js")
                             app.exit(function () { process.exit(1) })
                             //process.exit(1)
@@ -92,12 +92,12 @@ module.exports = function (app, callback) {
         },
         fileCredenciales: function (type, Command) {
             //if(Command="parser")
-                return app.path.normalize('sqlfiles/' + Command.toLowerCase() + '/cred_' + type.toLowerCase() + '.json')
+            return app.path.normalize('sqlfiles/' + (Command.toLowerCase() != "IA" ? Command.toLowerCase():'PARSER') + '/cred_' + type.toLowerCase() + '.json')
             //if (Command = "scrap")
             //    return app.path.normalize('sqlfiles/' + Command.toLowerCase() + '\cred_' + type.toLowerCase() + '.json')
         },
         filedb: function (Command,type) {
-            return "bbdd_kaos155" + (Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() :  (type == "GRAFOS" ? "_" + type.toLowerCase()  : "_contratos")))
+            return "bbdd_kaos155" + (Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() :  (type == "GRAFOS" || type=="IA" ? "_" + type.toLowerCase()  :  "_contratos")))
         },
         init: function (options, type, callback) {
             //debugger
@@ -129,6 +129,7 @@ module.exports = function (app, callback) {
                         const testIp = function (testIp, callback) {
 
                             //_cb = callback 
+
                             app.inquirer.prompt([
                                 { type: 'input', name: 'host', message: 'mysql ' + type + ' IP', default: 'localhost' },
                                 { type: 'input', name: 'user', message: 'mysql ' + type + ' user', default: 'root' },
@@ -280,6 +281,8 @@ module.exports = function (app, callback) {
                         keys: function (options, params, callback, _cberror) {
                             //const _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)"
                             //const _params = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
+
+
                             const _p = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
                             var _cadsql = _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)"
                             if (params.table == "Auditor") {
@@ -302,8 +305,25 @@ module.exports = function (app, callback) {
                                     //_cberror(err)
                                 } else {
                                     //punto para ejecutar procesos ._busqueda de contratos key: _rec[0][0]
-                                    if (_rec[1].insertId > 0 && options._common.io_client.connected)
-                                        options._common.io_client.emit('add', params)
+                                    params.type = 'BORME'
+                                    if (options._common.io_client.connected) {
+                                        options._common.IAgo(_rec,params)
+                                    } else {
+                                        console.log('esperando a conectar con la IA.....')
+                                        let delay = 0
+                                        while (!options._common.io_client.connected) {
+                                            
+                                            delay = delay+1
+                                            if (delay > 1000000)
+                                                if ( options._common.io_client.connected ) {
+                                                    options._common.IAgo(_rec, params)
+                                                }
+                                               
+                                            
+                                        }
+                                    }
+ 
+                                        
 
                                     callback(params, _rec)
                                 }

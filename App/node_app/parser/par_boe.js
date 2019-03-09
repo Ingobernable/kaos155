@@ -570,9 +570,9 @@ module.exports = function (app, callback) {
     options.patterns = options.transforms.getPatern(options.transforms)
 
     app.commonSQL.init(options, 'BOE', function (options) {
-        app.commonSQL.init({ SQL: { db: null }, Command: options.Command }, 'SCRAP', function (scrapdb) {
+        app.commonSQL.init({ SQL: { db: null }, Command: 'SCRAP' }, 'SCRAP', function (scrapdb) {
             options.SQL.scrapDb = scrapdb
-            app.commonSQL.init({ SQL: { db: null }, Command: options.Command }, 'GRAFOS', function (grafosdb) {
+            app.commonSQL.init({ SQL: { db: null }, Command: 'GRAFOS' }, 'GRAFOS', function (grafosdb) {
                 options.SQL.grafosDb = grafosdb
                 callback(options)
             })

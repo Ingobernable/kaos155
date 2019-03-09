@@ -120,7 +120,7 @@ String.prototype.capitalizeAllFirstLetter = function () {
             let App = app.merge(app, {
                 //idMachine: machineId,
                 command: myArgs[0],
-                
+           
                 update: myArgs[3],
                 anyo: myArgs[0]=='IA'? null: !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
                 Command: myArgs[0],
@@ -163,16 +163,27 @@ String.prototype.capitalizeAllFirstLetter = function () {
 
                         _cb({
                             IA: function () {
-                                //app.Command = 'PARSER'
-                                //app.SQL= { db: null }
-                                //app.commonSQL.init(app, 'BORME', function (options) {
-                                //SQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'PARSER', function (options) {
+                                require('./node_app/sql_common.js')(app, function (SQL) {
+                                    app.command = 'PARSER'
+                                    app.commonSQL = SQL
+                                    require('./node_app/parser/par_borme.js')(app, function (options) {
 
-                                        app._io = require('./node_IA/socket_IO.js')(app)
-                                        app._io.listen(require('socket.io')(8080), function (io) {
-                                            console.log("Sistema a la escucha")
-                                            debugger
+                                        app.commonSQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'BOE', function (boedb) {
+
+                                            options.SQL.boedb = boedb.SQL.db
+                                            //app.commonSQL.init({ SQL: { db: null }, Command: 'IA' }, 'IA', function (iadb) {
+                                            //    options.SQL.iadb = iadb.SQL.db
+                                                app._io = require('./node_IA/socket_IO.js')(app, options)
+                                                app._io.listen(require('socket.io')(8080), function (io) {
+                                                    console.log("Sistema a la escucha")
+                                                    //debugger
+                                                })
+                                            //})
                                         })
+                                    })
+                                })
+
+
 
                                         //var cadsql = "CALL Insert_Data_Tree(?,?)"
                                         //options.SQL.db.query(cadsql, [_key, JSON.stringify(app.response)], function (err, recordTree) {

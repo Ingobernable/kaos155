@@ -2,7 +2,20 @@
     //var _ = app._
     //debugger
     return {
-        io_client:require("socket.io-client")(app.ip_IA),
+        IAgo: function (_rec, params) {
+            params.command = _rec[0][0]._add > 0 ? 'add' : 'update'
+            if (_rec[0][0]._add > 0) {
+                this.io_client.emit('add', params)
+            } else {
+                this.io_client.emit('update', params)
+            }
+        },
+        io_client: require("socket.io-client")(app.ip_IA, {
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            reconnectionAttempts: 99999
+        }),
         SQL: {
             commands: {
                 Sumario: {

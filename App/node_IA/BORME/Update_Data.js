@@ -1,16 +1,15 @@
 ﻿'use strict';
 var App = {
+    mysql: require('mysql'),
+    path: require('path'),
+    fs: require("fs"),
     init: function (app, _cb) {
-
         require('../../node_app/sql_common.js')(app, function (SQL) {
+            app.command = 'PARSER'
             app.commonSQL = SQL
-            app.commonSQL.init(options, 'BORME', function (options) {
-                app.commonSQL.init({ SQL: { db: null }, Command: 'SCRAP' }, 'SCRAP', function (scrapdb) {
-                    options.SQL.scrapDb = scrapdb
-                    console.log('add ', process.argv.slice(2)[1])
-                })
+            require('../../node_app/parser/par_borme.js')(app, function (options) {
+                console.log('update ', process.argv.slice(2)[1])
             })
-            
         })
     }
 }

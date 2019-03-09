@@ -10,6 +10,7 @@
     "aguid": "^2.0.0",
     "cheerio": "^1.0.0-rc.2",
     "child_process": "^1.0.2",
+    "delay": "^4.1.0",
     "express": "^4.16.2",
     "hashids": "^1.1.4",
     "iconv-lite": "^0.4.19",
