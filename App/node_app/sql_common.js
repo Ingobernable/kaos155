@@ -291,7 +291,9 @@ module.exports = function (app, callback) {
                             }
                             options.SQL.db.query(_cadsql, _p , function (err, _rec) {
                                 if (err != null || _rec[0][0] == null) {
-                                    debugger
+                                    if (err)
+                                        console.log(err)
+
                                     options.SQL.scrapDb.SQL.db.query("CALL Insert_Error_Boletin(?,?,?)", [params.data.BOLETIN + '#' + params.data.ID_BORME, err.sql, err.sqlMessage], function (err2) {
                                         app.process.stdout.write(app, options, '\x1b[31m', "x", '\x1b[0m')
                                         _cberror(params)

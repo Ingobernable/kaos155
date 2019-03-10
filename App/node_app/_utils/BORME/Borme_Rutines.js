@@ -1004,6 +1004,9 @@ module.exports = function (app, options, transforms) {
                     debugger
 
                 _db.query("select * from borme_keys where _key=?", [_k], function (err, record) {
+                    if (err)
+                        console.log(err)
+
                     if (record.length > 0) {
                         if (record[0].Nombre.toLowerCase() === _name.toLowerCase()) {
                             callback(record[0]._key)

@@ -12,7 +12,7 @@
             ]
         },
         _IAparameters: {
-            min_TRelations:10
+            min_TRelations:25
         },
         ejec: function (_this,_func, _data) {
             //console.log(options)
