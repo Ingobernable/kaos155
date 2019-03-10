@@ -6,11 +6,41 @@
 global.__basedir = __dirname;
 const pjson = require('./package.json');
 console.log('kaos155 App - version -' + pjson.version + '.')
-
+//debugger
 
 var App = {
     version: pjson.version,
-    ip_IA:'http://localhost:8080',
+    ip_IA: function ( cb) {
+        const _this = this
+        const file = _this.path.normalize('sqlfiles/ia/iaioip.json')
+        _this.fs.readFile(file, function (err, _JSON) {
+            
+            if (!err) {
+                try {
+                    JSON.parse(_JSON.toString())
+                    //sqlPss = JSON.parse(_JSON.toString()).password
+                }
+                catch (e) {
+                    console.log('error en el fichero de Credenciales socket-io ia, json no valido, sistema detenido', e)
+                    _this.exit(function () { process.exit(1) })
+                    //process.exit(1)
+                }
+                const _j = JSON.parse(_JSON.toString())
+                cb( 'http://'+_j.host+':'+_j.port)
+            } else {
+                _this.inquirer.prompt([
+                    { type: 'input', name: 'host', message: 'socket-io ia IP', default: 'localhost' },
+                    { type: 'input', name: 'port', message: 'socket-io ia PORT', default: '8080' }
+
+                ]).then(function (resp) {
+                    _this.fs.writeFile(file, JSON.stringify(resp), function () {
+                        console.log('sistema listo para con ia, vuelva a ejecutar de nuevo', e)
+                        app.exit(function () { process.exit(1) })
+                    })
+                })
+            }
+        })
+    },
     //datos generales
     //_fileCredenciales: 'cred_',
     TypeBoletines: ["BORME", "BOE", "BOCM"],
@@ -224,18 +254,40 @@ String.prototype.capitalizeAllFirstLetter = function () {
                                 require('./node_app/parser/' + app.command.substr(0, 3).toLowerCase() + "_" + type.toLowerCase() + '.js')(app, function (options) {
                                     if (app.BOLETIN == null) {
                                         app.BOLETIN = options
-                                        if (!app.forever) {
-                                            app._io = require('./node_www/IO.js')(app)
-                                            require('./node_www/server_http.js')(app, function (io) {
-                                                if (app.process.stdout.io == null) {
-                                                    app.process.stdout.io = io
 
+                                        app.ip_IA(function (ip) {
+                                            options._common.io_client = require("socket.io-client")(ip, {
+                                                reconnection: true,
+                                                reconnectionDelay: 1000,
+                                                reconnectionDelayMax: 5000,
+                                                reconnectionAttempts: 99999
+                                            })
+                                            console.log('conectando con socket ia en '+ip)
+                                            options._common.io_client.on('connect', function () {
+                                                console.log('socket ia conectado continuamos.... ')
+                                                if (!app.forever) {
+                                                    app._io = require('./node_www/IO.js')(app)
+                                                    require('./node_www/server_http.js')(app, function (io) {
+                                                        if (app.process.stdout.io == null) {
+                                                            app.process.stdout.io = io
+
+                                                            options._common.Actualize(options, type, {}, app._returnfunc)
+                                                        }
+                                                    })
+                                                } else {
                                                     options._common.Actualize(options, type, {}, app._returnfunc)
                                                 }
                                             })
-                                        } else {
-                                            options._common.Actualize(options, type, {}, app._returnfunc)
-                                        }
+                                           // return require("socket.io-client")(ip, {
+                                           ////     reconnection: true,
+                                            //    reconnectionDelay: 1000,
+                                            //    reconnectionDelayMax: 5000,
+                                            //    reconnectionAttempts: 99999
+                                         })
+
+
+
+                                        
                                     } else {
                                         debugger
                                     }

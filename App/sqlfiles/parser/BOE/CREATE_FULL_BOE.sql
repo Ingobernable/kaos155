@@ -98,10 +98,6 @@ DROP TABLE IF EXISTS `boletin_totales`;
 CREATE TABLE `boletin_totales` (
   `_key` varchar(6) NOT NULL,
   `_type` varchar(5) NOT NULL,
-  `Counter_2001` int(11) NOT NULL DEFAULT '0',
-  `Importe_2001` decimal(13,2) NOT NULL DEFAULT '0.00',
-  `Counter_2002` int(11) NOT NULL DEFAULT '0',
-  `Importe_2002` decimal(13,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`_key`,`_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;

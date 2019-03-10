@@ -344,8 +344,20 @@ module.exports = function (app, options, transforms) {
                 const isEmpresa = function (cadena) {
                     if (cadena.substr(cadena.length - 1, 1) != ".")
                         cadena = cadena + '.'
+                    cadena = cadena.toUpperCase().replaceAll(/#\$$/, ".")
 
-                    return (cadena.indexOf('SOCIEDAD ANONIMA') > -1 || cadena.indexOf('SOCIEDAD LIMITADA') > -1 || cadena.indexOf(' SL.') > -1 || cadena.indexOf(' SA.') > -1 || cadena.indexOf('SAT ') > -1 || cadena.indexOf('SAU.') > -1 || cadena.indexOf('S.COOP') > -1)
+                    //if (cadena.indexOf('&') > 0)
+                    //    debugger
+
+                    return (cadena.indexOf('SOCIEDAD ANONIMA') > -1 ||
+                        cadena.indexOf('SOCIEDAD LIMITADA') > -1 ||
+                        cadena.indexOf(' SL.') > -1 ||
+                        cadena.indexOf(' SL') == cadena.length - 3 ||
+                        cadena.indexOf(' SA') == cadena.length - 3 ||
+                        cadena.indexOf(' SA.') > -1 ||
+                        cadena.indexOf('SAT ') > -1 ||
+                        cadena.indexOf('SAU.') > -1 ||
+                        cadena.indexOf('S.COOP') > -1)
                 }
                 const _k = function (_isEmpresa,key,cadena) {
                     return {
@@ -443,27 +455,28 @@ module.exports = function (app, options, transforms) {
                                     
                                     _dir[d] = _dir[d].replaceAll("/", "").replace(/(%|_)/g, ".") //.replaceAll("%", ".").replaceAll("_", ".")
 
-                                    const _isEmpresa = isEmpresa(_dir[d])
+                                    
                                     const _map = this._transforms.getPatern(this._transforms)
 
                                     var _c = ""
 
-                                    if (!_isEmpresa) {
+                                    //if (!_isEmpresa) {
                                         var _d = this.titleCase(_dir[d].replaceAll(".", ""))
                                         var _p = app._.findIndex(this._transforms.getPatern(this._transforms).recortes, function (e) {
-                                            return _d.indexOf(e) > -1
+                                            return _d.toLowerCase().indexOf(e) > -1
                                         })
                                         if (_p > -1) {
-                                            _c = _d.replaceAll(_map.recortes[_p], "")
+                                            _c = _d.replaceAll(new RegExp(_map.recortes[_p], 'gi'), "")
                                         } else {
                                             _c = _d
                                         }
-                                    } else {
-                                        _c = _dir[d].toUpperCase()
-                                    }
-
-                                    
+                                    //} else {
+                                    //    _c = _dir[d].toUpperCase()
+                                    //}
                                     var _key = this.titleCase(app._.trim(item[0]).replace(/(#|%)/g, "."))
+                                    const _isEmpresa = isEmpresa(_c)
+                                    _c = _isEmpresa ? _c.toUpperCase() : _c
+                                    
                                     var _r = _k(_isEmpresa, _key, _c)
          
                                     if (_r.value == _dir[d].toUpperCase() && !_isEmpresa)
@@ -526,7 +539,7 @@ module.exports = function (app, options, transforms) {
                         __data.values.value = __data.values.value.replaceAll("#", ".")
                     
 
-                    var _table = __data.values.key.toUpperCase() == "AUDITOR" ? "Auditor" : __data.values.value == __data.values.value.toUpperCase() ? "Empresa" :  "Directivo"
+                    var _table = __data.values.key.toUpperCase().indexOf("AUD")>-1 ? "Auditor" : __data.values.value == __data.values.value.toUpperCase() ? "Empresa" :  "Directivo"
                     __data.values.Empresa = (_table == "Empresa")
                     __data.values.Auditor = (_table == "Auditor")
                    
@@ -584,7 +597,9 @@ module.exports = function (app, options, transforms) {
                             if (_e + 1 + _cl.length == __data.values.value.length) {
 
                                 __data.values.value = __data.values.value.substr(0, _e + 1 + _cl.length).toUpperCase()
-                                _table = "Empresa"
+                                if (!__data.values.Auditor) {
+                                    _table = "Empresa"
+                                }
                                 __data.values.Empresa = true
                             } 
                             //__data.values.Directivo=false
@@ -1059,13 +1074,12 @@ module.exports = function (app, options, transforms) {
                 if ( _NEmpresa.indexOf("UNION TEMPORAL DE EMPRESAS") > -1) {
                      _NEmpresa =  _NEmpresa.substr(0,  _NEmpresa.length -  _NEmpresa.indexOf("UNION TEMPORAL DE EMPRESAS"))
                 }
-                if ( _NEmpresa.indexOf('SA.') > -1) {
-                     _NEmpresa =  _NEmpresa.substr(0,  _NEmpresa.indexOf('SA.') + 2)
-                }
 
-                if ( _NEmpresa.indexOf('SL.') > -1) {
-                     _NEmpresa =  _NEmpresa.substr(0,  _NEmpresa.indexOf('SL.') + 2)
-                }
+                const _m = _NEmpresa.match(/(SL\.|SA\.)/g)
+                if (_m)
+                    _NEmpresa = _NEmpresa.substr(0, _NEmpresa.indexOf(_m[0]) + 2)
+
+
 
 
                 var _e =  _NEmpresa.split(".")[0].replace(/%/g, '.')

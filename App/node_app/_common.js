@@ -10,12 +10,7 @@
                 this.io_client.emit('update', params)
             }
         },
-        io_client: require("socket.io-client")(app.ip_IA, {
-            reconnection: true,
-            reconnectionDelay: 1000,
-            reconnectionDelayMax: 5000,
-            reconnectionAttempts: 99999
-        }),
+        io_client: null,
         SQL: {
             commands: {
                 Sumario: {

@@ -59,9 +59,6 @@ CREATE TABLE `borme_keys` (
   `_Auditor` tinyint(4) DEFAULT '0',
   `_Financiera` bit(1) DEFAULT b'0',
   `_Sicav` bit(1) DEFAULT b'0',
-  `Provincia` varchar(25) DEFAULT NULL,
-  `BOLETIN` varchar(20) DEFAULT NULL,
-  `_ID` int(11) DEFAULT NULL,
   `T_Relations` int(11) DEFAULT '0',
   `id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`_key`),
@@ -349,7 +346,7 @@ BEGIN
 			SET @Empresa = 1;
 		END IF;
 
-			INSERT INTO borme_keys (_key, Nombre, _Empresa,_Directivo, _Auditor, _Financiera, _Sicav ,BOLETIN,_ID) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,_BOLETIN,_ID);
+			INSERT INTO borme_keys (_key, Nombre, _Empresa,_Directivo, _Auditor, _Financiera, _Sicav) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
 
 		SELECT 1 as _add, _iKey as _key;
     ELSE
@@ -497,7 +494,7 @@ BEGIN
 			SET @Empresa = 1;
 		END IF;
 		
-		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ,BOLETIN,_ID ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,_BOLETIN,_ID);
+		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
 		
 		SELECT 1 as _add, _iKey as _key;
     ELSE
@@ -543,7 +540,7 @@ BEGIN
 			SET @Auditor= 1;
 		END IF;
 		
-		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ,BOLETIN,_ID ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,_BOLETIN,_ID);
+		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
 		SELECT 1 as _add, _iKey as _key;
     ELSE
 		SELECT 0 as _add, _iKey as _key;
