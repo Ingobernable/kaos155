@@ -2,9 +2,9 @@ CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_borme` /*!40100 DEFAULT CHARACTER S
 USE `bbdd_kaos155_borme`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: bbdd_kaos155_borme
+-- Host: 54.37.77.130    Database: bbdd_kaos155_borme
 -- ------------------------------------------------------
--- Server version	5.7.20-log
+-- Server version	5.5.5-10.2.22-MariaDB-10.2.22+maria~stretch-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -41,7 +41,7 @@ CREATE TABLE `borme_actos` (
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`),
   KEY `DatosRegistrales` (`DatosRegistrales`)
-) ENGINE=InnoDB AUTO_INCREMENT=10105921 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=294424 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -52,20 +52,20 @@ DROP TABLE IF EXISTS `borme_keys`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_keys` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `_key` varchar(36) NOT NULL,
-  `Nombre` text,
-  `_Empresa` tinyint(4) DEFAULT '0',
-  `_Directivo` tinyint(4) DEFAULT '0',
-  `_Auditor` tinyint(4) DEFAULT '0',
+  `Nombre` text DEFAULT NULL,
+  `_Empresa` tinyint(4) DEFAULT 0,
+  `_Directivo` tinyint(4) DEFAULT 0,
+  `_Auditor` tinyint(4) DEFAULT 0,
   `_Financiera` bit(1) DEFAULT b'0',
   `_Sicav` bit(1) DEFAULT b'0',
-  `T_Relations` int(11) DEFAULT '0',
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `T_Relations` int(11) DEFAULT 0,
   PRIMARY KEY (`_key`),
   UNIQUE KEY `id_UNIQUE` (`id`),
   KEY `T_Relaciones` (`T_Relations`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=1550993 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=256690 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -79,7 +79,7 @@ CREATE TABLE `borme_relaciones` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `Empresa_key` char(55) NOT NULL,
   `Relation_key` char(55) NOT NULL,
-  `Type` int(11) DEFAULT '1',
+  `Type` int(11) DEFAULT 1,
   `Motivo` varchar(45) NOT NULL,
   `Cargo` varchar(45) NOT NULL,
   `Activo` bit(1) NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE `borme_relaciones` (
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`),
   KEY `DatosRegistrales` (`DatosRegistrales`)
-) ENGINE=InnoDB AUTO_INCREMENT=12079121 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=54812 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -106,19 +106,19 @@ CREATE TABLE `borme_stadistics` (
   `Anyo` int(11) NOT NULL,
   `Acto` varchar(100) CHARACTER SET utf8 NOT NULL,
   `Motivo` varchar(100) CHARACTER SET utf8 NOT NULL,
-  `Enero` int(11) DEFAULT '0',
-  `Febrero` int(11) DEFAULT '0',
-  `Marzo` int(11) DEFAULT '0',
-  `Abril` int(11) DEFAULT '0',
-  `Mayo` int(11) DEFAULT '0',
-  `Junio` int(11) DEFAULT '0',
-  `Julio` int(11) DEFAULT '0',
-  `Agosto` int(11) DEFAULT '0',
-  `Septiembre` int(11) DEFAULT '0',
-  `Octubre` int(11) DEFAULT '0',
-  `Noviembre` int(11) DEFAULT '0',
-  `Diciembre` int(11) DEFAULT '0',
-  `Total` int(11) DEFAULT '0',
+  `Enero` int(11) DEFAULT 0,
+  `Febrero` int(11) DEFAULT 0,
+  `Marzo` int(11) DEFAULT 0,
+  `Abril` int(11) DEFAULT 0,
+  `Mayo` int(11) DEFAULT 0,
+  `Junio` int(11) DEFAULT 0,
+  `Julio` int(11) DEFAULT 0,
+  `Agosto` int(11) DEFAULT 0,
+  `Septiembre` int(11) DEFAULT 0,
+  `Octubre` int(11) DEFAULT 0,
+  `Noviembre` int(11) DEFAULT 0,
+  `Diciembre` int(11) DEFAULT 0,
+  `Total` int(11) DEFAULT 0,
   PRIMARY KEY (`Provincia`,`Anyo`,`Acto`,`Motivo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -137,6 +137,20 @@ CREATE TABLE `ia_data_contratos` (
   `_importe` double DEFAULT NULL,
   PRIMARY KEY (`_key`),
   UNIQUE KEY `UNIQUE` (`_key`,`_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `ia_data_seguimiento`
+--
+
+DROP TABLE IF EXISTS `ia_data_seguimiento`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ia_data_seguimiento` (
+  `_key_seguimiento` varchar(36) NOT NULL,
+  `_key_empresa` varchar(36) NOT NULL,
+  PRIMARY KEY (`_key_seguimiento`,`_key_empresa`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -253,7 +267,8 @@ SET character_set_client = @saved_cs_client;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` FUNCTION `_type`( Empresa int, Directivo int, Auditor int, Financiera int) RETURNS int(11) DETERMINISTIC
+CREATE DEFINER=`root`@`localhost` FUNCTION `_type`( Empresa int, Directivo int, Auditor int, Financiera int) RETURNS int(11)
+    DETERMINISTIC
 BEGIN  
   DECLARE _r int; 
   IF Financiera >0 THEN
@@ -315,7 +330,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_NAME  nvarchar(250), _iKey  nvarchar(55),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT,_empresa INT)
 BEGIN
@@ -324,7 +339,7 @@ BEGIN
 		SET @Directivo = _EMPRESA = 0 ;
 		SET @Empresa = _EMPRESA = 1;
 		SET @Financiera = 0;
-		SET @Auditor= 0;
+		SET @Auditor= 1;
 		SET @Sicav = 0;
 		
 		IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 THEN
@@ -340,17 +355,12 @@ BEGIN
 			SET @Empresa = 1;
 		END IF;
 		
-		IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
-			SET @Auditor= 1;
-			SET @Directivo = 0;
-			SET @Empresa = 1;
-		END IF;
 
-			INSERT INTO borme_keys (_key, Nombre, _Empresa,_Directivo, _Auditor, _Financiera, _Sicav) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
 
-		SELECT 1 as _add, _iKey as _key;
+		INSERT INTO borme_keys (_key, Nombre, _Empresa,_Directivo, _Auditor, _Financiera, _Sicav) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
+		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id;
     ELSE
-		SELECT 0 as _add, _iKey as _key;
+		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id;
     END IF;
 END ;;
 DELIMITER ;
@@ -465,7 +475,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _NAME  nvarchar(250) , IN _ikey  nvarchar(55),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
 BEGIN
@@ -495,10 +505,9 @@ BEGIN
 		END IF;
 		
 		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
-		
-		SELECT 1 as _add, _iKey as _key;
+		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id;
     ELSE
-		SELECT 0 as _add, _iKey as _key;
+		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id;
     END IF;
 END ;;
 DELIMITER ;
@@ -514,7 +523,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(IN _NAME  nvarchar(250), _iKey  nvarchar(55), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
 BEGIN
@@ -541,11 +550,48 @@ BEGIN
 		END IF;
 		
 		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
-		SELECT 1 as _add, _iKey as _key;
+		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id;
     ELSE
-		SELECT 0 as _add, _iKey as _key;
+		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id;
     END IF;
     
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_IA_seguimiento` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_IA_seguimiento`(_dkey VARCHAR(36),_idrel int, _minrel int)
+BEGIN
+	DECLARE _ekey VARCHAR(36);
+     DECLARE fin INTEGER DEFAULT 0;
+    DECLARE runners_cursor CURSOR FOR 
+		SELECT Empresa_key FROM borme_relaciones WHERE Relation_key=_dkey;
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin=1;
+    SET @Counter = (SELECT T_Relations FROM borme_keys where id=_idrel AND T_Relations>_minrel AND _Directivo AND NOT _Auditor AND NOT _Financiera AND NOT _sicav);
+    IF @Counter>0 THEN
+		OPEN runners_cursor;
+		get_cursor: LOOP
+			FETCH runners_cursor INTO _ekey;
+			IF fin = 1 THEN
+			   LEAVE get_cursor;
+			END IF;
+			INSERT IGNORE ia_data_seguimiento (_key_seguimiento,_key_empresa) VALUES (_dkey,_ekey);
+		END LOOP get_cursor;
+
+		CLOSE runners_cursor;   
+	END IF;
+    SELECT @Counter as counter;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -566,7 +612,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `relacionado_con` AS select `_rel`.`Relation_key` AS `idKey`,`_rel`.`Empresa_key` AS `_key`,`_keys`.`Nombre` AS `Nombre`,`_keys`.`_Empresa` AS `_Empresa`,`_keys`.`_Directivo` AS `_Directivo`,`_keys`.`_Auditor` AS `_Auditor`,`_keys`.`_Financiera` AS `_Financiera`,`_keys`.`T_Relations` AS `T_Relations`,`_rel`.`Type` AS `Type`,`_rel`.`Motivo` AS `Motivo`,`_rel`.`Cargo` AS `Cargo`,`_rel`.`Activo` AS `Activo`,`_rel`.`Anyo` AS `Anyo`,`_rel`.`Mes` AS `Mes`,`_rel`.`Dia` AS `Dia` from (`borme_relaciones` `_rel` join `borme_keys` `_keys` on((`_rel`.`Empresa_key` = `_keys`.`_key`))) */;
+/*!50001 VIEW `relacionado_con` AS select `_rel`.`Relation_key` AS `idKey`,`_rel`.`Empresa_key` AS `_key`,`_keys`.`Nombre` AS `Nombre`,`_keys`.`_Empresa` AS `_Empresa`,`_keys`.`_Directivo` AS `_Directivo`,`_keys`.`_Auditor` AS `_Auditor`,`_keys`.`_Financiera` AS `_Financiera`,`_keys`.`T_Relations` AS `T_Relations`,`_rel`.`Type` AS `Type`,`_rel`.`Motivo` AS `Motivo`,`_rel`.`Cargo` AS `Cargo`,`_rel`.`Activo` AS `Activo`,`_rel`.`Anyo` AS `Anyo`,`_rel`.`Mes` AS `Mes`,`_rel`.`Dia` AS `Dia` from (`borme_relaciones` `_rel` join `borme_keys` `_keys` on(`_rel`.`Empresa_key` = `_keys`.`_key`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -584,7 +630,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `relacionadocon` AS select `_data`.`_key` AS `_key`,`_data`.`Nombre` AS `Nombre`,`_data`.`_Empresa` AS `_Empresa`,`_data`.`_Directivo` AS `_Directivo`,`_data`.`_Auditor` AS `_Auditor`,`_data`.`_Financiera` AS `_Financiera`,`_rel`.`Type` AS `Type`,`_rel`.`Motivo` AS `Motivo`,`_rel`.`Cargo` AS `Cargo`,`_rel`.`Activo` AS `Activo`,`_rel`.`Anyo` AS `Anyo`,`_rel`.`Mes` AS `Mes`,`_rel`.`Dia` AS `Dia` from ((`borme_keys` `_keys` join `borme_relaciones` `_rel` on((`_keys`.`_key` = `_rel`.`Relation_key`))) join `borme_keys` `_data` on((`_rel`.`Empresa_key` = `_data`.`_key`))) */;
+/*!50001 VIEW `relacionadocon` AS select `_data`.`_key` AS `_key`,`_data`.`Nombre` AS `Nombre`,`_data`.`_Empresa` AS `_Empresa`,`_data`.`_Directivo` AS `_Directivo`,`_data`.`_Auditor` AS `_Auditor`,`_data`.`_Financiera` AS `_Financiera`,`_rel`.`Type` AS `Type`,`_rel`.`Motivo` AS `Motivo`,`_rel`.`Cargo` AS `Cargo`,`_rel`.`Activo` AS `Activo`,`_rel`.`Anyo` AS `Anyo`,`_rel`.`Mes` AS `Mes`,`_rel`.`Dia` AS `Dia` from ((`borme_keys` `_keys` join `borme_relaciones` `_rel` on(`_keys`.`_key` = `_rel`.`Relation_key`)) join `borme_keys` `_data` on(`_rel`.`Empresa_key` = `_data`.`_key`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -602,7 +648,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `relaciones_de` AS select `_rel`.`Empresa_key` AS `idKey`,`_rel`.`Relation_key` AS `_key`,`_keys`.`Nombre` AS `Nombre`,`_keys`.`_Empresa` AS `_Empresa`,`_keys`.`_Directivo` AS `_Directivo`,`_keys`.`_Auditor` AS `_Auditor`,`_keys`.`_Financiera` AS `_Financiera`,`_keys`.`T_Relations` AS `T_Relations`,`_rel`.`Type` AS `Type`,`_rel`.`Motivo` AS `Motivo`,`_rel`.`Cargo` AS `Cargo`,`_rel`.`Activo` AS `Activo`,`_rel`.`Anyo` AS `Anyo`,`_rel`.`Mes` AS `Mes`,`_rel`.`Dia` AS `Dia` from (`borme_relaciones` `_rel` join `borme_keys` `_keys` on((`_rel`.`Relation_key` = `_keys`.`_key`))) */;
+/*!50001 VIEW `relaciones_de` AS select `_rel`.`Empresa_key` AS `idKey`,`_rel`.`Relation_key` AS `_key`,`_keys`.`Nombre` AS `Nombre`,`_keys`.`_Empresa` AS `_Empresa`,`_keys`.`_Directivo` AS `_Directivo`,`_keys`.`_Auditor` AS `_Auditor`,`_keys`.`_Financiera` AS `_Financiera`,`_keys`.`T_Relations` AS `T_Relations`,`_rel`.`Type` AS `Type`,`_rel`.`Motivo` AS `Motivo`,`_rel`.`Cargo` AS `Cargo`,`_rel`.`Activo` AS `Activo`,`_rel`.`Anyo` AS `Anyo`,`_rel`.`Mes` AS `Mes`,`_rel`.`Dia` AS `Dia` from (`borme_relaciones` `_rel` join `borme_keys` `_keys` on(`_rel`.`Relation_key` = `_keys`.`_key`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -620,7 +666,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `relacionesde` AS select `_data`.`_key` AS `_key`,`_data`.`Nombre` AS `Nombre`,`_data`.`_Empresa` AS `_Empresa`,`_data`.`_Directivo` AS `_Directivo`,`_data`.`_Auditor` AS `_Auditor`,`_data`.`_Financiera` AS `_Financiera`,`_rel`.`Type` AS `Type`,`_rel`.`Motivo` AS `Motivo`,`_rel`.`Cargo` AS `Cargo`,`_rel`.`Activo` AS `Activo`,`_rel`.`Anyo` AS `Anyo`,`_rel`.`Mes` AS `Mes`,`_rel`.`Dia` AS `Dia` from ((`borme_keys` `_keys` join `borme_relaciones` `_rel` on((`_keys`.`_key` = `_rel`.`Empresa_key`))) join `borme_keys` `_data` on((`_rel`.`Relation_key` = `_data`.`_key`))) */;
+/*!50001 VIEW `relacionesde` AS select `_data`.`_key` AS `_key`,`_data`.`Nombre` AS `Nombre`,`_data`.`_Empresa` AS `_Empresa`,`_data`.`_Directivo` AS `_Directivo`,`_data`.`_Auditor` AS `_Auditor`,`_data`.`_Financiera` AS `_Financiera`,`_rel`.`Type` AS `Type`,`_rel`.`Motivo` AS `Motivo`,`_rel`.`Cargo` AS `Cargo`,`_rel`.`Activo` AS `Activo`,`_rel`.`Anyo` AS `Anyo`,`_rel`.`Mes` AS `Mes`,`_rel`.`Dia` AS `Dia` from ((`borme_keys` `_keys` join `borme_relaciones` `_rel` on(`_keys`.`_key` = `_rel`.`Empresa_key`)) join `borme_keys` `_data` on(`_rel`.`Relation_key` = `_data`.`_key`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -634,4 +680,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-09 19:57:05
+-- Dump completed on 2019-03-10 21:01:09

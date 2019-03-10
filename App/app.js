@@ -34,8 +34,8 @@ var App = {
 
                 ]).then(function (resp) {
                     _this.fs.writeFile(file, JSON.stringify(resp), function () {
-                        console.log('sistema listo para con ia, vuelva a ejecutar de nuevo', e)
-                        app.exit(function () { process.exit(1) })
+                        console.log('sistema listo para con ia, vuelva a ejecutar de nuevo')
+                        _this.exit(function () { process.exit(1) })
                     })
                 })
             }

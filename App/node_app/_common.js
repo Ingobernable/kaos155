@@ -3,12 +3,13 @@
     //debugger
     return {
         IAgo: function (_rec, params) {
-            params.command = _rec[0][0]._add > 0 ? 'add' : 'update'
-            if (_rec[0][0]._add > 0) {
-                this.io_client.emit('add', params)
-            } else {
-                this.io_client.emit('update', params)
-            }
+            const _p = _rec.length > 0 ? (_rec[0][0]._add > 0 ? 'add' : 'update') : 'movimiento'
+            
+            this.io_client.emit(_p, {
+                command: _p,
+                type: "BORME",
+                data: params
+            })
         },
         io_client: null,
         SQL: {

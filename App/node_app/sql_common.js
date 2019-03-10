@@ -307,19 +307,19 @@ module.exports = function (app, callback) {
                                     //punto para ejecutar procesos ._busqueda de contratos key: _rec[0][0]
                                     params.type = 'BORME'
                                     if (options._common.io_client.connected) {
-                                        options._common.IAgo(_rec,params)
+                                        options._common.IAgo(_rec, params)
                                     } else {
                                         console.log('esperando a conectar con la IA.....')
                                         let delay = 0
                                         while (!options._common.io_client.connected) {
-                                            
-                                            delay = delay+1
+
+                                            delay = delay + 1
                                             if (delay > 1000000)
-                                                if ( options._common.io_client.connected ) {
+                                                if (options._common.io_client.connected) {
                                                     options._common.IAgo(_rec, params)
                                                 }
-                                               
-                                            
+
+
                                         }
                                     }
  
@@ -329,10 +329,32 @@ module.exports = function (app, callback) {
                                 }
                             })
                         },
-                        diario: function (options, params, callback) {
+                        diario: function (options, params, json, callback) {
+                            //console.log(params[12])
+                            //if (params[12] == "Nombramiento")
+                            //    debugger
+
                             options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
                                 if (err)
                                     debugger
+
+                                if (options._common.io_client.connected) {
+                                    options._common.IAgo([], json)
+                                } else {
+                                    console.log('esperando a conectar con la IA.....')
+                                    let delay = 0
+                                    while (!options._common.io_client.connected) {
+
+                                        delay = delay + 1
+                                        if (delay > 1000000)
+                                            if (options._common.io_client.connected) {
+                                                options._common.IAgo(_rec, json)
+                                            }
+
+
+                                    }
+                                }
+
                                 callback(err, _rec)
                             })
                         }

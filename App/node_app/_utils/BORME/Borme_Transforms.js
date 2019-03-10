@@ -193,6 +193,7 @@ module.exports = function (app, options) {
                     //["F", { f: _this.removeLastChar }, "."],
                 ],
                 recortes: ['admmancom',
+                    
                             'admsolid',
                             'admunico',
                             'apoderado',
@@ -202,6 +203,7 @@ module.exports = function (app, options) {
                             'audccon',
                             'audccon',
                             'audsupl',
+                            'auditcuent',
                             'condelegado',
                             'consejero',
                             'liquidador',

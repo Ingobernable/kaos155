@@ -111,7 +111,22 @@ module.exports = function (app, callback) {
                                         _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
                                         (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value),
                                          _linea.contenido.DatosRegistrales     
-                                    ], function (err, _record) {
+                                ], {
+                                        _boletin: _linea.data.BOLETIN,
+                                        _id_boletin: _linea.id,
+                                        _fecha: { dia: _linea.data.dia, mes: _linea.data.mes, anyo: _linea.data.BOLETIN.match(/[\d]{4}/)[0] },
+                                        _provincia: _linea.data.provincia,
+                                        _id_empresa: _linea.ID,
+                                        _key_empresa: _linea.k,
+                                        _id_relation: idRelacion,
+                                        _key_relation: params.k,
+                                        acto: {
+                                            _def: idRelacion > 0 && _linea.ID>0?'RELACION':'EMPRESARIAL',
+                                            _type: _Dl.type ? _Dl.type : _Dl.values.type,
+                                            _cargo: _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
+                                            _value: (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value),
+                                        }
+                                    }, function (err, _record) {
                                         //if (_that == null)
                                         //    debugger
                                             options.parser.printOut(app, options, '\x1b[33m', '.', '\x1b[0m')
