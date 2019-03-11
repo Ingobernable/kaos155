@@ -235,7 +235,7 @@ module.exports = function (app, callback) {
                                     }
                                     timex._c = {
                                         _e: timex.extract > 1000 ? '\x1b[31m' : timex.extract > 100 ? '\x1b[33m' : '\x1b[32m',
-                                        _c: timex.calculate > 1000 ? '\x1b[31m' : timex.extract > 100 ? '\x1b[33m' : '\x1b[32m',
+                                        _c: timex.calculate > 1000 ? '\x1b[31m' : timex.calculate > 100 ? '\x1b[33m' : '\x1b[32m',
                                         _u: timex.update > 1000 ? '\x1b[31m' : timex.update > 100 ? '\x1b[33m' : '\x1b[32m',
                                     }
                                     console.log(timex._c._e + 'extract ' + timex.extract + 'ms', timex._c._c + 'calculate ' + timex.calculate + 'ms', timex._c._u + 'update text ' + timex.update + 'ms \x1b[37m', _line.e)
