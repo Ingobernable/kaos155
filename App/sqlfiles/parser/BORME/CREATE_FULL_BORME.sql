@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6231868 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6232016 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -161,7 +161,7 @@ CREATE TABLE `borme_keys` (
   UNIQUE KEY `_id` (`id`),
   KEY `T_Relaciones` (`T_Relations`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=2066 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2481 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -186,7 +186,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=10258294 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10258574 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -625,7 +625,7 @@ BEGIN
     
     DECLARE fin INTEGER DEFAULT 0;
     DECLARE runners_cursor CURSOR FOR 
-		SELECT borme_keys.id FROM borme_relaciones JOIN borme_keys on borme_relaciones.Empresa_key=borme_keys._key WHERE borme_relaciones.Relation_key=_dkey AND NOT borme_keys.ia_suspicius;
+		SELECT borme_keys.id,borme_relaciones.Empresa_key FROM borme_relaciones JOIN borme_keys on borme_relaciones.Empresa_key=borme_keys._key WHERE borme_relaciones.Relation_key=_dkey AND NOT borme_keys.ia_suspicius;
         
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin=1;
     SET @Counter = (SELECT T_Relations FROM borme_keys where id=_idrel AND T_Relations>_minrel AND _Directivo AND NOT _Auditor AND NOT _Financiera AND NOT _sicav);
@@ -768,4 +768,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-11  0:49:49
+-- Dump completed on 2019-03-11  1:13:28
