@@ -238,7 +238,14 @@ module.exports = function (app, callback) {
                                         _c: timex.calculate > 1000 ? '\x1b[31m' : timex.calculate > 100 ? '\x1b[33m' : '\x1b[32m',
                                         _u: timex.update > 1000 ? '\x1b[31m' : timex.update > 100 ? '\x1b[33m' : '\x1b[32m',
                                     }
-                                    console.log('\x1b[1m\x1b[36m' + _line.data.dia + "." + _line.data.mes, "\x1b[33m" + _line.data.provincia, timex._c._e + 'extract ' + timex.extract + 'ms', timex._c._c + 'calculate ' + timex.calculate + 'ms', timex._c._u + 'update text ' + timex.update + 'ms \x1b[37m', _line.e)
+                                    timex._t = {
+                                        _f: "\x1b[36m" + _line.data.dia + "." + _line.data.mes + "." + app.myArgs[2],
+                                        _p: "\x1b[33m" + _line.data.provincia + "\x1b[1m",
+                                        _e: timex._c._e + "extract " + timex.extract + 'ms',
+                                        _c: timex._c._c + 'calculate ' + timex.calculate + 'ms',
+                                        _u: timex._c._u + 'update text ' + timex.update + 'ms \x1b[0m'
+                                    }
+                                    console.log(timex._t._f, timex._t._p, timex._t._e, timex._t._c, timex._t._u , _line.e)
                                 }
                                 if (err)
                                     debugger
