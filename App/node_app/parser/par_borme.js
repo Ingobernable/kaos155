@@ -213,7 +213,7 @@ module.exports = function (app, callback) {
                                 _line.data.texto = _textos[_n]
                                 options.parser.saveEmpresaDeMovimiento(_line, function () {
                                     if (_n == _textos.length - 1) {
-                                        callback(options,type,recordset)
+                                        callback(options,type,recordset,_line)
                                     } else {
                                         analizer(options, _textos, _n+1, analizer, callback, type, recordset)
                                     }
@@ -221,12 +221,15 @@ module.exports = function (app, callback) {
                                 //})
                             }, recordset)
                         }
-                        _analizer(options, _textos, 0, _analizer, function (options, type, recordset) {
+                        _analizer(options, _textos, 0, _analizer, function (options, type, recordset,_line) {
                             const endAnalizeDate = new Date()
-                            if (app.myArgs[app.myArgs.length - 1] == 'VERBOSE')
-                                console.log('extract record in ' + (readDate.getTime() - startDate.getTime()) + ' calculate record in ' + (endAnalizeDate.getTime() - readDate.getTime()) + ' miliseconds')
-
+                     
                             options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + app.anyo + " set parser=1 where ID_BORME = ? ", [recordset[0][0].ID_BORME], function (err) {
+                                const saveDate = new Date()
+
+                                if (app.myArgs[app.myArgs.length - 1] == 'VERBOSE')
+                                    console.log('extract ' + (readDate.getTime() - startDate.getTime()) + 'ms', 'calculate in ' + (endAnalizeDate.getTime() - readDate.getTime()) + 'ms', ' update text in ' + (saveDate.getTime() - endAnalizeDate.getTime()) +'ms',_line.e)
+
                                 if (err)
                                     debugger
                                 options.parser.Preceptos(options, type, callback)

@@ -619,14 +619,14 @@ module.exports = function (app, options, transforms) {
                                     app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
 
                                         if (_directivo.length > 0) {
-
+                                            
                                             if (Active) {
-                                                app.process.stdout.write(app, options, '\x1b[32m', '', '')
+                                                options.parser.printOut(app, options, '\x1b[32m', '', '')
                                             } else {
-                                                app.process.stdout.write(app, options, '\x1b[31m', '', '')
+                                                options.parser.printOut(app, options, '\x1b[31m', '', '')
                                             }
-                                            app.process.stdout.write(app, options, '', __data.values.Empresa ? "e" : __data.values.Auditor ? "a" : "d", '')
-                                            app.process.stdout.write(app, options, '', '', '\x1b[0m')
+                                            options.parser.printOut(app, options, '', __data.values.Empresa ? "e" : __data.values.Auditor ? "a" : "d", '')
+                                            options.parser.printOut(app, options, '', '', '\x1b[0m')
                                             callback(__data, _directivo[0][0].Id, params, Active)
                                         }
                                     }, function (params) {
@@ -648,12 +648,12 @@ module.exports = function (app, options, transforms) {
                             })
                         } else {
                             if (Active) {
-                                app.process.stdout.write(app, options, '\x1b[32m', '', '')
+                                options.parser.printOut(app, options, '\x1b[32m', '', '')
                             } else {
-                                app.process.stdout.write(app, options, '\x1b[31m', '', '')
+                                options.parser.printOut(app, options, '\x1b[31m', '', '')
                             }
-                            app.process.stdout.write(app, options, '',  "?", '')
-                            app.process.stdout.write(app, options, '', '', '\x1b[0m')
+                            options.parser.printOut(app, options, '',  "?", '')
+                            options.parser.printOut(app, options, '', '', '\x1b[0m')
                             callback(__data, 0, null, false)
                         }
                         //})
