@@ -57,7 +57,7 @@ module.exports = function (app, callback) {
                             options.parser.printOut(app, options, '\x1b[33m', '.', '\x1b[0m')
                             //app.process.stdout.write(app, options, '\x1b[1m\x1b[36m', 'E', '\x1b[0m')
                             _linea.ID = _rec[0][0].Id
-                            _linea.ia_suspicius = _rec[0][0].ia_suspicius[0]==48?0:1
+                            _linea.ia_suspicius = _rec[0][0].ia_suspicius ? _rec[0][0].ia_suspicius[0]==48?0:1 :0
                             options.parser.saveDiarioMovimientos(_linea, _cb)
 
                         }, _cb)
@@ -244,7 +244,7 @@ module.exports = function (app, callback) {
                                         _e: timex._c._e + "extract " + timex.extract + 'ms',
                                         _c: timex._c._c + 'calculate ' + timex.calculate + 'ms',
                                         _u: timex._c._u + 'update text ' + timex.update + 'ms \x1b[0m',
-                                        _s: (_line.ia_suspicius == 1 ? '\x1b[31m' : '') + _line.e
+                                        _s: '\x1b[1m' + (_line.ia_suspicius == 1 ? '\x1b[31m' : '\x1b[37m') + _line.e
                                     }
                                     console.log(timex._t._f, timex._t._p, timex._t._e, timex._t._c, timex._t._u, timex._t._s)
                                 }
