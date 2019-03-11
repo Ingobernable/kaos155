@@ -308,26 +308,25 @@ module.exports = function (app, callback) {
                                 } else {
                                     //punto para ejecutar procesos ._busqueda de contratos key: _rec[0][0]
                                     params.type = 'BORME'
+
                                     if (options._common.io_client.connected) {
                                         options._common.IAgo(_rec, params)
+                                        callback(params, _rec)
                                     } else {
                                         console.log('esperando a conectar con la IA.....')
-                                        let delay = 0
-                                        while (!options._common.io_client.connected) {
+                                        options._common.io_client.off()
+                                        options._common.io_client.disconnect()
+                                        options._common.io_client = require("socket.io-client")(app.ip_ia)
+                                        options._common.io_client.on('connect', function () {
+                                            if (options._common.io_client.connected) {
+                                                options._common.IAgo(_rec, params)
+                                                callback(params, _rec)
+                                            }
 
-                                            delay = delay + 1
-                                            if (delay > 1000000)
-                                                if (options._common.io_client.connected) {
-                                                    options._common.IAgo(_rec, params)
-                                                }
-
-
-                                        }
+                                        })
                                     }
- 
-                                        
 
-                                    callback(params, _rec)
+
                                 }
                             })
                         },
@@ -342,22 +341,22 @@ module.exports = function (app, callback) {
 
                                 if (options._common.io_client.connected) {
                                     options._common.IAgo([], json)
+                                    callback(err, _rec)
                                 } else {
                                     console.log('esperando a conectar con la IA.....')
-                                    let delay = 0
-                                    while (!options._common.io_client.connected) {
+                                    options._common.io_client.off()
+                                    options._common.io_client.disconnect()
+                                    options._common.io_client = require("socket.io-client")(app.ip_ia)
+                                    options._common.io_client.on('connect', function () {
+                                        if (options._common.io_client.connected) {
+                                            options._common.IAgo([], json)
+                                            callback(err, _rec)
+                                        }
 
-                                        delay = delay + 1
-                                        if (delay > 1000000)
-                                            if (options._common.io_client.connected) {
-                                                options._common.IAgo(_rec, json)
-                                            }
-
-
-                                    }
+                                    })
                                 }
 
-                                callback(err, _rec)
+                                
                             })
                         }
                     },

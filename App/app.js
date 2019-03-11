@@ -26,7 +26,8 @@ var App = {
                     //process.exit(1)
                 }
                 const _j = JSON.parse(_JSON.toString())
-                cb( 'http://'+_j.host+':'+_j.port)
+                _this.ip_ia = 'http://' + _j.host + ':' + _j.port
+                cb(_this.ip_ia)
             } else {
                 _this.inquirer.prompt([
                     { type: 'input', name: 'host', message: 'socket-io ia IP', default: 'localhost' },
@@ -256,27 +257,23 @@ String.prototype.capitalizeAllFirstLetter = function () {
                                         app.BOLETIN = options
 
                                         app.ip_IA(function (ip) {
-                                            options._common.io_client = require("socket.io-client")(ip, {
-                                                reconnection: true,
-                                                reconnectionDelay: 1000,
-                                                reconnectionDelayMax: 5000,
-                                                reconnectionAttempts: 99999
-                                            })
+                                            options._common.io_client = require("socket.io-client")(ip)
                                             console.log('conectando con socket ia en '+ip)
                                             options._common.io_client.on('connect', function () {
                                                 console.log('socket ia conectado continuamos.... ')
-                                                if (!app.forever) {
-                                                    app._io = require('./node_www/IO.js')(app)
-                                                    require('./node_www/server_http.js')(app, function (io) {
-                                                        if (app.process.stdout.io == null) {
-                                                            app.process.stdout.io = io
+                                                if (app._io==null)
+                                                    if (!app.forever) {
+                                                        app._io = require('./node_www/IO.js')(app)
+                                                        require('./node_www/server_http.js')(app, function (io) {
+                                                            if (app.process.stdout.io == null) {
+                                                                app.process.stdout.io = io
 
-                                                            options._common.Actualize(options, type, {}, app._returnfunc)
-                                                        }
-                                                    })
-                                                } else {
-                                                    options._common.Actualize(options, type, {}, app._returnfunc)
-                                                }
+                                                                options._common.Actualize(options, type, {}, app._returnfunc)
+                                                            }
+                                                        })
+                                                    } else {
+                                                        options._common.Actualize(options, type, {}, app._returnfunc)
+                                                    }
                                             })
                                            // return require("socket.io-client")(ip, {
                                            ////     reconnection: true,
