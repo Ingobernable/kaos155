@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6372456 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6372459 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -178,7 +178,7 @@ CREATE TABLE `borme_keys` (
   UNIQUE KEY `_id` (`id`),
   KEY `T_Relaciones` (`T_Relations`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=237872 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=237949 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -203,7 +203,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=10441752 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10441760 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -424,7 +424,7 @@ BEGIN
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id;
         		
         IF @Empresa=1  THEN
-			INSERT INTO borme_empresas (_key,Nombre,provincia) VALUES (_key, _NAME ,_provincia);
+			INSERT INTO borme_empresas (_id,_key,Nombre,provincia) VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia);
 		END IF;
     ELSE
 		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id;
@@ -577,7 +577,7 @@ BEGIN
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id;
         
         IF @Empresa=1  THEN
-			INSERT INTO borme_empresas (_key,Nombre,provincia) VALUES (_key, _NAME ,_provincia);
+			INSERT INTO borme_empresas (_id,_key,Nombre,provincia) VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia);
 		END IF;
         
     ELSE
@@ -628,7 +628,7 @@ BEGIN
 		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id;
         
-        INSERT INTO borme_empresas (_key,Nombre,provincia) VALUES (_key, _NAME ,_provincia);
+        INSERT INTO borme_empresas (_id,_key,Nombre,provincia) VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia);
     ELSE
 		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id;
     END IF;
@@ -799,4 +799,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-11 16:11:20
+-- Dump completed on 2019-03-11 16:37:20

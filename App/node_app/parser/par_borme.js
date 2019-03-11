@@ -151,9 +151,11 @@ module.exports = function (app, callback) {
             },
             Preceptos: function (options, type, callback) {
                 //obtenemos el siguiente texto a parsear
-
+                
+                console.log(' db text record peticion')
                 var _this = this
                 app.commonSQL.SQL.commands.select.NextTextParser(options, [type, app.anyo], function (err, recordset) {
+                    console.log(' db text record response')
                     if (err)
                         console.log(err)
 
