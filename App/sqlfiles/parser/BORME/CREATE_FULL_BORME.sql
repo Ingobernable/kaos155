@@ -124,7 +124,7 @@ CREATE TABLE `borme_actos` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `Empresa_key` char(55) NOT NULL,
   `Acto` varchar(45) NOT NULL,
-  `Motivo` varchar(45) NOT NULL,
+  `Motivo` varchar(55) NOT NULL,
   `Texto` varchar(255) NOT NULL,
   `Anyo` int(10) unsigned NOT NULL,
   `Mes` int(11) DEFAULT NULL,
@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6372459 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7261316 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -178,7 +178,7 @@ CREATE TABLE `borme_keys` (
   UNIQUE KEY `_id` (`id`),
   KEY `T_Relaciones` (`T_Relations`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=237949 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1414391 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -203,7 +203,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=10441760 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11537519 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -217,7 +217,7 @@ CREATE TABLE `borme_stadistics` (
   `Provincia` varchar(50) CHARACTER SET utf8 NOT NULL,
   `Anyo` int(11) NOT NULL,
   `Acto` varchar(45) CHARACTER SET utf8 NOT NULL,
-  `Motivo` varchar(45) CHARACTER SET utf8 NOT NULL,
+  `Motivo` varchar(55) CHARACTER SET utf8 NOT NULL,
   `Enero` int(11) DEFAULT 0,
   `Febrero` int(11) DEFAULT 0,
   `Marzo` int(11) DEFAULT 0,
@@ -421,13 +421,13 @@ BEGIN
 
 
 		INSERT INTO borme_keys (_key, Nombre, _Empresa,_Directivo, _Auditor, _Financiera, _Sicav) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
-		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id;
+		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius;
         		
         IF @Empresa=1  THEN
 			INSERT INTO borme_empresas (_id,_key,Nombre,provincia) VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia);
 		END IF;
     ELSE
-		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id;
+		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius;
     END IF;
 END ;;
 DELIMITER ;
@@ -574,14 +574,14 @@ BEGIN
 
         
 		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
-		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id;
+		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius;
         
         IF @Empresa=1  THEN
 			INSERT INTO borme_empresas (_id,_key,Nombre,provincia) VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia);
 		END IF;
         
     ELSE
-		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id;
+		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius;
     END IF;
 END ;;
 DELIMITER ;
@@ -626,11 +626,11 @@ BEGIN
 		
         
 		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
-		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id;
+		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius;
         
         INSERT INTO borme_empresas (_id,_key,Nombre,provincia) VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia);
     ELSE
-		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id;
+		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius;
     END IF;
     
 END ;;
@@ -799,4 +799,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-11 16:37:20
+-- Dump completed on 2019-03-11 21:19:42
