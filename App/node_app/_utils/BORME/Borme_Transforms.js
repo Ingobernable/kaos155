@@ -193,7 +193,7 @@ module.exports = function (app, options) {
                     //["F", { f: _this.removeLastChar }, "."],
                 ],
                 recortes: ['admmancom',
-                    
+                    'repr143 Rrm',
                             'admsolid',
                             'admunico',
                             'apoderado',
@@ -210,6 +210,8 @@ module.exports = function (app, options) {
                             'liquisoli',
                             'miemcomej',
                             'presidente',
+                            'repr143 Rrm',
+                            'representan',
                             'secretario',
                             'socio Miembr',
                             'socio Único',
