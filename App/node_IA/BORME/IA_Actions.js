@@ -32,7 +32,7 @@
             const cadSql = "call Insert_Data_IA_seguimiento(?,?,?)"
             options.SQL.db.query(cadSql, [argv.data._key_relation,argv.data._id_relation, iaparams.min_TRelations], function (err, rec) {
                 if (err || rec == null  ) {
-                    console.log(argv.data)
+                    console.log(err)
                     debugger
                 }
 
