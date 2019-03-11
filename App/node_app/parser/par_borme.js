@@ -227,9 +227,19 @@ module.exports = function (app, callback) {
                             options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + app.anyo + " set parser=1 where ID_BORME = ? ", [recordset[0][0].ID_BORME], function (err) {
                                 const saveDate = new Date()
 
-                                if (app.myArgs[app.myArgs.length - 1] == 'VERBOSE')
-                                    console.log('extract ' + (readDate.getTime() - startDate.getTime()) + 'ms', 'calculate in ' + (endAnalizeDate.getTime() - readDate.getTime()) + 'ms', ' update text in ' + (saveDate.getTime() - endAnalizeDate.getTime()) +'ms',_line.e)
-
+                                if (app.myArgs[app.myArgs.length - 1] == 'VERBOSE') {
+                                    var timex = {
+                                        extract: readDate.getTime() - startDate.getTime(),
+                                        calculate: endAnalizeDate.getTime() - readDate.getTime(),
+                                        update: saveDate.getTime() - endAnalizeDate.getTime()
+                                    }
+                                    timex._c = {
+                                        _e: timex.extract > 1000 ? '\x1b[31m' : timex.extract > 100 ? '\x1b[33m' : '\x1b[32m',
+                                        _c: timex.calculate > 1000 ? '\x1b[31m' : timex.extract > 100 ? '\x1b[33m' : '\x1b[32m',
+                                        _u: timex.update > 1000 ? '\x1b[31m' : timex.update > 100 ? '\x1b[33m' : '\x1b[32m',
+                                    }
+                                    console.log(timex._c._e + 'extract ' + timex.extract + 'ms', timex._c._c + 'calculate ' + timex.calculate + 'ms', timex._c._u + 'update text ' + timex.update + 'ms \x1b[37m', _line.e)
+                                }
                                 if (err)
                                     debugger
                                 options.parser.Preceptos(options, type, callback)
