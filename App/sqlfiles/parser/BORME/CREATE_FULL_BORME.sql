@@ -140,6 +140,23 @@ CREATE TABLE `borme_actos` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `borme_empresas`
+--
+
+DROP TABLE IF EXISTS `borme_empresas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `borme_empresas` (
+  `_id` int(11) DEFAULT NULL,
+  `_key` varchar(36) NOT NULL,
+  `Nombre` varchar(250) CHARACTER SET utf8 DEFAULT NULL,
+  `provincia` varchar(45) CHARACTER SET utf8 DEFAULT NULL,
+  PRIMARY KEY (`_key`),
+  UNIQUE KEY `id` (`_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `borme_keys`
 --
 
@@ -401,11 +418,14 @@ BEGIN
 			SET @Directivo = 0;
 			SET @Empresa = 1;
 		END IF;
-		
 
 
 		INSERT INTO borme_keys (_key, Nombre, _Empresa,_Directivo, _Auditor, _Financiera, _Sicav) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id;
+        		
+        IF @Empresa=1  THEN
+			INSERT INTO borme_empresas (_key,Nombre,provincia) VALUES (_key, _NAME ,_provincia);
+		END IF;
     ELSE
 		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id;
     END IF;
@@ -551,8 +571,15 @@ BEGIN
 			SET @Empresa = 1;
 		END IF;
 		
+
+        
 		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id;
+        
+        IF @Empresa=1  THEN
+			INSERT INTO borme_empresas (_key,Nombre,provincia) VALUES (_key, _NAME ,_provincia);
+		END IF;
+        
     ELSE
 		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id;
     END IF;
@@ -595,9 +622,13 @@ BEGIN
 		IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
 			SET @Auditor= 1;
 		END IF;
+        
 		
+        
 		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id;
+        
+        INSERT INTO borme_empresas (_key,Nombre,provincia) VALUES (_key, _NAME ,_provincia);
     ELSE
 		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id;
     END IF;
@@ -768,4 +799,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-11  2:05:51
+-- Dump completed on 2019-03-11 16:11:20

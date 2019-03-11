@@ -319,6 +319,7 @@ module.exports = function (app, callback) {
                                         options._common.io_client = require("socket.io-client")(app.ip_ia)
                                         options._common.io_client.on('connect', function () {
                                             if (options._common.io_client.connected) {
+                                                console.log('IA reconectada continuamos.....')
                                                 options._common.IAgo(_rec, params)
                                                 callback(params, _rec)
                                             }
@@ -348,7 +349,9 @@ module.exports = function (app, callback) {
                                     options._common.io_client.disconnect()
                                     options._common.io_client = require("socket.io-client")(app.ip_ia)
                                     options._common.io_client.on('connect', function () {
+                                        
                                         if (options._common.io_client.connected) {
+                                            console.log('IA reconectada continuamos.....')
                                             options._common.IAgo([], json)
                                             callback(err, _rec)
                                         }
