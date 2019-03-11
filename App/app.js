@@ -446,7 +446,7 @@ String.prototype.capitalizeAllFirstLetter = function () {
                         console.log('PROCESS:' + app.Type)
                         console.log('Anyo:' + app.anyo)
                         console.log('Args:' + myArgs)
-
+                        app.myArgs = myArgs
                         app.init(app, function (_f) { _f[myArgs[0]](app.Type) })
 
                     } else {

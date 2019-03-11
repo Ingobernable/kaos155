@@ -3,7 +3,9 @@
         let cadSql = "call sum_KeyTotales(?,?);"
         var _cadOut = ""
         options.SQL.boedb.query(cadSql, [argv.data.k, 'BOE,BOCM'], function (err, record) {
-            
+            if (err)
+                console.log(err)
+
             if (record.length > 0) {
                 cadSql = "INSERT IGNORE ia_data_contratos (_key,_type,_counter,_importe) values (?,?,?,?)"
                 app._.each(record, function (rec) {

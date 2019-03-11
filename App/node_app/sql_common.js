@@ -337,8 +337,10 @@ module.exports = function (app, callback) {
                             //    debugger
 
                             options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
-                                if (err)
+                                if (err) {
+                                    console.log(params)
                                     debugger
+                                }
 
                                 if (options._common.io_client.connected) {
                                     options._common.IAgo([], json)

@@ -38,7 +38,8 @@ module.exports = function (app, callback) {
         SQL: { db: null },
         parser: {
             printOut: function (app, options, _ci, _data, _cf) {
-                app.process.stdout.write(app, options, _ci, _data, _cf)
+                if (app.myArgs[app.myArgs.length - 1] != 'VERBOSE')
+                    app.process.stdout.write(app, options, _ci, _data, _cf)
                 //if (!app.forever || !process.send) {
                 //    app.process.stdout.write(app, options, _ci, _data, _cf)
                 //} else {
@@ -151,11 +152,17 @@ module.exports = function (app, callback) {
             },
             Preceptos: function (options, type, callback) {
                 //obtenemos el siguiente texto a parsear
-                
-                console.log(' db text record peticion')
+                const startDate = new Date()
+               // if (app.myArgs[app.myArgs.length - 1] == 'VERBOSE') {
+                    
+               //     console.log(' db text record peticion')
+                //}
                 var _this = this
                 app.commonSQL.SQL.commands.select.NextTextParser(options, [type, app.anyo], function (err, recordset) {
-                    console.log(' db text record response')
+                    const readDate = new Date()
+                    //if (app.myArgs[app.myArgs.length - 1] == 'VERBOSE')
+                    //    console.log(' extract Text in ' + (endDate.getTime() - startDate.getTime()) + ' miliseconds')
+
                     if (err)
                         console.log(err)
 
@@ -215,6 +222,10 @@ module.exports = function (app, callback) {
                             }, recordset)
                         }
                         _analizer(options, _textos, 0, _analizer, function (options, type, recordset) {
+                            const endAnalizeDate = new Date()
+                            if (app.myArgs[app.myArgs.length - 1] == 'VERBOSE')
+                                console.log('extract record in ' + (readDate.getTime() - startDate.getTime()) + ' calculate record in ' + (endAnalizeDate.getTime() - readDate.getTime()) + ' miliseconds')
+
                             options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + app.anyo + " set parser=1 where ID_BORME = ? ", [recordset[0][0].ID_BORME], function (err) {
                                 if (err)
                                     debugger
