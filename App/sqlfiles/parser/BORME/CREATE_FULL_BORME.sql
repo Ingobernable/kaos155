@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7261316 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7281995 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -178,7 +178,7 @@ CREATE TABLE `borme_keys` (
   UNIQUE KEY `_id` (`id`),
   KEY `T_Relaciones` (`T_Relations`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=1414391 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1450814 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -203,7 +203,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=11537519 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11564439 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -400,8 +400,8 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_NAME  n
 BEGIN
 	SET @repeat = (SELECT count(*) FROM borme_keys WHERE _key = _iKey);
 	IF @repeat = 0 THEN	
-		SET @Directivo = _EMPRESA = 0 ;
-		SET @Empresa = _EMPRESA = 1;
+		SET @Directivo =  0 ;
+		SET @Empresa =  1;
 		SET @Financiera = 0;
 		SET @Auditor= 1;
 		SET @Sicav = 0;
@@ -799,4 +799,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-11 21:19:42
+-- Dump completed on 2019-03-12 19:57:59

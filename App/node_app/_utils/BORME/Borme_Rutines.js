@@ -484,7 +484,7 @@ module.exports = function (app, options, transforms) {
                                     }
                                     app._.each(_map.replaces, function (e) {
                                         if (_c.toLowerCase().indexOf(e[0]) > -1)
-                                            _c = _c.replaceAll(new RegExp(_map.recortes[_p][0], 'gi'), _map.recortes[_p][1])
+                                            _c = _c.replaceAll(new RegExp(e[0], 'gi'), e[1])
                                     })                                    //} else {
                                     //    _c = _dir[d].toUpperCase()
                                     //}
