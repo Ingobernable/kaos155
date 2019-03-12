@@ -1009,7 +1009,7 @@ module.exports = function (app, options, transforms) {
                 }
             },
             getUnique: function (_this, _name, _db, callback) {
-                const _k = app.aguid(_name)
+                const _k = app.aguid(_name).toLowerCase()
                 if (_db == null)
                     debugger
 

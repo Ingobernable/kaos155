@@ -193,7 +193,7 @@ module.exports = function (app, options) {
                     //["F", { f: _this.removeLastChar }, "."],
                 ], 
                 replaces: [
-                    ["s'sl", "s sl"],   //Faura Casas Auditors Consultors'sl
+                    ["s'sl", "s sl"],[/ Slp$/," SL"],   //Faura Casas Auditors Consultors'sl
                 ],
                 recortes: ['admmancom',
                     
@@ -206,6 +206,7 @@ module.exports = function (app, options) {
                     'audccon',
                     'audccon',
                     'audsupl',
+                    'auditor Sup',
                     'auditcuent',
                     'codemaso',
                     'condelegado',
