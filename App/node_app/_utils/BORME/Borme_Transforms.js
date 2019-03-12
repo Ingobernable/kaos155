@@ -196,7 +196,7 @@ module.exports = function (app, options) {
                     [/(Sl Profesional|Sl Profesiona)/i, 'SLP'],
                     [/(Sociedad Limi|Sociedad Limita)/i, 'SL'],
                     ["s'sl", "s sl"],
-                    [/SRL$/i, " SL"]
+                    [/SRL$/i, " SL"],
                     [/(SL$| SL$)/i, " SL"],   //Faura Casas Auditors Consultors'sl
                 ],
                 recortes: ['admmancom',
