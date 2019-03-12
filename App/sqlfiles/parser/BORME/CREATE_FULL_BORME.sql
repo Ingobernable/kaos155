@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_borme` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `bbdd_kaos155_borme`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: 54.37.77.130    Database: bbdd_kaos155_borme
@@ -136,7 +134,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7610569 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7646292 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -175,12 +173,12 @@ CREATE TABLE `borme_keys` (
   `_Slp` bit(1) DEFAULT b'0',
   `T_Relations` int(11) DEFAULT 0,
   `ia_suspicius` bit(1) DEFAULT b'0',
-  PRIMARY KEY (`_key`),
-  UNIQUE KEY `_id` (`id`),
+  PRIMARY KEY (`id`),
   KEY `T_Relaciones` (`T_Relations`),
-  KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`),
+  KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
+  KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=1986911 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2052795 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,7 +203,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=11990589 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12038710 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -323,6 +321,27 @@ SET character_set_client = @saved_cs_client;
 --
 -- Dumping routines for database 'bbdd_kaos155_borme'
 --
+/*!50003 DROP FUNCTION IF EXISTS `lastIndex` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `lastIndex`(_str nvarchar(255), _key nvarchar(10) ) RETURNS int(11)
+    DETERMINISTIC
+BEGIN
+
+RETURN IF(LOCATE(_key, _str )>0,LENGTH(_str) - LOCATE(_key, REVERSE(_str))-(LENGTH(_key)-1),-1);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP FUNCTION IF EXISTS `_type` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -396,14 +415,14 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_NAME  nvarchar(250), _iKey  nvarchar(55),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT,_empresa INT)
 BEGIN
 	SET @repeat = (SELECT count(*) FROM borme_keys WHERE _key = _iKey);
 	IF @repeat = 0 THEN	
     
-		SET @Directivo = IF(INSTR(UPPER(_NAME),'SL') OR INSTR(UPPER(_NAME),'SLP') OR INSTR(UPPER(_NAME),'SRC'), 1,0);
+		SET @Directivo = IF( ( lastIndex(_NAME,'SA')=length(_Name)-1 OR lastIndex(_NAME,'SL')=length(_Name)-1 OR lastIndex(_NAME,'SLP') =length(_Name)-2 OR lastIndex(_NAME,'SRC')=length(_Name)-2),0,1);
 		SET @Empresa = if(@Directivo=1,0,1);
         
 		SET @Financiera = 0;
@@ -549,7 +568,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(IN _NAME  nvarchar(250) , IN _ikey  nvarchar(55),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
 BEGIN
@@ -574,7 +593,7 @@ BEGIN
 		
 		IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
 			SET @Auditor= 1;
-			SET @Directivo = IF(INSTR(UPPER(_NAME),'SL') OR INSTR(UPPER(_NAME),'SLP') OR INSTR(UPPER(_NAME),'SRC'), 1,0) ;
+			SET @Directivo = IF( (  lastIndex(_NAME,'SA')=length(_Name)-1 OR lastIndex(_NAME,'SL')=length(_Name)-1 OR lastIndex(_NAME,'SLP') =length(_Name)-2 OR lastIndex(_NAME,'SRC')=length(_Name)-2),0,1);
 			SET @Empresa = if(@Directivo=1,0,1);
 		END IF;
 		
@@ -808,4 +827,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-12 21:48:49
+-- Dump completed on 2019-03-12 22:42:44
