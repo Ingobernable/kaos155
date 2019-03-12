@@ -200,7 +200,7 @@ module.exports = function (app, options) {
                     [/(SL$| SL$)/i, " SL"],   //Faura Casas Auditors Consultors'sl
                 ],
                 recortes: ['admmancom',
-                    'auditor Sup',
+                    
                     'admsolid',
                     'admunico',
                     'apoderado',
@@ -210,8 +210,9 @@ module.exports = function (app, options) {
                     'audccon',
                     'audccon',
                     'audsupl',
+                    'auditor sup',
                     'auditor',
-                    'auditor Sup',
+                    
                     'auditcuent',
                     'audtctscon',
                     'codemaso',
@@ -225,18 +226,19 @@ module.exports = function (app, options) {
                     'liquidador',
                     'liquisoli',
                     'liqunico',
-                    'Comejecutiv',
+                    'comejecutiv',
                     'miemcomej',                            
                     'presidente',
                     'repadmconc',
-                    'repr143 Rrm',
+                    'repr143 rrm',
                     'representan',
                     'seccomsaud',
                     'secretario',
                     'Secrenoconsj',
                     'sup',
-                    'socio Miembr',
-                    'socio Único',
+                    'socio miembr',
+                    'socio único',
+                    'socio unico',
                     'socuniprof',
                     'vicepresid'
                 ]
