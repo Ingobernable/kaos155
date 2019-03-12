@@ -349,15 +349,15 @@ module.exports = function (app, options, transforms) {
                     //if (cadena.indexOf('&') > 0)
                     //    debugger
 
-                    return (cadena.indexOf('SOCIEDAD ANONIMA') > -1 ||
-                        cadena.indexOf('SOCIEDAD LIMITADA') > -1 ||
-                        cadena.indexOf(' SL.') > -1 ||
-                        cadena.indexOf(' SL') == cadena.length - 3 ||
-                        cadena.indexOf(' SA') == cadena.length - 3 ||
-                        cadena.indexOf(' SA.') > -1 ||
-                        cadena.indexOf('SAT ') > -1 ||
-                        cadena.indexOf('SAU.') > -1 ||
-                        cadena.indexOf('S.COOP') > -1)
+                    return (cadena.toUpperCase().indexOf('SOCIEDAD ANONIMA') > -1 ||
+                        cadena.toUpperCase().indexOf('SOCIEDAD LIMITADA') > -1 ||
+                        cadena.toUpperCase().indexOf(' SL.') > -1 ||
+                        cadena.toUpperCase().indexOf('SL') == cadena.length - 2 ||
+                        cadena.toUpperCase().indexOf('SA') == cadena.length - 2 ||
+                        cadena.toUpperCase().indexOf(' SA.') > -1 ||
+                        cadena.toUpperCase().indexOf('SAT ') > -1 ||
+                        cadena.toUpperCase().indexOf('SAU.') > -1 ||
+                        cadena.toUpperCase().indexOf('S.COOP') > -1)
                 }
                 const _k = function (_isEmpresa,key,cadena) {
                     return {
@@ -415,6 +415,7 @@ module.exports = function (app, options, transforms) {
                     .replace(/w SA\W/g, " SA.")
                     .replace(/w SL\W/g, " SL.")
                     .replace(/S\.L\./g, 'SL.')
+                    .replace(/SL$/gi, 'SL.')
                     .replace(/S\.A\./g, 'SA.')
 
                     .replace(/\.\B/g, "#$")
