@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7358738 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7610569 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -167,18 +167,20 @@ CREATE TABLE `borme_keys` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `_key` varchar(36) NOT NULL,
   `Nombre` text DEFAULT NULL,
-  `_Empresa` tinyint(4) DEFAULT 0,
-  `_Directivo` tinyint(4) DEFAULT 0,
-  `_Auditor` tinyint(4) DEFAULT 0,
+  `_Empresa` bit(1) DEFAULT b'0',
+  `_Directivo` bit(1) DEFAULT b'0',
+  `_Auditor` bit(1) DEFAULT b'0',
   `_Financiera` bit(1) DEFAULT b'0',
   `_Sicav` bit(1) DEFAULT b'0',
+  `_Slp` bit(1) DEFAULT b'0',
   `T_Relations` int(11) DEFAULT 0,
   `ia_suspicius` bit(1) DEFAULT b'0',
   PRIMARY KEY (`_key`),
   UNIQUE KEY `_id` (`id`),
   KEY `T_Relaciones` (`T_Relations`),
+  KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=1585645 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1986911 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -203,7 +205,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=11667326 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11990589 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -400,8 +402,10 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_NAME  n
 BEGIN
 	SET @repeat = (SELECT count(*) FROM borme_keys WHERE _key = _iKey);
 	IF @repeat = 0 THEN	
-		SET @Directivo =  0 ;
-		SET @Empresa =  1;
+    
+		SET @Directivo = IF(INSTR(UPPER(_NAME),'SL') OR INSTR(UPPER(_NAME),'SLP') OR INSTR(UPPER(_NAME),'SRC'), 1,0);
+		SET @Empresa = if(@Directivo=1,0,1);
+        
 		SET @Financiera = 0;
 		SET @Auditor= 1;
 		SET @Sicav = 0;
@@ -418,7 +422,10 @@ BEGIN
 			SET @Directivo = 0;
 			SET @Empresa = 1;
 		END IF;
-
+        
+		IF @Empresa=1 THEN
+			SET _NAME= UCASE(_NAME);
+        END IF;
 
 		INSERT INTO borme_keys (_key, Nombre, _Empresa,_Directivo, _Auditor, _Financiera, _Sicav) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius;
@@ -567,11 +574,13 @@ BEGIN
 		
 		IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
 			SET @Auditor= 1;
-			SET @Directivo = 0;
-			SET @Empresa = 1;
+			SET @Directivo = IF(INSTR(UPPER(_NAME),'SL') OR INSTR(UPPER(_NAME),'SLP') OR INSTR(UPPER(_NAME),'SRC'), 1,0) ;
+			SET @Empresa = if(@Directivo=1,0,1);
 		END IF;
 		
-
+		IF @Empresa=1 THEN
+			SET _NAME= UCASE(_NAME);
+        END IF;
         
 		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius;
@@ -799,4 +808,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-12 20:33:47
+-- Dump completed on 2019-03-12 21:48:49

@@ -193,10 +193,13 @@ module.exports = function (app, options) {
                     //["F", { f: _this.removeLastChar }, "."],
                 ], 
                 replaces: [
-                    ["s'sl", "s sl"], [/ SLP$/, " SL"], [/(SL$| SL$)/," SL"],   //Faura Casas Auditors Consultors'sl
+                    [/(Sl Profesional|Sl Profesiona)/i, 'SLP'],
+                    [/(Sociedad Limi|Sociedad Limita)/i, 'SL'],
+                    ["s'sl", "s sl"],
+                    [/(SL$| SL$)/i, " SL"],   //Faura Casas Auditors Consultors'sl
                 ],
                 recortes: ['admmancom',
-                    
+                    'auditor Sup',
                     'admsolid',
                     'admunico',
                     'apoderado',
@@ -206,8 +209,10 @@ module.exports = function (app, options) {
                     'audccon',
                     'audccon',
                     'audsupl',
+                    'auditor',
                     'auditor Sup',
                     'auditcuent',
+                    'audtctscon',
                     'codemaso',
                     'condelegado',
                     'consejero',
@@ -222,10 +227,13 @@ module.exports = function (app, options) {
                     'Comejecutiv',
                     'miemcomej',                            
                     'presidente',
+                    'repadmconc',
                     'repr143 Rrm',
                     'representan',
+                    'seccomsaud',
                     'secretario',
                     'Secrenoconsj',
+                    
                     'socio Miembr',
                     'socio Único',
                     'socuniprof',
