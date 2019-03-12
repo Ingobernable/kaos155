@@ -193,7 +193,7 @@ module.exports = function (app, options) {
                     //["F", { f: _this.removeLastChar }, "."],
                 ], 
                 replaces: [
-                    ["s'sl", "s sl"],[/ SLP$/," SL"],   //Faura Casas Auditors Consultors'sl
+                    ["s'sl", "s sl"], [/ SLP$/, " SL"], [/(SL$| SL$)/," SL"],   //Faura Casas Auditors Consultors'sl
                 ],
                 recortes: ['admmancom',
                     
