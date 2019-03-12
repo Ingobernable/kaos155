@@ -462,15 +462,24 @@ module.exports = function (app, options, transforms) {
                                     var _c = ""
 
                                     //if (!_isEmpresa) {
-                                        var _d = this.titleCase(_dir[d].replaceAll(".", ""))
-                                        var _p = app._.findIndex(this._transforms.getPatern(this._transforms).recortes, function (e) {
+                                    var _d = this.titleCase(_dir[d].replaceAll(".", ""))
+
+                                    var _p = app._.findIndex(_map.replaces, function (e) {
+                                        return _d.toLowerCase().indexOf(e[0]) > -1
+                                    })
+                                    if (_p > -1) {
+                                        _d = _d.replaceAll(new RegExp(_map.recortes[_p][0], 'gi'), _map.recortes[_p][1])
+                                    } 
+
+                                    var _p = app._.findIndex(_map.recortes, function (e) {
                                             return _d.toLowerCase().indexOf(e) > -1
-                                        })
-                                        if (_p > -1) {
-                                            _c = _d.replaceAll(new RegExp(_map.recortes[_p], 'gi'), "")
-                                        } else {
-                                            _c = _d
-                                        }
+                                    })
+
+                                    if (_p > -1) {
+                                        _c = _d.replaceAll(new RegExp(_map.recortes[_p], 'gi'), "")
+                                    } else {
+                                        _c = _d
+                                    }
                                     //} else {
                                     //    _c = _dir[d].toUpperCase()
                                     //}

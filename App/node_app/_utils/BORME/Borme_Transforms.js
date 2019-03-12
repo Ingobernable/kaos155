@@ -191,6 +191,9 @@ module.exports = function (app, options) {
                     ['R', new RegExp(/\*$/, "g"), "."]
 
                     //["F", { f: _this.removeLastChar }, "."],
+                ], 
+                replaces: [
+                    ["s'sl", "s sl"],   //Faura Casas Auditors Consultors'sl
                 ],
                 recortes: ['admmancom',
                     
