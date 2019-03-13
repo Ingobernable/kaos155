@@ -53,7 +53,8 @@
     movimiento: function (app, options, argv, iaparams) {
         //debugger
             //console.log('movimiento', argv.data.acto._type)
-            if (argv.data.acto._type == 'Constitucion') {
+        if (argv.data.acto._type == 'Constitucion') {
+                console.log(argv.data.record)
                 const cadSql = "CALL insert_Data_IA_constitucion(?,?,?,?,?,?,?,?)"
                 options.SQL.db.query(cadSql, [
                     argv.data._fecha.mes,
