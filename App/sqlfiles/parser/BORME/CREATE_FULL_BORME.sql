@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7646790 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7650200 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -180,7 +180,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=2053534 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2059360 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,7 +205,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=12039235 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12044179 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -248,10 +248,10 @@ CREATE TABLE `borme_stadistics_keys` (
   `_provincia` varchar(45) CHARACTER SET utf8 NOT NULL,
   `_mes` int(11) NOT NULL,
   `_anyo` int(11) NOT NULL,
-  `add_empresas` int(11) DEFAULT NULL,
-  `add_financieras` int(11) DEFAULT NULL,
-  `add_sicav` int(11) DEFAULT NULL,
-  `add_auditor` int(11) DEFAULT NULL,
+  `add_empresas` int(11) DEFAULT 0,
+  `add_financieras` int(11) DEFAULT 0,
+  `add_sicav` int(11) DEFAULT 0,
+  `add_auditor` int(11) DEFAULT 0,
   PRIMARY KEY (`_mes`,`_provincia`,`_anyo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -441,40 +441,41 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_mes int, _anyo int, _NAME  nvarchar(250), _iKey  nvarchar(55),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT,_empresa INT)
 BEGIN
 	SET @repeat = (SELECT count(*) FROM borme_keys WHERE _key = _iKey);
-	IF @repeat = 0 THEN	
-    
-		SET @Directivo =  NOT _NAME REGEXP '.+( SA| SL| SLP| SRC)$'; -- IF( ( lastIndex(_NAME,'SA')=length(_Name)-1 OR lastIndex(_NAME,'SL')=length(_Name)-1 OR lastIndex(_NAME,'SLP') =length(_Name)-2 OR lastIndex(_NAME,'SRC')=length(_Name)-2),0,1);
-		SET @Empresa = if(@Directivo=1,0,1);
-        
-		SET @Financiera = 0;
-		SET @Auditor= 1;
-		SET @Sicav = 0;
 		
-		IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
-			SET @Financiera = 1;
-			SET @Directivo = 0;
-			SET @Empresa = 1;
-		END IF;
-	 
-		SET @Sicav = 0;
-		IF lastIndex(_NAME,'SICAV')>0 THEN
-			SET @Sicav = 1;
-			SET @Directivo = 0;
-			SET @Empresa = 1;
-		END IF;
-        
-		IF @Empresa=1 THEN
-			SET _NAME= UCASE(_NAME);
-        END IF;
-
+    
+	SET @Directivo =  NOT _NAME REGEXP '.+( SA| SL| SLP| SRC)$'; -- IF( ( lastIndex(_NAME,'SA')=length(_Name)-1 OR lastIndex(_NAME,'SL')=length(_Name)-1 OR lastIndex(_NAME,'SLP') =length(_Name)-2 OR lastIndex(_NAME,'SRC')=length(_Name)-2),0,1);
+	SET @Empresa = if(@Directivo=1,0,1);
+	
+	SET @Financiera = 0;
+	SET @Auditor= 1;
+	SET @Sicav = 0;
+	
+	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
+		SET @Financiera = 1;
+		SET @Directivo = 0;
+		SET @Empresa = 1;
+	END IF;
+ 
+	SET @Sicav = 0;
+	IF lastIndex(_NAME,'SICAV')>0 THEN
+		SET @Sicav = 1;
+		SET @Directivo = 0;
+		SET @Empresa = 1;
+	END IF;
+	
+	IF @Empresa=1 THEN
+		SET _NAME= UCASE(_NAME);
+	END IF;
+    
+	IF @repeat = 0 THEN
 		INSERT INTO borme_keys (_key, Nombre, _Empresa,_Directivo, _Auditor, _Financiera, _Sicav) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
-		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius;
+		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
         		
         IF @Empresa=1  THEN
 			INSERT INTO borme_empresas (_id,_key,Nombre,provincia) VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia);
 		END IF;
     ELSE
-		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius;
+		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
     END IF;
 END ;;
 DELIMITER ;
@@ -490,7 +491,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Diario`(
 	IN _BOLETIN nvarchar(20) ,
@@ -521,7 +522,7 @@ BEGIN
         SET _counter = (SELECT Count(*) FROM borme_relaciones WHERE Empresa_key = _Empresa_key AND Relation_key = _Relacion_key);
 		if _counter=0 THEN	           
             SET @s = CONCAT('UPDATE borme_keys SET T_Relations =T_Relations + 1 WHERE _key ="',_Empresa_key,'" OR _key = "',_Relacion_key ,'";');
-            SELECT (@s) as pp ,_Empresa_key,_Relacion_key;
+            -- SELECT (@s) as pp ,_Empresa_key,_Relacion_key;
             PREPARE stmt1 FROM @s;
 			EXECUTE stmt1;  
 			DEALLOCATE PREPARE stmt1;
@@ -534,26 +535,10 @@ BEGIN
 	else
 		INSERT IGNORE INTO borme_actos (Empresa_key,Acto,Motivo,Texto,Anyo,Mes,Dia,BOLETIN,_ID,DatosRegistrales)
 								  VALUES (_Empresa_key,_type,_key,_value,_Anyo,_Mes,_Dia,_BOLETIN,_BOLETIN_ID,_DatosRegistrales); 		
-		IF _type='Constitucion' THEN
-			SET @empresa = (SELECT _empresa FROM borme_keys WHERE _key=_Empresa_key);
-			SET @financiera = (SELECT _financiera FROM borme_keys WHERE _key=_Empresa_key);
-			SET @auditor = (SELECT _auditor FROM borme_keys WHERE _key=_Empresa_key);
-			SET @sicav = (SELECT _sicav FROM borme_keys WHERE _key=_Empresa_key);
-			IF  @financiera THEN
-				INSERT INTO borme_stadistics_keys (mes,anyo,Provincia,add_empresas,add_financieras) VALUES (_Mes,_Anyo,_Provincia,1,1) ON DUPLICATE KEY UPDATE add_empresas=add_empresas+1 ,add_financieras=add_financieras+1;
-			else
-				IF  @auditor THEN
-					INSERT INTO borme_stadistics_keys (mes,anyo,Provincia,add_auditor) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE add_auditor=add_auditor+1;
-				END IF;
-				IF  @sicav THEN
-					INSERT INTO borme_stadistics_keys (mes,anyo,Provincia,add_sicav) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE add_sicav=add_sicav+1;
-				END IF;
-				IF  @empresa THEN
-					INSERT INTO borme_stadistics_keys (mes,anyo,Provincia,add_empresas) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE add_empresas=add_empresas+1;
-				END IF;
-			END IF;
-		END IF;
+		
+        SELECT * FROM borme_keys WHERE id = _Empresa_Id;
     END IF;
+    
     IF _Mes=1 THEN
 		INSERT INTO borme_stadistics (Provincia, Acto,Motivo,Anyo,Enero,Total) values(_Provincia,_type,_key,_Anyo,1,1) on duplicate key update Enero=Enero + 1,Total=Total+1;
     END IF;
@@ -610,43 +595,43 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(_mes int, _anyo int, IN _NAME  nvarchar(250) , IN _ikey  nvarchar(55),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
 BEGIN
 	SET @repeat = (SELECT count(*) FROM borme_keys WHERE _key = _iKey);
-	IF @repeat = 0 THEN
-		SET @Directivo = 1;
-		SET @Empresa = 0;
-		SET @Financiera = 0;
-		SET @Auditor= 0;
-		IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
-			SET @Financiera = 1;
-			SET @Directivo = 0;
-			SET @Empresa = 1;
-		END IF;
-	 
-		SET @Sicav = 0;
-		IF lastIndex(_NAME,'SICAV')>0 THEN
-			SET @Sicav = 1;
-			SET @Directivo = 0;
-			SET @Empresa = 1;
-		END IF;
-		
-		IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
-			SET @Auditor= 1;
-			SET @Directivo = NOT _NAME REGEXP '.+( SA| SL| SLP| SRC)$';
-			SET @Empresa = if(@Directivo=1,0,1);
-		END IF;
-		
-		IF @Empresa=1 THEN
-			SET _NAME= UCASE(_NAME);
-        END IF;
-        
+	
+	SET @Directivo = 1;
+	SET @Empresa = 0;
+	SET @Financiera = 0;
+	SET @Auditor= 0;
+	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
+		SET @Financiera = 1;
+		SET @Directivo = 0;
+		SET @Empresa = 1;
+	END IF;
+ 
+	SET @Sicav = 0;
+	IF lastIndex(_NAME,'SICAV')>0 THEN
+		SET @Sicav = 1;
+		SET @Directivo = 0;
+		SET @Empresa = 1;
+	END IF;
+	
+	IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
+		SET @Auditor= 1;
+		SET @Directivo = NOT _NAME REGEXP '.+( SA| SL| SLP| SRC)$';
+		SET @Empresa = if(@Directivo=1,0,1);
+	END IF;
+	
+	IF @Empresa=1 THEN
+		SET _NAME= UCASE(_NAME);
+	END IF;
+	IF @repeat = 0 THEN       
 		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
-		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius;
+		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
         
         IF @Empresa=1  THEN
 			INSERT INTO borme_empresas (_id,_key,Nombre,provincia) VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia);
 		END IF;
         
     ELSE
-		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius;
+		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
     END IF;
 END ;;
 DELIMITER ;
@@ -667,7 +652,7 @@ DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(_mes int, _anyo int, IN _NAME  nvarchar(250), _iKey  nvarchar(55), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
 BEGIN
 	SET @repeat = (SELECT count(*) FROM borme_keys WHERE _key = _iKey);
-	IF @repeat = 0 THEN
+	
 		SET @Directivo = 0;
 		SET @Empresa = 1;
 		SET @Financiera = 0;
@@ -688,16 +673,61 @@ BEGIN
 			SET @Auditor= 1;
 		END IF;
         
-		
+	IF @repeat = 0 THEN	
         
 		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
-		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius;
+		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
         
         INSERT INTO borme_empresas (_id,_key,Nombre,provincia) VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia);
     ELSE
-		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius;
+		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius, @Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav ;
     END IF;
     
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_IA_constitucion` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_IA_constitucion`(_Mes int, 
+	_Anyo int, 
+	_Provincia nvarchar(45), 
+    
+	_empresa int,    
+	_financiera int,
+	_auditor int,
+	_sicav int,
+	_id int
+)
+BEGIN
+
+	IF  _financiera=1 THEN
+		INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_empresas,add_financieras) VALUES (_Mes,_Anyo,_Provincia,1,1) ON DUPLICATE KEY UPDATE add_empresas=add_empresas+1 ,add_financieras=add_financieras+1;
+	else
+		IF  _auditor=1 THEN
+			INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_auditor) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE add_auditor=add_auditor+1;
+		END IF;
+		IF  _sicav=1 THEN
+			INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_sicav) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE add_sicav=add_sicav+1;
+		END IF;
+		IF  _empresa=1 THEN
+			INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_empresas) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE add_empresas=add_empresas+1;
+		END IF;
+	END IF;
+
+	
+
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -864,4 +894,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-13  1:24:46
+-- Dump completed on 2019-03-13 22:41:50

@@ -310,7 +310,10 @@ module.exports = function (app, callback) {
                                     params.type = 'BORME'
 
                                     if (options._common.io_client.connected) {
-                                        options._common.IAgo(_rec, params)
+                                        //const _p = _rec[0] ? (_rec[0][0]._add > 0 ? 'add' : 'update') : 'movimiento'
+                                        params.record = _rec[0][0]
+
+                                        options._common.IAgo(params, (_rec[0][0]._add > 0 ? 'add' : 'update'))
                                         callback(params, _rec)
                                     } else {
                                         console.log('esperando a conectar con la IA.....')
@@ -335,17 +338,18 @@ module.exports = function (app, callback) {
                             //console.log(params[12])
                             //if (params[12] == "Nombramiento")
                             //    debugger
-                            if (params[12] == 'Constitucion')
-                                debugger
+                            //if (params[12] == 'Constitucion')
+                            //    debugger
 
                             options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
                                 if (err) {
-                                    console.log(err)
+                                    console.log(err,params)
                                     debugger
                                 }
 
                                 if (options._common.io_client.connected) {
-                                    options._common.IAgo([], json)
+                                    json.record = _rec.length > 0 ? _rec[0][0] : null
+                                    options._common.IAgo(json, (_rec.length > 0 ? 'movimiento' : 'relacion'))
                                     callback(err, _rec)
                                 } else {
                                     console.log('esperando a conectar con la IA.....')

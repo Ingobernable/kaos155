@@ -357,6 +357,8 @@ module.exports = function (app, options, transforms) {
                         cadena.toUpperCase().indexOf(' SA.') > -1 ||
                         cadena.toUpperCase().indexOf('SAT ') > -1 ||
                         cadena.toUpperCase().indexOf('SAU.') > -1 ||
+                        cadena.toUpperCase().indexOf('SRL') > -1 ||
+                        cadena.toUpperCase().indexOf('CONSULTORES') > -1 ||
                         cadena.toUpperCase().indexOf('S.COOP') > -1)
                 }
                 const _k = function (_isEmpresa,key,cadena) {
@@ -472,7 +474,7 @@ module.exports = function (app, options, transforms) {
                                    // if (_p > -1) {
                                    ////     _d = _d.replaceAll(new RegExp(_map.recortes[_p][0], 'gi'), _map.recortes[_p][1])
                                     //} 
-                                    if (_d.toLowerCase().indexOf('audtctscon') > 0 || _d.indexOf(/sa$/i) > 0)
+                                    if (_d.toLowerCase().indexOf('audtctscon') > 0)
                                         debugger
 
                                     var _p = app._.findIndex(_map.recortes, function (e) {

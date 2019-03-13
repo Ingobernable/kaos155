@@ -2,13 +2,13 @@
     //var _ = app._
     //debugger
     return {
-        IAgo: function (_rec, params) {
-            const _p = _rec.length > 0 ? (_rec[0][0]._add > 0 ? 'add' : 'update') : 'movimiento'
-            
+        IAgo: function (params,_p) {
+
             this.io_client.emit(_p, {
                 command: _p,
                 type: "BORME",
-                data: params
+                data: params,
+                //recordset :_rec,
             })
         },
         io_client: null,

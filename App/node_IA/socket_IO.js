@@ -8,7 +8,8 @@
         data: function () { return [
                 { name: 'add', action: "../node_IA/BORME/add_Data.js" },
                 { name: 'update', action: "../node_IA/BORME/update_Data.js" },
-                { name: 'movimiento', action: "../node_IA/BORME/update_Data.js" }
+                { name: 'movimiento', action: "../node_IA/BORME/update_Data.js" },
+                { name: 'relacion', action: "../node_IA/BORME/update_Data.js" }
             ]
         },
         _IAparameters: {
