@@ -335,6 +335,8 @@ module.exports = function (app, callback) {
                             //console.log(params[12])
                             //if (params[12] == "Nombramiento")
                             //    debugger
+                            if (params[12] == 'Constitucion')
+                                debugger
 
                             options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
                                 if (err) {

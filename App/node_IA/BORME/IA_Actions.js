@@ -32,8 +32,8 @@
         //debugger
         if (argv.data.acto._def == "RELACION") {
             const cadSql = "call Insert_Data_IA_seguimiento(?,?,?)"
-            options.SQL.db.query(cadSql, [argv.data._key_relation,argv.data._id_relation, iaparams.min_TRelations], function (err, rec) {
-                if (err || rec == null  ) {
+            options.SQL.db.query(cadSql, [argv.data._key_relation, argv.data._id_relation, iaparams.min_TRelations], function (err, rec) {
+                if (err || rec == null) {
                     console.log(err)
                     debugger
                 }
@@ -44,11 +44,18 @@
 
                 }
                 //if (rec[0].T_relations > 10 && rec[0]._Directivo)
-                    //debugger
+                //debugger
                 //if (rec[0].Nombre != argv.e)
                 //    debugger
             })
 
+        } else {
+            if (argv.data.acto._type == 'Constitucion') {
+                const cadSql = "CALL insert_Data_IA_constitucion(?,?,?,?)"
+                options.SQL.db.query(cadSql, [argv.data._fecha.mes, argv.data._fecha.anyo, argv.data._provincia, argv.data._id_empresa], function (err, rec) {
+                    debugger
+                })
+            }
         }
         //const cadSql = "SELECT Count(*) as _c FROM boletin_contratos WHERE _key=?"
         //options.SQL.boedb.query(cadSql, [argv.k], function (err, record) {

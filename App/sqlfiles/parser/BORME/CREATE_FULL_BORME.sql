@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7646539 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7646790 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -180,7 +180,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=2053174 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2053534 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,7 +205,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=12038967 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12039235 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -490,7 +490,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Diario`(
 	IN _BOLETIN nvarchar(20) ,
@@ -535,10 +535,10 @@ BEGIN
 		INSERT IGNORE INTO borme_actos (Empresa_key,Acto,Motivo,Texto,Anyo,Mes,Dia,BOLETIN,_ID,DatosRegistrales)
 								  VALUES (_Empresa_key,_type,_key,_value,_Anyo,_Mes,_Dia,_BOLETIN,_BOLETIN_ID,_DatosRegistrales); 		
 		IF _type='Constitucion' THEN
-			SET @empresa = (SELECT _empresa FROM borme_keys WHERE _key=Empresa_key);
-			SET @financiera = (SELECT _financiera FROM borme_keys WHERE _key=Empresa_key);
-			SET @auditor = (SELECT _auditor FROM borme_keys WHERE _key=Empresa_key);
-			SET @sicav = (SELECT _sicav FROM borme_keys WHERE _key=Empresa_key);
+			SET @empresa = (SELECT _empresa FROM borme_keys WHERE _key=_Empresa_key);
+			SET @financiera = (SELECT _financiera FROM borme_keys WHERE _key=_Empresa_key);
+			SET @auditor = (SELECT _auditor FROM borme_keys WHERE _key=_Empresa_key);
+			SET @sicav = (SELECT _sicav FROM borme_keys WHERE _key=_Empresa_key);
 			IF  @financiera THEN
 				INSERT INTO borme_stadistics_keys (mes,anyo,Provincia,add_empresas,add_financieras) VALUES (_Mes,_Anyo,_Provincia,1,1) ON DUPLICATE KEY UPDATE add_empresas=add_empresas+1 ,add_financieras=add_financieras+1;
 			else
@@ -864,4 +864,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-13  1:18:06
+-- Dump completed on 2019-03-13  1:24:46
