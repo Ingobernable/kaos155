@@ -65,7 +65,7 @@
                 argv.data.record._Sicav.toString() == '\u0001' ? 1 : 0
 
             ]
-            console.log(_p)
+            //console.log(_p)
                 const cadSql = "CALL insert_Data_IA_constitucion(?,?,?,?,?,?,?)"
                 options.SQL.db.query(cadSql, _p, function (err, rec) {
                     if (err) 

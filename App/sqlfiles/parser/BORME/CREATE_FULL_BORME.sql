@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7650200 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7673339 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -180,7 +180,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=2059360 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2102795 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,7 +205,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=12044179 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12076166 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -699,30 +699,31 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_IA_constitucion`(_Mes int, 
+CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_IA_constitucion`(
+	_Mes int, 
 	_Anyo int, 
 	_Provincia nvarchar(45), 
     
 	_empresa int,    
 	_financiera int,
 	_auditor int,
-	_sicav int,
-	_id int
+	_sicav int
 )
 BEGIN
 
 	IF  _financiera=1 THEN
 		INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_empresas,add_financieras) VALUES (_Mes,_Anyo,_Provincia,1,1) ON DUPLICATE KEY UPDATE add_empresas=add_empresas+1 ,add_financieras=add_financieras+1;
 	else
-		IF  _auditor=1 THEN
+		IF  _empresa=1 THEN
+			INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_empresas) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE add_empresas=add_empresas+1;
+		END IF;		
+        IF  _auditor=1 THEN
 			INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_auditor) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE add_auditor=add_auditor+1;
 		END IF;
 		IF  _sicav=1 THEN
 			INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_sicav) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE add_sicav=add_sicav+1;
 		END IF;
-		IF  _empresa=1 THEN
-			INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_empresas) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE add_empresas=add_empresas+1;
-		END IF;
+
 	END IF;
 
 	
@@ -894,4 +895,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-13 22:41:50
+-- Dump completed on 2019-03-13 23:17:42
