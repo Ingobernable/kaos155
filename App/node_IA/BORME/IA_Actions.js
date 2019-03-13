@@ -59,10 +59,10 @@
                 argv.data._fecha.anyo,
                 argv.data._provincia,
                 argv.data._id_empresa,
-                argv.data.record._Empresa[0],
-                argv.data.record._Financiera[0],
-                argv.data.record._Auditor[0],
-                argv.data.record._Sicav[0]
+                argv.data.record._Empresa,
+                argv.data.record._Financiera,
+                argv.data.record._Auditor,
+                argv.data.record._Sicav
 
             ])
                 const cadSql = "CALL insert_Data_IA_constitucion(?,?,?,?,?,?,?,?)"
