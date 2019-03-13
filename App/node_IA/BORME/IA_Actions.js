@@ -59,10 +59,10 @@
                 argv.data._fecha.anyo,
                 argv.data._provincia,
                 argv.data._id_empresa,
-                argv.data.record._Empresa.toString() = '\u0001' ? 1 : 0,
-                argv.data.record._Financiera.toString() = '\u0001' ? 1 : 0,
-                argv.data.record._Auditor.toString() = '\u0001' ? 1 : 0,
-                argv.data.record._Sicav.toString() = '\u0001' ? 1 : 0
+                argv.data.record._Empresa.toString() == '\u0001' ? 1 : 0,
+                argv.data.record._Financiera.toString() == '\u0001' ? 1 : 0,
+                argv.data.record._Auditor.toString() == '\u0001' ? 1 : 0,
+                argv.data.record._Sicav.toString() == '\u0001' ? 1 : 0
 
             ]
             console.log(_p)
