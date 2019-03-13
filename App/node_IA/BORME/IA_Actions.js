@@ -77,7 +77,8 @@
                     argv.data.record._Sicav[0] = 1 ? 1 : 0
                     
                 ], function (err, rec) {
-                    //debugger
+                    if (err) 
+                        console.log(err)
                 })
             }
         
