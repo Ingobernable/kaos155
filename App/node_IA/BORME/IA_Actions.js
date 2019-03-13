@@ -61,10 +61,10 @@
                     argv.data._fecha.anyo,
                     argv.data._provincia,
                     argv.data._id_empresa,
-                    argv.data.record._Empresa[0],
-                    argv.data.record._Financiera[0],
-                    argv.data.record._Auditor[0],
-                    argv.data.record._Sicav[0]
+                    argv.data.record._Empresa[0]=1?1:0 ,
+                    argv.data.record._Financiera[0] = 1 ? 1 : 0,
+                    argv.data.record._Auditor[0] = 1 ? 1 : 0,
+                    argv.data.record._Sicav[0] = 1 ? 1 : 0
                     
                 ], function (err, rec) {
                     //debugger
