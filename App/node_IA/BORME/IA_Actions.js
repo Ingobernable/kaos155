@@ -66,7 +66,7 @@
 
             ]
             console.log(_p)
-                const cadSql = "CALL insert_Data_IA_constitucion(?,?,?,?,?,?,?,?)"
+                const cadSql = "CALL insert_Data_IA_constitucion(?,?,?,?,?,?,?)"
                 options.SQL.db.query(cadSql, _p, function (err, rec) {
                     if (err) 
                         console.log(err)
