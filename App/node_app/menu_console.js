@@ -156,6 +156,7 @@ module.exports = function (app, myArgs, callback) {
             require('./sql_common.js')(app, function (SQL) {
                 //debugger
                 getanyos(app, myArgs[0], myArgs[1], function (app, anyos, test) {
+                    console.log( myArgs[0] )
                     if (myArgs[0] == "IA") {
                         exit(myArgs, callback, true, test)
                     } else {
