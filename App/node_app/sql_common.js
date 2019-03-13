@@ -338,7 +338,7 @@ module.exports = function (app, callback) {
 
                             options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
                                 if (err) {
-                                    console.log(params)
+                                    console.log(err)
                                     debugger
                                 }
 
