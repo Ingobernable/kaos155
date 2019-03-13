@@ -54,7 +54,17 @@
         //debugger
             //console.log('movimiento', argv.data.acto._type)
         if (argv.data.acto._type == 'Constitucion') {
-                console.log(argv.data.record)
+            console.log([
+                argv.data._fecha.mes,
+                argv.data._fecha.anyo,
+                argv.data._provincia,
+                argv.data._id_empresa,
+                argv.data.record._Empresa[0] = 1 ? 1 : 0,
+                argv.data.record._Financiera[0] = 1 ? 1 : 0,
+                argv.data.record._Auditor[0] = 1 ? 1 : 0,
+                argv.data.record._Sicav[0] = 1 ? 1 : 0
+
+            ])
                 const cadSql = "CALL insert_Data_IA_constitucion(?,?,?,?,?,?,?,?)"
                 options.SQL.db.query(cadSql, [
                     argv.data._fecha.mes,
