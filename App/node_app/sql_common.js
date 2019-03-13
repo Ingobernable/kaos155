@@ -283,11 +283,11 @@ module.exports = function (app, callback) {
                             //const _params = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
 
 
-                            const _p = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
-                            var _cadsql = _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?)"
+                            const _p = [ params.data.mes, app.anyo , params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
+                            var _cadsql = _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?,?,?)"
                             if (params.table == "Auditor") {
                                 _p.push(params.empresa ? 1 : 0)
-                                _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?,?)"
+                                _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?,?,?,?)"
                             }
                             options.SQL.db.query(_cadsql, _p , function (err, _rec) {
                                 if (err != null || _rec[0][0] == null) {
