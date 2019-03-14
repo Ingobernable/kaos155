@@ -487,7 +487,7 @@ module.exports = function (app, options, transforms) {
                                     } else {
                                         _c = _d
                                     }
-                                    if (_c.toLowerCase().indexOf('consejero') > 0)
+                                    if (_c.toLowerCase().indexOf(/consejero$/gi) > 0)
                                         debugger
 
                                     app._.each(_map.replaces, function (e) {
