@@ -361,6 +361,7 @@ module.exports = function (app, options, transforms) {
                         cadena.toUpperCase().indexOf('SRL') > -1 ||
                         cadena.toUpperCase().indexOf('SLP') > -1 ||
                         cadena.toUpperCase().indexOf('CONSULTORES') > -1 ||
+                        cadena.toUpperCase().indexOf(' Lda') > -1 ||
                         cadena.toUpperCase().indexOf('S.COOP') > -1)
                 }
                 const _k = function (_isEmpresa,key,cadena) {
@@ -419,10 +420,6 @@ module.exports = function (app, options, transforms) {
                     .replace(/w SA\W/g, " SA.")
                     .replace(/w SL\W/g, " SL.")
                     .replace(/S\.L\./g, 'SL.')
-                    .replace(/S L$/g, 'SL.')
-                    .replace(/SL$/gi, 'SL.')
-                    .replace(/Sociedad Lim[a-zA-Z]{0,}$/gi, 'SL.')
-                    .replace(/Sl p[a-zA-Z]{0,}$/gi, 'SLP.')
                     .replace(/S\.A\./g, 'SA.')
 
                     .replace(/\.\B/g, "#$")
@@ -500,6 +497,14 @@ module.exports = function (app, options, transforms) {
                                     //    _c = _dir[d].toUpperCase()
                                     //}
                                     var _key = this.titleCase(app._.trim(item[0]).replace(/(#|%)/g, "."))
+
+                                    _c =_c.replace(/S L$/g, 'SL')
+                                        .replace(/SL$/gi, 'SL')
+                                        .replace(/ Sociedad Lim[a-zA-Z]{0,}$/gi, ' SL')
+                                        .replace(/Sl p[a-zA-Z]{0,}$/gi, 'SLP')
+
+
+
                                     const _isEmpresa = isEmpresa(_c)
                                     _c = _isEmpresa ? _c.toUpperCase() : _c
                                     
@@ -1025,6 +1030,10 @@ module.exports = function (app, options, transforms) {
                 }
             },
             getUnique: function (_this, _name, _db, callback) {
+
+                if (_name.indexOf(/S L$/gi) > 0)
+                    debugger
+
                 const _k = app.aguid(_name).toLowerCase()
                 if (_db == null)
                     debugger
@@ -1077,7 +1086,13 @@ module.exports = function (app, options, transforms) {
                     }
 
                     var _e = this.analizeEmpresaName(_Empresa[1], this._transforms.getPatern(this._transforms))
-                    
+
+                    if (_e.indexOf(/ S L$/gi) > 0)
+                        _e = _e.replace(/ S L$/gi, ' SL')
+
+                    if (_e.indexOf(/(sl p.{0,}$)/gi) > 0)
+                        _e = _e.replace(/(sl p.{0,}$)/gi, 'SLP')
+
                     this.getUnique(this.getUnique, _e , _db, function (_k) {
                         
                         

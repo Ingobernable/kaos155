@@ -283,6 +283,7 @@ module.exports = function (app, callback) {
                             //const _params = [params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
 
 
+
                             const _p = [ params.data.mes, app.anyo , params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
                             var _cadsql = _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?,?,?)"
                             if (params.table == "Auditor") {

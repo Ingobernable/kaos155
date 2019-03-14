@@ -220,7 +220,7 @@ module.exports = function (app, options) {
                     'audccconj',
                     'auditor sup',
                     'auditor',
-
+                    'censores',
                     'codemaso',
                     'condelegado',
                     'consejero',
