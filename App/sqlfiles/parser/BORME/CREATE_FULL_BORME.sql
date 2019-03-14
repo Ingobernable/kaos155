@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=8218956 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8463914 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -180,7 +180,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=2884275 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3273870 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,7 +205,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=12764633 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13080265 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -895,4 +895,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-14  2:19:48
+-- Dump completed on 2019-03-14  3:18:32
