@@ -176,6 +176,7 @@ module.exports = function (app, options) {
                     ['F', { f: _this.replaceAll }, 'SOCIEDAD LIMITADA', 'SL'],
                     ['F', { f: _this.replaceAll }, 'S.L.', 'SL'],
                     ['F', { f: _this.replaceAll }, 'S. L.', 'SL'],
+                    ['F', { f: _this.replace },  /S L$/gi, 'SL'],
                     ['F', { f: _this.replaceAll }, 'EN LIQUIDACION', ' LIQ'],
                     ['F', { f: _this.replaceAll }, 'EN LIQUIDACION', ' LIQ'],
                     ['F', { f: _this.replaceAll }, 'S. E. I.', 'SEI'],
@@ -193,11 +194,12 @@ module.exports = function (app, options) {
                     //["F", { f: _this.removeLastChar }, "."],
                 ], 
                 replaces: [
-                    [/(Sl Profesional|Sl Profesiona)/i, 'SLP'],
-                    [/(Sociedad Limi|Sociedad Limita)/i, 'SL'],
+                    [/(sl p.{0,}$)/gi, 'SLP'],
+                    [/So.{0,}\WLi.{0,}$/gi, 'SL'],
                     ["s'sl", "s sl"],
                     [/SRL$/i, " SL"],
-                    [/(SL$| SL$)/i, " SL"],   //Faura Casas Auditors Consultors'sl
+                    [/\(.{ 0, }\)$/,""],
+                    [/(SL$| SL$)/i, " SL"]   //Faura Casas Auditors Consultors'sl
                 ],
                 recortes: ['admmancom',
                     
@@ -226,6 +228,7 @@ module.exports = function (app, options) {
                     'consdelsol',
                     'entiddeposit',
                     'entregcont',
+                    
                     'gerente',
                     'liquidador',
                     'liquisoli',

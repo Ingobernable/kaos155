@@ -354,10 +354,12 @@ module.exports = function (app, options, transforms) {
                         cadena.toUpperCase().indexOf(' SL.') > -1 ||
                         cadena.toUpperCase().indexOf('SL') == cadena.length - 2 ||
                         cadena.toUpperCase().indexOf('SA') == cadena.length - 2 ||
+                        cadena.toUpperCase().indexOf('SLP') == cadena.length - 2 ||
                         cadena.toUpperCase().indexOf(' SA.') > -1 ||
                         cadena.toUpperCase().indexOf('SAT ') > -1 ||
                         cadena.toUpperCase().indexOf('SAU.') > -1 ||
                         cadena.toUpperCase().indexOf('SRL') > -1 ||
+                        cadena.toUpperCase().indexOf('SLP') > -1 ||
                         cadena.toUpperCase().indexOf('CONSULTORES') > -1 ||
                         cadena.toUpperCase().indexOf('S.COOP') > -1)
                 }
@@ -417,7 +419,10 @@ module.exports = function (app, options, transforms) {
                     .replace(/w SA\W/g, " SA.")
                     .replace(/w SL\W/g, " SL.")
                     .replace(/S\.L\./g, 'SL.')
+                    .replace(/S L$/g, 'SL.')
                     .replace(/SL$/gi, 'SL.')
+                    .replace(/Sociedad Lim[a-zA-Z]{0,}$/gi, 'SL.')
+                    .replace(/Sl p[a-zA-Z]{0,}$/gi, 'SLP.')
                     .replace(/S\.A\./g, 'SA.')
 
                     .replace(/\.\B/g, "#$")
@@ -474,8 +479,7 @@ module.exports = function (app, options, transforms) {
                                    // if (_p > -1) {
                                    ////     _d = _d.replaceAll(new RegExp(_map.recortes[_p][0], 'gi'), _map.recortes[_p][1])
                                     //} 
-                                    if (_d.toLowerCase().indexOf('audtctscon') > 0)
-                                        debugger
+
 
                                     var _p = app._.findIndex(_map.recortes, function (e) {
                                             return _d.toLowerCase().indexOf(e) > -1
@@ -486,6 +490,9 @@ module.exports = function (app, options, transforms) {
                                     } else {
                                         _c = _d
                                     }
+                                    if (_c.toLowerCase().indexOf('consejero') > 0)
+                                        debugger
+
                                     app._.each(_map.replaces, function (e) {
                                         if (_c.toLowerCase().indexOf(e[0]) > -1)
                                             _c = _c.replaceAll(new RegExp(e[0], 'gi'), e[1])

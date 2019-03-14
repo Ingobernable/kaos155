@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=7673339 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8218956 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -180,7 +180,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=2102795 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2884275 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,7 +205,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=12076166 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12764633 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -450,7 +450,7 @@ BEGIN
 	SET @Auditor= 1;
 	SET @Sicav = 0;
 	
-	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
+	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'BANK')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
 		SET @Financiera = 1;
 		SET @Directivo = 0;
 		SET @Empresa = 1;
@@ -600,7 +600,7 @@ BEGIN
 	SET @Empresa = 0;
 	SET @Financiera = 0;
 	SET @Auditor= 0;
-	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
+	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'BANK')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
 		SET @Financiera = 1;
 		SET @Directivo = 0;
 		SET @Empresa = 1;
@@ -613,7 +613,7 @@ BEGIN
 		SET @Empresa = 1;
 	END IF;
 	
-	IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
+	IF INSTR(UPPER(_NAME),'AUDITOR')>0 or INSTR(UPPER(_NAME),'ASESOR')>0 or INSTR(UPPER(_NAME),'CONSULTOR')>0 THEN
 		SET @Auditor= 1;
 		SET @Directivo = NOT _NAME REGEXP '.+( SA| SL| SLP| SRC)$';
 		SET @Empresa = if(@Directivo=1,0,1);
@@ -660,7 +660,7 @@ BEGIN
 		SET @Sicav = 0;
 
 		
-		IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
+		IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'BANK')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
 			SET @Financiera = 1;
 		END IF;
 	 
@@ -669,7 +669,7 @@ BEGIN
 			SET @Sicav = 1;
 		END IF;
 
-		IF INSTR(UPPER(_NAME),'AUDITOR')>0 THEN
+		IF INSTR(UPPER(_NAME),'AUDITOR')>0 or INSTR(UPPER(_NAME),'ASESOR')>0 or INSTR(UPPER(_NAME),'CONSULTOR')>0 THEN
 			SET @Auditor= 1;
 		END IF;
         
@@ -895,4 +895,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-13 23:17:42
+-- Dump completed on 2019-03-14  2:19:48
