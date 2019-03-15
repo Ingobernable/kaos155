@@ -498,6 +498,8 @@ module.exports = function (app, options, transforms) {
                                     //}
                                     var _key = this.titleCase(app._.trim(item[0]).replace(/(#|%)/g, "."))
 
+
+
                                     _c =_c.replace(/S L$/g, 'SL')
                                         .replace(/SL$/gi, 'SL')
                                         .replace(/ Sociedad Lim[a-zA-Z]{0,}$/gi, ' SL')
@@ -1031,7 +1033,7 @@ module.exports = function (app, options, transforms) {
             },
             getUnique: function (_this, _name, _db, callback) {
 
-                if (_name.indexOf(/S L$/gi) > 0)
+                if (_name.indexOf(/S L.{0,}$/gi) > 0)
                     debugger
 
                 const _k = app.aguid(_name).toLowerCase()

@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=8463914 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10531868 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -180,7 +180,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=3273870 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5579008 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,7 +205,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=13080265 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15660951 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -252,6 +252,10 @@ CREATE TABLE `borme_stadistics_keys` (
   `add_financieras` int(11) DEFAULT 0,
   `add_sicav` int(11) DEFAULT 0,
   `add_auditor` int(11) DEFAULT 0,
+  `sup_empresas` int(11) DEFAULT 0,
+  `sup_financieras` int(11) DEFAULT 0,
+  `sup_sicav` int(11) DEFAULT 0,
+  `sup_auditor` int(11) DEFAULT 0,
   PRIMARY KEY (`_mes`,`_provincia`,`_anyo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -735,6 +739,68 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_IA_movimiento` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_IA_movimiento`(
+	_type nvarchar(25),
+	_Mes int, 
+	_Anyo int, 
+	_Provincia nvarchar(45), 
+    
+	_empresa int,    
+	_financiera int,
+	_auditor int,
+	_sicav int
+)
+BEGIN
+	IF _Type='Constitucion' then
+		IF  _financiera=1 THEN
+			INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_empresas,add_financieras) VALUES (_Mes,_Anyo,_Provincia,1,1) ON DUPLICATE KEY UPDATE add_empresas=add_empresas+1 ,add_financieras=add_financieras+1;
+		else
+			IF  _empresa=1 THEN
+				INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_empresas) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE add_empresas=add_empresas+1;
+			END IF;		
+			IF  _auditor=1 THEN
+				INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_auditor) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE add_auditor=add_auditor+1;
+			END IF;
+			IF  _sicav=1 THEN
+				INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_sicav) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE add_sicav=add_sicav+1;
+			END IF;
+
+		END IF;
+	end if;
+	IF _Type='Extincion' then
+		IF  _financiera=1 THEN
+			INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,sup_empresas,sup_financieras) VALUES (_Mes,_Anyo,_Provincia,1,1) ON DUPLICATE KEY UPDATE sup_empresas=sup_empresas+1 ,sup_financieras=sup_financieras+1;
+		else
+			IF  _empresa=1 THEN
+				INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,sup_empresas) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE sup_empresas=sup_empresas+1;
+			END IF;		
+			IF  _auditor=1 THEN
+				INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,sup_auditor) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE sup_auditor=sup_auditor+1;
+			END IF;
+			IF  _sicav=1 THEN
+				INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,sup_sicav) VALUES (_Mes,_Anyo,_Provincia,1) ON DUPLICATE KEY UPDATE sup_sicav=sup_sicav+1;
+			END IF;
+
+		END IF;
+	end if;	
+
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP PROCEDURE IF EXISTS `Insert_Data_IA_seguimiento` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -895,4 +961,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-14  3:18:32
+-- Dump completed on 2019-03-14 16:19:35
