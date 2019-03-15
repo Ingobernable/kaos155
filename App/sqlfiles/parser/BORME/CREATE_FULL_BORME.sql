@@ -4,7 +4,7 @@ USE `bbdd_kaos155_borme`;
 --
 -- Host: 54.37.77.130    Database: bbdd_kaos155_borme
 -- ------------------------------------------------------
--- Server version	5.5.5-10.2.22-MariaDB-10.2.22+maria~stretch-log
+-- Server version	5.5.5-10.1.37-MariaDB-0+deb9u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=10531868 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10540004 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -151,10 +151,39 @@ CREATE TABLE `borme_empresas` (
   `_key` varchar(36) NOT NULL,
   `Nombre` varchar(250) CHARACTER SET utf8 DEFAULT NULL,
   `provincia` varchar(45) CHARACTER SET utf8 DEFAULT NULL,
+  `SA` bit(1) DEFAULT b'0',
+  `SL` bit(1) DEFAULT b'0',
+  `SLP` bit(1) DEFAULT b'0',
+  `SLL` bit(1) DEFAULT b'0',
+  `Anyo_constitucion` int(11) DEFAULT NULL,
+  `Domicilio` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `Objeto` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   PRIMARY KEY (`_key`),
   UNIQUE KEY `id` (`_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`%`*/ /*!50003 TRIGGER `bbdd_kaos155_borme`.`borme_empresas_BEFORE_INSERT` BEFORE INSERT ON `borme_empresas` FOR EACH ROW
+BEGIN
+
+ set new.SA = (new.Nombre REGEXP 'SA%');
+ set new.SL = (new.Nombre REGEXP 'SL%');
+ set new.SLL = (new.Nombre REGEXP 'SLL%');
+ set new.SLP = (new.Nombre REGEXP 'SLP%');
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `borme_keys`
@@ -166,21 +195,21 @@ DROP TABLE IF EXISTS `borme_keys`;
 CREATE TABLE `borme_keys` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `_key` varchar(36) NOT NULL,
-  `Nombre` text DEFAULT NULL,
+  `Nombre` text,
   `_Empresa` bit(1) DEFAULT b'0',
   `_Directivo` bit(1) DEFAULT b'0',
   `_Auditor` bit(1) DEFAULT b'0',
   `_Financiera` bit(1) DEFAULT b'0',
   `_Sicav` bit(1) DEFAULT b'0',
   `_Slp` bit(1) DEFAULT b'0',
-  `T_Relations` int(11) DEFAULT 0,
+  `T_Relations` int(11) DEFAULT '0',
   `ia_suspicius` bit(1) DEFAULT b'0',
   PRIMARY KEY (`id`),
   KEY `T_Relaciones` (`T_Relations`),
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=5579008 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5593579 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -194,7 +223,7 @@ CREATE TABLE `borme_relaciones` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `Empresa_key` char(55) NOT NULL,
   `Relation_key` char(55) NOT NULL,
-  `Type` int(11) DEFAULT 1,
+  `Type` int(11) DEFAULT '1',
   `Motivo` varchar(45) NOT NULL,
   `Cargo` varchar(45) NOT NULL,
   `Activo` bit(1) NOT NULL,
@@ -205,7 +234,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=15660951 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15671694 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -220,19 +249,19 @@ CREATE TABLE `borme_stadistics` (
   `Anyo` int(11) NOT NULL,
   `Acto` varchar(45) CHARACTER SET utf8 NOT NULL,
   `Motivo` varchar(55) CHARACTER SET utf8 NOT NULL,
-  `Enero` int(11) DEFAULT 0,
-  `Febrero` int(11) DEFAULT 0,
-  `Marzo` int(11) DEFAULT 0,
-  `Abril` int(11) DEFAULT 0,
-  `Mayo` int(11) DEFAULT 0,
-  `Junio` int(11) DEFAULT 0,
-  `Julio` int(11) DEFAULT 0,
-  `Agosto` int(11) DEFAULT 0,
-  `Septiembre` int(11) DEFAULT 0,
-  `Octubre` int(11) DEFAULT 0,
-  `Noviembre` int(11) DEFAULT 0,
-  `Diciembre` int(11) DEFAULT 0,
-  `Total` int(11) DEFAULT 0,
+  `Enero` int(11) DEFAULT '0',
+  `Febrero` int(11) DEFAULT '0',
+  `Marzo` int(11) DEFAULT '0',
+  `Abril` int(11) DEFAULT '0',
+  `Mayo` int(11) DEFAULT '0',
+  `Junio` int(11) DEFAULT '0',
+  `Julio` int(11) DEFAULT '0',
+  `Agosto` int(11) DEFAULT '0',
+  `Septiembre` int(11) DEFAULT '0',
+  `Octubre` int(11) DEFAULT '0',
+  `Noviembre` int(11) DEFAULT '0',
+  `Diciembre` int(11) DEFAULT '0',
+  `Total` int(11) DEFAULT '0',
   PRIMARY KEY (`Provincia`,`Anyo`,`Acto`,`Motivo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -248,14 +277,14 @@ CREATE TABLE `borme_stadistics_keys` (
   `_provincia` varchar(45) CHARACTER SET utf8 NOT NULL,
   `_mes` int(11) NOT NULL,
   `_anyo` int(11) NOT NULL,
-  `add_empresas` int(11) DEFAULT 0,
-  `add_financieras` int(11) DEFAULT 0,
-  `add_sicav` int(11) DEFAULT 0,
-  `add_auditor` int(11) DEFAULT 0,
-  `sup_empresas` int(11) DEFAULT 0,
-  `sup_financieras` int(11) DEFAULT 0,
-  `sup_sicav` int(11) DEFAULT 0,
-  `sup_auditor` int(11) DEFAULT 0,
+  `add_empresas` int(11) DEFAULT '0',
+  `add_financieras` int(11) DEFAULT '0',
+  `add_sicav` int(11) DEFAULT '0',
+  `add_auditor` int(11) DEFAULT '0',
+  `sup_empresas` int(11) DEFAULT '0',
+  `sup_financieras` int(11) DEFAULT '0',
+  `sup_sicav` int(11) DEFAULT '0',
+  `sup_auditor` int(11) DEFAULT '0',
   PRIMARY KEY (`_mes`,`_provincia`,`_anyo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -346,6 +375,48 @@ SET character_set_client = @saved_cs_client;
 --
 -- Dumping routines for database 'bbdd_kaos155_borme'
 --
+/*!50003 DROP FUNCTION IF EXISTS `IS _RegExp` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `IS _RegExp`( cadena nvarchar(255), search nvarchar(25)) RETURNS int(11)
+    DETERMINISTIC
+BEGIN
+
+RETURN (SELECT cadena REGEXP search);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `IS_RegExp` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `IS_RegExp`( cadena nvarchar(255), search nvarchar(25)) RETURNS int(11)
+    DETERMINISTIC
+BEGIN
+
+RETURN (SELECT cadena REGEXP search);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP FUNCTION IF EXISTS `lastIndex` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -961,4 +1032,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-14 16:19:35
+-- Dump completed on 2019-03-15  1:31:29
