@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=10540004 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15890456 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -158,32 +158,14 @@ CREATE TABLE `borme_empresas` (
   `Anyo_constitucion` int(11) DEFAULT NULL,
   `Domicilio` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `Objeto` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `_Auditor` bit(1) DEFAULT b'0',
+  `_Financiera` bit(1) DEFAULT b'0',
+  `_sicav` bit(1) DEFAULT b'0',
+  `_ute` bit(1) DEFAULT b'0',
   PRIMARY KEY (`_key`),
   UNIQUE KEY `id` (`_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
-/*!50003 SET collation_connection  = utf8_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`%`*/ /*!50003 TRIGGER `bbdd_kaos155_borme`.`borme_empresas_BEFORE_INSERT` BEFORE INSERT ON `borme_empresas` FOR EACH ROW
-BEGIN
-
- set new.SA = (new.Nombre REGEXP 'SA%');
- set new.SL = (new.Nombre REGEXP 'SL%');
- set new.SLL = (new.Nombre REGEXP 'SLL%');
- set new.SLP = (new.Nombre REGEXP 'SLP%');
-END */;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `borme_keys`
@@ -209,7 +191,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=5593579 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9952508 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -234,7 +216,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=15671694 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=22599238 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -511,7 +493,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_mes int, _anyo int, _NAME  nvarchar(250), _iKey  nvarchar(55),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT,_empresa INT)
 BEGIN
@@ -547,7 +529,11 @@ BEGIN
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
         		
         IF @Empresa=1  THEN
-			INSERT INTO borme_empresas (_id,_key,Nombre,provincia) VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia);
+			INSERT INTO borme_empresas (_id,_key,Nombre,provincia,SA,SL,SLL,SLP,_Auditor,_Financiera, _Sicav) 
+			VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia,_NAME REGEXP 'SA%',
+															_NAME REGEXP 'SL%',
+															_NAME REGEXP 'SLL%',
+															_NAME REGEXP 'SLP%',@Auditor,@Financiera,@Sicav);	
 		END IF;
     ELSE
 		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
@@ -665,7 +651,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(_mes int, _anyo int, IN _NAME  nvarchar(250) , IN _ikey  nvarchar(55),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
 BEGIN
@@ -685,6 +671,7 @@ BEGIN
 	IF lastIndex(_NAME,'SICAV')>0 THEN
 		SET @Sicav = 1;
 		SET @Directivo = 0;
+        SET @Financiera = 0;
 		SET @Empresa = 1;
 	END IF;
 	
@@ -702,7 +689,11 @@ BEGIN
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
         
         IF @Empresa=1  THEN
-			INSERT INTO borme_empresas (_id,_key,Nombre,provincia) VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia);
+			INSERT INTO borme_empresas (_id,_key,Nombre,provincia,SA,SL,SLL,SLP,_Auditor,_Financiera, _Sicav) 
+			VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia,_NAME REGEXP 'SA%',
+															_NAME REGEXP 'SL%',
+															_NAME REGEXP 'SLL%',
+															_NAME REGEXP 'SLP%',@Auditor,@Financiera,@Sicav);
 		END IF;
         
     ELSE
@@ -722,7 +713,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(_mes int, _anyo int, IN _NAME  nvarchar(250), _iKey  nvarchar(55), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
 BEGIN
@@ -742,18 +733,25 @@ BEGIN
 		
 		IF INSTR(UPPER(_NAME),' SICAV ')>0 THEN
 			SET @Sicav = 1;
+            SET @Financiera = 0;
 		END IF;
 
 		IF INSTR(UPPER(_NAME),'AUDITOR')>0 or INSTR(UPPER(_NAME),'ASESOR')>0 or INSTR(UPPER(_NAME),'CONSULTOR')>0 THEN
 			SET @Auditor= 1;
 		END IF;
         
-	IF @repeat = 0 THEN	
-        
+	IF @repeat = 0 THEN
+	
+
+         
 		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
         
-        INSERT INTO borme_empresas (_id,_key,Nombre,provincia) VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia);
+        INSERT INTO borme_empresas (_id,_key,Nombre,provincia,SA,SL,SLL,SLP,_Auditor,_Financiera, _Sicav) 
+        VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia,_NAME REGEXP 'SA%',
+														_NAME REGEXP 'SL%',
+														_NAME REGEXP 'SLL%',
+														_NAME REGEXP 'SLP%',@Auditor,@Financiera,@Sicav);
     ELSE
 		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius, @Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav ;
     END IF;
@@ -1032,4 +1030,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-15  1:31:29
+-- Dump completed on 2019-03-16  9:26:28

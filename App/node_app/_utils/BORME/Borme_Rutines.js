@@ -184,6 +184,10 @@ module.exports = function (app, options, transforms) {
                     null
                 ]
             },
+            test: {
+                empresas: new RegExp(/( SOCIEDAD ANO\w{ 0, }| SOCIEDAD LIM\w{ 0, }| S[AL]$ | S[AL][LP]]$ | S[AL]\.$ | Slp$ | SAT | SAU.| SRL | SLP | CONSULTORES | LDA | S.COOP) /gi)
+            }
+            ,
             _transforms: transforms,
             get: {
                 principal: function ($) {
@@ -336,18 +340,22 @@ module.exports = function (app, options, transforms) {
                 return [{ key: _keys.c, value: cadena }]
             },
             getDirectivos: function (type, cadena, _keys, _next, data) {
+                const _this = this
                 const _COriginal = cadena
                 const cuenta = function (str) {
                     str = str.replace(/[^.]/g, "").length
                     return str;
                 }
-                const isEmpresa = function (cadena) {
+                const isEmpresa = function (_this,cadena) {
                     if (cadena.substr(cadena.length - 1, 1) != ".")
                         cadena = cadena + '.'
                     cadena = cadena.toUpperCase().replaceAll(/#\$$/, ".")
 
                     //if (cadena.indexOf('&') > 0)
                     //    debugger
+                    //var 
+                    //return _this.test.empresas.test(cadena)
+
 
                     return (cadena.toUpperCase().indexOf('SOCIEDAD ANONIMA') > -1 ||
                         cadena.toUpperCase().indexOf('SOCIEDAD LIMITADA') > -1 ||
@@ -507,7 +515,7 @@ module.exports = function (app, options, transforms) {
 
 
 
-                                    const _isEmpresa = isEmpresa(_c)
+                                    const _isEmpresa = isEmpresa(_this, _c)
                                     _c = _isEmpresa ? _c.toUpperCase() : _c
                                     
                                     var _r = _k(_isEmpresa, _key, _c)
@@ -517,7 +525,8 @@ module.exports = function (app, options, transforms) {
 
                                     if (_r.value.indexOf("%")>-1 && !_isEmpresa)
                                         debugger
-                                    _ret.push(_r )
+                                    if(_r.key.length>0)
+                                        _ret.push(_r )
 
                                 }
                             }
