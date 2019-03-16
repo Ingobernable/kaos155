@@ -2,9 +2,9 @@ CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_contratos` /*!40100 DEFAULT CHARACT
 USE `bbdd_kaos155_contratos`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: bbdd_kaos155_contratos
+-- Host: 54.37.77.130    Database: bbdd_kaos155_contratos
 -- ------------------------------------------------------
--- Server version	5.7.20-log
+-- Server version	5.5.5-10.1.37-MariaDB-0+deb9u1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -146,7 +146,8 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` FUNCTION `UC_Words`( str VARCHAR(255) ) RETURNS  varchar(255) CHARSET utf8 DETERMINISTIC
+CREATE DEFINER=`root`@`localhost` FUNCTION `UC_Words`( str VARCHAR(255) ) RETURNS varchar(255) CHARSET utf8
+    DETERMINISTIC
 BEGIN  
   DECLARE c CHAR(1);  
   DECLARE s VARCHAR(255);  
@@ -197,7 +198,8 @@ CREATE DEFINER=`root`@`%` FUNCTION `_codeaux`(
 	_Descripcion nvarchar(255),
     _extra nvarchar(255)
     
-) RETURNS varchar(8) CHARSET utf8 DETERMINISTIC
+) RETURNS varchar(8) CHARSET utf8
+    DETERMINISTIC
 BEGIN
 
 	DECLARE _counter INT;
@@ -243,7 +245,8 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` FUNCTION `_type`( Empresa int, Directivo int, Auditor int, Financiera int) RETURNS int(11) DETERMINISTIC
+CREATE DEFINER=`root`@`localhost` FUNCTION `_type`( Empresa int, Directivo int, Auditor int, Financiera int) RETURNS int(11)
+    DETERMINISTIC
 BEGIN  
   DECLARE _r int; 
   IF Financiera >0 THEN
@@ -601,4 +604,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-09 19:57:50
+-- Dump completed on 2019-03-16 21:32:11

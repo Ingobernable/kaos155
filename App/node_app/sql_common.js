@@ -92,7 +92,7 @@ module.exports = function (app, callback) {
         },
         fileCredenciales: function (type, Command) {
             //if(Command="parser")
-            return app.path.normalize('sqlfiles/' + (Command.toLowerCase() != "IA" ? Command.toLowerCase():'PARSER') + '/cred_' + type.toLowerCase() + '.json')
+            return app.path.normalize('sqlfiles/creditos/cred_' + type.toLowerCase() + '.json')
             //if (Command = "scrap")
             //    return app.path.normalize('sqlfiles/' + Command.toLowerCase() + '\cred_' + type.toLowerCase() + '.json')
         },
