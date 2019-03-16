@@ -54,9 +54,12 @@
         //debugger
             //console.log('movimiento', argv.data.acto._type)
 
-        if (argv.data.acto._type == 'Constitucion' || argv.data.acto._type == 'Extincion') {
+        //if (argv.data.acto._type == 'Constitucion' || argv.data.acto._type == 'Extincion') {
             const _p = [
+                argv.data._id_empresa,
                 argv.data.acto._type,
+
+                argv.data._fecha.dia,
                 argv.data._fecha.mes,
                 argv.data._fecha.anyo,
                 argv.data._provincia,
@@ -64,16 +67,19 @@
                 argv.data.record._Empresa.toString() == '\u0001' ? 1 : 0,
                 argv.data.record._Financiera.toString() == '\u0001' ? 1 : 0,
                 argv.data.record._Auditor.toString() == '\u0001' ? 1 : 0,
-                argv.data.record._Sicav.toString() == '\u0001' ? 1 : 0
+                argv.data.record._Sicav.toString() == '\u0001' ? 1 : 0,
+
+                argv.data.acto._cargo,
+                argv.data.acto._value ? (argv.data.acto._type == 'Constitucion' ? argv.data.acto._value.substr(0, 8) : argv.data.acto._value.split('.')[0]): '',
 
             ]
             //console.log(_p)
-            const cadSql = "CALL insert_Data_IA_movimiento(?,?,?,?,?,?,?,?)"
+            const cadSql = "CALL insert_Data_IA_movimiento(?,?,?,?,?,?,?,?,?,?,?,?)"
                 options.SQL.db.query(cadSql, _p, function (err, rec) {
                     if (err) 
                         console.log(err)
                 })
-            }
+            //}
         
         //const cadSql = "SELECT Count(*) as _c FROM boletin_contratos WHERE _key=?"
         //options.SQL.boedb.query(cadSql, [argv.k], function (err, record) {
