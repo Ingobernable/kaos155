@@ -2,7 +2,7 @@
     tools: {
         relacion: {
             cadSql: "call Insert_Data_IA_seguimiento(?,?,?)",
-            data: function (argv) { return [argv.data._key_relation, argv.data._id_relation, iaparams.min_TRelations] },
+            data: function (argv, iaparams) { return [argv.data._key_relation, argv.data._id_relation, iaparams.min_TRelations] },
         },
         movimiento: {
             cadSql: "CALL insert_Data_IA_movimiento(?,?,?,?,?,?,?,?,?,?,?,?)",
@@ -43,12 +43,12 @@
             }
         }
     },
-    add: function (app, options,argv, iaparams) {
+    add: function (_tools, app, options,argv, iaparams) {
         //console.log('Nuevo ->cuenta contratos task')
 
         //let cadSql = "call sum_KeyTotales(?,?);"
         //var _cadOut = ""
-        options.SQL.boedb.query(this.tools.add.ask.cadSql, this.tools.add.data.ask(argv), function (err, record) {
+        options.SQL.boedb.query(_tools.cadSql.ask, _tools.data.ask(argv), function (err, record) {
             if (err)
                 console.log(err)
 
@@ -56,7 +56,7 @@
                 app._.each(record, function (rec) {
                    
                         if (rec[0]._COUNTER != null) {
-                            options.SQL.db.query(this.tools.add.insert.cadSql, this.tools.add.data.insert(argv, rec[0]) , function (err, recordInsert) {
+                            options.SQL.db.query(_tools.cadSql.insert, _tools.data.insert(argv, rec[0]) , function (err, recordInsert) {
                                console.log( "-" + argv.table.substr(0, 7) + " - " + argv.data.e + "->" + record[0].type)
                             })
                         } else {
@@ -68,12 +68,12 @@
         })
         
     },
-    relacion: function (app, options, argv, iaparams) {
+    relacion: function (_tools,app, options, argv, iaparams) {
         //console.log('relacion')
         //const cadSql = "call Insert_Data_IA_seguimiento(?,?,?)"
         
 
-        options.SQL.db.query(this.tools.relacion.cadSql, this.tools.relacion.data(argv) , function (err, rec) {
+        options.SQL.db.query(_tools.cadSql, _tools.data(argv, iaparams) , function (err, rec) {
             if (err || rec == null) {
                 console.log(err)
                 debugger
@@ -90,7 +90,7 @@
             //    debugger
         })
     },
-    movimiento: function (app, options, argv, iaparams) {
+    movimiento: function (_tools,app, options, argv, iaparams) {
         //debugger
             //console.log('movimiento', argv.data.acto._type)
 
@@ -98,7 +98,7 @@
             //const _p = 
             //console.log(_p)
             //const cadSql = "CALL insert_Data_IA_movimiento(?,?,?,?,?,?,?,?,?,?,?,?)"
-        options.SQL.db.query(this.tools.movimiento.cadSql, this.tools.movimiento.data(argv), function (err, rec) {
+        options.SQL.db.query(_tools.cadSql, _tools.data(argv), function (err, rec) {
                     if (err) 
                         console.log(err)
                 })

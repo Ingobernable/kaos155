@@ -17,7 +17,7 @@
         },
         ejec: function (_this,_func, _data) {
             //console.log(options)
-            _func(app, options,_data,_this._IAparameters)
+            _func(_this.functions.BORME.tools[_data.command],app, options,_data,_this._IAparameters)
         },
         listen: function (io, callback) {
             const _f = this.ejec
