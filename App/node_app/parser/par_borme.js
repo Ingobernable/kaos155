@@ -37,6 +37,21 @@ module.exports = function (app, callback) {
         grafos: require('../../node_grafos/common_grafos.js')(app),
         SQL: { db: null },
         parser: {
+            _analizer : function (options, _textos, _n, analizer, callback, type, recordset) {
+                //for (_n == 0; _n <= _textos.length-1; _n++) {
+                options.Rutines.analizeSimpleLine(options, _textos[_n], _n, recordset, function (_line, _n, recordset) {
+                    _line.data = recordset[0][0]
+                    _line.data.texto = _textos[_n]
+                    options.parser.saveEmpresaDeMovimiento(_line, function () {
+                        if (_n == _textos.length - 1) {
+                            callback(options, type, recordset, _line)
+                        } else {
+                            analizer(options, _textos, _n + 1, analizer, callback, type, recordset)
+                        }
+                    })
+                    //})
+                }, recordset)
+            },
             printOut: function (app, options, _ci, _data, _cf) {
                 if (app.myArgs[app.myArgs.length - 1] != 'VERBOSE')
                     app.process.stdout.write(app, options, _ci, _data, _cf)
@@ -66,13 +81,13 @@ module.exports = function (app, callback) {
             saveLineContenido: function (_e, _linea, _cb, _func) {
                 //var _that = this
                 if (_e < _linea.contenido.length) {
-                    if (options.Rutines.SQL[_linea.contenido[_e].type] == null)
+                    if (options.Rutines.SQL()[_linea.contenido[_e].type] == null)
                         debugger
                     //
                     // !!! Magic Point ¡¡¡¡
                     // ejecutamos una rutina especifica dependiendo del valor de Type
                     // 
-                    options.Rutines.SQL[_linea.contenido[_e].type](_linea, _linea.contenido[_e], function (_Dl, idRelacion, params, Active) {
+                    options.Rutines.SQL()[_linea.contenido[_e].type](_linea, _linea.contenido[_e], function (_Dl, idRelacion, params, Active) {
                         if (params == null) {
                             params = { k: null }
                         }
@@ -206,22 +221,22 @@ module.exports = function (app, callback) {
 
                         var _n = 0
 
-                        const _analizer = function (options,_textos,_n, analizer, callback, type, recordset) {
+                        ///const _analizer = function (options,_textos,_n, analizer, callback, type, recordset) {
                             //for (_n == 0; _n <= _textos.length-1; _n++) {
-                            options.Rutines.analizeSimpleLine(options, _textos[_n], _n, recordset, function (_line, _n, recordset) {
-                                _line.data = recordset[0][0]
-                                _line.data.texto = _textos[_n]
-                                options.parser.saveEmpresaDeMovimiento(_line, function () {
-                                    if (_n == _textos.length - 1) {
-                                        callback(options,type,recordset,_line)
-                                    } else {
-                                        analizer(options, _textos, _n+1, analizer, callback, type, recordset)
-                                    }
-                                })
+                         //   options.Rutines.analizeSimpleLine(options, _textos[_n], _n, recordset, function (_line, _n, recordset) {
+                         //       _line.data = recordset[0][0]
+                         //       _line.data.texto = _textos[_n]
+                         //       options.parser.saveEmpresaDeMovimiento(_line, function () {
+                         //           if (_n == _textos.length - 1) {
+                         //               callback(options,type,recordset,_line)
+                         //           } else {
+                         //               analizer(options, _textos, _n+1, analizer, callback, type, recordset)
+                         //           }
+                          //      })
                                 //})
-                            }, recordset)
-                        }
-                        _analizer(options, _textos, 0, _analizer, function (options, type, recordset,_line) {
+                          //  }, recordset)
+                        //}
+                        _this._analizer(options, _textos, 0, _this._analizer, function (options, type, recordset,_line) {
                             const endAnalizeDate = new Date()
                      
                             options.SQL.scrapDb.SQL.db.query("UPDATE _" + type.toLowerCase() + "_text_" + app.anyo + " set parser=1 where ID_BORME = ? ", [recordset[0][0].ID_BORME], function (err) {
@@ -246,7 +261,7 @@ module.exports = function (app, callback) {
                                         _u: timex._c._u + 'update text ' + timex.update + 'ms \x1b[0m',
                                         _s: '\x1b[1m' + (_line.ia_suspicius == 1 ? '\x1b[31m' : '\x1b[37m') + _line.e
                                     }
-                                    console.log(timex._t._f, timex._t._p, timex._t._e, timex._t._c, timex._t._u, timex._t._s)
+                                    console.log(timex._t._f, timex._t._p, timex._t._e, timex._t._c, timex._t._u, timex._t._s,_line.original.length)
                                 }
                                 if (err)
                                     debugger

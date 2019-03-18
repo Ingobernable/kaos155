@@ -189,6 +189,79 @@ module.exports = function (app, options, transforms) {
             }
             ,
             _transforms: transforms,
+            _normalize: {
+                _setFinSociety: function (_c) {
+                    return _c.replace(/S L$/g, 'SL')
+                        .replace(/SL$/gi, 'SL')
+                        .replace(/ Sociedad Lim[a-zA-Z]{0,}$/gi, ' SL')
+                        .replace(/Sl p[a-zA-Z]{0,}$/gi, 'SLP')
+                },
+                _adjustFinLineSociety: function (_c) {
+
+                    return _c.replace(/S\W COOP\W/g, "/S_COOP_")
+                        .replace(/AND\.\W/g, " ")
+                        .replace(/w SA\W/g, " SA.")
+                        .replace(/w SL\W/g, " SL.")
+                        .replace(/S\.L\./g, 'SL.')
+                        .replace(/S\.A\./g, 'SA.')
+
+                        .replace(/\.\B/g, "#$")
+                        .replace(/\. /g, "#$")
+                        .replace(/\./g, "#")
+                        .replace(/\_/g, ".")
+                }
+            },
+            _functions: {
+                isEmpresa : function (cadena) {
+                    if (cadena.substr(cadena.length - 1, 1) != ".")
+                        cadena = cadena + '.'
+                    cadena = cadena.toUpperCase().replaceAll(/#\$$/, ".")
+
+                    //if (cadena.indexOf('&') > 0)
+                    //    debugger
+                    //var 
+                    //return _this.test.empresas.test(cadena)
+
+
+                    return (cadena.toUpperCase().indexOf('SOCIEDAD ANONIMA') > -1 ||
+                        cadena.toUpperCase().indexOf('SOCIEDAD LIMITADA') > -1 ||
+                        cadena.toUpperCase().indexOf(' SL.') > -1 ||
+                        cadena.toUpperCase().indexOf('SL') == cadena.length - 2 ||
+                        cadena.toUpperCase().indexOf('SA') == cadena.length - 2 ||
+                        cadena.toUpperCase().indexOf('SLP') == cadena.length - 2 ||
+                        cadena.toUpperCase().indexOf(' SA.') > -1 ||
+                        cadena.toUpperCase().indexOf('SAT ') > -1 ||
+                        cadena.toUpperCase().indexOf('SAU.') > -1 ||
+                        cadena.toUpperCase().indexOf('SRL') > -1 ||
+                        cadena.toUpperCase().indexOf('SLP') > -1 ||
+                        cadena.toUpperCase().indexOf('CONSULTORES') > -1 ||
+                        cadena.toUpperCase().indexOf(' Lda') > -1 ||
+                        cadena.toUpperCase().indexOf('S.COOP') > -1)
+                },
+                found : function (cargos, _cadena) {
+                    let cad = _cadena
+                    let _found = false
+                    let _counter = 0
+
+                    for (_counter in cargos) {
+
+                        if (cad.toUpperCase().indexOf(cargos[_counter].toUpperCase()) > -1) {
+                            const minus = cad.indexOf(cargos[_counter]) > -1
+                            _found = true
+                            var _rep = cargos[_counter].replace(/\ /g, "").replace(/\./g, "#")
+                            cad = app._.trim(cad.replaceAll(minus ? cargos[_counter] : cargos[_counter].toUpperCase(), minus ? _rep : _rep.toUpperCase())) //.trim()
+                        }
+                    }
+                    return { found: _found, cadena: cad }
+                },
+                _k : function (_isEmpresa, key, cadena) {
+                    return {
+                        Empresa: _isEmpresa,
+                        key: key,
+                        value: _isEmpresa ? cadena.toUpperCase() : cadena
+                    }
+                }
+            },
             get: {
                 principal: function ($) {
                     //console.log($('analisis modalidad').html())
@@ -341,70 +414,24 @@ module.exports = function (app, options, transforms) {
             },
             getDirectivos: function (type, cadena, _keys, _next, data) {
                 const _this = this
-                const _COriginal = cadena
-                const cuenta = function (str) {
-                    str = str.replace(/[^.]/g, "").length
-                    return str;
-                }
-                const isEmpresa = function (_this,cadena) {
-                    if (cadena.substr(cadena.length - 1, 1) != ".")
-                        cadena = cadena + '.'
-                    cadena = cadena.toUpperCase().replaceAll(/#\$$/, ".")
+                //const _COriginal = cadena
+                //const cuenta = function (str) {
+                //    str = str.replace(/[^.]/g, "").length
+                //    return str;
+                //}
+                
 
-                    //if (cadena.indexOf('&') > 0)
-                    //    debugger
-                    //var 
-                    //return _this.test.empresas.test(cadena)
-
-
-                    return (cadena.toUpperCase().indexOf('SOCIEDAD ANONIMA') > -1 ||
-                        cadena.toUpperCase().indexOf('SOCIEDAD LIMITADA') > -1 ||
-                        cadena.toUpperCase().indexOf(' SL.') > -1 ||
-                        cadena.toUpperCase().indexOf('SL') == cadena.length - 2 ||
-                        cadena.toUpperCase().indexOf('SA') == cadena.length - 2 ||
-                        cadena.toUpperCase().indexOf('SLP') == cadena.length - 2 ||
-                        cadena.toUpperCase().indexOf(' SA.') > -1 ||
-                        cadena.toUpperCase().indexOf('SAT ') > -1 ||
-                        cadena.toUpperCase().indexOf('SAU.') > -1 ||
-                        cadena.toUpperCase().indexOf('SRL') > -1 ||
-                        cadena.toUpperCase().indexOf('SLP') > -1 ||
-                        cadena.toUpperCase().indexOf('CONSULTORES') > -1 ||
-                        cadena.toUpperCase().indexOf(' Lda') > -1 ||
-                        cadena.toUpperCase().indexOf('S.COOP') > -1)
-                }
-                const _k = function (_isEmpresa,key,cadena) {
-                    return {
-                        Empresa: _isEmpresa,
-                        key: key,
-                        value: _isEmpresa ? cadena.toUpperCase() : cadena
-                    }
-                }
                 const _ret = []
                 let i = 0
 
-                const found = function (cargos, _cadena) {
-                    let cad = _cadena
-                    let _found = false
-                    let _counter = 0
-
-                    for (_counter in cargos) {
-
-                        if (cad.toUpperCase().indexOf(cargos[_counter].toUpperCase()) > -1) {
-                            const minus = cad.indexOf(cargos[_counter]) > -1
-                            _found = true
-                            var _rep = cargos[_counter].replace(/\ /g, "").replace(/\./g, "#")
-                            cad = app._.trim(cad.replaceAll(minus ? cargos[_counter] : cargos[_counter].toUpperCase(), minus?_rep:_rep.toUpperCase() ) ) //.trim()
-                        }
-                    }
-                    return { found: _found, cadena: cad }
-                }
                 if (cadena.toUpperCase() == cadena)
                     cadena = cadena.capitalizeAllFirstLetter()
-                const _f = found([], cadena)
+
+                const _f = _this._functions.found([], cadena)
                 cadena = _f.cadena
                 
                 //_cad = app._.trim( this.titleCase(_f.cadena.split(":")[0] + ":") )
-                cadena = found([ app._.trim(this.titleCase(_f.cadena.split(":")[0] + ":")) ], cadena).cadena
+                cadena = _this._functions.found([ app._.trim(_this.titleCase(_f.cadena.split(":")[0] + ":")) ], cadena).cadena
 
 
                 const _valores = []
@@ -419,21 +446,22 @@ module.exports = function (app, options, transforms) {
                         cadena = cadena.replaceAll(o, _x.replaceAll(/[.]S/,". S").replaceAll(".","_"))
                     //}
                 })
-                cadena = this.transforms(app._.trim(cadena), this._transforms.getPatern(this._transforms).Directivos)
+                cadena = _this.transforms(app._.trim(cadena), _this._transforms.getPatern(_this._transforms).Directivos)
                 
                 //cadena = this.analizeEmpresaName(cadena, this._transforms.getPatern(this._transforms))
+                cadena = _this._normalize._adjustFinLineSociety(cadena)
 
-                cadena = cadena.replace(/S\W COOP\W/g, "/S_COOP_")
-                    .replace(/AND\.\W/g, " ")
-                    .replace(/w SA\W/g, " SA.")
-                    .replace(/w SL\W/g, " SL.")
-                    .replace(/S\.L\./g, 'SL.')
-                    .replace(/S\.A\./g, 'SA.')
+                //cadena = cadena.replace(/S\W COOP\W/g, "/S_COOP_")
+                //    .replace(/AND\.\W/g, " ")
+                //    .replace(/w SA\W/g, " SA.")
+                //    .replace(/w SL\W/g, " SL.")
+                //    .replace(/S\.L\./g, 'SL.')
+                //    .replace(/S\.A\./g, 'SA.')
 
-                    .replace(/\.\B/g, "#$")
-                    .replace(/\. /g, "#$")
-                    .replace(/\./g, "#") 
-                    .replace(/\_/g, ".")
+                //   .replace(/\.\B/g, "#$")
+                //    .replace(/\. /g, "#$")
+                 //   .replace(/\./g, "#") 
+                 //   .replace(/\_/g, ".")
                 //if (cadena != _c)
                 //    debugger
 
@@ -451,6 +479,7 @@ module.exports = function (app, options, transforms) {
                             _valores[_valores.length] = app._.trim( _preval[i] ).replace(/#/g, ".").replace(/\$/g, "")
                         }
                 }
+
                 for (i in _valores) {
                     if (app._.trim( _valores[i] ).length > 0) {
                         const item = app._.trim( _valores[i]).split(": ")
@@ -469,12 +498,12 @@ module.exports = function (app, options, transforms) {
                                     _dir[d] = _dir[d].replaceAll("/", "").replace(/(%|_)/g, ".") //.replaceAll("%", ".").replaceAll("_", ".")
 
                                     
-                                    const _map = this._transforms.getPatern(this._transforms)
+                                    const _map = _this._transforms.getPatern(_this._transforms)
 
                                     var _c = ""
 
                                     //if (!_isEmpresa) {
-                                    var _d = this.titleCase(_dir[d].replaceAll(".", ""))
+                                    var _d = _this.titleCase(_dir[d].replaceAll(".", ""))
 
 
                                 
@@ -504,21 +533,22 @@ module.exports = function (app, options, transforms) {
                                     })                                    //} else {
                                     //    _c = _dir[d].toUpperCase()
                                     //}
-                                    var _key = this.titleCase(app._.trim(item[0]).replace(/(#|%)/g, "."))
+                                    var _key = _this.titleCase(app._.trim(item[0]).replace(/(#|%)/g, "."))
+
+
+                                    _c = _this._normalize._setFinSociety(_c)
+
+                                    //_c =_c.replace(/S L$/g, 'SL')
+                                    //    .replace(/SL$/gi, 'SL')
+                                    //    .replace(/ Sociedad Lim[a-zA-Z]{0,}$/gi, ' SL')
+                                    //    .replace(/Sl p[a-zA-Z]{0,}$/gi, 'SLP')
 
 
 
-                                    _c =_c.replace(/S L$/g, 'SL')
-                                        .replace(/SL$/gi, 'SL')
-                                        .replace(/ Sociedad Lim[a-zA-Z]{0,}$/gi, ' SL')
-                                        .replace(/Sl p[a-zA-Z]{0,}$/gi, 'SLP')
-
-
-
-                                    const _isEmpresa = isEmpresa(_this, _c)
+                                    const _isEmpresa = _this._functions.isEmpresa(_c)
                                     _c = _isEmpresa ? _c.toUpperCase() : _c
                                     
-                                    var _r = _k(_isEmpresa, _key, _c)
+                                    var _r = _this._functions._k(_isEmpresa, _key, _c)
          
                                     if (_r.value == _dir[d].toUpperCase() && !_isEmpresa)
                                         debugger
@@ -541,190 +571,193 @@ module.exports = function (app, options, transforms) {
             //
             //
             // 
-            SQL: {
-                Concurso: function (_linea, __data, callback) {
-                    callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: app._.upperFirst(__data.values.value.toLowerCase()) }, 0)
-                },
-                Varios: function (_linea, __data, callback) {
-                    callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: app._.upperFirst(__data.values.value.toLowerCase()) }, 0)
-                },
-                Constitucion: function (_linea, __data, callback) {
-                    callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
-                },
-                AmpliaCapital: function (_linea, __data, callback) {
-                    //debugger
-                    callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
-                },
-                Disolucion: function (_linea, __data, callback) {
-                    //debugger
-                    callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
-                },
-                Extincion: function (_linea, __data, callback) {
-                    //debugger
-                    callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
-                },
-                SaveDirectivo: function (_linea, __data, Active, callback) {
-                    const capitalizeFirstLetter= function(string) {
-                        return string.charAt(0).toUpperCase() + string.slice(1);
-                    }
-                    var _e = 0
-                    
-                    __data.values.value = __data.values.value.replaceAll("#$", "")
-                    
-                    var _lesp = __data.values.value.lastIndexOf('#')
-                    var _l = __data.values.value.length
-                    if (_l - _lesp < 4)
-                        __data.values.value = __data.values.value.substr(0, _lesp )
+            SQL: function () {
+                const _this = this
+                return {
+                    Concurso: function (_linea, __data, callback) {
+                        callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: app._.upperFirst(__data.values.value.toLowerCase()) }, 0)
+                    },
+                    Varios: function (_linea, __data, callback) {
+                        callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: app._.upperFirst(__data.values.value.toLowerCase()) }, 0)
+                    },
+                    Constitucion: function (_linea, __data, callback) {
+                        callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
+                    },
+                    AmpliaCapital: function (_linea, __data, callback) {
+                        //debugger
+                        callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
+                    },
+                    Disolucion: function (_linea, __data, callback) {
+                        //debugger
+                        callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
+                    },
+                    Extincion: function (_linea, __data, callback) {
+                        //debugger
+                        callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
+                    },
+                    SaveDirectivo: function (_linea, __data, Active, callback) {
+                        const capitalizeFirstLetter = function (string) {
+                            return string.charAt(0).toUpperCase() + string.slice(1);
+                        }
+                        var _e = 0
 
-                    var _esp = __data.values.value.indexOf('#')
-                    if (_esp > -1)
-                        __data.values.value = __data.values.value.replaceAll("#", ".")
-                    
+                        __data.values.value = _this._normalize._setFinSociety( __data.values.value.replaceAll("#$", "") )
 
-                    var _table = __data.values.key.toUpperCase().indexOf("AUD")>-1 ? "Auditor" : __data.values.value == __data.values.value.toUpperCase() ? "Empresa" :  "Directivo"
-                    __data.values.Empresa = (_table == "Empresa")
-                    __data.values.Auditor = (_table == "Auditor")
-                   
-                    var _exclude = false
-                    app._.forEach(options.diccionario.exclude, function (value) {
-                        if (app._.toLower(__data.values.value).indexOf(value) == 0)
-                            _exclude = true
-                    })
+                        var _lesp = __data.values.value.lastIndexOf('#')
+                        var _l = __data.values.value.length
+                        if (_l - _lesp < 4)
+                            __data.values.value = __data.values.value.substr(0, _lesp)
 
-                    app._.forEach(options.diccionario.recorta, function (value) {
-                        if (app._.toLower(__data.values.value).indexOf(value) > -1)
-                            __data.values.value = __data.values.value.substr(__data.values.value, app._.toLower(__data.values.value).indexOf(value) - 1)
-                    })
-
-                    if (!_exclude) {
+                        var _esp = __data.values.value.indexOf('#')
+                        if (_esp > -1)
+                            __data.values.value = __data.values.value.replaceAll("#", ".")
 
 
-                        if (__data.values.value.indexOf('#') > -1)
-                            debugger
-                        //__data.values.value = __data.values.value.replaceAll("#",".")
-                        if (__data.values.value.indexOf('Administrad') > -1 && _table!="Auditor")
-                            debugger
+                        var _table = __data.values.key.toUpperCase().indexOf("AUD") > -1 ? "Auditor" : __data.values.value == __data.values.value.toUpperCase() ? "Empresa" : "Directivo"
+                        __data.values.Empresa = (_table == "Empresa")
+                        __data.values.Auditor = (_table == "Auditor")
 
-                        //if (_table == "Directivo")
-                        //    __data.values.value = capitalizeFirstLetter(__data.values.value)
+                        var _exclude = false
+                        app._.forEach(options.diccionario.exclude, function (value) {
+                            if (app._.toLower(__data.values.value).indexOf(value) == 0)
+                                _exclude = true
+                        })
+
+                        app._.forEach(options.diccionario.recorta, function (value) {
+                            if (app._.toLower(__data.values.value).indexOf(value) > -1)
+                                __data.values.value = __data.values.value.substr(__data.values.value, app._.toLower(__data.values.value).indexOf(value) - 1)
+                        })
+
+                        if (!_exclude) {
 
 
-                        
-                        //if (__data.values.key.toLowerCase() == "juzgado")
-                        //    __data.values.value = capitalizeFirstLetter(__data.values.key + " " + __data.values.value)
+                            if (__data.values.value.indexOf('#') > -1)
+                                debugger
+                            //__data.values.value = __data.values.value.replaceAll("#",".")
+                            if (__data.values.value.indexOf('Administrad') > -1 && _table != "Auditor")
+                                debugger
 
-                        if (__data.values.value.indexOf(":") > -1 && __data.values.value.indexOf(".") > 0)
-                            if (__data.values.value.indexOf(":") > __data.values.value.indexOf("."))
-                                __data.values.value = __data.values.value.substr(0,__data.values.value.indexOf("."))
+                            //if (_table == "Directivo")
+                            //    __data.values.value = capitalizeFirstLetter(__data.values.value)
+
+
+
+                            //if (__data.values.key.toLowerCase() == "juzgado")
+                            //    __data.values.value = capitalizeFirstLetter(__data.values.key + " " + __data.values.value)
+
+                            if (__data.values.value.indexOf(":") > -1 && __data.values.value.indexOf(".") > 0)
+                                if (__data.values.value.indexOf(":") > __data.values.value.indexOf("."))
+                                    __data.values.value = __data.values.value.substr(0, __data.values.value.indexOf("."))
 
                             //debugger
-                        if (__data.values.value.indexOf(".") > -1) {
-                            var _p = app._.findIndex(options.Rutines.maps.Replace, function (o) {
-                                return __data.values.value.toUpperCase().indexOf(o[0].toUpperCase()) > -1
-                            })
-                            if (_p > -1) {
-                                __data.values.value = __data.values.value.toUpperCase().replaceAll(options.Rutines.maps.Replace[_p][0].toUpperCase(), options.Rutines.maps.Replace[_p][1].toUpperCase())
-                            }
-                            if (__data.values.value.lastIndexOf(".") == __data.values.value.length - 1)
-                                __data.values.value = __data.values.value.substr(0, __data.values.value.lastIndexOf("."))
-
-
-                        }
-  
-                        const _emp = app._.findIndex(options.Rutines.maps.Empresas, function (o) { return __data.values.value.toUpperCase().indexOf(" " + o.toUpperCase()) > -1 })
-                        
-                        if (_emp > -1 ) {
-                            const _cl = options.Rutines.maps.Empresas[_emp]
-                            const _e = __data.values.value.toUpperCase().lastIndexOf(" " + _cl)
-                            if (_e + 1 + _cl.length == __data.values.value.length) {
-
-                                __data.values.value = __data.values.value.substr(0, _e + 1 + _cl.length).toUpperCase()
-                                if (!__data.values.Auditor) {
-                                    _table = "Empresa"
-                                }
-                                __data.values.Empresa = true
-                            } 
-                            //__data.values.Directivo=false
-                        } else {
-                            if (!__data.values.Auditor) {
-                                _table = "Directivo"
-                                __data.values.value = capitalizeFirstLetter(__data.values.value)
-                            }
-                        }
-                        if (__data.values.value.length > 4) {
-                            const _m = __data.values.value.match(/(SL\.|SA\.)/g)
-                            if (_m)
-                                __data.values.value = __data.values.value.substr(0, __data.values.value.indexOf(_m[0])+2)
-
-                            app.BOLETIN.Rutines.getUnique(app.BOLETIN.Rutines.getUnique, __data.values.value, app.BOLETIN.SQL.db, function (_k) {
-                                const go = function (options, params) {
-                                    app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
-
-                                        if (_directivo.length > 0) {
-                                            
-                                            if (Active) {
-                                                options.parser.printOut(app, options, '\x1b[32m', '', '')
-                                            } else {
-                                                options.parser.printOut(app, options, '\x1b[31m', '', '')
-                                            }
-                                            options.parser.printOut(app, options, '', __data.values.Empresa ? "e" : __data.values.Auditor ? "a" : "d", '')
-                                            options.parser.printOut(app, options, '', '', '\x1b[0m')
-                                            callback(__data, _directivo[0][0].Id, params, Active)
-                                        }
-                                    }, function (params) {
-                                        callback(null)
-                                    })
-                                }
-
-
-                                options.grafos.push.Object({
-                                    table: _table,
-                                    empresa: __data.values.Empresa ? true : false,
-                                    e: __data.values.value,
-                                    k: _k.replaceAll("-", ""), //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
-                                    data: _linea.data
-                                }, function (params) {
-                                    go(options, params)
+                            if (__data.values.value.indexOf(".") > -1) {
+                                var _p = app._.findIndex(options.Rutines.maps.Replace, function (o) {
+                                    return __data.values.value.toUpperCase().indexOf(o[0].toUpperCase()) > -1
                                 })
+                                if (_p > -1) {
+                                    __data.values.value = __data.values.value.toUpperCase().replaceAll(options.Rutines.maps.Replace[_p][0].toUpperCase(), options.Rutines.maps.Replace[_p][1].toUpperCase())
+                                }
+                                if (__data.values.value.lastIndexOf(".") == __data.values.value.length - 1)
+                                    __data.values.value = __data.values.value.substr(0, __data.values.value.lastIndexOf("."))
 
-                            })
-                        } else {
-                            if (Active) {
-                                options.parser.printOut(app, options, '\x1b[32m', '', '')
-                            } else {
-                                options.parser.printOut(app, options, '\x1b[31m', '', '')
+
                             }
-                            options.parser.printOut(app, options, '',  "?", '')
-                            options.parser.printOut(app, options, '', '', '\x1b[0m')
+                            
+                            const _emp = app._.findIndex(options.Rutines.maps.Empresas, function (o) { return __data.values.value.toUpperCase().indexOf(" " + o.toUpperCase()) > -1 })
+
+                            if (_emp > -1) {
+                                const _cl = options.Rutines.maps.Empresas[_emp]
+                                const _e = __data.values.value.toUpperCase().lastIndexOf(" " + _cl)
+                                if (_e + 1 + _cl.length == __data.values.value.length) {
+
+                                    __data.values.value = __data.values.value.substr(0, _e + 1 + _cl.length).toUpperCase()
+                                    if (!__data.values.Auditor) {
+                                        _table = "Empresa"
+                                    }
+                                    __data.values.Empresa = true
+                                }
+                                //__data.values.Directivo=false
+                            } else {
+                                if (!__data.values.Auditor) {
+                                    _table = "Directivo"
+                                    __data.values.value = capitalizeFirstLetter(__data.values.value)
+                                }
+                            }
+                            if (__data.values.value.length > 4) {
+                                const _m = __data.values.value.match(/(SL\.|SA\.)/g)
+                                if (_m)
+                                    __data.values.value = __data.values.value.substr(0, __data.values.value.indexOf(_m[0]) + 2)
+
+                                app.BOLETIN.Rutines.getUnique(app.BOLETIN.Rutines.getUnique, __data.values.value, app.BOLETIN.SQL.db, function (_k) {
+                                    const go = function (options, params) {
+                                        app.commonSQL.SQL.commands.insert.Borme.keys(options, params, function (params, _directivo) {
+
+                                            if (_directivo.length > 0) {
+
+                                                if (Active) {
+                                                    options.parser.printOut(app, options, '\x1b[32m', '', '')
+                                                } else {
+                                                    options.parser.printOut(app, options, '\x1b[31m', '', '')
+                                                }
+                                                options.parser.printOut(app, options, '', __data.values.Empresa ? "e" : __data.values.Auditor ? "a" : "d", '')
+                                                options.parser.printOut(app, options, '', '', '\x1b[0m')
+                                                callback(__data, _directivo[0][0].Id, params, Active)
+                                            }
+                                        }, function (params) {
+                                            callback(null)
+                                        })
+                                    }
+
+
+                                    options.grafos.push.Object({
+                                        table: _table,
+                                        empresa: __data.values.Empresa ? true : false,
+                                        e: __data.values.value,
+                                        k: _k.replaceAll("-", ""), //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
+                                        data: _linea.data
+                                    }, function (params) {
+                                        go(options, params)
+                                    })
+
+                                })
+                            } else {
+                                if (Active) {
+                                    options.parser.printOut(app, options, '\x1b[32m', '', '')
+                                } else {
+                                    options.parser.printOut(app, options, '\x1b[31m', '', '')
+                                }
+                                options.parser.printOut(app, options, '', "?", '')
+                                options.parser.printOut(app, options, '', '', '\x1b[0m')
+                                callback(__data, 0, null, false)
+                            }
+                            //})
+                        } else {
                             callback(__data, 0, null, false)
                         }
-                        //})
-                    } else {
-                        callback(__data, 0, null, false)
-                    }
-               
-                },
-                Nombramiento: function (_linea, __data, callback) {
-                    this.SaveDirectivo(_linea, __data, true, callback)
-                },
-                Reeleccion: function (_linea, __data, callback) {
-                    this.SaveDirectivo(_linea, __data, true, callback)
-                },
-                Cese: function (_linea, __data,  callback) {
-                    this.SaveDirectivo(_linea, __data, false, callback)
-                },
-                Revocacion: function (_linea, __data,  callback) {
-                    this.SaveDirectivo(_linea, __data, false, callback)
-                },
-                Oficio: function (_linea, __data,  callback) {
-                    this.SaveDirectivo(_linea, __data, false, callback)
-                },
-                Cancela: function (_linea, __data,  callback) {
-                    this.SaveDirectivo(_linea, __data, false, callback)
-                },
-                Erratas: function (_linea, __data, callback) {
-                    callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: __data.values.value }, 0)
-                },
+
+                    },
+                    Nombramiento: function (_linea, __data, callback) {
+                        this.SaveDirectivo(_linea, __data, true, callback)
+                    },
+                    Reeleccion: function (_linea, __data, callback) {
+                        this.SaveDirectivo(_linea, __data, true, callback)
+                    },
+                    Cese: function (_linea, __data, callback) {
+                        this.SaveDirectivo(_linea, __data, false, callback)
+                    },
+                    Revocacion: function (_linea, __data, callback) {
+                        this.SaveDirectivo(_linea, __data, false, callback)
+                    },
+                    Oficio: function (_linea, __data, callback) {
+                        this.SaveDirectivo(_linea, __data, false, callback)
+                    },
+                    Cancela: function (_linea, __data, callback) {
+                        this.SaveDirectivo(_linea, __data, false, callback)
+                    },
+                    Erratas: function (_linea, __data, callback) {
+                        callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: __data.values.value }, 0)
+                    },
+                }
             },
             Constitucion: function ( cadena, _keys, _next, data) {
                 const _ret = []
