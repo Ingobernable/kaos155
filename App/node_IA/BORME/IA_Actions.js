@@ -43,7 +43,7 @@
             }
         }
     },
-    add: function (_tools, app, options,argv, iaparams) {
+    add: function (_tools, app, options, argv, iaparams,_cb) {
         //console.log('Nuevo ->cuenta contratos task')
 
         //let cadSql = "call sum_KeyTotales(?,?);"
@@ -58,9 +58,11 @@
                         if (rec[0]._COUNTER != null) {
                             options.SQL.db.query(_tools.cadSql.insert, _tools.data.insert(argv, rec[0]) , function (err, recordInsert) {
                                console.log( "-" + argv.table.substr(0, 7) + " - " + argv.data.e + "->" + record[0].type)
+                                _cb()
                             })
                         } else {
-                            console.log( "-" + "Sin Contratos" )
+                            console.log("-" + "Sin Contratos")
+                            _cb()
                         }
                     
                 })
@@ -68,7 +70,7 @@
         })
         
     },
-    relacion: function (_tools,app, options, argv, iaparams) {
+    relacion: function (_tools, app, options, argv, iaparams,_cb) {
         //console.log('relacion')
         //const cadSql = "call Insert_Data_IA_seguimiento(?,?,?)"
         
@@ -84,13 +86,14 @@
                 console.log(argv.data.acto._def, argv.data.acto._type, argv.data.acto._cargo, argv.data.acto._value)
 
             }
+            _cb()
             //if (rec[0].T_relations > 10 && rec[0]._Directivo)
             //debugger
             //if (rec[0].Nombre != argv.e)
             //    debugger
         })
     },
-    movimiento: function (_tools,app, options, argv, iaparams) {
+    movimiento: function (_tools, app, options, argv, iaparams,_cb) {
         //debugger
             //console.log('movimiento', argv.data.acto._type)
 
@@ -101,6 +104,7 @@
         options.SQL.db.query(_tools.cadSql, _tools.data(argv), function (err, rec) {
                     if (err) 
                         console.log(err)
+                    _cb()
                 })
             //}
         
@@ -109,7 +113,8 @@
         //    console.log(argv.command.substr(0, 3), argv.k + "-" + argv.table.substr(0, 7) + " - " + argv.e + "->" + record[0]._c)
         //})
     },
-    update: function (app, options, argv) {
+    update: function (_tools, app, options, argv, iaparams, _cb) {
+        _cb()
         //const cadSql = "SELECT Count(*) as _c FROM boletin_contratos WHERE _key=?"
         //options.SQL.boedb.query(cadSql, [argv.k], function (err, record) {
         //    console.log(argv.command.substr(0, 3), argv.k + "-" + argv.table.substr(0, 7) + " - " + argv.e + "->" + record[0]._c)

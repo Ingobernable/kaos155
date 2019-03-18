@@ -15,9 +15,9 @@
         _IAparameters: {
             min_TRelations:25
         },
-        ejec: function (_this,_func, _data) {
+        ejec: function (_this,_func, _data, fn) {
             //console.log(options)
-            _func(_this.functions.BORME.tools[_data.command],app, options,_data,_this._IAparameters)
+            _func(_this.functions.BORME.tools[_data.command], app, options, _data, _this._IAparameters, fn)
         },
         listen: function (io, callback) {
             const _f = this.ejec
@@ -30,7 +30,10 @@
                     socket.on(e.name, function (data) {
                         data.command = e.name
                         //console.log(data.type,_this.functions[data.type], e.name) //data.type, e.action, _this.functions[data.type][e.action])
-                        _f(_this, _this.functions[data.type][e.name], data)
+                        _f(_this, _this.functions[data.type][e.name], data, function () {
+                            //console.log(data)
+                            data=null
+                        })
                     })
                 })
 
