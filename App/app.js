@@ -369,6 +369,8 @@ String.prototype.capitalizeAllFirstLetter = function () {
                                     callback(app)
                                 }) //'localhost'
 
+                            } else {
+                                callback(app)
                             }
                         } else {
                             app.SqlIP = 'localhost'
