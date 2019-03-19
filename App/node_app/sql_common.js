@@ -123,6 +123,7 @@ module.exports = function (app, callback) {
 
             } else {
                 //debugger
+                //console.log()
                 app.fs.readFile(this.fileCredenciales(type,Command) , function (err, _JSON) {
                     var _cb = null
                     if (err) {

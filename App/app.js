@@ -145,6 +145,7 @@ String.prototype.capitalizeAllFirstLetter = function () {
 
 
         const client = app.net.connect({ port: 80, host: "google.com" }, function() {
+            console.log('ping google.com ok')
             console.log('MyIP=' + client.localAddress);
             console.log('MyPORT=' + client.localPort);
             //debugger
@@ -191,12 +192,13 @@ String.prototype.capitalizeAllFirstLetter = function () {
                     return require('./node_app/func_common.js')(app)
                 },
                 init: function (app, _cb) {
-
+                    console.log('init ......')
                     require('./node_app/sql_common.js')(app, function (SQL) {
                         app.commonSQL = SQL
-
+                        console.log('init OK')
                         _cb({
                             IA: function () {
+                                console.log('ejecute IA init.....')
                                 require('./node_app/sql_common.js')(app, function (SQL) {
                                     app.command = 'PARSER'
                                     app.commonSQL = SQL
