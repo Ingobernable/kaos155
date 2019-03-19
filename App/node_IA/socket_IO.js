@@ -5,40 +5,43 @@
         functions: {
             BORME: require('../node_IA/BORME/IA_Actions.js')
         },
-        data: function () { return [
-                { name: 'add', action: "../node_IA/BORME/add_Data.js" },
-                { name: 'update', action: "../node_IA/BORME/update_Data.js" },
-                { name: 'movimiento', action: "../node_IA/BORME/update_Data.js" },
-                { name: 'relacion', action: "../node_IA/BORME/update_Data.js" }
-            ]
-        },
         _IAparameters: {
             min_TRelations:25
         },
-        ejec: function (_this,_func, _data, fn) {
-            //console.log(options)
-            _func(_this.functions.BORME.tools[_data.command], app, options, _data, _this._IAparameters, fn)
-        },
-        listen: function (io, callback) {
-            const _f = this.ejec
-            const _this = this
+        listen: function (io) {
+            //const _f = 
+            //const _this = this
             io.on('connection', function (socket) {
                 console.log('IO Connect ' + socket.id)
-                //console.log(_this.data())
-                app._.each(_this.data(), function (e) {
-                    //console.log (e.name)
-                    socket.on(e.name, function (data) {
-                        data.command = e.name
-                        //console.log(data.type,_this.functions[data.type], e.name) //data.type, e.action, _this.functions[data.type][e.action])
-                        _f(_this, _this.functions[data.type][e.name], data, function () {
-                            //console.log(data)
-                            data=null
-                        })
+               
+                socket.on('add', function (data) {
+                    data.command = 'add'
+                    app._io.functions.BORME.add(app._io.functions.BORME.tools.add, app, options, _data, app._io._IAparameters,  function () {                            
+                        data = null
+                    })
+                })
+                socket.on('update', function (data) {
+                    data.command = 'update'
+                    app._io.functions.BORME.update(app._io.functions.BORME.tools.update, app, options, _data, app._io._IAparameters, function () {
+                        data = null
+                    })
+                })
+                socket.on('movimiento', function (data) {
+                    data.command = 'movimiento'
+                    app._io.functions.BORME.movimiento(app._io.functions.BORME.tools.movimiento, app, options, _data, app._io._IAparameters, function () {
+                        data = null
+                    })
+                })
+                socket.on('relacion', function (data) {
+                    data.command = 'relacion'
+                    app._io.functions.BORME.relacion(app._io.functions.BORME.tools.relacion, app, options, _data, app._io._IAparameters, function () {
+                        data = null
                     })
                 })
 
             })
-            callback(io)
+            //callback(io)
         }
     }
+    //return _this
 }

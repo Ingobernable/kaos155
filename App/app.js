@@ -210,10 +210,7 @@ String.prototype.capitalizeAllFirstLetter = function () {
                                             //app.commonSQL.init({ SQL: { db: null }, Command: 'IA' }, 'IA', function (iadb) {
                                             //    options.SQL.iadb = iadb.SQL.db
                                                 app._io = require('./node_IA/socket_IO.js')(app, options)
-                                                app._io.listen(require('socket.io')(8080), function (io) {
-                                                    console.log("Sistema a la escucha")
-                                                    //debugger
-                                                })
+                                                app._io.listen(require('socket.io')(8080))
                                             //})
                                         })
                                     })

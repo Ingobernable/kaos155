@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=30504 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=232739 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -197,7 +197,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=55288 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=331770 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -222,7 +222,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=40850 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=308169 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -856,13 +856,7 @@ BEGIN
     END IF;
     
 	IF _Type='Constitucion' then
-		IF _tipo='Comienzo de operaciones' THEN
-			IF STR_TO_DATE(substr(_motivo,1,8), '%d.%m.%Y' ) IS NOT NULL THEN
-				UPDATE borme_empresas SET  _activa=1, _date_activacion=STR_TO_DATE(substr(_motivo,1,8), '%d.%m.%Y'), Anyo_constitucion= substr(_motivo,1,8) where _id = _id_empresa;
-			ELSE
-				UPDATE borme_empresas SET  _activa=1, _date_activacion=now(), Anyo_constitucion= substr(_motivo,1,8) where _id = _id_empresa;
-            END IF;
-		END IF;
+
 		IF  _financiera=1 THEN
 			INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_empresas,add_financieras) VALUES (_Mes,_Anyo,_Provincia,1,1) ON DUPLICATE KEY UPDATE add_empresas=add_empresas+1 ,add_financieras=add_financieras+1;
 		else
@@ -877,7 +871,14 @@ BEGIN
 			END IF;
 
 		END IF;       
-
+		IF _tipo='Comienzo de operaciones' THEN
+			SET @_Date = STR_TO_DATE(substr(_motivo,1,8), '%d.%m.%Y' );
+			IF @_Date IS NOT NULL THEN
+				UPDATE borme_empresas SET  _activa=1, _date_activacion=STR_TO_DATE(substr(_motivo,1,8), '%d.%m.%Y'), Anyo_constitucion= substr(_motivo,1,8) where _id = _id_empresa;
+			ELSE
+				UPDATE borme_empresas SET  _activa=1, _date_activacion=now(), Anyo_constitucion= substr(_motivo,1,8) where _id = _id_empresa;
+            END IF;
+		END IF;
 	end if;
 	IF _Type='Extincion' then
 		UPDATE borme_empresas SET _activa=0, _date_extincion= @Fecha where _id = _id_empresa;
@@ -1064,4 +1065,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-19 12:19:54
+-- Dump completed on 2019-03-19 20:30:14

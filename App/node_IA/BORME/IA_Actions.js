@@ -46,28 +46,31 @@
         }
     },
     add: function (_tools, app, options, argv, iaparams,_cb) {
-        //console.log('Nuevo ->cuenta contratos task')
-
-        //let cadSql = "call sum_KeyTotales(?,?);"
-        //var _cadOut = ""
         options.SQL.boedb.query(_tools.cadSql.ask, _tools.data.ask(argv), function (err, record) {
             if (err)
-                console.log(err)
+                app.writeSync(err)
 
             if (record.length > 0) {
                 app._.each(record, function (rec) {
-                   
-                        if (rec[0]._COUNTER != null) {
-                            options.SQL.db.query(_tools.cadSql.insert, _tools.data.insert(argv, rec[0]) , function (err, recordInsert) {
-                               console.log( "-" + argv.table.substr(0, 7) + " - " + argv.data.e + "->" + record[0].type)
-                                _cb()
-                            })
-                        } else {
-                            console.log("-" + "Sin Contratos")
+
+                    if (rec[0]._COUNTER != null) {
+                        options.SQL.db.query(_tools.cadSql.insert, _tools.data.insert(argv, rec[0]), function () {
+                            app.writeSync("-" + argv.table.substr(0, 7) + " - " + argv.data.e + "->" + record[0].type)
+                            err = null
+                            rec = null
                             _cb()
-                        }
-                    
+                        })
+                    } else {
+                        app.writeSync(argv.data.e + "-" + "Sin Contratos")
+                        err = null
+                        rec = null
+                        _cb()
+                    }
+
                 })
+            } else {
+                err = null
+                rec = null
             }
         })
         
@@ -79,51 +82,33 @@
 
         options.SQL.db.query(_tools.cadSql, _tools.data(argv, iaparams) , function (err, rec) {
             if (err || rec == null) {
-                console.log(err)
+                app.writeSync(err)
                 debugger
             }
 
             //    console.log(argv.command.substr(0, 3), rec[0].T_relations, argv.e, argv.k, _cadOut)
             if (rec[0][0].counter != null) {
                 app.writeSync(app,argv.data.acto._def + ' ' + argv.data.acto._type + ' ' + argv.data.acto._cargo + ' ' + argv.data.acto._value)
-
-                //console.log(argv.data.acto._def, argv.data.acto._type, argv.data.acto._cargo, argv.data.acto._value)
-
             }
-
+            err = null
+            rec = null
             _cb()
-            //if (rec[0].T_relations > 10 && rec[0]._Directivo)
-            //debugger
-            //if (rec[0].Nombre != argv.e)
-            //    debugger
+   debugger
         })
     },
     movimiento: function (_tools, app, options, argv, iaparams,_cb) {
-        //debugger
-            //console.log('movimiento', argv.data.acto._type)
-
-        //if (argv.data.acto._type == 'Constitucion' || argv.data.acto._type == 'Extincion') {
-            //const _p = 
-            //console.log(_p)
-            //const cadSql = "CALL insert_Data_IA_movimiento(?,?,?,?,?,?,?,?,?,?,?,?)"
-        options.SQL.db.query(_tools.cadSql, _tools.data(argv), function (err, rec) {
+       options.SQL.db.query(_tools.cadSql, _tools.data(argv), function (err, rec) {
                     if (err) 
-                        console.log(err)
+                       app.writeSync(err)
+                        err = null
+                        rec = null
                     _cb()
                 })
-            //}
-        
-        //const cadSql = "SELECT Count(*) as _c FROM boletin_contratos WHERE _key=?"
-        //options.SQL.boedb.query(cadSql, [argv.k], function (err, record) {
-        //    console.log(argv.command.substr(0, 3), argv.k + "-" + argv.table.substr(0, 7) + " - " + argv.e + "->" + record[0]._c)
-        //})
+
     },
     update: function (_tools, app, options, argv, iaparams, _cb) {
         _cb()
-        //const cadSql = "SELECT Count(*) as _c FROM boletin_contratos WHERE _key=?"
-        //options.SQL.boedb.query(cadSql, [argv.k], function (err, record) {
-        //    console.log(argv.command.substr(0, 3), argv.k + "-" + argv.table.substr(0, 7) + " - " + argv.e + "->" + record[0]._c)
-        //})
+
     }
     
 }
