@@ -136,7 +136,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=15931181 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -164,8 +164,12 @@ CREATE TABLE `borme_empresas` (
   `_ute` bit(1) DEFAULT b'0',
   `_last_date_dom` date DEFAULT NULL,
   `_last_date_objeto` date DEFAULT NULL,
+  `_activa` bit(1) DEFAULT b'1',
+  `_date_extincion` date DEFAULT NULL,
+  `_date_activacion` date DEFAULT now(),
   PRIMARY KEY (`_key`),
-  UNIQUE KEY `id` (`_id`)
+  UNIQUE KEY `id` (`_id`),
+  KEY `activos` (`_activa`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -193,7 +197,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=10023703 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -218,7 +222,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=22652117 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -495,7 +499,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Auditor`(_mes int, _anyo int, _NAME  nvarchar(250), _iKey  nvarchar(55),_provincia nvarchar(25),_BOLETIN nvarchar(20), _ID INT,_empresa INT)
 BEGIN
@@ -508,7 +512,8 @@ BEGIN
 	SET @Financiera = 0;
 	SET @Auditor= 1;
 	SET @Sicav = 0;
-	
+	SET @UTE = _NAME REGEXP ' UTE$';
+    
 	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'BANK')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
 		SET @Financiera = 1;
 		SET @Directivo = 0;
@@ -531,11 +536,11 @@ BEGIN
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
         		
         IF @Empresa=1  THEN
-			INSERT INTO borme_empresas (_id,_key,Nombre,provincia,SA,SL,SLL,SLP,_Auditor,_Financiera, _Sicav) 
+			INSERT INTO borme_empresas (_id,_key,Nombre,provincia,SA,SL,SLL,SLP,_Auditor,_Financiera, _Sicav,_ute) 
 			VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia,_NAME REGEXP 'SA$',
-															_NAME REGEXP 'SL$',
-															_NAME REGEXP 'SLL$',
-															_NAME REGEXP 'SLP$',@Auditor,@Financiera,@Sicav);		
+																	_NAME REGEXP 'SL$',
+																	_NAME REGEXP 'SLL$',
+																	_NAME REGEXP 'SLP$',@Auditor,@Financiera,@Sicav,@UTE);
 		END IF;
     ELSE
 		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
@@ -653,7 +658,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Directivo`(_mes int, _anyo int, IN _NAME  nvarchar(250) , IN _ikey  nvarchar(55),IN _provincia nvarchar(25),IN _BOLETIN nvarchar(20), IN _ID INT)
 BEGIN
@@ -663,6 +668,8 @@ BEGIN
 	SET @Empresa = 0;
 	SET @Financiera = 0;
 	SET @Auditor= 0;
+    SET @UTE = _NAME REGEXP ' UTE$';
+    
 	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'BANK')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
 		SET @Financiera = 1;
 		SET @Directivo = 0;
@@ -691,11 +698,12 @@ BEGIN
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
         
         IF @Empresa=1  THEN
-        INSERT INTO borme_empresas (_id,_key,Nombre,provincia,SA,SL,SLL,SLP,_Auditor,_Financiera, _Sicav) 
-        VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia,_NAME REGEXP 'SA$',
-														_NAME REGEXP 'SL$',
-														_NAME REGEXP 'SLL$',
-														_NAME REGEXP 'SLP$',@Auditor,@Financiera,@Sicav);		END IF;
+        INSERT INTO borme_empresas (_id,_key,Nombre,provincia,SA,SL,SLL,SLP,_Auditor,_Financiera, _Sicav,_ute) 
+			VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia,_NAME REGEXP 'SA$',
+																	_NAME REGEXP 'SL$',
+																	_NAME REGEXP 'SLL$',
+																	_NAME REGEXP 'SLP$',@Auditor,@Financiera,@Sicav,@UTE);
+		END IF;
         
     ELSE
 		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
@@ -714,7 +722,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Empresa`(_mes int, _anyo int, IN _NAME  nvarchar(250), _iKey  nvarchar(55), _provincia nvarchar(25), _BOLETIN nvarchar(20), _ID INT)
 BEGIN
@@ -725,7 +733,7 @@ BEGIN
 		SET @Financiera = 0;
 		SET @Auditor=0;
 		SET @Sicav = 0;
-
+		SET @UTE = _NAME REGEXP ' UTE$';
 		
 		IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'BANK')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
 			SET @Financiera = 1;
@@ -748,11 +756,11 @@ BEGIN
 		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
         
-        INSERT INTO borme_empresas (_id,_key,Nombre,provincia,SA,SL,SLL,SLP,_Auditor,_Financiera, _Sicav) 
+        INSERT INTO borme_empresas (_id,_key,Nombre,provincia,SA,SL,SLL,SLP,_Auditor,_Financiera, _Sicav,_ute) 
         VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia,_NAME REGEXP 'SA$',
 														_NAME REGEXP 'SL$',
 														_NAME REGEXP 'SLL$',
-														_NAME REGEXP 'SLP$',@Auditor,@Financiera,@Sicav);
+														_NAME REGEXP 'SLP$',@Auditor,@Financiera,@Sicav,@UTE);
     ELSE
 		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius, @Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav ;
     END IF;
@@ -817,7 +825,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_IA_movimiento`(
 	_id_empresa int,
@@ -836,8 +844,9 @@ CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_IA_movimiento`(
     _motivo text
 )
 BEGIN
+	SET @Fecha = STR_TO_DATE(CONCAT(_dia,'/',_Mes,'/',_Anyo),'%d/%m/%Y');
 	IF _Type='Varios' then
-		SET @Fecha = STR_TO_DATE(CONCAT(_dia,'/',_Mes,'/',_Anyo),'%d/%m/%Y');
+		
 		IF _tipo='Cambio de domicilio social' THEN
 			UPDATE borme_empresas SET Domicilio = _motivo,_last_date_dom= @Fecha WHERE _last_date_dom<@Fecha OR _last_date_dom is null and _id=_id_empresa;
         END IF;
@@ -848,7 +857,7 @@ BEGIN
     
 	IF _Type='Constitucion' then
 		IF _tipo='Comienzo de operaciones' THEN
-			UPDATE borme_empresas SET Anyo_constitucion= substr(_motivo,1,8) where _id = _id_empresa;
+			UPDATE borme_empresas SET  _activa=1, _date_activacion=STR_TO_DATE(substr(_motivo,1,8), '%d.%m.%Y'), Anyo_constitucion= substr(_motivo,1,8) where _id = _id_empresa;
 		END IF;
 		IF  _financiera=1 THEN
 			INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,add_empresas,add_financieras) VALUES (_Mes,_Anyo,_Provincia,1,1) ON DUPLICATE KEY UPDATE add_empresas=add_empresas+1 ,add_financieras=add_financieras+1;
@@ -867,6 +876,7 @@ BEGIN
 
 	end if;
 	IF _Type='Extincion' then
+		UPDATE borme_empresas SET _activa=0, _date_extincion= @Fecha where _id = _id_empresa;
 		IF  _financiera=1 THEN
 			INSERT INTO borme_stadistics_keys (_mes,_anyo,_Provincia,sup_empresas,sup_financieras) VALUES (_Mes,_Anyo,_Provincia,1,1) ON DUPLICATE KEY UPDATE sup_empresas=sup_empresas+1 ,sup_financieras=sup_financieras+1;
 		else
@@ -1050,4 +1060,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-17  0:29:15
+-- Dump completed on 2019-03-19  8:49:31
