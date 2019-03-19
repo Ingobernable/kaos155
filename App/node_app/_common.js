@@ -2,6 +2,7 @@
     //var _ = app._
     //debugger
     return {
+        
         IAgo: function (params,_p) {
 
             this.io_client.emit(_p, {

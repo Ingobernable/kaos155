@@ -1,5 +1,7 @@
 ﻿module.exports = {
+    
     tools: {
+
         relacion: {
             cadSql: "call Insert_Data_IA_seguimiento(?,?,?)",
             data: function (argv, iaparams) { return [argv.data._key_relation, argv.data._id_relation, iaparams.min_TRelations] },
@@ -73,7 +75,7 @@
     relacion: function (_tools, app, options, argv, iaparams,_cb) {
         //console.log('relacion')
         //const cadSql = "call Insert_Data_IA_seguimiento(?,?,?)"
-        
+        const _this = this
 
         options.SQL.db.query(_tools.cadSql, _tools.data(argv, iaparams) , function (err, rec) {
             if (err || rec == null) {
@@ -83,9 +85,12 @@
 
             //    console.log(argv.command.substr(0, 3), rec[0].T_relations, argv.e, argv.k, _cadOut)
             if (rec[0][0].counter != null) {
-                console.log(argv.data.acto._def, argv.data.acto._type, argv.data.acto._cargo, argv.data.acto._value)
+                app.writeSync(app,argv.data.acto._def + ' ' + argv.data.acto._type + ' ' + argv.data.acto._cargo + ' ' + argv.data.acto._value)
+
+                //console.log(argv.data.acto._def, argv.data.acto._type, argv.data.acto._cargo, argv.data.acto._value)
 
             }
+
             _cb()
             //if (rec[0].T_relations > 10 && rec[0]._Directivo)
             //debugger

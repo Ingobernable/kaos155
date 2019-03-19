@@ -183,6 +183,9 @@ String.prototype.capitalizeAllFirstLetter = function () {
                 },
                 _lData: {},
                 poolSql: [],
+                writeSync: function (app, string) {
+                    app.fs.writeSync(process.stdout.fd, string)
+                },
                 Rutines: function (app) {
                     //_this = this
                     return require('./node_app/func_common.js')(app)

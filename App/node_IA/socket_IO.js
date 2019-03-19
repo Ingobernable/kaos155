@@ -1,7 +1,7 @@
 ﻿module.exports = function (app, options) {
 
     return {
-        child_process: require('child_process'),
+        //child_process: require('child_process'),
         functions: {
             BORME: require('../node_IA/BORME/IA_Actions.js')
         },
