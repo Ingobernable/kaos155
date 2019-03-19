@@ -360,10 +360,11 @@ String.prototype.capitalizeAllFirstLetter = function () {
                             if (app.SqlIP.match(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g) != null) {
                                 console.log('app.SqlIP.match->', app.SqlIP, ' yes')
                                 app.SqlIP = app.dns.lookup(app.SqlIP, function (err, address, family) {
-                                    if (err)
+                                    if (err) {
                                         console.log(err)
-
-                                    console.log(lookup, app.SqlIP, ' yes')
+                                    } else {
+                                        console.log('lookup ', app.SqlIP, ' yes')
+                                    }
                                     app.SqlIP = address
                                     callback(app)
                                 }) //'localhost'
