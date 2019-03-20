@@ -94,7 +94,7 @@
             err = null
             rec = null
             _cb()
-   debugger
+            debugger
         })
     },
     movimiento: function (_tools, app, options, argv, iaparams,_cb) {
@@ -110,7 +110,6 @@
     },
     update: function (_tools, app, options, argv, iaparams, _cb) {
         _cb()
-
     }
     
 }

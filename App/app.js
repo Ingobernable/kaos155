@@ -152,9 +152,9 @@ String.prototype.capitalizeAllFirstLetter = function () {
             let App = app.merge(app, {
                 //idMachine: machineId,
                 command: myArgs[0],
-           
+
                 update: myArgs[3],
-                anyo: myArgs[0]=='IA'? null: !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
+                anyo: myArgs[0] == 'IA' ? null : !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
                 Command: myArgs[0],
 
 
@@ -184,6 +184,9 @@ String.prototype.capitalizeAllFirstLetter = function () {
                 },
                 _lData: {},
                 poolSql: [],
+                sockets: {
+                    array: []
+                },
                 writeSync: function (app, string) {
                     app.fs.writeSync(process.stdout.fd, string+'\n')
                 },
