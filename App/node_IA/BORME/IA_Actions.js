@@ -99,7 +99,8 @@
     movimiento: function (_tools, app, options, argv, iaparams,_cb) {
        options.SQL.db.query(_tools.cadSql, _tools.data(argv), function (err, rec) {
                     if (err) 
-                       app.writeSync(app,err)
+                        err ? app.writeSync(app, err) : app.writeSync(app, argv.data.acto._type + ' ' + argv.data.acto._cargo + ' ' + argv.data.acto._value)
+
                         err = null
                         rec = null
                     _cb()
