@@ -69,6 +69,7 @@
 
                 })
             } else {
+                app.writeSync(app, argv.table.substr(0, 7)+'->'+argv.data.e)
                 err = null
                 rec = null
             }
