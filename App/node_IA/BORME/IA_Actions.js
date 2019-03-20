@@ -48,20 +48,20 @@
     add: function (_tools, app, options, argv, iaparams,_cb) {
         options.SQL.boedb.query(_tools.cadSql.ask, _tools.data.ask(argv), function (err, record) {
             if (err)
-                app.writeSync(err)
+                app.writeSync(app,err)
 
             if (record.length > 0) {
                 app._.each(record, function (rec) {
 
                     if (rec[0]._COUNTER != null) {
                         options.SQL.db.query(_tools.cadSql.insert, _tools.data.insert(argv, rec[0]), function () {
-                            app.writeSync("-" + argv.table.substr(0, 7) + " - " + argv.data.e + "->" + record[0].type)
+                            app.writeSync(app,"-" + argv.table.substr(0, 7) + " - " + argv.data.e + "->" + record[0].type)
                             err = null
                             rec = null
                             _cb()
                         })
                     } else {
-                        app.writeSync(argv.data.e + "-" + "Sin Contratos")
+                        app.writeSync(app,argv.data.e + "-" + "Sin Contratos")
                         err = null
                         rec = null
                         _cb()
@@ -82,7 +82,7 @@
 
         options.SQL.db.query(_tools.cadSql, _tools.data(argv, iaparams) , function (err, rec) {
             if (err || rec == null) {
-                app.writeSync(err)
+                app.writeSync(app,err)
                 debugger
             }
 
@@ -99,7 +99,7 @@
     movimiento: function (_tools, app, options, argv, iaparams,_cb) {
        options.SQL.db.query(_tools.cadSql, _tools.data(argv), function (err, rec) {
                     if (err) 
-                       app.writeSync(err)
+                       app.writeSync(app,err)
                         err = null
                         rec = null
                     _cb()
