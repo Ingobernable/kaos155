@@ -3,14 +3,36 @@
     //debugger
     return {
         
-        IAgo: function (params,_p) {
+        IAgo: function (params, _p) {
+            var _params = app._.clone( params ) //.clone()
+
+            if (_params.record!= null)
+                _params.record = {
+                    _Empresa: params.record._Empresa.toString() == '\u0001' ? 1 : 0,
+                    _Financiera : params.record._Financiera.toString() == '\u0001' ? 1 : 0,
+                    _Auditor: params.record._Auditor.toString() == '\u0001' ? 1 : 0,
+                    _Sicav : params.record._Sicav.toString() == '\u0001' ? 1 : 0,
+                }
+
+            _params.keys == null
+            _params.original = null
+            _params.contenido = null
+            _params.keys = null
+
+            if (_params.data != null)
+                _params.data = {
+                    dia: params.data.dia,
+                    mes: params.data.mes,
+                    anyo: params.data.anyo,
+                }
 
             this.io_client.emit(_p, {
                 command: _p,
                 type: "BORME",
-                data: params,
+                data: _params,
                 //recordset :_rec,
             })
+            _params=null
         },
         io_client: null,
         SQL: {
