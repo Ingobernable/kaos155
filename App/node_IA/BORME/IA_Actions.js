@@ -58,12 +58,14 @@
                             app.writeSync(app,"-" + argv.table.substr(0, 7) + " - " + argv.data.e + "->" + record[0].type)
                             err = null
                             rec = null
+                            record = null
                             _cb()
                         })
                     } else {
                         app.writeSync(app,argv.data.e + "-" + "Sin Contratos")
                         err = null
                         rec = null
+                        record = null
                         _cb()
                     }
 
@@ -73,6 +75,7 @@
                 err = null
                 rec = null
             }
+            record = null
         })
         
     },
