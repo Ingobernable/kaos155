@@ -1,10 +1,10 @@
-﻿module.exports = function (app, options) {
+﻿module.exports = function (app) {
 
     return {
         //child_process: require('child_process'),
         //memwatch : require('memwatch'),
         functions: {
-            BORME: require('../node_IA/BORME/IA_Actions.js')
+            BORME: require('../node_IA/BORME/IA_Actions.js')(app)
         },
         _IAparameters: {
             min_TRelations:25
@@ -25,27 +25,22 @@
                 app.sockets.array[socket.id] = socket
                 app.sockets.array[socket.id].on('add', function (_data) {
                     
-                    app._io.functions.BORME.add(app._io.functions.BORME.tools.add, app, options, _data, app._io._IAparameters,  function () {                            
-                        _data = null
-                    })
+                    app._io.functions.BORME.add(_data)
+                    _data = null
                 })
-                app.sockets.array[socket.id].on('update', function (_data) {
-                    
-                    app._io.functions.BORME.update(app._io.functions.BORME.tools.update, app, options, _data, app._io._IAparameters, function () {
-                        _data = null
-                    })
+                app.sockets.array[socket.id].on('update', function (_data) {                    
+                    app._io.functions.BORME.update(_data)
+                    _data=null
                 })
                 app.sockets.array[socket.id].on('movimiento', function (_data) {
                     
-                    app._io.functions.BORME.movimiento(app._io.functions.BORME.tools.movimiento, app, options, _data, app._io._IAparameters, function () {
-                        _data = null
-                    })
+                    app._io.functions.BORME.movimiento(_data)
+                    _data = null
                 })
                 app.sockets.array[socket.id].on('relacion', function (_data) {
                     
-                    app._io.functions.BORME.relacion(app._io.functions.BORME.tools.relacion, app, options, _data, app._io._IAparameters, function () {
-                        _data = null
-                    })
+                    app._io.functions.BORME.relacion(_data)
+                    _data = null
                 })
                 socket=null
             })

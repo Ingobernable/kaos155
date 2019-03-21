@@ -209,11 +209,11 @@ String.prototype.capitalizeAllFirstLetter = function () {
                                     require('./node_app/parser/par_borme.js')(app, function (options) {
 
                                         app.commonSQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'BOE', function (boedb) {
-
-                                            options.SQL.boedb = boedb.SQL.db
+                                            app.IA = options
+                                            app.IA.SQL.boedb = boedb.SQL.db
                                             //app.commonSQL.init({ SQL: { db: null }, Command: 'IA' }, 'IA', function (iadb) {
                                             //    options.SQL.iadb = iadb.SQL.db
-                                                app._io = require('./node_IA/socket_IO.js')(app, options)
+                                                app._io = require('./node_IA/socket_IO.js')(app)
                                                 app._io.listen(require('socket.io')(8080))
                                             //})
                                         })
