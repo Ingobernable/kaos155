@@ -86,7 +86,7 @@
             //const cadSql = "call Insert_Data_IA_seguimiento(?,?,?)"
             //const _this = this
 
-            app.IA.SQL.db.query(app._io.functions.BORME.tools.update.cadSql, app._io.functions.BORME.tools.update.data(argv, app._io._IAparameters), function (err, rec) {
+            app.IA.SQL.db.query(app._io.functions.BORME.tools.relacion.cadSql, app._io.functions.BORME.tools.relacion.data(argv, app._io._IAparameters), function (err, rec) {
                 if (err || rec == null) {
                     app.writeSync(app, err)
                     debugger
