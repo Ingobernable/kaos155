@@ -99,7 +99,7 @@
                 err = null
                 rec = null
 
-                debugger
+                //debugger
             })
         },
         movimiento: function (argv) {
