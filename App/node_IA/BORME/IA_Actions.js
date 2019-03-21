@@ -56,26 +56,20 @@
                     app._.each(record, function (rec) {
 
                         if (rec[0]._COUNTER != null) {
-                            app.IA.SQL.db.query(app._io.functions.BORME.tools.add.cadSql.insert, app._io.functions.BORME.tools.add.data.insert(argv, rec[0]), function () {
-                                app.writeSync(app, "-" + argv.table.substr(0, 7) + " - " + argv.data.e + "->" + record[0].type)
-                                err = null
-                                rec = null
-                                record = null
-                                _cb()
-                            })
+                            app.writeSync(app, "-" + argv.table.substr(0, 7) + " - " + argv.data.e + "->" + record[0].type)
+                            err = null
+                            rec = null
                         } else {
                             app.writeSync(app, argv.data.e + "-" + "Sin Contratos")
                             err = null
                             rec = null
-                            record = null
-                            _cb()
+                           
+                        
                         }
-
+                        record = null
                     })
                 } else {
                     app.writeSync(app, 'ADD->' + argv.data.e)
-                    err = null
-                    rec = null
                 }
                 record = null
             })
@@ -85,32 +79,13 @@
             //console.log('relacion')
             //const cadSql = "call Insert_Data_IA_seguimiento(?,?,?)"
             //const _this = this
+            app.writeSync(app, argv.data.acto._def + ' ' + argv.data.acto._type + ' ' + argv.data.acto._cargo + ' ' + argv.data.acto._value)
 
-            app.IA.SQL.db.query(app._io.functions.BORME.tools.relacion.cadSql, app._io.functions.BORME.tools.relacion.data(argv, app._io._IAparameters), function (err, rec) {
-                if (err || rec == null) {
-                    app.writeSync(app, err)
-                    debugger
-                }
-
-                //    console.log(argv.command.substr(0, 3), rec[0].T_relations, argv.e, argv.k, _cadOut)
-                if (rec[0][0].counter != null) {
-                    app.writeSync(app, argv.data.acto._def + ' ' + argv.data.acto._type + ' ' + argv.data.acto._cargo + ' ' + argv.data.acto._value)
-                }
-                err = null
-                rec = null
-
-                //debugger
-            })
+            app.IA.SQL.db.query(app._io.functions.BORME.tools.relacion.cadSql, app._io.functions.BORME.tools.relacion.data(argv, app._io._IAparameters))
         },
         movimiento: function (argv) {
-            app.IA.SQL.db.query(app._io.functions.BORME.tools.movimiento.cadSql, app._io.functions.BORME.tools.movimiento.data(argv), function (err, rec) {
-                if (err)
-                    err ? app.writeSync(app, err) : app.writeSync(app, argv.data.acto._type + ' ' + argv.data.acto._cargo + ' ' + argv.data.acto._value)
-
-                err = null
-                rec = null
-
-            })
+            app.writeSync(app, argv.data.acto._type + ' ' + argv.data.acto._cargo + ' ' + argv.data.acto._value)
+            app.IA.SQL.db.query(app._io.functions.BORME.tools.movimiento.cadSql, app._io.functions.BORME.tools.movimiento.data(argv) )
 
         },
         update: function () {
