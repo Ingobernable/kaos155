@@ -18,102 +18,6 @@ USE `bbdd_kaos155_borme`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Temporary view structure for view `RelacionadoCON`
---
-
-DROP TABLE IF EXISTS `RelacionadoCON`;
-/*!50001 DROP VIEW IF EXISTS `RelacionadoCON`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE VIEW `RelacionadoCON` AS SELECT 
- 1 AS `_key`,
- 1 AS `Nombre`,
- 1 AS `_Empresa`,
- 1 AS `_Directivo`,
- 1 AS `_Auditor`,
- 1 AS `_Financiera`,
- 1 AS `Type`,
- 1 AS `Motivo`,
- 1 AS `Cargo`,
- 1 AS `Activo`,
- 1 AS `Anyo`,
- 1 AS `Mes`,
- 1 AS `Dia`*/;
-SET character_set_client = @saved_cs_client;
-
---
--- Temporary view structure for view `Relacionadocon`
---
-
-DROP TABLE IF EXISTS `Relacionadocon`;
-/*!50001 DROP VIEW IF EXISTS `Relacionadocon`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE VIEW `Relacionadocon` AS SELECT 
- 1 AS `_key`,
- 1 AS `Nombre`,
- 1 AS `_Empresa`,
- 1 AS `_Directivo`,
- 1 AS `_Auditor`,
- 1 AS `_Financiera`,
- 1 AS `Type`,
- 1 AS `Motivo`,
- 1 AS `Cargo`,
- 1 AS `Activo`,
- 1 AS `Anyo`,
- 1 AS `Mes`,
- 1 AS `Dia`*/;
-SET character_set_client = @saved_cs_client;
-
---
--- Temporary view structure for view `RelacionesDE`
---
-
-DROP TABLE IF EXISTS `RelacionesDE`;
-/*!50001 DROP VIEW IF EXISTS `RelacionesDE`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE VIEW `RelacionesDE` AS SELECT 
- 1 AS `_key`,
- 1 AS `Nombre`,
- 1 AS `_Empresa`,
- 1 AS `_Directivo`,
- 1 AS `_Auditor`,
- 1 AS `_Financiera`,
- 1 AS `Type`,
- 1 AS `Motivo`,
- 1 AS `Cargo`,
- 1 AS `Activo`,
- 1 AS `Anyo`,
- 1 AS `Mes`,
- 1 AS `Dia`*/;
-SET character_set_client = @saved_cs_client;
-
---
--- Temporary view structure for view `Relacionesde`
---
-
-DROP TABLE IF EXISTS `Relacionesde`;
-/*!50001 DROP VIEW IF EXISTS `Relacionesde`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE VIEW `Relacionesde` AS SELECT 
- 1 AS `_key`,
- 1 AS `Nombre`,
- 1 AS `_Empresa`,
- 1 AS `_Directivo`,
- 1 AS `_Auditor`,
- 1 AS `_Financiera`,
- 1 AS `Type`,
- 1 AS `Motivo`,
- 1 AS `Cargo`,
- 1 AS `Activo`,
- 1 AS `Anyo`,
- 1 AS `Mes`,
- 1 AS `Dia`*/;
-SET character_set_client = @saved_cs_client;
-
---
 -- Table structure for table `borme_actos`
 --
 
@@ -136,7 +40,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=232739 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=937593 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -197,7 +101,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=331770 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1236517 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -209,8 +113,8 @@ DROP TABLE IF EXISTS `borme_relaciones`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `borme_relaciones` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `Empresa_key` char(55) NOT NULL,
-  `Relation_key` char(55) NOT NULL,
+  `Empresa_key` char(36) NOT NULL,
+  `Relation_key` char(36) NOT NULL,
   `Type` int(11) DEFAULT 1,
   `Motivo` varchar(45) NOT NULL,
   `Cargo` varchar(45) NOT NULL,
@@ -222,7 +126,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=308169 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1178797 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -309,6 +213,20 @@ CREATE TABLE `ia_data_seguimiento` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `ia_data_unique`
+--
+
+DROP TABLE IF EXISTS `ia_data_unique`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ia_data_unique` (
+  `Empresa_key` char(36) NOT NULL,
+  `Relation_key` char(36) NOT NULL,
+  PRIMARY KEY (`Empresa_key`,`Relation_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Temporary view structure for view `relacionado_con`
 --
 
@@ -317,21 +235,18 @@ DROP TABLE IF EXISTS `relacionado_con`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 /*!50001 CREATE VIEW `relacionado_con` AS SELECT 
- 1 AS `idKey`,
- 1 AS `_key`,
+ 1 AS `Empresa`,
+ 1 AS `_Ekey`,
+ 1 AS `_DKey`,
  1 AS `Nombre`,
  1 AS `_Empresa`,
  1 AS `_Directivo`,
  1 AS `_Auditor`,
  1 AS `_Financiera`,
+ 1 AS `_Sicav`,
+ 1 AS `_Slp`,
  1 AS `T_Relations`,
- 1 AS `Type`,
- 1 AS `Motivo`,
- 1 AS `Cargo`,
- 1 AS `Activo`,
- 1 AS `Anyo`,
- 1 AS `Mes`,
- 1 AS `Dia`*/;
+ 1 AS `ia_suspicius`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -343,21 +258,18 @@ DROP TABLE IF EXISTS `relaciones_de`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 /*!50001 CREATE VIEW `relaciones_de` AS SELECT 
- 1 AS `idKey`,
- 1 AS `_key`,
+ 1 AS `Directivo`,
+ 1 AS `_DKey`,
+ 1 AS `_Ekey`,
  1 AS `Nombre`,
  1 AS `_Empresa`,
  1 AS `_Directivo`,
  1 AS `_Auditor`,
  1 AS `_Financiera`,
+ 1 AS `_Sicav`,
+ 1 AS `_Slp`,
  1 AS `T_Relations`,
- 1 AS `Type`,
- 1 AS `Motivo`,
- 1 AS `Cargo`,
- 1 AS `Activo`,
- 1 AS `Anyo`,
- 1 AS `Mes`,
- 1 AS `Dia`*/;
+ 1 AS `ia_suspicius`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -479,10 +391,10 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `GetRelations`(
 )
 BEGIN
 	IF _type= 0 THEN 
-		SELECT DISTINCT _key,Nombre,Motivo,CArgo,Anyo,mes,dia,type,activo,T_Relations FROM bbdd_kaos155_borme.relaciones_de _rel where idkey= _Id AND _key<>_IdParent ;
+		SELECT DISTINCT _key,Nombre,Motivo,CArgo,Anyo,mes,dia,type,activo,T_Relations FROM bbdd_kaos155_borme.relaciones_de where idkey= _Id AND _key<>_IdParent ;
     ELSE    
 
-		SELECT DISTINCT _key,Nombre,Motivo,CArgo,Anyo,mes,dia,type,activo,T_Relations FROM bbdd_kaos155_borme.relacionado_con _rel where idkey= _Id AND _key<>_IdParent;
+		SELECT DISTINCT _key,Nombre,Motivo,CArgo,Anyo,mes,dia,type,activo,T_Relations FROM bbdd_kaos155_borme.relacionado_con where idkey= _Id AND _key<>_IdParent;
 
 	END IF;
 END ;;
@@ -599,7 +511,7 @@ BEGIN
         
 		INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo,Mes,Dia,DatosRegistrales)
 						  VALUES (_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo,_Mes,_Dia,_DatosRegistrales); 
-	
+		INSERT IGNORE INTO ia_data_unique (Empresa_key,Relation_key) values (_Empresa_key,_Relacion_key);
 	else
 		INSERT IGNORE INTO borme_actos (Empresa_key,Acto,Motivo,Texto,Anyo,Mes,Dia,BOLETIN,_ID,DatosRegistrales)
 								  VALUES (_Empresa_key,_type,_key,_value,_Anyo,_Mes,_Dia,_BOLETIN,_BOLETIN_ID,_DatosRegistrales); 		
@@ -949,78 +861,6 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
--- Final view structure for view `RelacionadoCON`
---
-
-/*!50001 DROP VIEW IF EXISTS `RelacionadoCON`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `RelacionadoCON` AS select 1 AS `_key`,1 AS `Nombre`,1 AS `_Empresa`,1 AS `_Directivo`,1 AS `_Auditor`,1 AS `_Financiera`,1 AS `Type`,1 AS `Motivo`,1 AS `Cargo`,1 AS `Activo`,1 AS `Anyo`,1 AS `Mes`,1 AS `Dia` */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `Relacionadocon`
---
-
-/*!50001 DROP VIEW IF EXISTS `Relacionadocon`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `Relacionadocon` AS select 1 AS `_key`,1 AS `Nombre`,1 AS `_Empresa`,1 AS `_Directivo`,1 AS `_Auditor`,1 AS `_Financiera`,1 AS `Type`,1 AS `Motivo`,1 AS `Cargo`,1 AS `Activo`,1 AS `Anyo`,1 AS `Mes`,1 AS `Dia` */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `RelacionesDE`
---
-
-/*!50001 DROP VIEW IF EXISTS `RelacionesDE`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `RelacionesDE` AS select 1 AS `_key`,1 AS `Nombre`,1 AS `_Empresa`,1 AS `_Directivo`,1 AS `_Auditor`,1 AS `_Financiera`,1 AS `Type`,1 AS `Motivo`,1 AS `Cargo`,1 AS `Activo`,1 AS `Anyo`,1 AS `Mes`,1 AS `Dia` */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
--- Final view structure for view `Relacionesde`
---
-
-/*!50001 DROP VIEW IF EXISTS `Relacionesde`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8 */;
-/*!50001 SET character_set_results     = utf8 */;
-/*!50001 SET collation_connection      = utf8_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `Relacionesde` AS select 1 AS `_key`,1 AS `Nombre`,1 AS `_Empresa`,1 AS `_Directivo`,1 AS `_Auditor`,1 AS `_Financiera`,1 AS `Type`,1 AS `Motivo`,1 AS `Cargo`,1 AS `Activo`,1 AS `Anyo`,1 AS `Mes`,1 AS `Dia` */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-
---
 -- Final view structure for view `relacionado_con`
 --
 
@@ -1033,7 +873,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `relacionado_con` AS select 1 AS `idKey`,1 AS `_key`,1 AS `Nombre`,1 AS `_Empresa`,1 AS `_Directivo`,1 AS `_Auditor`,1 AS `_Financiera`,1 AS `T_Relations`,1 AS `Type`,1 AS `Motivo`,1 AS `Cargo`,1 AS `Activo`,1 AS `Anyo`,1 AS `Mes`,1 AS `Dia` */;
+/*!50001 VIEW `relacionado_con` AS select distinct `_Empresa`.`Nombre` AS `Empresa`,`borme_relaciones`.`Empresa_key` AS `_Ekey`,`borme_relaciones`.`Relation_key` AS `_DKey`,`_directivo`.`Nombre` AS `Nombre`,`_directivo`.`_Empresa` AS `_Empresa`,`_directivo`.`_Directivo` AS `_Directivo`,`_directivo`.`_Auditor` AS `_Auditor`,`_directivo`.`_Financiera` AS `_Financiera`,`_directivo`.`_Sicav` AS `_Sicav`,`_directivo`.`_Slp` AS `_Slp`,`_directivo`.`T_Relations` AS `T_Relations`,`_directivo`.`ia_suspicius` AS `ia_suspicius` from ((`borme_relaciones` left join `borme_keys` `_Empresa` on(`borme_relaciones`.`Empresa_key` = `_Empresa`.`_key`)) left join `borme_keys` `_directivo` on(`borme_relaciones`.`Relation_key` = `_directivo`.`_key`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1051,7 +891,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `relaciones_de` AS select 1 AS `idKey`,1 AS `_key`,1 AS `Nombre`,1 AS `_Empresa`,1 AS `_Directivo`,1 AS `_Auditor`,1 AS `_Financiera`,1 AS `T_Relations`,1 AS `Type`,1 AS `Motivo`,1 AS `Cargo`,1 AS `Activo`,1 AS `Anyo`,1 AS `Mes`,1 AS `Dia` */;
+/*!50001 VIEW `relaciones_de` AS select distinct `_directivo`.`Nombre` AS `Directivo`,`borme_relaciones`.`Relation_key` AS `_DKey`,`borme_relaciones`.`Empresa_key` AS `_Ekey`,`_Empresa`.`Nombre` AS `Nombre`,`_Empresa`.`_Empresa` AS `_Empresa`,`_Empresa`.`_Directivo` AS `_Directivo`,`_Empresa`.`_Auditor` AS `_Auditor`,`_Empresa`.`_Financiera` AS `_Financiera`,`_Empresa`.`_Sicav` AS `_Sicav`,`_Empresa`.`_Slp` AS `_Slp`,`_Empresa`.`T_Relations` AS `T_Relations`,`_Empresa`.`ia_suspicius` AS `ia_suspicius` from ((`borme_relaciones` left join `borme_keys` `_Empresa` on(`borme_relaciones`.`Empresa_key` = `_Empresa`.`_key`)) left join `borme_keys` `_directivo` on(`borme_relaciones`.`Relation_key` = `_directivo`.`_key`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -1065,4 +905,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-19 20:30:14
+-- Dump completed on 2019-03-20 22:33:47
