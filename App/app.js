@@ -188,7 +188,7 @@ String.prototype.capitalizeAllFirstLetter = function () {
                     array: []
                 },
                 writeSync: function (app, string) {
-                    if(app.myargs[1]=='VERBOSE')
+                    if (app.Type=='VERBOSE')
                         app.fs.writeSync(process.stdout.fd, string+'\n')
                 },
                 Rutines: function (app) {
