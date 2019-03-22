@@ -203,31 +203,50 @@ String.prototype.capitalizeAllFirstLetter = function () {
                         _cb({
                             IA: function () {
                                 console.log('ejecute IA init.....')
-                               // require('./node_app/sql_common.js')(app, function (SQL) {
-                               //     app.command = 'PARSER'
-                               //     app.commonSQL = SQL
-                               //     require('./node_app/parser/par_borme.js')(app, function (options) {
+                                if (!app.IA) {
+                                    require('./node_app/sql_common.js')(app, function (SQL) {
+                                        app.command = 'PARSER'
+                                        app.commonSQL = SQL
+                                        require('./node_app/parser/par_borme.js')(app, function (options) {
 
-                               //         app.commonSQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'BOE', function (boedb) {
-                                //            app.IA = options
-                                 //           app.IA.SQL.boedb = boedb.SQL.db
-                                            //app.commonSQL.init({ SQL: { db: null }, Command: 'IA' }, 'IA', function (iadb) {
-                                            //    options.SQL.iadb = iadb.SQL.db
-                                                app._io = require('./node_IA/socket_IO.js')(app)
-                                                app._io.listen(require('socket.io')(8080))
-                                            //})
-                                  //      })
-                                   // })
-                                //})
+                                            app.commonSQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'BOE', function (boedb) {
+                                                app.IA = options
+                                                app.IA.SQL.boedb = boedb.SQL.db
+                                                //app.commonSQL.init({ SQL: { db: null }, Command: 'IA' }, 'IA', function (iadb) {
+                                                   // options.SQL.iadb = iadb.SQL.db
+                                                    app._io = require('./node_IA/socket_IO.js')(app)
+                                                    app._io.listen(require('socket.io')(8080))
+                                                //})
+                                            })
+                                        })
+                                    })
+                                } else {
+                                    // require('./node_app/sql_common.js')(app, function (SQL) {
+                                    //     app.command = 'PARSER'
+                                    //     app.commonSQL = SQL
+                                    //     require('./node_app/parser/par_borme.js')(app, function (options) {
 
-
-
-                                        //var cadsql = "CALL Insert_Data_Tree(?,?)"
-                                        //options.SQL.db.query(cadsql, [_key, JSON.stringify(app.response)], function (err, recordTree) {
-                                        //process.exit(code)
-                                        //})
+                                    //         app.commonSQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'BOE', function (boedb) {
+                                    //            app.IA = options
+                                    //           app.IA.SQL.boedb = boedb.SQL.db
+                                    //app.commonSQL.init({ SQL: { db: null }, Command: 'IA' }, 'IA', function (iadb) {
+                                    //    options.SQL.iadb = iadb.SQL.db
+                                    app._io = require('./node_IA/socket_IO.js')(app)
+                                    app._io.listen(require('socket.io')(8080))
                                     //})
-                                //})
+                                    //      })
+                                    // })
+                                    //})
+
+
+
+                                    //var cadsql = "CALL Insert_Data_Tree(?,?)"
+                                    //options.SQL.db.query(cadsql, [_key, JSON.stringify(app.response)], function (err, recordTree) {
+                                    //process.exit(code)
+                                    //})
+                                    //})
+                                    //})
+                                }
                             },
                             SCRAP: function (type) {
                                 app.pdftotext = require('./node_app/_utils/pdftotext.js')

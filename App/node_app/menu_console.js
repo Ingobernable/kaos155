@@ -160,7 +160,11 @@ module.exports = function (app, myArgs, callback) {
                                         app.commonSQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'BOE', function (boedb, test) {
                                             //app.IA = options
                                             options.SQL.boedb = boedb.SQL.db
-                                            exit(myArgs, callback, false, test,options)
+                                            //app.commonSQL.init({ SQL: { db: null }, Command: 'IA' }, 'IA', function (iadb) {
+                                            //    options.SQL.iadb = iadb.SQL.db
+                                                exit(myArgs, callback, false, test, options)
+                                            //})
+                                            
                                         })
                                     })
                                 })
