@@ -492,8 +492,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Diario`(
     IN _key nvarchar(100),
     IN _value text,
     IN _DatosRegistrales nvarchar(100),
-    IN _MinRel int
+    IN _MinRel int,
     
+    IN _Empresa int,
+    IN _Directivo int,
+    IN _Financiera int,
+    IN _Auditor int,
+    IN _Sicav int
 )
 BEGIN
 
@@ -528,6 +533,27 @@ BEGIN
     else
 		INSERT IGNORE INTO borme_actos (Empresa_key,Acto,Motivo,Texto,Anyo,Mes,Dia,BOLETIN,_ID,DatosRegistrales)
 								  VALUES (_Empresa_key,_type,_key,_value,_Anyo,_Mes,_Dia,_BOLETIN,_BOLETIN_ID,_DatosRegistrales); 		
+
+
+
+		CALL  Insert_Data_IA_movimiento(
+											_Empresa_Id ,
+											_type ,
+											_Dia ,
+											_Mes , 
+											_Anyo , 
+											_Provincia , 
+											
+											_empresa ,    
+											_financiera ,
+											_auditor ,
+											_sicav ,
+											
+											_key,
+											_value 
+										); 
+
+
 		
         SELECT * FROM borme_keys WHERE id = _Empresa_Id;
     END IF;
@@ -883,4 +909,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-22 22:23:51
+-- Dump completed on 2019-03-22 23:15:32

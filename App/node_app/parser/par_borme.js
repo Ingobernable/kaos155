@@ -127,7 +127,14 @@ module.exports = function (app, callback) {
                                         _Dl.key ? _Dl.key : _Dl.values.key.substr(0, 55),
                                     (_Dl.value == null && _Dl.values == null ? null : _Dl.value ? _Dl.value : _Dl.values == null ? null : _Dl.values.value),
                                     _linea.contenido.DatosRegistrales,
-                                    app._IAparameters.min_TRelations     
+                                    app._IAparameters.min_TRelations,
+
+                                    _linea.record._Empresa,
+                                    _linea.record._Directivo,
+                                    _linea.record._Financiera,
+                                    _linea.record._Auditor,
+                                    _linea.record._Sicav
+
                                 ], function (err, _record) {
                                         //if (_that == null)
                                         //    debugger

@@ -14,6 +14,8 @@
                 }
             }else {
                 _params = {
+                    table: _p.table,
+                    e : _p.e,
                     _id_empresa: _p._id_empresa,
                     _id_relation: _p._id_relation,
                     _key_relation: _p._key_relation,
