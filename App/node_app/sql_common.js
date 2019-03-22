@@ -336,40 +336,19 @@ module.exports = function (app, callback) {
                                 }
                             })
                         },
-                        diario: function (options, params, json, callback) {
+                        diario: function (options, params, callback) {
                             //console.log(params[12])
                             //if (params[12] == "Nombramiento")
                             //    debugger
                             //if (params[12] == 'Constitucion')
                             //    debugger
 
-                            options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
+                            options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", params, function (err, _rec) {
                                 if (err) {
                                     console.log(err,params)
                                     debugger
                                 }
-
-                                if (options._common.io_client.connected) {
-                                    json.record = _rec.length > 0 ? _rec[0][0] : null
-                                    options._common.IAgo(json, (_rec.length > 0 ? 'movimiento' : 'relacion'))
-                                    callback(err, _rec)
-                                } else {
-                                    console.log('esperando a conectar con la IA.....')
-                                    options._common.io_client.off()
-                                    options._common.io_client.disconnect()
-                                    options._common.io_client = require("socket.io-client")(app.ip_ia)
-                                    options._common.io_client.on('connect', function () {
-                                        
-                                        if (options._common.io_client.connected) {
-                                            console.log('IA reconectada continuamos.....')
-                                            options._common.IAgo([], json)
-                                            callback(err, _rec)
-                                        }
-
-                                    })
-                                }
-
-                                
+                                callback(err, _rec)
                             })
                         }
                     },

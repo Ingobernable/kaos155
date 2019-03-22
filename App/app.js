@@ -152,7 +152,9 @@ String.prototype.capitalizeAllFirstLetter = function () {
             let App = app.merge(app, {
                 //idMachine: machineId,
                 command: myArgs[0],
-
+                _IAparameters: {
+                    min_TRelations: 25
+                }, 
                 update: myArgs[3],
                 anyo: myArgs[0] == 'IA' ? null : !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
                 Command: myArgs[0],

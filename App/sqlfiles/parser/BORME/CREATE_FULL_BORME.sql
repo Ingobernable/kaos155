@@ -40,7 +40,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=937593 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +101,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=1236517 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,7 +126,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=1178797 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -268,8 +268,10 @@ SET character_set_client = utf8;
  1 AS `_Financiera`,
  1 AS `_Sicav`,
  1 AS `_Slp`,
- 1 AS `T_Relations`,
- 1 AS `ia_suspicius`*/;
+ 1 AS `_E_T_Relations`,
+ 1 AS `_E.ia_suspicius`,
+ 1 AS `_D_T_Relations`,
+ 1 AS `_D_ia_suspicius`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -489,72 +491,48 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_BORME_Diario`(
     IN _type nvarchar(100), 
     IN _key nvarchar(100),
     IN _value text,
-    IN _DatosRegistrales nvarchar(100)
+    IN _DatosRegistrales nvarchar(100),
+    IN _MinRel int
     
 )
 BEGIN
-	DECLARE _counter int;
-    DECLARE _counterA int;
-    DECLARE _counterB int;
 
+
+
+	-- DECLARE @counter int;
+
+
+
+    
 	IF _Empresa_Id>0 AND _Relacion_Id>0 THEN
-		
-        SET _counter = (SELECT Count(*) FROM borme_relaciones WHERE Empresa_key = _Empresa_key AND Relation_key = _Relacion_key);
-		if _counter=0 THEN	           
-            SET @s = CONCAT('UPDATE borme_keys SET T_Relations =T_Relations + 1 WHERE _key ="',_Empresa_key,'" OR _key = "',_Relacion_key ,'";');
-            -- SELECT (@s) as pp ,_Empresa_key,_Relacion_key;
-            PREPARE stmt1 FROM @s;
-			EXECUTE stmt1;  
-			DEALLOCATE PREPARE stmt1;
-            
-        END IF;
+		SET @counter = (SELECT T_Relations FROM borme_keys WHERE _key = _Relacion_key);	
+       -- SET @counter = (SELECT Count(*) FROM ia_data_unique WHERE Empresa_key = _Empresa_key AND Relation_key = _Relacion_key);
+		 -- IF @counter=0 THEN	
+		UPDATE borme_keys SET T_Relations =T_Relations + 1 WHERE _key = _Empresa_key OR _key = _Relacion_key;
+         -- END IF;
         
-		INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo,Mes,Dia,DatosRegistrales)
-						  VALUES (_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo,_Mes,_Dia,_DatosRegistrales); 
-		INSERT IGNORE INTO ia_data_unique (Empresa_key,Relation_key) values (_Empresa_key,_Relacion_key);
-	else
+		 INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo,Mes,Dia,DatosRegistrales)
+			VALUES (_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo,_Mes,_Dia,_DatosRegistrales); 
+		
+         INSERT IGNORE INTO ia_data_unique (Empresa_key,Relation_key) 
+		     VALUES (_Empresa_key,_Relacion_key);
+        
+        -- SET _counter = (SELECT Count(*) FROM ia_data_unique WHERE Relation_key = _Relacion_key);
+		       
+         IF @counter >= _minRel THEN
+			call Insert_Data_IA_seguimiento(_Relacion_key ,_Empresa_Id, _minrel);
+			-- SELECT @counter;
+		 END IF;	
+		
+    
+    else
 		INSERT IGNORE INTO borme_actos (Empresa_key,Acto,Motivo,Texto,Anyo,Mes,Dia,BOLETIN,_ID,DatosRegistrales)
 								  VALUES (_Empresa_key,_type,_key,_value,_Anyo,_Mes,_Dia,_BOLETIN,_BOLETIN_ID,_DatosRegistrales); 		
 		
         SELECT * FROM borme_keys WHERE id = _Empresa_Id;
     END IF;
     
-    IF _Mes=1 THEN
-		INSERT INTO borme_stadistics (Provincia, Acto,Motivo,Anyo,Enero,Total) values(_Provincia,_type,_key,_Anyo,1,1) on duplicate key update Enero=Enero + 1,Total=Total+1;
-    END IF;
-    IF _Mes=2 THEN
-		INSERT INTO borme_stadistics (Provincia, Acto,Motivo,Anyo,Febrero,Total) values(_Provincia,_type,_key,_Anyo,1,1) on duplicate key update Febrero=Febrero + 1,Total=Total+1;    
-    END IF;
-    IF _Mes=3 THEN
-		INSERT INTO borme_stadistics (Provincia, Acto,Motivo,Anyo,Marzo,Total) values(_Provincia,_type,_key,_Anyo,1,1) on duplicate key update Marzo=Marzo + 1,Total=Total+1;  
-    END IF;
-    IF _Mes=4 THEN
-		INSERT INTO borme_stadistics (Provincia, Acto,Motivo,Anyo,Abril,Total) values(_Provincia,_type,_key,_Anyo,1,1) on duplicate key update Abril=Abril + 1,Total=Total+1;    
-    END IF;
-    IF _Mes=5 THEN
-		INSERT INTO borme_stadistics (Provincia, Acto,Motivo,Anyo,Mayo,Total) values(_Provincia,_type,_key,_Anyo,1,1) on duplicate key update Mayo=Mayo + 1,Total=Total+1;
-    END IF;
-    IF _Mes=6 THEN
-		INSERT INTO borme_stadistics (Provincia, Acto,Motivo,Anyo,Junio,Total) values(_Provincia,_type,_key,_Anyo,1,1) on duplicate key update Junio=Junio + 1,Total=Total+1;  
-    END IF;
-    IF _Mes=7 THEN
-		INSERT INTO borme_stadistics (Provincia, Acto,Motivo,Anyo,Julio,Total) values(_Provincia,_type,_key,_Anyo,1,1) on duplicate key update Julio=Julio + 1,Total=Total+1;  
-    END IF;
-    IF _Mes=8 THEN
-		INSERT INTO borme_stadistics (Provincia, Acto,Motivo,Anyo,Agosto,Total) values(_Provincia,_type,_key,_Anyo,1,1) on duplicate key update Agosto=Agosto + 1,Total=Total+1;  
-    END IF;
-    IF _Mes=9 THEN
-		INSERT INTO borme_stadistics (Provincia, Acto,Motivo,Anyo,Septiembre,Total) values(_Provincia,_type,_key,_Anyo,1,1) on duplicate key update Septiembre=Septiembre + 1,Total=Total+1;  
-    END IF;
-    IF _Mes=10 THEN
-		INSERT INTO borme_stadistics (Provincia, Acto,Motivo,Anyo,Octubre,Total) values(_Provincia,_type,_key,_Anyo,1,1) on duplicate key update Octubre=Octubre + 1,Total=Total+1;  
-    END IF;
-    IF _Mes=11 THEN
-		INSERT INTO borme_stadistics (Provincia, Acto,Motivo,Anyo,Noviembre,Total) values(_Provincia,_type,_key,_Anyo,1,1) on duplicate key update Noviembre=Noviembre + 1,Total=Total+1;  
-    END IF;
-    IF _Mes=12 THEN
-		INSERT INTO borme_stadistics (Provincia, Acto,Motivo,Anyo,Diciembre,Total) values(_Provincia,_type,_key,_Anyo,1,1) on duplicate key update Diciembre=Diciembre + 1,Total=Total+1;  
-    END IF;
+
     
 END ;;
 DELIMITER ;
@@ -873,7 +851,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `relacionado_con` AS select distinct `_Empresa`.`Nombre` AS `Empresa`,`borme_relaciones`.`Empresa_key` AS `_Ekey`,`borme_relaciones`.`Relation_key` AS `_DKey`,`_directivo`.`Nombre` AS `Nombre`,`_directivo`.`_Empresa` AS `_Empresa`,`_directivo`.`_Directivo` AS `_Directivo`,`_directivo`.`_Auditor` AS `_Auditor`,`_directivo`.`_Financiera` AS `_Financiera`,`_directivo`.`_Sicav` AS `_Sicav`,`_directivo`.`_Slp` AS `_Slp`,`_directivo`.`T_Relations` AS `T_Relations`,`_directivo`.`ia_suspicius` AS `ia_suspicius` from ((`borme_relaciones` left join `borme_keys` `_Empresa` on(`borme_relaciones`.`Empresa_key` = `_Empresa`.`_key`)) left join `borme_keys` `_directivo` on(`borme_relaciones`.`Relation_key` = `_directivo`.`_key`)) */;
+/*!50001 VIEW `relacionado_con` AS select `_Empresa`.`Nombre` AS `Empresa`,`ia_data_unique`.`Empresa_key` AS `_Ekey`,`ia_data_unique`.`Relation_key` AS `_DKey`,`_directivo`.`Nombre` AS `Nombre`,`_directivo`.`_Empresa` AS `_Empresa`,`_directivo`.`_Directivo` AS `_Directivo`,`_directivo`.`_Auditor` AS `_Auditor`,`_directivo`.`_Financiera` AS `_Financiera`,`_directivo`.`_Sicav` AS `_Sicav`,`_directivo`.`_Slp` AS `_Slp`,`_directivo`.`T_Relations` AS `T_Relations`,`_directivo`.`ia_suspicius` AS `ia_suspicius` from ((`ia_data_unique` left join `borme_keys` `_Empresa` on(`ia_data_unique`.`Empresa_key` = `_Empresa`.`_key`)) left join `borme_keys` `_directivo` on(`ia_data_unique`.`Relation_key` = `_directivo`.`_key`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -891,7 +869,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `relaciones_de` AS select distinct `_directivo`.`Nombre` AS `Directivo`,`borme_relaciones`.`Relation_key` AS `_DKey`,`borme_relaciones`.`Empresa_key` AS `_Ekey`,`_Empresa`.`Nombre` AS `Nombre`,`_Empresa`.`_Empresa` AS `_Empresa`,`_Empresa`.`_Directivo` AS `_Directivo`,`_Empresa`.`_Auditor` AS `_Auditor`,`_Empresa`.`_Financiera` AS `_Financiera`,`_Empresa`.`_Sicav` AS `_Sicav`,`_Empresa`.`_Slp` AS `_Slp`,`_Empresa`.`T_Relations` AS `T_Relations`,`_Empresa`.`ia_suspicius` AS `ia_suspicius` from ((`borme_relaciones` left join `borme_keys` `_Empresa` on(`borme_relaciones`.`Empresa_key` = `_Empresa`.`_key`)) left join `borme_keys` `_directivo` on(`borme_relaciones`.`Relation_key` = `_directivo`.`_key`)) */;
+/*!50001 VIEW `relaciones_de` AS select `_directivo`.`Nombre` AS `Directivo`,`ia_data_unique`.`Relation_key` AS `_DKey`,`ia_data_unique`.`Empresa_key` AS `_Ekey`,`_Empresa`.`Nombre` AS `Nombre`,`_Empresa`.`_Empresa` AS `_Empresa`,`_Empresa`.`_Directivo` AS `_Directivo`,`_Empresa`.`_Auditor` AS `_Auditor`,`_Empresa`.`_Financiera` AS `_Financiera`,`_Empresa`.`_Sicav` AS `_Sicav`,`_Empresa`.`_Slp` AS `_Slp`,`_Empresa`.`T_Relations` AS `_E_T_Relations`,`_Empresa`.`ia_suspicius` AS `_E.ia_suspicius`,`_directivo`.`T_Relations` AS `_D_T_Relations`,`_directivo`.`ia_suspicius` AS `_D_ia_suspicius` from ((`ia_data_unique` left join `borme_keys` `_Empresa` on(`ia_data_unique`.`Empresa_key` = `_Empresa`.`_key`)) left join `borme_keys` `_directivo` on(`ia_data_unique`.`Relation_key` = `_directivo`.`_key`)) order by `ia_data_unique`.`Relation_key` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -905,4 +883,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-20 22:33:47
+-- Dump completed on 2019-03-22 22:23:51
