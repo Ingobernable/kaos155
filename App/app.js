@@ -203,22 +203,22 @@ String.prototype.capitalizeAllFirstLetter = function () {
                         _cb({
                             IA: function () {
                                 console.log('ejecute IA init.....')
-                                require('./node_app/sql_common.js')(app, function (SQL) {
-                                    app.command = 'PARSER'
-                                    app.commonSQL = SQL
-                                    require('./node_app/parser/par_borme.js')(app, function (options) {
+                               // require('./node_app/sql_common.js')(app, function (SQL) {
+                               //     app.command = 'PARSER'
+                               //     app.commonSQL = SQL
+                               //     require('./node_app/parser/par_borme.js')(app, function (options) {
 
-                                        app.commonSQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'BOE', function (boedb) {
-                                            app.IA = options
-                                            app.IA.SQL.boedb = boedb.SQL.db
+                               //         app.commonSQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'BOE', function (boedb) {
+                                //            app.IA = options
+                                 //           app.IA.SQL.boedb = boedb.SQL.db
                                             //app.commonSQL.init({ SQL: { db: null }, Command: 'IA' }, 'IA', function (iadb) {
                                             //    options.SQL.iadb = iadb.SQL.db
                                                 app._io = require('./node_IA/socket_IO.js')(app)
                                                 app._io.listen(require('socket.io')(8080))
                                             //})
-                                        })
-                                    })
-                                })
+                                  //      })
+                                   // })
+                                //})
 
 
 

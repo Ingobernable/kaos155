@@ -6,8 +6,8 @@ module.exports = function (app, myArgs, callback) {
     const exit = function (myArgs, callback, automatic, test) {
 
         //debugger
-        if (myArgs[0] != _exit && myArgs[0] != 'IA') {
-            if (myArgs[0] != 'GRAFOS') {
+        if (myArgs[0] != _exit && myArgs[0] != 'IA' && myArgs[0] != 'GRAFOS') {
+            //if (myArgs[0] != 'GRAFOS') {
                 if (myArgs[1] != 'BORME') {
 
                     var date = new Date(myArgs[2].substr(0, 4), 0, 1) //myArgs[2])
@@ -27,7 +27,7 @@ module.exports = function (app, myArgs, callback) {
 
                     }
                 }
-            }
+            //}
         }
 
         callback(app, myArgs, date, automatic,test ) // options
@@ -77,7 +77,7 @@ module.exports = function (app, myArgs, callback) {
                     
                     if (command.value != _exit) {
                         myArgs[0] = command.value
-                        if (_commands.indexOf(command.value) < _commands.length - 2) {
+                        if (_commands.indexOf(command.value) < _commands.length - 3) {
                             app.inquirer.prompt([{ type: 'list', name: 'value', message: 'tipo', choices: ['BORME', 'BOE', 'BOCM'] }])
                                 .then(function (type) {
                                     //debugger
@@ -92,55 +92,75 @@ module.exports = function (app, myArgs, callback) {
                                     })
                                 })
                         } else {
-                            app.grafos = { obj: require("../node_grafos/common_grafos.js")(app) }
-                            app.grafos_sys = require('neo4j-driver').v1
-                            myArgs = [command.value, null, null]
-                            if (app.fs.existsSync(__basedir + "/sqlfiles/cred_grafos.json")) {
-                                app.credentials.getparamsfromfile('cred_neo4j', function (err) {
-                                    debugger
-                                }, function (resp) {
+                            if (command.value == 'GRAFOS') {
+                                app.grafos = { obj: require("../node_grafos/common_grafos.js")(app) }
+                                app.grafos_sys = require('neo4j-driver').v1
+                                myArgs = [command.value, null, null]
+                                if (app.fs.existsSync(__basedir + "/sqlfiles/creditos/cred_neo4j.json")) {
+                                    app.credentials.getparamsfromfile('cred_neo4j', function (err) {
+                                        debugger
+                                    }, function (resp) {
 
-                                    app.grafos.obj.driver = app.grafos_sys.driver('bolt://' + resp.host, app.grafos_sys.auth.basic(resp.user, resp.password), {
-                                        encrypted: 'ENCRYPTION_OFF'
-                                    })
-                                    app.grafos.obj.driver.onCompleted = function () {
-                                        //debugger
-                                        exit(myArgs, callback, false)
-                                    }
-                                    app.grafos.obj.driver.onError = function (error) {
-                                        console.log("neo4j error:error.message");
-                                        console.log("elimine el fichero kaos155\\App\\sqlfiles\\cred_grafos.json");
-                                        app.exit(function () { process.exit(1) })
-                                        //process.exit(1)
-                                    };
-                                    app.grafos.obj.session = app.grafos.obj.driver.session();
-                                })
-
-                            } else {
-                                app.inquirer.prompt([
-
-                                    { type: 'input', name: 'host', message: 'neo4db IP:port', default: 'localhost' },
-                                    { type: 'input', name: 'user', message: 'neo4db user', default: 'grafos' },
-                                    { type: 'password', name: 'password', message: 'neo4db password' }
-
-                                ]).then(function (resp) {
-
-                                    //app.grafos = require("./common_grafos.js")(app)
-                                    app.grafos.obj.driver = app.grafos_sys.driver('bolt://' + resp.host, app.grafos_sys.auth.basic(resp.user, resp.password), { encrypted: 'ENCRYPTION_OFF' })
-                                    app.grafos.obj.driver.onCompleted = function () {
-                                        console.log('grafoss Driver created');
-                                        //debugger
-                                        app.credentials.saveparamstofile('cred_neo4j', resp, null, function (_credenciales) {
-                                            exit(myArgs, callback, false)
+                                        app.grafos.obj.driver = app.grafos_sys.driver('bolt://' + resp.host, app.grafos_sys.auth.basic(resp.user, resp.password), {
+                                            encrypted: 'ENCRYPTION_OFF'
                                         })
-                                    };
-                                    app.grafos.obj.driver.onError = function (error) {
-                                        console.log(error);
-                                        app.exit(function () { process.exit(1) })
-                                        //process.exit(1)
-                                    };
-                                    app.grafos.obj.session = app.grafos.obj.driver.session();
+                                        app.grafos.obj.driver.onCompleted = function () {
+                                            app.command = command
+                                            require("./sql_common.js")(app, function (commonSQL) {
+                                                app.commonSQL = commonSQL
+                                                app.commonSQL.init({ SQL: { db: null }, Command: 'GRAFOS' }, 'GRAFOS', function (grafosdb, test) {
+                                                    exit(myArgs, callback, false, test)
+                                                })
+                                            })
+                                        }
+                                        app.grafos.obj.driver.onError = function (error) {
+                                            console.log("neo4j error:error.message");
+                                            console.log("elimine el fichero kaos155\\App\\sqlfiles\\creditos\\cred_neo4j.json");
+                                            app.exit(function () { process.exit(1) })
+                                            //process.exit(1)
+                                        };
+                                        app.grafos.obj.session = app.grafos.obj.driver.session();
+                                    })
 
+                                } else {
+                                    app.inquirer.prompt([
+
+                                        { type: 'input', name: 'host', message: 'neo4db IP:port', default: 'localhost' },
+                                        { type: 'input', name: 'user', message: 'neo4db user', default: 'grafos' },
+                                        { type: 'password', name: 'password', message: 'neo4db password' }
+
+                                    ]).then(function (resp) {
+
+                                        //app.grafos = require("./common_grafos.js")(app)
+                                        app.grafos.obj.driver = app.grafos_sys.driver('bolt://' + resp.host, app.grafos_sys.auth.basic(resp.user, resp.password), { encrypted: 'ENCRYPTION_OFF' })
+                                        app.grafos.obj.driver.onCompleted = function () {
+                                            console.log('grafoss Driver created');
+                                            //debugger
+                                            app.credentials.saveparamstofile('cred_neo4j', resp, null, function (_credenciales) {
+                                                exit(myArgs, callback, false)
+                                            })
+                                        };
+                                        app.grafos.obj.driver.onError = function (error) {
+                                            console.log(error);
+                                            app.exit(function () { process.exit(1) })
+                                            //process.exit(1)
+                                        };
+                                        app.grafos.obj.session = app.grafos.obj.driver.session();
+
+                                    })
+                                }
+                            } else {
+                                require("./sql_common.js")(app, function (commonSQL) {
+                                    app.command = 'PARSER'
+                                    app.commonSQL = commonSQL
+                                    require('./parser/par_borme.js')(app, function (options) {
+
+                                        app.commonSQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'BOE', function (boedb, test) {
+                                            app.IA = options
+                                            app.IA.SQL.boedb = boedb.SQL.db
+                                            exit(myArgs, callback, false, test)
+                                        })
+                                    })
                                 })
                             }
                         }
