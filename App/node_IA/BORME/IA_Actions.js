@@ -81,11 +81,17 @@
             //const _this = this
             app.writeSync(app, argv.data.acto._def + ' ' + argv.data.acto._type + ' ' + argv.data.acto._cargo + ' ' + argv.data.acto._value)
 
-            app.IA.SQL.db.query(app._io.functions.BORME.tools.relacion.cadSql, app._io.functions.BORME.tools.relacion.data(argv, app._io._IAparameters))
+            app.IA.SQL.db.query(app._io.functions.BORME.tools.relacion.cadSql, app._io.functions.BORME.tools.relacion.data(argv, app._io._IAparameters), function (err) {
+                if (err)
+                    app.writeSync(app, err)
+            })
         },
         movimiento: function (argv) {
             app.writeSync(app, argv.data.acto._type + ' ' + argv.data.acto._cargo + ' ' + argv.data.acto._value)
-            app.IA.SQL.db.query(app._io.functions.BORME.tools.movimiento.cadSql, app._io.functions.BORME.tools.movimiento.data(argv) )
+            app.IA.SQL.db.query(app._io.functions.BORME.tools.movimiento.cadSql, app._io.functions.BORME.tools.movimiento.data(argv), function (err) {
+                if (err)
+                    app.writeSync(app, err)
+            })
 
         },
         update: function () {

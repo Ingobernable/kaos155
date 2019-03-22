@@ -325,7 +325,7 @@ module.exports = function (app, callback) {
                                         options._common.io_client.on('connect', function () {
                                             if (options._common.io_client.connected) {
                                                 console.log('IA reconectada continuamos.....')
-                                                options._common.IAgo(_rec, params)
+                                                options._common.IAgo(params, (_rec[0][0]._add > 0 ? 'add' : 'update'))
                                                 callback(params, _rec)
                                             }
 
