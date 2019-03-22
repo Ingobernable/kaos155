@@ -513,7 +513,7 @@ BEGIN
 		SET @counter = (SELECT T_Relations FROM borme_keys WHERE _key = _Relacion_key);	
        -- SET @counter = (SELECT Count(*) FROM ia_data_unique WHERE Empresa_key = _Empresa_key AND Relation_key = _Relacion_key);
 		 -- IF @counter=0 THEN	
-		UPDATE borme_keys SET T_Relations =T_Relations + 1 WHERE _key = _Empresa_key OR _key = _Relacion_key;
+		UPDATE borme_keys SET T_Relations =T_Relations + 1 WHERE id = _Empresa_Id OR id = _Relacion_Id;
          -- END IF;
         
 		 INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo,Mes,Dia,DatosRegistrales)
@@ -544,10 +544,10 @@ BEGIN
 											_Anyo , 
 											_Provincia , 
 											
-											_empresa ,    
-											_financiera ,
-											_auditor ,
-											_sicav ,
+											_Empresa ,    
+											_Financiera ,
+											_Auditor ,
+											_Sicav ,
 											
 											_key,
 											_value 
@@ -909,4 +909,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-22 23:15:32
+-- Dump completed on 2019-03-23  0:17:27
