@@ -3,9 +3,11 @@ module.exports = function (app, myArgs, callback) {
 
     const _exit = "EXIT"
     
-    const exit = function (myArgs, callback, automatic, test) {
+    const exit = function (myArgs, callback, automatic, test, options) {
 
-        //debugger
+        if (myArgs[0] == 'IA')
+            app.IA = options
+
         if (myArgs[0] != _exit && myArgs[0] != 'IA' && myArgs[0] != 'GRAFOS') {
             //if (myArgs[0] != 'GRAFOS') {
                 if (myArgs[1] != 'BORME') {
@@ -156,9 +158,9 @@ module.exports = function (app, myArgs, callback) {
                                     require('./parser/par_borme.js')(app, function (options) {
 
                                         app.commonSQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'BOE', function (boedb, test) {
-                                            app.IA = options
-                                            app.IA.SQL.boedb = boedb.SQL.db
-                                            exit(myArgs, callback, false, test)
+                                            //app.IA = options
+                                            options.SQL.boedb = boedb.SQL.db
+                                            exit(myArgs, callback, false, test,options)
                                         })
                                     })
                                 })
