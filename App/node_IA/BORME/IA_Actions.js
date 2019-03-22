@@ -69,7 +69,7 @@
                         record = null
                     })
                 } else {
-                    app.writeSync(app, 'ADD->' + argv.table.substr(0, 7) + " - " + argv.data.e)
+                    app.writeSync(app, 'ADD->' + argv.data.table + " - " + argv.data.e)
                 }
                 record = null
             })

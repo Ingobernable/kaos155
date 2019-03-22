@@ -5,8 +5,12 @@
         
         IAgo: function ( _p, _command) {
             var _params = {}
+            if (_p.table == null)
+                debugger
+
             if (_p.id) {
                 _params = {
+                    table: _p.table,
                     id: _p.id,
                     e: _p.e,
                     k: _p.k,

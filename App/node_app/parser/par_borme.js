@@ -109,7 +109,8 @@ module.exports = function (app, callback) {
                                         debugger
                                     }
                                 }
-
+                                if (!_linea.record._Empresa)
+                                    debugger
                                 app.commonSQL.SQL.commands.insert.Borme.diario(options, [
                                         _linea.data.BOLETIN,
                                         _linea.id,
