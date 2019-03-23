@@ -56,9 +56,11 @@
                     app._.each(record, function (rec) {
 
                         if (rec[0]._COUNTER != null) {
-                            app.writeSync(app, "-" + argv.table.substr(0, 7) + " - " + argv.data.e + "->" + record[0].type)
-                            err = null
-                            rec = null
+                            app.IA.SQL.boedb.query(app._io.functions.BORME.tools.add.cadSql.insert, app._io.functions.BORME.tools.add.data.insert(argv, rec[0]), function (err, record) {
+                                app.writeSync(app, "-" + argv.table.substr(0, 7) + " - " + argv.data.e + "->" + record[0].type)
+                                err = null
+                                rec = null
+                            })
                         } else {
                             app.writeSync(app, argv.data.e + "-" + "Sin Contratos")
                             err = null
