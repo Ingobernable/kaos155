@@ -510,7 +510,7 @@ BEGIN
 
     
 	IF _Empresa_Id>0 AND _Relacion_Id>0 THEN
-		SET @counter = (SELECT T_Relations FROM borme_keys WHERE _key = _Relacion_key);	
+			
        -- SET @counter = (SELECT Count(*) FROM ia_data_unique WHERE Empresa_key = _Empresa_key AND Relation_key = _Relacion_key);
 		 -- IF @counter=0 THEN	
 		UPDATE borme_keys SET T_Relations =T_Relations + 1 WHERE id = _Empresa_Id OR id = _Relacion_Id;
@@ -523,9 +523,10 @@ BEGIN
 		     VALUES (_Empresa_key,_Relacion_key);
         
         -- SET _counter = (SELECT Count(*) FROM ia_data_unique WHERE Relation_key = _Relacion_key);
-		       
+		 
+         SET @counter = (SELECT T_Relations FROM borme_keys WHERE id = _Relacion_Id);      
          IF @counter >= _minRel THEN
-			call Insert_Data_IA_seguimiento(_Relacion_key ,_Empresa_Id, _minrel);
+			call Insert_Data_IA_seguimiento(_Relacion_key , _MinRel);
 			-- SELECT @counter;
 		 END IF;	
 		
@@ -831,17 +832,17 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_IA_seguimiento`(_dkey VARCHAR(36),_idrel int, _minrel int)
+CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_IA_seguimiento`(_dkey VARCHAR(36), _minrel int)
 BEGIN
 	DECLARE _ekey VARCHAR(36);
     DECLARE _id INT;
     
     DECLARE fin INTEGER DEFAULT 0;
     DECLARE runners_cursor CURSOR FOR 
-		SELECT borme_keys.id,borme_relaciones.Empresa_key FROM borme_relaciones JOIN borme_keys on borme_relaciones.Empresa_key=borme_keys._key WHERE borme_relaciones.Relation_key=_dkey AND NOT borme_keys.ia_suspicius;
+		SELECT borme_keys.id, _key FROM ia_data_unique JOIN borme_keys on ia_data_unique.Empresa_key=borme_keys._key WHERE ia_data_unique.Relation_key=_dkey AND NOT borme_keys.ia_suspicius;
         
 	DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin=1;
-    SET @Counter = (SELECT T_Relations FROM borme_keys where id=_idrel AND T_Relations>_minrel AND _Directivo AND NOT _Auditor AND NOT _Financiera AND NOT _sicav);
+    SET @Counter = (SELECT T_Relations FROM borme_keys where _key=_dkey AND T_Relations>_minrel AND _Directivo AND NOT _Auditor AND NOT _Financiera AND NOT _sicav);
     IF @Counter>0 THEN
 		OPEN runners_cursor;
 		get_cursor: LOOP
@@ -853,7 +854,7 @@ BEGIN
 			INSERT IGNORE ia_data_seguimiento (_key_seguimiento,_key_empresa) VALUES (_dkey,_ekey);
 		END LOOP get_cursor;
 		
-        UPDATE borme_keys SET ia_suspicius=1 WHERE id = _idrel ;
+		UPDATE borme_keys SET ia_suspicius=1 WHERE _key = _dkey ;
 		CLOSE runners_cursor;   
 	END IF;
     SELECT @Counter as counter;
@@ -909,4 +910,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-23  0:17:27
+-- Dump completed on 2019-03-23  0:58:32

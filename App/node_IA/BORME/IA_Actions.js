@@ -66,8 +66,9 @@
                            
                         
                         }
-                        record = null
+                       
                     })
+                    record = null
                 } else {
                     app.writeSync(app, 'ADD->' + argv.data.table + " - " + argv.data.e)
                 }
