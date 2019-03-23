@@ -40,7 +40,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +101,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2259 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,7 +126,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1500 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -140,7 +140,6 @@ CREATE TABLE `borme_stadistics` (
   `Provincia` varchar(50) CHARACTER SET utf8 NOT NULL,
   `Anyo` int(11) NOT NULL,
   `Acto` varchar(45) CHARACTER SET utf8 NOT NULL,
-  `Motivo` varchar(55) CHARACTER SET utf8 NOT NULL,
   `Enero` int(11) DEFAULT 0,
   `Febrero` int(11) DEFAULT 0,
   `Marzo` int(11) DEFAULT 0,
@@ -154,7 +153,7 @@ CREATE TABLE `borme_stadistics` (
   `Noviembre` int(11) DEFAULT 0,
   `Diciembre` int(11) DEFAULT 0,
   `Total` int(11) DEFAULT 0,
-  PRIMARY KEY (`Provincia`,`Anyo`,`Acto`,`Motivo`)
+  PRIMARY KEY (`Provincia`,`Anyo`,`Acto`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -538,7 +537,8 @@ BEGIN
 
 
 		CALL  Insert_Data_IA_movimiento(
-											_Empresa_Id ,
+											_Empresa_key,
+                                            _Empresa_Id ,
 											_type ,
 											_Dia ,
 											_Mes , 
@@ -745,6 +745,7 @@ DELIMITER ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_IA_movimiento`(
+	_key nvarchar(36),
 	_id_empresa int,
 	_type nvarchar(25),
     _Dia nvarchar(2),
@@ -764,11 +765,51 @@ BEGIN
 	SET @Fecha = STR_TO_DATE(CONCAT(_dia,'/',_Mes,'/',_Anyo),'%d/%m/%Y');
 	IF _Type='Varios' then
 		
-		IF _tipo='Cambio de domicilio social' THEN
-			UPDATE borme_empresas SET Domicilio = _motivo,_last_date_dom= @Fecha WHERE _last_date_dom<@Fecha OR _last_date_dom is null and _id=_id_empresa;
-        END IF;
-        IF _tipo= "Objeto social" THEN			
-			UPDATE borme_empresas SET Objeto_Social = _motivo,_last_date_objeto= @Fecha WHERE _last_date_objeto<@Fecha OR _last_date_objeto is null and _id=_id_empresa;
+        IF _tipo='Cambio de domicilio social' OR _tipo= "Objeto social" THEN
+        
+			IF _tipo='Cambio de domicilio social' THEN
+				UPDATE borme_empresas SET Domicilio = _motivo,_last_date_dom= @Fecha WHERE _last_date_dom<@Fecha OR _last_date_dom is null and _id=_id_empresa;
+			END IF;
+			IF _tipo= "Objeto social" THEN			
+				UPDATE borme_empresas SET Objeto_Social = _motivo,_last_date_objeto= @Fecha WHERE _last_date_objeto<@Fecha OR _last_date_objeto is null and _id=_id_empresa;
+			END IF;
+			
+			IF _Mes=1 THEN
+				INSERT INTO borme_stadistics (Provincia, Acto,Anyo,Enero,Total) values(_Provincia,SUBSTR(_tipo,1,45) ,_Anyo,1,1) on duplicate key update Enero=Enero + 1,Total=Total+1;
+			END IF;
+			IF _Mes=2 THEN
+				INSERT INTO borme_stadistics (Provincia, Acto,Anyo,Febrero,Total) values(_Provincia,SUBSTR(_tipo,1,45),_Anyo,1,1) on duplicate key update Febrero=Febrero + 1,Total=Total+1;    
+			END IF;
+			IF _Mes=3 THEN
+				INSERT INTO borme_stadistics (Provincia, Acto,Anyo,Marzo,Total) values(_Provincia,SUBSTR(_tipo,1,45),_Anyo,1,1) on duplicate key update Marzo=Marzo + 1,Total=Total+1;  
+			END IF;
+			IF _Mes=4 THEN
+				INSERT INTO borme_stadistics (Provincia, Acto,Anyo,Abril,Total) values(_Provincia,SUBSTR(_tipo,1,45),_Anyo,1,1) on duplicate key update Abril=Abril + 1,Total=Total+1;    
+			END IF;
+			IF _Mes=5 THEN
+				INSERT INTO borme_stadistics (Provincia, Acto,Anyo,Mayo,Total) values(_Provincia,SUBSTR(_tipo,1,45),_Anyo,1,1) on duplicate key update Mayo=Mayo + 1,Total=Total+1;
+			END IF;
+			IF _Mes=6 THEN
+				INSERT INTO borme_stadistics (Provincia, Acto,Anyo,Junio,Total) values(_Provincia,SUBSTR(_tipo,1,45),_Anyo,1,1) on duplicate key update Junio=Junio + 1,Total=Total+1;  
+			END IF;
+			IF _Mes=7 THEN
+				INSERT INTO borme_stadistics (Provincia, Acto,Anyo,Julio,Total) values(_Provincia,SUBSTR(_tipo,1,45),_Anyo,1,1) on duplicate key update Julio=Julio + 1,Total=Total+1;  
+			END IF;
+			IF _Mes=8 THEN
+				INSERT INTO borme_stadistics (Provincia, Acto,Anyo,Agosto,Total) values(_Provincia,SUBSTR(_tipo,1,45),_Anyo,1,1) on duplicate key update Agosto=Agosto + 1,Total=Total+1;  
+			END IF;
+			IF _Mes=9 THEN
+				INSERT INTO borme_stadistics (Provincia, Acto,Anyo,Septiembre,Total) values(_Provincia,SUBSTR(_tipo,1,45),_Anyo,1,1) on duplicate key update Septiembre=Septiembre + 1,Total=Total+1;  
+			END IF;
+			IF _Mes=10 THEN
+				INSERT INTO borme_stadistics (Provincia, Acto,Anyo,Octubre,Total) values(_Provincia,SUBSTR(_tipo,1,45),_Anyo,1,1) on duplicate key update Octubre=Octubre + 1,Total=Total+1;  
+			END IF;
+			IF _Mes=11 THEN
+				INSERT INTO borme_stadistics (Provincia, Acto,Anyo,Noviembre,Total) values(_Provincia,SUBSTR(_tipo,1,45),_Anyo,1,1) on duplicate key update Noviembre=Noviembre + 1,Total=Total+1;  
+			END IF;
+			IF _Mes=12 THEN
+				INSERT INTO borme_stadistics (Provincia, Acto,Anyo,Diciembre,Total) values(_Provincia,SUBSTR(_tipo,1,45),_Anyo,1,1) on duplicate key update Diciembre=Diciembre + 1,Total=Total+1;  
+			END IF;
         END IF;
     END IF;
     
@@ -910,4 +951,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-23  0:58:32
+-- Dump completed on 2019-03-23  9:50:37
