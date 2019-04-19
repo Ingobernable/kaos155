@@ -153,7 +153,7 @@ String.prototype.capitalizeAllFirstLetter = function () {
                 //idMachine: machineId,
                 command: myArgs[0],
                 _IAparameters: {
-                    min_TRelations: 25
+                    min_TRelations: 100
                 }, 
                 update: myArgs[3],
                 anyo: myArgs[0] == 'IA' ? null : !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
