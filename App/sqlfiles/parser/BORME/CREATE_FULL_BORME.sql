@@ -1,10 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_borme` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `bbdd_kaos155_borme`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
--- Host: 51.75.95.139    Database: bbdd_kaos155_borme
+-- Host: 54.36.112.23    Database: bbdd_kaos155_borme
 -- ------------------------------------------------------
--- Server version	5.5.5-10.2.15-MariaDB-10.2.15+maria~stretch-log
+-- Server version	5.5.5-10.2.23-MariaDB-10.2.23+maria~stretch-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -16,6 +14,46 @@ USE `bbdd_kaos155_borme`;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `Workers_suspicius`
+--
+
+DROP TABLE IF EXISTS `Workers_suspicius`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Workers_suspicius` (
+  `_key` varchar(32) CHARACTER SET utf8 DEFAULT NULL,
+  `_Nombre` varchar(100) CHARACTER SET utf8 DEFAULT NULL,
+  `Caso` varchar(45) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `borme_actos`
+--
+
+DROP TABLE IF EXISTS `borme_actos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `borme_actos` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Empresa_key` char(55) NOT NULL,
+  `Acto` varchar(45) NOT NULL,
+  `Motivo` varchar(55) NOT NULL,
+  `Texto` varchar(255) NOT NULL,
+  `Anyo` int(10) unsigned NOT NULL,
+  `Mes` int(11) DEFAULT NULL,
+  `Dia` int(11) DEFAULT NULL,
+  `BOLETIN` varchar(20) DEFAULT NULL,
+  `_ID` int(11) DEFAULT NULL,
+  `DatosRegistrales` varchar(105) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
+  KEY `Empresa` (`Empresa_key`),
+  KEY `Boletin` (`BOLETIN`,`_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `borme_empresas`
@@ -75,7 +113,32 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=2192021 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `borme_relaciones`
+--
+
+DROP TABLE IF EXISTS `borme_relaciones`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `borme_relaciones` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Empresa_key` char(55) NOT NULL,
+  `Relation_key` char(55) NOT NULL,
+  `Type` int(11) DEFAULT 1,
+  `Motivo` varchar(45) NOT NULL,
+  `Cargo` varchar(45) NOT NULL,
+  `Activo` bit(1) NOT NULL,
+  `Anyo` int(10) unsigned NOT NULL,
+  `Mes` int(11) DEFAULT NULL,
+  `Dia` int(11) DEFAULT NULL,
+  `DatosRegistrales` varchar(105) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `Empresa` (`Empresa_key`),
+  KEY `Directivo` (`Relation_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -110,6 +173,32 @@ CREATE TABLE `ia_data_seguimiento` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `ia_data_suspicius`
+--
+
+DROP TABLE IF EXISTS `ia_data_suspicius`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ia_data_suspicius` (
+  `_path` varchar(512) CHARACTER SET utf8 NOT NULL,
+  `_tree` varchar(512) CHARACTER SET utf8 DEFAULT NULL,
+  `_key` varchar(36) NOT NULL,
+  `_level` int(11) DEFAULT NULL,
+  `_Nombre` varchar(55) CHARACTER SET utf8 DEFAULT NULL,
+  `_Empresa` tinyint(4) DEFAULT NULL,
+  `_trx` int(11) DEFAULT NULL,
+  `_Financiera` tinyint(4) NOT NULL DEFAULT 0,
+  `_Auditor` tinyint(4) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`_path`,`_key`),
+  KEY `_trx` (`_trx`),
+  KEY `_level` (`_level`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `ia_data_tree`
+--
+--
 -- Table structure for table `ia_data_unique`
 --
 
@@ -119,7 +208,8 @@ DROP TABLE IF EXISTS `ia_data_unique`;
 CREATE TABLE `ia_data_unique` (
   `Empresa_key` char(36) NOT NULL,
   `Relation_key` char(36) NOT NULL,
-  PRIMARY KEY (`Empresa_key`,`Relation_key`)
+  PRIMARY KEY (`Empresa_key`,`Relation_key`),
+  UNIQUE KEY `revert` (`Relation_key`,`Empresa_key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -132,9 +222,8 @@ DROP TABLE IF EXISTS `relacionado_con`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 /*!50001 CREATE VIEW `relacionado_con` AS SELECT 
- 1 AS `Empresa`,
- 1 AS `_Ekey`,
  1 AS `_DKey`,
+ 1 AS `_key`,
  1 AS `Nombre`,
  1 AS `_Empresa`,
  1 AS `_Directivo`,
@@ -155,9 +244,8 @@ DROP TABLE IF EXISTS `relaciones_de`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 /*!50001 CREATE VIEW `relaciones_de` AS SELECT 
- 1 AS `Directivo`,
  1 AS `_DKey`,
- 1 AS `_Ekey`,
+ 1 AS `_key`,
  1 AS `Nombre`,
  1 AS `_Empresa`,
  1 AS `_Directivo`,
@@ -165,15 +253,34 @@ SET character_set_client = utf8;
  1 AS `_Financiera`,
  1 AS `_Sicav`,
  1 AS `_Slp`,
- 1 AS `_E_T_Relations`,
- 1 AS `_E.ia_suspicius`,
- 1 AS `_D_T_Relations`,
- 1 AS `_D_ia_suspicius`*/;
+ 1 AS `T_Relations`,
+ 1 AS `ia_suspicius`*/;
 SET character_set_client = @saved_cs_client;
 
 --
 -- Dumping routines for database 'bbdd_kaos155_borme'
 --
+/*!50003 DROP FUNCTION IF EXISTS `count_str` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `count_str`( haystack TEXT,  needle VARCHAR(32)) RETURNS int(11)
+    DETERMINISTIC
+BEGIN
+RETURN LENGTH(haystack) - LENGTH( REPLACE ( haystack, needle, space(char_length(needle)-1)));
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP FUNCTION IF EXISTS `IS_RegExp` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -216,6 +323,109 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `SPLIT_STR` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `SPLIT_STR`( s MEDIUMTEXT , del CHAR(1) , i INT) RETURNS text CHARSET utf8
+    DETERMINISTIC
+BEGIN
+
+        DECLARE n INT ;
+
+        
+        SET n = LENGTH(s) - LENGTH(REPLACE(s, del, '')) + 1;
+
+        IF i > n THEN
+            RETURN NULL ;
+        ELSE
+            RETURN SUBSTRING_INDEX(SUBSTRING_INDEX(s, del, i) , del , -1 ) ;        
+        END IF;
+
+    END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `_namespath` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `_namespath`(_path nvarchar(256), _key nvarchar(32)) RETURNS text CHARSET latin1
+    DETERMINISTIC
+BEGIN
+	DECLARE _TNombre nvarchar(55);
+    DECLARE _fin int;
+    SET @path = CONCAT(_path , _key,'#');
+    SET @counter = count_str( @path ,'#');
+	SET @str = '/'; -- SPLIT_STR(_path,'#',2);
+    SET @e=1;
+    
+    -- SELECT @counter;
+	while @e<=@counter DO
+		begin
+			DECLARE _keys CURSOR FOR 
+				SELECT SUBSTR(Nombre,1,55) FROM borme_keys WHERE _key= SPLIT_STR(@path,'#',@e+1);
+
+
+			DECLARE CONTINUE HANDLER FOR NOT FOUND SET _fin=1;    
+			OPEN _keys;
+			get_keys: LOOP
+				FETCH _keys INTO _TNombre;
+				-- SELECT _Tkey,_TNombre,_TEmpresa,_tr,_suspicius;
+				SET @str = concat(@str, _TNombre, "/");
+				IF _fin = 1 THEN
+					LEAVE get_keys;
+				END IF;
+				
+								
+			END LOOP get_keys;
+			CLOSE _keys; 
+		end;
+        SET @e = @e+1;
+	end while;    
+    
+RETURN @str;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `_truncatestring` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `_truncatestring`(str nvarchar(255), e int) RETURNS varchar(255) CHARSET utf8
+    DETERMINISTIC
+BEGIN
+
+RETURN CONCAT(SUBSTR(str,1,e), IF(LENGTH(str)>e,'...',''));
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP FUNCTION IF EXISTS `_type` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -246,35 +456,6 @@ BEGIN
 	  END IF;
 	END IF;
   RETURN _r;  
-END ;;
-DELIMITER ;
-/*!50003 SET sql_mode              = @saved_sql_mode */ ;
-/*!50003 SET character_set_client  = @saved_cs_client */ ;
-/*!50003 SET character_set_results = @saved_cs_results */ ;
-/*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `GetRelations` */;
-/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
-/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
-/*!50003 SET @saved_col_connection = @@collation_connection */ ;
-/*!50003 SET character_set_client  = utf8 */ ;
-/*!50003 SET character_set_results = utf8 */ ;
-/*!50003 SET collation_connection  = utf8_general_ci */ ;
-/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
-DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `GetRelations`(
-	IN _type int,
-    IN _Id VARCHAR(36),
-    IN _IdParent VARCHAR(36)
-)
-BEGIN
-	IF _type= 0 THEN 
-		SELECT DISTINCT _key,Nombre,Motivo,CArgo,Anyo,mes,dia,type,activo,T_Relations FROM bbdd_kaos155_borme.relaciones_de where idkey= _Id AND _key<>_IdParent ;
-    ELSE    
-
-		SELECT DISTINCT _key,Nombre,Motivo,CArgo,Anyo,mes,dia,type,activo,T_Relations FROM bbdd_kaos155_borme.relacionado_con where idkey= _Id AND _key<>_IdParent;
-
-	END IF;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -392,11 +573,12 @@ BEGIN
 		
          -- END IF;
         
-		-- INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo,Mes,Dia,DatosRegistrales)
-		-- VALUES (_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo,_Mes,_Dia,_DatosRegistrales); 
+		INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo,Mes,Dia,DatosRegistrales)
+			VALUES (_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo,_Mes,_Dia,_DatosRegistrales); 
 		
          INSERT IGNORE INTO ia_data_unique (Empresa_key,Relation_key) 
 		     VALUES (_Empresa_key,_Relacion_key);
+             
         IF ROW_COUNT() THEN
 			UPDATE borme_keys SET T_Relations =T_Relations + 1 WHERE id = _Empresa_Id OR id = _Relacion_Id;
 		END IF;
@@ -412,8 +594,8 @@ BEGIN
 		
     
     else
-		-- INSERT IGNORE INTO borme_actos (Empresa_key,Acto,Motivo,Texto,Anyo,Mes,Dia,BOLETIN,_ID,DatosRegistrales)
-		-- VALUES (_Empresa_key,_type,_key,_value,_Anyo,_Mes,_Dia,_BOLETIN,_BOLETIN_ID,_DatosRegistrales); 		
+		INSERT IGNORE INTO borme_actos (Empresa_key,Acto,Motivo,Texto,Anyo,Mes,Dia,BOLETIN,_ID,DatosRegistrales)
+		     VALUES (_Empresa_key,_type,_key,_value,_Anyo,_Mes,_Dia,_BOLETIN,_BOLETIN_ID,_DatosRegistrales); 		
 
 
 		-- INSERT INTO ia_data_preStadistics (_id_Empresa,_type,_Dia,_Mes,_Anyo,_Tipo,_Moti) VALUES (_Empresa_Id,_type,_Dia,_Mes,_Anyo,_key,_value);
@@ -787,6 +969,470 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Tree_IA` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `Tree_IA`( IN _Pkey varchar(36),IN maxlevel int, IN min_Relations int, IN max_nodes int	, IN _memory boolean)
+BEGIN
+
+    DECLARE _TEmpresa boolean;
+    DECLARE _TFinanciera boolean;
+    DECLARE _TAuditor boolean;
+    DECLARE _suspicius boolean;
+    
+    DECLARE _Tkey VARCHAR(32);
+	DECLARE _TNombre nVARCHAR(55);
+    DECLARE _tr int;
+    
+    DECLARE _contador INTEGER DEFAULT 0;
+    DECLARE _count_susp INTEGER DEFAULT 0;
+    DECLARE fin INTEGER DEFAULT 0;
+    DECLARE _Timex bigint DEFAULT 0;
+ 
+	DECLARE exit handler for SQLEXCEPTION
+		 BEGIN
+		  GET DIAGNOSTICS CONDITION 1 @sqlstate = RETURNED_SQLSTATE, 
+		   @errno = MYSQL_ERRNO, @text = MESSAGE_TEXT;
+		  SET @full_error = CONCAT("ERROR ", @errno, " (", @sqlstate, "): ", @text);
+    
+		SELECT ((UNIX_TIMESTAMP(now())*1000) - _Timex)/1000 as seconds,_contador as nodes,_count_susp as _suspicius,max_nodes,min_Relations;
+		SELECT _level,_key,_Nombre, concat(_tree, '\\' ,_Nombre) as _tree,_Empresa,_Financiera,_Auditor, _trx as _score,_path FROM ia_data_suspicius where _path LIKE CONCAT('#',_Tkey,'%') ORDER BY _trx DESC; -- _suspicius  and not _Financiera and not _Auditor;
+
+		  
+		  -- SELECT @full_error;
+		 END;
+ 
+ 
+ 
+	DROP TABLE IF EXISTS ia_data_tree;
+	-- SET max_heap_table_size = 2024*1024*1024;
+    
+    CREATE TABLE IF NOT EXISTS  `ia_data_suspicius` (
+		  `_path` nvarchar(512)  DEFAULT NULL,
+		  `_tree` nvarchar(512)  DEFAULT NULL,
+		  `_key` varchar(36) NOT NULL,
+		  `_level` int(11) DEFAULT NULL,
+		  `_Nombre` nvarchar(55) DEFAULT NULL,
+		  `_Empresa` tinyint(4) DEFAULT NULL,
+		  `_trx` int(11) DEFAULT NULL,
+		  `_Financiera` tinyint(4) NOT NULL DEFAULT 0,
+		  `_Auditor` tinyint(4) NOT NULL DEFAULT 0,
+		  
+		   PRIMARY KEY (`_path`,`_key`),
+		   KEY `_trx` (`_trx`),
+		   KEY `_level` (`_level`)
+		) ENGINE=innodb DEFAULT CHARSET=latin1;
+    
+    IF NOT _memory THEN
+		CREATE TABLE `ia_data_tree` (
+		  `_path` nvarchar(512)  DEFAULT NULL,
+		  `_tree` nvarchar(512)  DEFAULT NULL,
+		  `_key` varchar(36) NOT NULL,
+		  `_level` int(11) DEFAULT NULL,
+		  `_Nombre` nvarchar(55) DEFAULT NULL,
+		  `_Empresa` tinyint(4) DEFAULT NULL,
+		  `_trx` int(11) DEFAULT NULL,
+		  `max_level` int(11) DEFAULT 1,
+		  `_suspicius` tinyint(4) NOT NULL DEFAULT 1,
+		  `_Financiera` tinyint(4) NOT NULL DEFAULT 0,
+		  `_Auditor` tinyint(4) NOT NULL DEFAULT 0,
+		  `_Stop` tinyint(4) NOT NULL DEFAULT 0,
+		  
+		   PRIMARY KEY (`_path`,`_key`),
+		   KEY `_trx` (`_trx`),
+		   KEY `_level` (`_level`)
+		) ENGINE=innodb DEFAULT CHARSET=latin1 MAX_ROWS=350000;
+	ELSE
+		CREATE TABLE `ia_data_tree` (
+		  `_path` nvarchar(512)  DEFAULT NULL,
+		  `_tree` nvarchar(512)  DEFAULT NULL,
+		  `_key` varchar(36) NOT NULL,
+		  `_level` int(11) DEFAULT NULL,
+		  `_Nombre` nvarchar(55) DEFAULT NULL,
+		  `_Empresa` tinyint(4) DEFAULT NULL,
+		  `_trx` int(11) DEFAULT NULL,
+		  `max_level` int(11) DEFAULT 1,
+		  `_suspicius` tinyint(4) NOT NULL DEFAULT 1,
+		  `_Financiera` tinyint(4) NOT NULL DEFAULT 0,
+		  `_Auditor` tinyint(4) NOT NULL DEFAULT 0,
+		  `_Stop` tinyint(4) NOT NULL DEFAULT 0,
+		  
+		   PRIMARY KEY (`_path`,`_key`),
+		   KEY `_trx` (`_trx`),
+		   KEY `_level` (`_level`)
+		) ENGINE=MEMORY DEFAULT CHARSET=latin1 MAX_ROWS=350000;
+    END IF;
+    
+    SET _Timex = (UNIX_TIMESTAMP(now())*1000);
+    -- SELECT _timex;
+    
+	SET @level=1;
+	SET @go = false;
+    
+	begin
+		DECLARE _keys CURSOR FOR 
+			SELECT _key,_truncatestring(Nombre,52),_Empresa,_Financiera,_Auditor,T_Relations,ia_suspicius FROM borme_keys WHERE _key=_Pkey;
+
+
+		DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin=1;    
+		OPEN _keys;
+		get_keys: LOOP
+			FETCH _keys INTO _Tkey,_TNombre,_TEmpresa,_TFinanciera,_TAuditor,_tr,_suspicius;
+			
+            
+			IF fin = 1 THEN
+				LEAVE get_keys;
+			END IF;
+			
+			INSERT INTO ia_data_tree (_tree,_path,_key,_Nombre,_Empresa,_Financiera,_Auditor,_trx,_suspicius,_level,max_level) VALUES 
+									 ('\\','#',_Tkey,_TNombre,_TEmpresa,_TFinanciera,_TAuditor,_tr,_suspicius,1,maxlevel);
+			
+            SELECT _Timex as _id,_Tkey,_TNombre,LENGTH(_TNombre);
+            
+            SET @go = true;
+			
+		END LOOP get_keys;
+		CLOSE _keys;       
+	end;
+        -- SELECT  _Tlevel,_maxlevel,_TEmpresa,_Tpath, _Tkey, concat(_Tpath,_Tkey);
+	IF @go THEN
+		while @level<=maxlevel DO
+			 IF max_nodes>_contador THEN
+				 call `bbdd_kaos155_borme`.`Tree_IA_store`(@level,_Timex,maxlevel,min_Relations,max_nodes,_contador,_count_susp,_contador,_count_susp);
+			 END IF;
+            set @level=@level+1;
+		end while;
+	END IF;
+    SET @b = '\\';
+
+    SELECT ((UNIX_TIMESTAMP(now())*1000) - _Timex)/1000 as seconds,_contador as nodes,_count_susp as _suspicius,max_nodes,min_Relations;
+    SELECT _level,_key,_Nombre, concat(_tree, @b ,_Nombre) as _tree,_Empresa,_Financiera,_Auditor, _trx as _score,_path FROM ia_data_suspicius where _path LIKE CONCAT('#',_Tkey,'%') ORDER BY _trx DESC; -- _suspicius  and not _Financiera and not _Auditor;
+    -- DROP TABLE IF EXISTS ia_data_tree;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Tree_IA_GetRelations` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `Tree_IA_GetRelations`(
+	IN _Tlevel int,
+    IN _timex bigint,
+	IN _maxlevel int,
+    IN max_Tr int,
+    IN max_node int,
+    IN _TEmpresa boolean,
+    IN _Tkey VARCHAR(36),
+    _Ttr int,
+    IN _TParent nvarchar(512),
+    IN _Tpath nVARCHAR(512),
+    IN _Ttree nVARCHAR(512),
+    IN _contador int,
+    IN _csusp int,
+    OUT _count_susp int
+)
+BEGIN
+
+
+
+
+
+	DECLARE _ekey VARCHAR(36);
+    DECLARE _empresa boolean;
+    DECLARE _financiera boolean;
+    DECLARE _auditor boolean;
+    
+    DECLARE _Nombre nvarchar(55);
+    DECLARE _suspicius boolean;
+    
+    DECLARE fin INTEGER DEFAULT 0;
+    DECLARE fin_rdc INTEGER DEFAULT 0;
+    DECLARE fin_rcc INTEGER DEFAULT 0;
+    DECLARE _full_error nvarchar(512) DEFAULT '';
+ 
+    DECLARE relaciones_de_cursor CURSOR FOR 
+		SELECT borme_keys._key,_truncatestring(borme_keys.Nombre,52),borme_keys._Empresa,borme_keys._Financiera,borme_keys._Auditor,borme_keys.T_Relations,borme_keys.ia_suspicius and borme_keys.T_Relations>=max_Tr FROM ia_data_unique JOIN borme_keys on ia_data_unique.Relation_key=borme_keys._key WHERE ia_data_unique.Empresa_key=_Tkey AND ia_data_unique.Relation_key<>SPLIT_STR(_TPath,'#',_Tlevel-1) ;
+	
+    
+    DECLARE relacionado_con_cursor CURSOR FOR 
+		SELECT borme_keys._key,_truncatestring(borme_keys.Nombre,52),borme_keys._Empresa,borme_keys._Financiera,borme_keys._Auditor,borme_keys.T_Relations,borme_keys.ia_suspicius and borme_keys.T_Relations>=max_Tr FROM ia_data_unique JOIN borme_keys on ia_data_unique.Empresa_key=borme_keys._key WHERE ia_data_unique.Relation_key=_Tkey AND ia_data_unique.Empresa_key<>SPLIT_STR(_TPath,'#',_Tlevel-1); -- substr(_TPath,2,length(_TPath)-2);
+
+
+         
+	SET _count_susp = _csusp;	
+
+    
+
+         
+        IF _Ttr>0 AND _maxlevel>=_Tlevel AND _contador<max_node THEN
+			IF _TEmpresa THEN
+
+				begin
+				
+					DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin_rdc=1;
+
+
+
+
+
+					OPEN relaciones_de_cursor;
+					get_relaciones_decursor: LOOP
+                    
+                    
+
+                   
+                    
+                    
+                    
+						FETCH relaciones_de_cursor INTO _ekey,_Nombre,_empresa,_financiera,_auditor,_Ttr,_suspicius;
+                        -- SELECT fin_rdc, _Tpath,@k,_Tlevel;
+                        
+						IF fin_rdc = 1 or  length(_full_error)>0 THEN
+							LEAVE get_relaciones_decursor;
+						END IF;
+                        
+						IF _suspicius AND NOT _Empresa THEN
+							SET _count_susp =_count_susp + 1;
+                            INSERT IGNORE INTO ia_data_suspicius (_level,_key,_Nombre,_path,_tree,_Empresa,_Financiera,_Auditor,_trx) values
+														(_Tlevel, _ekey,_Nombre, _Tpath,_Ttree,_empresa,_financiera,_auditor,_Ttr);
+						 END IF;
+							INSERT INTO ia_data_tree (_level,_key,_Nombre,_path,_tree,_Empresa,_Financiera,_Auditor,max_level,_trx,_suspicius,_Stop)
+								values ( _Tlevel, _ekey,_Nombre, _Tpath,_Ttree,_empresa,_financiera,_auditor,_maxlevel,_Ttr,_suspicius , (_suspicius AND NOT _Empresa  ));
+	                    
+                                               -- SELECT _path,_Tkey,_ekey,_TEmpresa;
+                         
+					    -- INSERT INTO ia_data_tree (_level,_key,_Nombre,_path,_tree,_Empresa,_Financiera,_Auditor,max_level,_trx,_suspicius,_Stop)
+						-- 	values ( _Tlevel, _ekey,_Nombre, _Tpath,_Ttree,_empresa,_financiera,_auditor,_maxlevel,_Ttr,_suspicius , (_suspicius AND NOT _Empresa  ));
+						
+                        
+					END LOOP get_relaciones_decursor;
+					CLOSE relaciones_de_cursor;  
+				end;
+			ELSE
+				begin
+					DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin_rcc=1;
+					OPEN relacionado_con_cursor;
+					get_relacionado_concursor: LOOP
+						FETCH relacionado_con_cursor INTO _ekey,_Nombre,_empresa,_financiera,_auditor,_Ttr,_suspicius;
+						IF fin_rcc = 1 OR length(_full_error)>0 THEN
+							LEAVE get_relacionado_concursor;
+						END IF;
+                        -- SELECT @Counter,_maxlevel,_path,_path,_ekey,_TEmpresa;
+						IF _suspicius AND NOT _Empresa THEN
+							SET _count_susp =_count_susp + 1;
+                             INSERT IGNORE INTO ia_data_suspicius (_level,_key,_Nombre,_path,_tree,_Empresa,_Financiera,_Auditor,_trx) values
+							 								(_Tlevel, _ekey,_Nombre, _Tpath,_Ttree,_empresa,_financiera,_auditor,_Ttr);
+						END IF;
+						INSERT INTO ia_data_tree (_level,_key,_Nombre,_path,_tree,_Empresa,_Financiera,_Auditor,max_level,_trx,_suspicius,_Stop)
+							values ( _Tlevel, _ekey,_Nombre, _Tpath,_Ttree,_empresa,_financiera,_auditor,_maxlevel,_Ttr,_suspicius , (_suspicius AND NOT _Empresa  ));	                    
+											 
+					END LOOP get_relacionado_concursor;
+					CLOSE relacionado_con_cursor;   
+				end;
+			END IF;
+		END IF;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `Tree_IA_store` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `Tree_IA_store`(IN _Tlevel int ,IN _timex bigint,IN _maxlevel int, IN max_Tr int,in _maxnode int,in _Counter int ,   IN _csusp int , OUT _contador int, OUT _count_susp int)
+BEGIN
+
+	
+    DECLARE _TEmpresa boolean;
+    DECLARE _TFinanciera boolean;
+    DECLARE _TAuditor boolean;
+    DECLARE _Tsuspicius boolean;
+    DECLARE _Tstop boolean;
+    DECLARE _Ttr int;
+    
+    DECLARE _Tkey VARCHAR(36);
+    DECLARE _TNombre VARCHAR(55);
+    DECLARE _Tpath nVARCHAR(512) ; 
+	DECLARE _Ttree nVARCHAR(512) ;
+    
+    DECLARE fin INTEGER DEFAULT 0;
+    DECLARE relaciones CURSOR FOR 
+		SELECT _tree,_path,_key,_Nombre,_Empresa,_Financiera,_Auditor,_trx,_suspicius,_stop FROM ia_data_tree WHERE _level=_Tlevel;
+
+
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin=1;
+    
+    SET _count_susp = _csusp;
+    SET _contador = _Counter;
+    SELECT _level,_key,_Nombre,concat(_tree,'\\',_Nombre) as _tree,_Empresa,_Financiera,_Auditor, _trx as _score,_path FROM ia_data_tree order by _trx;
+    
+	OPEN relaciones;
+	get_relaciones: LOOP
+		FETCH relaciones INTO _Ttree,_Tpath,_Tkey,_TNombre,_TEmpresa,_TFinanciera,_TAuditor,_Ttr,_Tsuspicius,_TStop;
+        
+       -- SELECT  fin,_Tsuspicius, _Tlevel,_TEmpresa,_TFinanciera,_TAuditor,_Tpath, _Tkey, concat(_Tpath,_Tkey);
+        
+		IF fin = 1 THEN
+			LEAVE get_relaciones;
+		END IF;
+        
+        
+        IF NOT _TFinanciera AND NOT _TAuditor AND NOT _Tstop AND _maxnode>=_contador THEN -- AND (NOT _suspicius OR (_suspicius AND _TEmpresa)) THEN
+		  -- SELECT NOT _TFinanciera AND NOT _TAuditor, fin, _Tlevel,_Tpath,_Tkey,_TEmpresa,_TFinanciera,_TAuditor,_maxlevel;
+		  SET _contador = _contador + 1;
+		  CALL `bbdd_kaos155_borme`.`Tree_IA_GetRelations`( _Tlevel+1,_timex,_maxlevel,max_Tr,_maxnode,_TEmpresa, _Tkey,_Ttr, _Tpath, concat(_Tpath,_Tkey,"#"), concat(_Ttree,_TNombre,"\\"),_contador,_csusp  , _count_susp );
+		 -- INSERT INTO ia_data_tree (_key,_path,_Empresa,max_level) values ( _ekey, concat(_path,'#',_ekey),_empresa,_maxlevel);
+		END IF;
+    END LOOP get_relaciones;
+	CLOSE relaciones; 
+    
+    
+    DELETE FROM ia_data_tree WHERE _level=_Tlevel and not _stop;
+	 
+	
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `worker_assist` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `worker_assist`()
+BEGIN
+
+   DECLARE _fin int DEFAULT 0;
+   DECLARE _fin_cursor int DEFAULT 0;
+   DECLARE xNombre nvarchar(55);
+   
+   DECLARE _xNombre nvarchar(55);
+   DECLARE _xkey nvarchar(32);
+   
+   DECLARE keys_cursor CURSOR FOR 
+		SELECT _Nombre from Workers_suspicius where LENGTH(_key)=0;
+
+   DECLARE CONTINUE HANDLER FOR NOT FOUND SET _fin=1; 
+   OPEN keys_cursor;
+   
+   get_cursor: LOOP
+   
+		FETCH keys_cursor INTO xNombre;
+		IF _fin = 1 THEN
+			LEAVE get_cursor;
+		END IF;  
+		
+        BEGIN
+			DECLARE _cursor CURSOR FOR 
+				SELECT _key,Nombre FROM borme_keys WHERE MATCH(Nombre) AGAINST (xNombre IN BOOLEAN MODE) LIMIT 1;
+            
+            DECLARE CONTINUE HANDLER FOR NOT FOUND SET _fin_cursor=1;
+            -- close _cursor;
+            OPEN _cursor;
+			FETCH _cursor INTO _xkey, _xNombre;
+			
+			if _fin_cursor=0 AND _xNombre = xNombre THEN
+				UPDATE Workers_suspicius SET _key = _xkey WHERE _Nombre=xNombre;
+			END IF;
+            CLOSE _cursor;
+        END;
+        
+   END LOOP get_cursor;
+   close keys_cursor;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `_namespath` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `_namespath`(_path nvarchar(256), _key nvarchar(32))
+BEGIN
+	DECLARE _TNombre nvarchar(55);
+    DECLARE _fin int DEFAULT 0;
+    
+    SET @path = CONCAT(_path , _key,'#');
+    SET @counter = count_str( @path ,'#');
+	SET @str = '/'; -- SPLIT_STR(_path,'#',2);
+    SET @e=1;
+    
+    
+	while @e<=@counter DO
+		SET @key = SPLIT_STR(@path,'#',@e+1);
+		-- SELECT @counter,@e,@path,@key;
+		begin
+			DECLARE _keys CURSOR FOR 
+				SELECT SUBSTR(Nombre,1,55) FROM borme_keys WHERE _key= @key;
+
+
+			DECLARE CONTINUE HANDLER FOR NOT FOUND SET _fin=1; 
+            
+            
+			OPEN _keys;
+			get_keys: LOOP
+				FETCH _keys INTO _TNombre;
+				-- SELECT _fin;
+				SET @str = concat(@str, _TNombre, "/");
+				IF _fin = 1 THEN
+					LEAVE get_keys;
+				END IF;
+				
+								
+			END LOOP get_keys;
+			CLOSE _keys; 
+		end;
+        SET @e = @e+1;
+        -- SELECT @e;
+	end while;    
+    
+SELECT @str;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Final view structure for view `relacionado_con`
@@ -801,7 +1447,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `relacionado_con` AS select `_Empresa`.`Nombre` AS `Empresa`,`ia_data_unique`.`Empresa_key` AS `_Ekey`,`ia_data_unique`.`Relation_key` AS `_DKey`,`_directivo`.`Nombre` AS `Nombre`,`_directivo`.`_Empresa` AS `_Empresa`,`_directivo`.`_Directivo` AS `_Directivo`,`_directivo`.`_Auditor` AS `_Auditor`,`_directivo`.`_Financiera` AS `_Financiera`,`_directivo`.`_Sicav` AS `_Sicav`,`_directivo`.`_Slp` AS `_Slp`,`_directivo`.`T_Relations` AS `T_Relations`,`_directivo`.`ia_suspicius` AS `ia_suspicius` from ((`ia_data_unique` left join `borme_keys` `_Empresa` on(`ia_data_unique`.`Empresa_key` = `_Empresa`.`_key`)) left join `borme_keys` `_directivo` on(`ia_data_unique`.`Relation_key` = `_directivo`.`_key`)) */;
+/*!50001 VIEW `relacionado_con` AS select `ia_data_unique`.`Relation_key` AS `_DKey`,`ia_data_unique`.`Empresa_key` AS `_key`,`_Empresa`.`Nombre` AS `Nombre`,`_Empresa`.`_Empresa` AS `_Empresa`,`_Empresa`.`_Directivo` AS `_Directivo`,`_Empresa`.`_Auditor` AS `_Auditor`,`_Empresa`.`_Financiera` AS `_Financiera`,`_Empresa`.`_Sicav` AS `_Sicav`,`_Empresa`.`_Slp` AS `_Slp`,`_Empresa`.`T_Relations` AS `T_Relations`,`_Empresa`.`ia_suspicius` AS `ia_suspicius` from ((`ia_data_unique` left join `borme_keys` `_Empresa` on(`ia_data_unique`.`Empresa_key` = `_Empresa`.`_key`)) left join `borme_keys` `_directivo` on(`ia_data_unique`.`Relation_key` = `_directivo`.`_key`)) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -819,7 +1465,7 @@ DELIMITER ;
 /*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `relaciones_de` AS select `_directivo`.`Nombre` AS `Directivo`,`ia_data_unique`.`Relation_key` AS `_DKey`,`ia_data_unique`.`Empresa_key` AS `_Ekey`,`_Empresa`.`Nombre` AS `Nombre`,`_Empresa`.`_Empresa` AS `_Empresa`,`_Empresa`.`_Directivo` AS `_Directivo`,`_Empresa`.`_Auditor` AS `_Auditor`,`_Empresa`.`_Financiera` AS `_Financiera`,`_Empresa`.`_Sicav` AS `_Sicav`,`_Empresa`.`_Slp` AS `_Slp`,`_Empresa`.`T_Relations` AS `_E_T_Relations`,`_Empresa`.`ia_suspicius` AS `_E.ia_suspicius`,`_directivo`.`T_Relations` AS `_D_T_Relations`,`_directivo`.`ia_suspicius` AS `_D_ia_suspicius` from ((`ia_data_unique` left join `borme_keys` `_Empresa` on(`ia_data_unique`.`Empresa_key` = `_Empresa`.`_key`)) left join `borme_keys` `_directivo` on(`ia_data_unique`.`Relation_key` = `_directivo`.`_key`)) order by `ia_data_unique`.`Relation_key` */;
+/*!50001 VIEW `relaciones_de` AS select `ia_data_unique`.`Empresa_key` AS `_DKey`,`ia_data_unique`.`Relation_key` AS `_key`,`_directivo`.`Nombre` AS `Nombre`,`_directivo`.`_Empresa` AS `_Empresa`,`_directivo`.`_Directivo` AS `_Directivo`,`_directivo`.`_Auditor` AS `_Auditor`,`_directivo`.`_Financiera` AS `_Financiera`,`_directivo`.`_Sicav` AS `_Sicav`,`_directivo`.`_Slp` AS `_Slp`,`_directivo`.`T_Relations` AS `T_Relations`,`_directivo`.`ia_suspicius` AS `ia_suspicius` from ((`ia_data_unique` left join `borme_keys` `_Empresa` on(`ia_data_unique`.`Empresa_key` = `_Empresa`.`_key`)) left join `borme_keys` `_directivo` on(`ia_data_unique`.`Relation_key` = `_directivo`.`_key`)) order by `ia_data_unique`.`Relation_key` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -833,4 +1479,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-24 22:44:30
+-- Dump completed on 2019-04-19 22:02:07
