@@ -3,7 +3,8 @@
 -- Host: 54.36.112.23    Database: bbdd_kaos155_borme
 -- ------------------------------------------------------
 -- Server version	5.5.5-10.2.23-MariaDB-10.2.23+maria~stretch-log
-
+CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_borme` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `bbdd_kaos155_borme`;
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
