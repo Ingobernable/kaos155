@@ -1,10 +1,11 @@
--- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
---
--- Host: 54.36.112.23    Database: bbdd_kaos155_borme
--- ------------------------------------------------------
--- Server version	5.5.5-10.2.23-MariaDB-10.2.23+maria~stretch-log
 CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_borme` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `bbdd_kaos155_borme`;
+-- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
+--
+-- Host: 54.36.118.152    Database: bbdd_kaos155_borme
+-- ------------------------------------------------------
+-- Server version	5.5.5-10.2.15-MariaDB-10.2.15+maria~stretch-log
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -24,9 +25,11 @@ DROP TABLE IF EXISTS `Workers_suspicius`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Workers_suspicius` (
+  `Borme_Nombre` varchar(255) DEFAULT NULL,
   `_key` varchar(32) CHARACTER SET utf8 DEFAULT NULL,
   `_Nombre` varchar(100) CHARACTER SET utf8 DEFAULT NULL,
-  `Caso` varchar(45) DEFAULT NULL
+  `Caso` varchar(45) DEFAULT NULL,
+  `_Match` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -53,7 +56,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=230393 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -114,7 +117,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=358651 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -139,7 +142,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=297488 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -196,9 +199,6 @@ CREATE TABLE `ia_data_suspicius` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `ia_data_tree`
---
 --
 -- Table structure for table `ia_data_unique`
 --
@@ -1337,10 +1337,11 @@ BEGIN
 
    DECLARE _fin int DEFAULT 0;
    DECLARE _fin_cursor int DEFAULT 0;
-   DECLARE xNombre nvarchar(55);
+   DECLARE xNombre nvarchar(255);
    
-   DECLARE _xNombre nvarchar(55);
+   DECLARE _xNombre nvarchar(255);
    DECLARE _xkey nvarchar(32);
+   DECLARE _TMatch Int;
    
    DECLARE keys_cursor CURSOR FOR 
 		SELECT _Nombre from Workers_suspicius where LENGTH(_key)=0;
@@ -1357,15 +1358,15 @@ BEGIN
 		
         BEGIN
 			DECLARE _cursor CURSOR FOR 
-				SELECT _key,Nombre FROM borme_keys WHERE MATCH(Nombre) AGAINST (xNombre IN BOOLEAN MODE) LIMIT 1;
+				SELECT _key,SUBSTR(Nombre,1,255), MATCH(Nombre) AGAINST (xNombre IN BOOLEAN MODE)   FROM borme_keys WHERE _directivo=1 AND MATCH(Nombre) AGAINST (xNombre IN BOOLEAN MODE) LIMIT 1;
             
             DECLARE CONTINUE HANDLER FOR NOT FOUND SET _fin_cursor=1;
             -- close _cursor;
             OPEN _cursor;
-			FETCH _cursor INTO _xkey, _xNombre;
+			FETCH _cursor INTO _xkey, _xNombre,_TMatch;
 			
-			if _fin_cursor=0 AND _xNombre = xNombre THEN
-				UPDATE Workers_suspicius SET _key = _xkey WHERE _Nombre=xNombre;
+			if _fin_cursor=0 THEN
+				UPDATE Workers_suspicius SET _Match=_TMatch, Borme_Nombre=_xNombre, _key = _xkey WHERE _Nombre=xNombre;
 			END IF;
             CLOSE _cursor;
         END;
@@ -1480,4 +1481,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-19 22:02:07
+-- Dump completed on 2019-04-20  9:10:14
