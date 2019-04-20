@@ -274,6 +274,7 @@ module.exports = function (app, options) {
                     'socio miembr',
                     'socio único',
                     'socio unico',
+                    'socprof',
                     'socuniprof',
                     'vicepresid',
                     'v-sec No Con',
