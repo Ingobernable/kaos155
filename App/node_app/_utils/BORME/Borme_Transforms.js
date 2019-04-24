@@ -234,6 +234,7 @@ module.exports = function (app, options) {
                     'consdeleg',
                     'consdelman',
                     'consdelsol',
+                    'consjdomini',
                     'consjl',
                     'entdeposit',
                     'entiddeposit',
@@ -248,10 +249,12 @@ module.exports = function (app, options) {
                     'comejecutiv',
                     'miemcomej',
                     'miemcomctr',
+                    'miemcomaucnt',
                     'mrocomsdel',
                     'mrocomsliq',
                     'mrocomseje',
                     'mrocomsctr',
+                    'preejecut',
                     'presidente',
                     'ptecomitau',
                     'precomaud',
@@ -299,7 +302,11 @@ module.exports = function (app, options) {
                     'vicesecret1',
                     'vicsec Ce',
                     'v-seccomsc',
-                    'vcsecnocon'
+                    'v-sec No Con',
+                    'vcsecnocon',
+                    'vprescomau',
+                    'voc1',
+                    'voc2'
 
                 ]
             }
