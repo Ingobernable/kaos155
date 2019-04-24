@@ -85,7 +85,7 @@ CREATE TABLE `borme_empresas` (
   `_last_date_objeto` date DEFAULT NULL,
   `_activa` bit(1) DEFAULT b'1',
   `_date_extincion` date DEFAULT NULL,
-  `_date_activacion` date DEFAULT current_timestamp(),
+  `_date_activacion` date DEFAULT current_timestamp,
   PRIMARY KEY (`_key`),
   UNIQUE KEY `id` (`_id`),
   KEY `activos` (`_activa`)
