@@ -1,4 +1,6 @@
+CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_borme` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `bbdd_kaos155_borme`;
+SET sql_mode = '';
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: kaosdev.bbdd.ovh    Database: bbdd_kaos155_borme
@@ -85,7 +87,7 @@ CREATE TABLE `borme_empresas` (
   `_last_date_objeto` date DEFAULT NULL,
   `_activa` bit(1) DEFAULT b'1',
   `_date_extincion` date DEFAULT NULL,
-  `_date_activacion` date DEFAULT current_timestamp,
+  `_date_activacion` date DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`_key`),
   UNIQUE KEY `id` (`_id`),
   KEY `activos` (`_activa`)
