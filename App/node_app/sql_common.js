@@ -13,7 +13,7 @@ module.exports = function (app, callback) {
                 if (options.SQL.db == null) {
 
                     this.poolSql[type].getConnection(function (err, connection) {
-                        // connected! (unless `err` is set)
+                        // connected! (unless err is set)
                         if (err == null) {
                             const handle = function (connection,_hc) {
                                 connection.on('error', function (err) {
@@ -481,8 +481,176 @@ module.exports = function (app, callback) {
                         callback(_options)
                     })
                 })
-            }
+            },
+            www: {
+                model: {
+                    reg: function (recordset, cmpkey, cmpDef) {
+                        var arr = []
+                        var dupl = {}
+
+                        const _type = function (record) {
+                            return record._directivo ? 1 : 0
+                        }
+
+                        app._.forEach(recordset, function (record) {
+                            const _k = record[cmpkey]
+                            if (!dupl[_k]) {
+                                dupl[_k] = []
+                            }
+                            dupl[_k].push(record)
+
+                        })
+                        //debugger
+                        app._.forEach(dupl, function (_record) {
+                            //if (record.root) {
+                            //    var _record = JSON.parse(record.root)
+                            //} else {
+                            //    var _record = record
+                            //}
+                            var _reg = { Id: _record[0][cmpkey], Name: _record[0][cmpDef], ActiveRelations: _record[0].T_Relations, Type: _record[0]._type, Nodes: [], roles: [], Mark: _record[0].ia_suspicius[0]==1 }
+                            app._.forEach(_record, function (_rel) {
+                                _reg.roles.push({ motivo: _rel.Motivo, cargo: _rel.Cargo, anyo: _rel.Anyo, mes: _rel.Mes, dia: _rel.Dia })
+                                //if (_rel.T_Relations) {
+                                //    arr[arr.length] = { Id: _rel[cmpkey], Name: _rel[cmpDef], ActiveRelations: _rel.T_Relations, Type: _type, Active: 1, Roles: 'xxxx', Mark: _record.Mark ? 1 : 0, Tags: _record.Tags ? _record.Tags : '' }
+                                //} else {
+                                //    arr[arr.length] = { Id: _record[cmpkey], Name: _record[cmpDef], ActiveRelations: _record.ActiveRelations, Type: _record.Type, Active: 1, Roles: 'xxxx', Mark: _record.Mark ? 1 : 0, Tags: _record.Tags ? _record.Tags : '' }
+                                //}
+                            })
+                            arr.push(_reg)
+                        })
+                        return arr
+
+                    }
+                },
+                query: function (SQL, options, _cadsql, params, callback) {
+                    var _callrecord = function (_cadsql, params, _cb) {
+                        options.SQL.db.query(_cadsql, params, function (err, Record) {
+                            //options.SQL.db.release()
+                            if (err)
+                                debugger
+                            _cb(err, Record)
+                        })
+                    }
+                    if (options.SQL.db.state == "disconnected") {
+                        //debugger
+                        options.SQL.db = null
+                        SQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'PARSER', 'ACCESO_mysql_PARSER', function (_options) {
+                            app.SQL.db = options.SQL.db = _options.SQL.db
+                            _callrecord(_cadsql, params, callback)
+                        }, true)
+                    } else {
+                        _callrecord(_cadsql, params, callback)
+                    }
+                },
+                search: function (SQL, options, type, valor, callback) {
+
+                    // valor = valor // type=='Empresa'?valor.toUpperCase():valor // _.kebabCase(_.unescape(valor)).replace("--","-").split("-").join(" +")
+                    const _cadsql = "SELECT JSON_OBJECT('_key',_key ,'Nombre',Nombre, '_Empresa',CONVERT(_Empresa , UNSIGNED),'_Directivo',CONVERT(_Directivo, UNSIGNED),'_Auditor', CONVERT(_Auditor, UNSIGNED)) as root FROM borme_keys WHERE _" + type + "=1 AND MATCH(Nombre) AGAINST ('" + valor + "' IN BOOLEAN MODE) LIMIT 20;"
+                    this.query(SQL, options, _cadsql, [], callback)
+                },
+                relations: function (SQL, options, _key, callback) {
+                    var _this = this
+                    var _cadsql = " SELECT *,_TYPE(_Empresa,_Directivo,_Auditor,_Financiera) as _type FROM borme_keys WHERE _key= '" + _key[1] + "';"+
+                        "SELECT " +
+                        "bbdd_kaos155_borme.ia_data_unique.Relation_key AS _DKey,"+
+                        "    bbdd_kaos155_borme.ia_data_unique.Empresa_key AS _key,"+
+                        "        _Empresa.Nombre AS Nombre,"+
+                        "            _Empresa._Empresa AS _Empresa,"+
+                        "                _Empresa._Directivo AS _Directivo,"+
+                        "                    _Empresa._Auditor AS _Auditor,"+
+                        "                        _Empresa._Financiera AS _Financiera,"+
+                        "                            _Empresa._Sicav AS _Sicav,"+
+                        "                                _Empresa._Slp AS _Slp,"+
+                        "                                    _Empresa.T_Relations AS T_Relations,"+
+                        "                                        _Empresa.ia_suspicius AS ia_suspicius," +
+                        "                                           _TYPE(_Empresa._Empresa,_Empresa._Directivo,_Empresa._Auditor,_Empresa._Financiera) as _type"+
+                   " FROM "+
+                   "     ((bbdd_kaos155_borme.ia_data_unique"+
+        " LEFT JOIN bbdd_kaos155_borme.borme_keys _Empresa ON (bbdd_kaos155_borme.ia_data_unique.Empresa_key = _Empresa._key))"+
+                   " LEFT JOIN bbdd_kaos155_borme.borme_keys _directivo ON (bbdd_kaos155_borme.ia_data_unique.Relation_key = _directivo._key))"+
+
+                    "  WHERE ia_data_unique.Relation_key = '" + _key[1] + "';"
+
+
+
+
+
+
+
+                    var _Tree = {
+
+                    }
+                    //app.push(_key, record[0].Nombre, record[0]._type)
+                    //app.tree = new Tree(_key, record[0].Nombre, 0, app.argv._max_level);
+                    //var _cadsql = "CALL tree_getRelationsKey(?,?);"
+                    //console.log(_key)
+                    this.query(SQL, options, _cadsql, function (err, dataKey) {
+                        //console.log(dataKey[0].Nombre)
+
+                        //if (err)
+                        //    debugger
+                        //if (dataKey.length > 0) {
+                        //if (dataKey[0]._Auditor == 1 || dataKey[0]._Financiera == 1) {
+                        //    var dat = _this.model.reg(dataKey, '_key', 'Nombre', dataKey[0]._type)
+                        //    dat[0].Nodes = []
+                        //    console.log('NO relations ')
+                        //    callback(err, dat[0])
+                        //} else {
+                        //var _cadsql = "CALL Tree_IA(?,?,?,?,?);"
+                        //options.SQL.db.query(_cadsql, _key, function (err, record) {
+                            if (err)
+                                debugger
+
+                        var _dat = []
+                        var dat = _this.model.reg(dataKey[0], '_key', 'Nombre')
+                        app._.each(dataKey[1], function (record, i) {
+
+                                dat[0].roles = null
+                                dat[0].Nodes.push( _this.model.reg([record], '_key', 'Nombre'))
+                                console.log('relations OK')
+                            
+                        })
+                        callback(err, dat[0])
+                        
+                        //})
+                        //}
+
+
+                        //}
+                    })
+                },
+                tree: {
+
+                    id: function (options, key, callback) {
+                        var _this = this
+
+                        var cadsql = ""
+                        app.counter = 0
+                        //app.argv._max_level = max_level
+                        //var _ekey = _value[_level - 1]
+
+
+                        cadsql = "SELECT Nombre,_TYPE(_Empresa,_Directivo,_Auditor) as _type FROM borme_keys   WHERE _Key = '" + _key + "'"
+                        options.SQL.db.query(cadsql, function (err, record) {
+                            if (record.length == 1) {
+                                //app.path = _key 
+                                app.push(_key, record[0].Nombre, record[0]._type)
+                                app.tree = new Tree(_key, record[0].Nombre, 0, app.argv._max_level);
+                            }
+                        })
+
+
+                        _cadsql = "SELECT * From  bbdd_kaos155.borme_keys WHERE _key=?;"
+                        options.SQL.db.query(_cadsql, [key], function (err, record) {
+                            if (err)
+                                debugger
+                            var dat = _this.model.reg(record, '_key', 'Nombre', record[0]._Empresa == 1 ? 1 : 2)
+                            callback(err, dat[0])
+                        })
+                    }
+                }
+            },
         }
 
-    })
+    },app)
 }

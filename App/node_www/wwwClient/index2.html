@@ -1,0 +1,215 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>BOE-BOT.ORG</title>
+    <link href="/css/Semantic-UI-CSS-master-2.2/semantic.css" rel="stylesheet" />
+
+    <script src="/js/plugins/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/js/plugins/vue/vue.min.js"></script>
+    <script src="/js/plugins/d3/d3.v3.js"></script>
+    <script src="/css/Semantic-UI-CSS-master-2.2/semantic.min.js"></script>
+    <script src="/js/plugins/Lodash/lodash.js"></script>
+    <script src="/js/d3_Graphics/pelotitas.js"></script>
+    <link href="/css/pelotitas.css" rel="stylesheet" />
+    <script src="/js/_app.js"></script>
+    <style>
+        .hidden {
+            display: none;
+        }
+
+        #search {
+            width: 425px;
+        }
+
+        #panelSearch {
+            position: absolute;
+            top: 71px;
+            left: 0px;
+            margin-top: -1px;
+            height: 385px;
+            width: 425px;
+            display: none;
+            z-index: 9999;
+        }
+
+        #panelSearch .item:hover {
+            background-color: lightgray;
+            font-weight: bolder;
+            cursor: pointer;
+        }
+
+        #panelSearch .item.selected {
+            
+            font-weight: bolder;
+        }
+
+        #search.selected {
+            font-weight: bold;
+        }
+
+        #borme {
+            width: 425px;
+        }
+        #next {
+            cursor: pointer
+        }
+        #cleaner{
+            cursor: pointer
+        }
+    </style>
+    <script>
+
+        String.prototype.replaceAll = function (target, replacement) {
+            return this.split(target).join(replacement);
+        };
+
+        $(document).ready(function () {
+            App = App()
+            App.Framework.PanelSearch.init(App)
+
+            $('#cleaner').click(function () {
+                App.root.force.stop()
+                if ($('g.hidden').length > 0) {
+                    App.root.force.stop()
+                    $('g').removeClass('hidden')
+                    $('line').removeClass('hidden')
+                    
+
+                } else {
+
+                    $('g circle').not('.Mark').parent().addClass('hidden')
+                    $('g circle.Mark').parent().show()
+                    $('line').not('.Mark').addClass('hidden')
+                    //var _v = $('g circle.Mark')
+                    //_.forEach(_v, function (_e) {
+                    //    var _t = $(_e).parent().attr('transform').match(/((\(.*?\)))/g)[0].split(",")
+                    //    debugger
+                    //    $(_e).parent().attr('transform', 'translate(' + _t[1].replace("(","") + ',120)')
+                    //})
+                    //App.root.refresh(1)
+                }
+                App.root.force.start()
+            })
+            $('#next').click(function () {
+                App.root.force.stop()
+                $('#Search').find('.icon.go').parent().addClass('loading')
+
+                App.level++
+                if (App.links[App.level] == null)
+                    App.links[App.level] = []
+
+                function go(_e, _t, callback, go) {
+                    $('#counterNodes').html(_e+" de "+_t).removeClass("hidden")
+                    //console.log(_e,_t)
+                    if (_e + $('circle.Mark').length < _t) {
+                        $('#next').addClass('hidden')
+                        var _n = App.links[App.level - 1][_e]
+                        App.root.expandNode(_n, function (t) {
+                            App.root.addRelationsToGraph(_n, t);
+                            _e++
+                            go(_e, _t, callback, go)
+                           
+                        })
+                    } else {
+                        $('#next').removeClass('hidden')
+                        $('#counterNodes').html("").addClass("hidden")
+                        App.root.update()
+                        $('#Search').find('.icon.go').parent().removeClass('loading')
+                        callback()
+                    }
+
+                }
+
+                go(0, App.links[App.level - 1].length, function () {
+
+
+
+                }, go)
+
+                //debugger
+            })
+
+
+
+        }).click(function () {
+            $('#panel').hide()
+        })
+    </script>
+</head>
+<body>
+   
+ 
+            <div id="Search" class="column">
+                <div class="ui form">
+                    <div class="inline fields">
+                        <div class="field">
+                            <div class="ui radio checkbox checked">
+                                <input type="radio" name="typeSearch" data="Empresa" checked="checked">
+                                <label>Empresas</label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="ui radio checkbox">
+                                <input type="radio" name="typeSearch" data="Directivo">
+                                <label>Directivos</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="inline fields">
+                        <div class="ui icon input">
+
+                            <input id="search" type="text" placeholder="Buscar...">
+                            <i class="inverted circular search link icon go disabled"></i>
+                        </div>
+                        <div id="panelSearch" class="ui segment hidden">
+                            <!-- Create an instance of the list-item-search component -->
+                            <div class="ui mini list">
+                                <list-item-search v-for="item in SearchList"
+                                                  v-bind:List="item"
+                                                  v-bind:key="item._key">
+                                </list-item-search>
+                            </div>
+                            <input type="hidden" id="parent" value="" />
+                        </div>
+                        <div class="field">
+
+                            <label id="counterNodes" class="hidden"></label>
+                            <a id="next" class="hidden">Siguiente</a>
+                            <a id="cleaner" class="hidden">Limpiar</a>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div id="graph_container">
+
+                    <svg id="relations">
+                        <title>Entramado de empresas y directivos relacionados con </title>
+                        <desc></desc>
+                        <g z-order="1000"></g>
+                        <g>
+                            <g id="links"></g>
+                            <g id="nodes"></g>
+                            <g id="nodetexts"></g>
+                        </g>
+
+                    </svg>
+
+                    <div id="ui">
+                        <div id="topleft">
+                            <h1>Entramado</h1>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+           
+
+
+
+</body>
+
+</html>

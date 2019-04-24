@@ -217,7 +217,6 @@ module.exports = function (app, options) {
                     'apomanc',
                     'apomansoli',
                     'aposol',
-
                     'audccon',
                     'audsupl',
                     'auditindiv',
@@ -227,6 +226,7 @@ module.exports = function (app, options) {
                     'audccconj',
                     'auditor sup',
                     'auditor',
+                    'cc',
                     'censores',
                     'codemaso',
                     'condelegado',
@@ -235,6 +235,7 @@ module.exports = function (app, options) {
                     'consdelman',
                     'consdelsol',
                     'consjl',
+                    'entdeposit',
                     'entiddeposit',
                     'entregcont',
                     'entgestora',
@@ -282,6 +283,7 @@ module.exports = function (app, options) {
                     'seconore',
 
                     'sup',
+                    'socio',
                     'socio miembr',
                     'socio único',
                     'socio unico',

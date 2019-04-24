@@ -1,8 +1,6 @@
-CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_borme` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `bbdd_kaos155_borme`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
--- Host: 54.36.118.152    Database: bbdd_kaos155_borme
+-- Host: kaosdev.bbdd.ovh    Database: bbdd_kaos155_borme
 -- ------------------------------------------------------
 -- Server version	5.5.5-10.2.15-MariaDB-10.2.15+maria~stretch-log
 
@@ -56,7 +54,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=230393 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6040062 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -117,7 +115,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=358651 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4964597 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -138,11 +136,12 @@ CREATE TABLE `borme_relaciones` (
   `Anyo` int(10) unsigned NOT NULL,
   `Mes` int(11) DEFAULT NULL,
   `Dia` int(11) DEFAULT NULL,
+  `BOLETIN` varchar(20) DEFAULT NULL,
   `DatosRegistrales` varchar(105) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=297488 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7865008 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -197,6 +196,32 @@ CREATE TABLE `ia_data_suspicius` (
   KEY `_trx` (`_trx`),
   KEY `_level` (`_level`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `ia_data_tree`
+--
+
+DROP TABLE IF EXISTS `ia_data_tree`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ia_data_tree` (
+  `_path` varchar(512) CHARACTER SET utf8 NOT NULL,
+  `_tree` varchar(512) CHARACTER SET utf8 DEFAULT NULL,
+  `_key` varchar(36) NOT NULL,
+  `_level` int(11) DEFAULT NULL,
+  `_Nombre` varchar(55) CHARACTER SET utf8 DEFAULT NULL,
+  `_Empresa` tinyint(4) DEFAULT NULL,
+  `_trx` int(11) DEFAULT NULL,
+  `max_level` int(11) DEFAULT 1,
+  `_suspicius` tinyint(4) NOT NULL DEFAULT 1,
+  `_Financiera` tinyint(4) NOT NULL DEFAULT 0,
+  `_Auditor` tinyint(4) NOT NULL DEFAULT 0,
+  `_Stop` tinyint(4) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`_path`,`_key`),
+  KEY `_trx` (`_trx`),
+  KEY `_level` (`_level`)
+) ENGINE=MEMORY DEFAULT CHARSET=latin1 MAX_ROWS=350000;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -297,6 +322,54 @@ CREATE DEFINER=`root`@`%` FUNCTION `IS_RegExp`( cadena nvarchar(255), search nva
 BEGIN
 
 RETURN (SELECT cadena REGEXP search);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `JSON_Array_Nombramientos` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `JSON_Array_Nombramientos`(empresa_key nvarchar(32), relation_key nvarchar(32)) RETURNS longtext CHARSET latin1
+    DETERMINISTIC
+BEGIN
+
+DECLARE fin INTEGER DEFAULT 0;
+			
+DECLARE JSON_OUTPUT JSON;
+DECLARE _TJSON nvarchar(255) default '';
+
+DECLARE _keys CURSOR FOR 
+	SELECT JSON_object('Activo',CAST(activo as UNSIGNED),'Anyo',anyo,'mes',mes,'dia',dia,'motivo,',motivo,'cargo',cargo) FROM bbdd_kaos155_borme.relaciones_de 
+			JOIN borme_relaciones on Empresa_key=_Dkey AND Relation_key = _key
+			where _Dkey = empresa_key and _key=relation_key order by anyo desc,mes desc,dia desc,activo desc;
+
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin=1;    
+
+	SET JSON_OUTPUT = JSON_ARRAY();
+	SET fin=0;
+	OPEN _keys;
+	-- get_keys: LOOP
+	-- 		FETCH _keys INTO _TJSON;
+			
+			-- IF fin = 1 THEN
+				-- LEAVE get_keys;
+			-- END IF;
+			-- SET JSON_OUTPUT = JSON_ARRAY_APPEND(JSON_OUTPUT,'$[0]',_TJSON);
+            -- LEAVE get_keys;
+	-- END LOOP get_keys;
+	CLOSE _keys;  
+        
+RETURN JSON_OUTPUT;
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -574,8 +647,8 @@ BEGIN
 		
          -- END IF;
         
-		INSERT IGNORE INTO borme_relaciones (Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo,Mes,Dia,DatosRegistrales)
-			VALUES (_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo,_Mes,_Dia,_DatosRegistrales); 
+		INSERT IGNORE INTO borme_relaciones (BOLETIN,Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo,Mes,Dia,DatosRegistrales)
+			VALUES (_BOLETIN,_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo,_Mes,_Dia,_DatosRegistrales); 
 		
          INSERT IGNORE INTO ia_data_unique (Empresa_key,Relation_key) 
 		     VALUES (_Empresa_key,_Relacion_key);
@@ -964,6 +1037,48 @@ BEGIN
 		CLOSE runners_cursor;   
 	END IF;
     SELECT @Counter as counter;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `tree_getRelationsKey` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `tree_getRelationsKey`(in _type int,in _key nvarchar(32))
+BEGIN
+
+SELECT 'HI';
+
+
+	SELECT 
+        `bbdd_kaos155_borme`.`ia_data_unique`.`Relation_key` AS `_DKey`,
+        `bbdd_kaos155_borme`.`ia_data_unique`.`Empresa_key` AS `_key`,
+        `_Empresa`.`Nombre` AS `Nombre`,
+        `_Empresa`.`_Empresa` AS `_Empresa`,
+        `_Empresa`.`_Directivo` AS `_Directivo`,
+        `_Empresa`.`_Auditor` AS `_Auditor`,
+        `_Empresa`.`_Financiera` AS `_Financiera`,
+        `_Empresa`.`_Sicav` AS `_Sicav`,
+        `_Empresa`.`_Slp` AS `_Slp`,
+        `_Empresa`.`T_Relations` AS `T_Relations`,
+        `_Empresa`.`ia_suspicius` AS `ia_suspicius`
+    FROM
+        ((`bbdd_kaos155_borme`.`ia_data_unique`
+        LEFT JOIN `bbdd_kaos155_borme`.`borme_keys` `_Empresa` ON (`bbdd_kaos155_borme`.`ia_data_unique`.`Empresa_key` = `_Empresa`.`_key`))
+        LEFT JOIN `bbdd_kaos155_borme`.`borme_keys` `_directivo` ON (`bbdd_kaos155_borme`.`ia_data_unique`.`Relation_key` = `_directivo`.`_key`))
+
+WHERE ia_data_unique.Relation_key=_key;
+
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -1481,4 +1596,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-20  9:10:14
+-- Dump completed on 2019-04-24 23:18:18
