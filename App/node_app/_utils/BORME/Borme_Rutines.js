@@ -708,16 +708,23 @@ module.exports = function (app, options, transforms) {
                                         })
                                     }
 
-
-                                    options.grafos.push.Object({
+                                    go(options, {
                                         table: _table,
                                         empresa: __data.values.Empresa ? true : false,
                                         e: __data.values.value,
                                         k: _k.replaceAll("-", ""), //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
                                         data: _linea.data
-                                    }, function (params) {
-                                        go(options, params)
                                     })
+
+                                    //options.grafos.push.Object({
+                                    //    table: _table,
+                                    //    empresa: __data.values.Empresa ? true : false,
+                                    //    e: __data.values.value,
+                                    //    k: _k.replaceAll("-", ""), //app.shorter.generate(), //_l + _i.substr(0, 1) + _k.substr((_k.length - 1) - (8 - _l.length), 8 - _l.length) ,
+                                    //    data: _linea.data
+                                    //}, function (params) {
+                                    //    go(options, params)
+                                    //})
 
                                 })
                             } else {
