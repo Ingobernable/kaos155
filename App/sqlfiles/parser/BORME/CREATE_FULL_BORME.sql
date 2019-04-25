@@ -27,11 +27,11 @@ DROP TABLE IF EXISTS `Workers_suspicius`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `Workers_suspicius` (
   `Borme_Nombre` varchar(255) DEFAULT NULL,
-  `_key` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `_key`char(32) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `_Nombre` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `Caso` varchar(45) DEFAULT NULL,
   `_Match` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=innodb DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -52,7 +52,7 @@ DROP TABLE IF EXISTS `borme_actos`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `borme_actos` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `Empresa_key` char(55) NOT NULL,
+  `Empresa_key` char(32) NOT NULL,
   `Acto` varchar(45) NOT NULL,
   `Motivo` varchar(55) NOT NULL,
   `Texto` varchar(255) NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE `borme_actos` (
   UNIQUE KEY `motivo` (`Empresa_key`,`Motivo`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Boletin` (`BOLETIN`,`_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=innodb AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
@@ -80,7 +80,7 @@ DROP TABLE IF EXISTS `borme_empresas`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `borme_empresas` (
   `_id` int(11) UNSIGNED DEFAULT NULL,
-  `_key` varchar(32) NOT NULL,
+  `_key`char(32) NOT NULL,
   `Nombre` varchar(250) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `provincia` varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `SA` bit(1) DEFAULT b'0',
@@ -102,7 +102,7 @@ CREATE TABLE `borme_empresas` (
   PRIMARY KEY (`_key`),
   UNIQUE KEY `id` (`_id`),
   KEY `activos` (`_activa`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=innodb DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
@@ -115,8 +115,8 @@ DROP TABLE IF EXISTS `borme_keys`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `borme_keys` (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `_key` varchar(32) NOT NULL,
-  `Nombre` text,
+  `_key`char(32) NOT NULL,
+  `Nombre` varchar(250) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `_Empresa` bit(1) DEFAULT b'0',
   `_Directivo` bit(1) DEFAULT b'0',
   `_Auditor` bit(1) DEFAULT b'0',
@@ -130,7 +130,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=innodb AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
@@ -157,7 +157,7 @@ CREATE TABLE `borme_relaciones` (
   PRIMARY KEY (`id`),
   KEY `Empresa` (`Empresa_key`),
   KEY `Directivo` (`Relation_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+) ENGINE=innodb AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
@@ -169,13 +169,13 @@ DROP TABLE IF EXISTS `ia_data_contratos`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `ia_data_contratos` (
-  `_key` varchar(32) NOT NULL,
+  `_key`char(32) NOT NULL,
   `_type` varchar(6) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `_counter` int(11) DEFAULT NULL,
   `_importe` double DEFAULT NULL,
   PRIMARY KEY (`_key`),
   UNIQUE KEY `type` (`_key`,`_type`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=innodb DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -195,10 +195,10 @@ DROP TABLE IF EXISTS `ia_data_seguimiento`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `ia_data_seguimiento` (
-  `_key_seguimiento` varchar(32) NOT NULL,
-  `_key_empresa` varchar(32) NOT NULL,
+  `_key_seguimiento`char(32) NOT NULL,
+  `_key_empresa`char(32) NOT NULL,
   PRIMARY KEY (`_key_seguimiento`,`_key_empresa`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=innodb DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -218,9 +218,9 @@ DROP TABLE IF EXISTS `ia_data_suspicius`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `ia_data_suspicius` (
-  `_path` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `_tree` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `_key` varchar(32) NOT NULL,
+  `_path` varchar(450) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `_tree` varchar(450) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `_key`char(32) NOT NULL,
   `_level` int(11) UNSIGNED DEFAULT NULL,
   `_Nombre` varchar(55) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `_Empresa` tinyint(4) DEFAULT NULL,
@@ -252,7 +252,7 @@ DROP TABLE IF EXISTS `ia_data_tree`;
 CREATE TABLE `ia_data_tree` (
   `_path` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `_tree` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
-  `_key` varchar(32) NOT NULL,
+  `_key`char(32) NOT NULL,
   `_level` int(11) UNSIGNED DEFAULT NULL,
   `_Nombre` varchar(55) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `_Empresa` tinyint(4) DEFAULT NULL,
@@ -289,7 +289,7 @@ CREATE TABLE `ia_data_unique` (
   `Relation_key` char(32) NOT NULL,
   PRIMARY KEY (`Empresa_key`,`Relation_key`),
   UNIQUE KEY `revert` (`Relation_key`,`Empresa_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=MEMORY DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 
@@ -349,7 +349,7 @@ SET character_set_client = @saved_cs_client;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` FUNCTION `count_str`( haystack TEXT,  needle VARCHAR(32)) RETURNS int(11)
+CREATE DEFINER=`root`@`%` FUNCTION `count_str`( haystack TEXT,  needle char(32)) RETURNS int(11)
     DETERMINISTIC
 BEGIN
 RETURN LENGTH(haystack) - LENGTH( REPLACE ( haystack, needle, space(char_length(needle)-1)));
@@ -1156,7 +1156,7 @@ BEGIN
     DECLARE _TAuditor boolean;
     DECLARE _suspicius boolean;
     
-    DECLARE _Tkey VARCHAR(32);
+    DECLARE _Tkeychar(32);
 	DECLARE _TNombre nVARCHAR(55);
     DECLARE _tr int;
     
@@ -1197,7 +1197,7 @@ BEGIN
 		   PRIMARY KEY (`_path`,`_key`),
 		   KEY `_trx` (`_trx`),
 		   KEY `_level` (`_level`)
-		) ENGINE=innodb DEFAULT CHARSET=latin1;
+		) ENGINE=MyISAM DEFAULT CHARSET=latin1;
     
     IF NOT _memory THEN
 		CREATE TABLE `ia_data_tree` (
@@ -1217,7 +1217,7 @@ BEGIN
 		   PRIMARY KEY (`_path`,`_key`),
 		   KEY `_trx` (`_trx`),
 		   KEY `_level` (`_level`)
-		) ENGINE=innodb DEFAULT CHARSET=latin1 MAX_ROWS=350000;
+		) ENGINE=MyISAM DEFAULT CHARSET=latin1 MAX_ROWS=350000;
 	ELSE
 		CREATE TABLE `ia_data_tree` (
 		  `_path` nvarchar(512)  DEFAULT NULL,

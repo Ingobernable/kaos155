@@ -296,12 +296,14 @@ module.exports = function (app, callback) {
                                     if (err)
                                         console.log(err)
 
-                                    options.SQL.scrapDb.SQL.db.query("CALL Insert_Error_Boletin(?,?,?)", [params.data.BOLETIN + '#' + params.data.ID_BORME, err.sql, err.sqlMessage], function (err2) {
-                                        app.process.stdout.write(app, options, '\x1b[31m', "x", '\x1b[0m')
-                                        _cberror(params)
-                                    })
+                                        options.SQL.db.query('INSERT INTO _parser_errors (errno,code,sql) VALUES (?,?,?)', [err.errno, err.code, err.sql], function (err, _rec) {
 
-
+                                            options.SQL.scrapDb.SQL.db.query("CALL Insert_Error_Boletin(?,?,?)", [params.data.BOLETIN + '#' + params.data.ID_BORME, err.sql, err.sqlMessage], function (err2) {
+                                                app.process.stdout.write(app, options, '\x1b[31m', "x", '\x1b[0m')
+                                                _cberror(params)
+                                            })
+                                       
+                                        })
                                     //app.commonSQL.SQL.commands.insert.errores(options, params.data.BOLETIN + '#' + params.data.ID_BORME , err.sql , err.sqlMessage , function (err2) {
                                     //    app.process.stdout.write(app, options, '\x1b[31m', "x", '\x1b[0m')
                                     //    _cberror(params)
@@ -345,10 +347,13 @@ module.exports = function (app, callback) {
 
                             options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?,?,?,?,?)", params, function (err, _rec) {
                                 if (err) {
-                                    console.log(err,params)
-                                    debugger
+                                    options.SQL.db.query('INSERT INTO _parser_errors (errno,code,sql) VALUES (?,?,?)', [err.errno, err.code, err.sql], function (err, _rec) {
+                                        callback(err, _rec)
+                                    })
+                                    //debugger
+                                } else {
+                                    callback(err, _rec)
                                 }
-                                callback(err, _rec)
                             })
                         }
                     },
