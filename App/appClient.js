@@ -27,7 +27,7 @@ String.prototype.replaceAll = function (target, replacement) {
         SQL.init({ SQL: { db: null }, Command: 'PARSER' }, 'BORME', function (options) {
             app.SQL.db = options.SQL.db;
             var www = App.express();
-            var server = App.http.createServer(www).listen(80);
+            var server = App.http.createServer(www).listen(4800);
 
             www.get('/css/*', function (req, res) {
                 res.sendFile(__dirname + '/node_www/wwwClient/public/' + req.url);
