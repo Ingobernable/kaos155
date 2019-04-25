@@ -66,7 +66,7 @@ module.exports = function (app, callback) {
                 _linea.table = "Empresa"
                 _linea.cif = null
 
-                    options.grafos.push.Object(_linea, function (_linea) {  //,  function (options, params) {
+                    //options.grafos.push.Object(_linea, function (_linea) {  //,  function (options, params) {
                 
                         app.commonSQL.SQL.commands.insert.Borme.keys(options, _linea, function (_linea, _rec) {
                             options.parser.printOut(app, options, '\x1b[33m', '.', '\x1b[0m')
@@ -76,7 +76,7 @@ module.exports = function (app, callback) {
                             options.parser.saveDiarioMovimientos(_linea, _cb)
 
                         }, _cb)
-                    })
+                    //})
             },
             saveLineContenido: function (_e, _linea, _cb, _func) {
                 //var _that = this
@@ -99,7 +99,7 @@ module.exports = function (app, callback) {
 
                             
                             //guardamos los datos
-                            options.grafos.push.relation(_Dl.values ? _Dl.values.Auditor ? "Auditor" : "Directivo" : "Directivo", _linea, params, function () {
+                            //options.grafos.push.relation(_Dl.values ? _Dl.values.Auditor ? "Auditor" : "Directivo" : "Directivo", _linea, params, function () {
                                 if (!_linea.contenido.DatosRegistrales) {
                                     _linea.contenido.DatosRegistrales = null
                                     debugger
@@ -147,7 +147,7 @@ module.exports = function (app, callback) {
                                     //repitiendo el proceso para todos los datos de una linea
                                     _e++
                                     _func(_e, _linea, _cb, _func)
-                                })
+                                //})
                             }, _Dl, Active, _linea.data.BOLETIN + "#" + _linea.data.ID_BORME)
 
                         }
