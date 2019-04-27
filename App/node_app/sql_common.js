@@ -286,10 +286,10 @@ module.exports = function (app, callback) {
 
 
                             const _p = [ params.data.mes, app.anyo , params.e, params.k, params.data.provincia, params.data.BOLETIN, params.data.ID_BORME]
-                            var _cadsql = _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?,?,?)"
+                            var _cadsql = _cadsql = "CALL Insert_Data_PARSER_" + params.table + "(?,?,?,?,?,?,?)"
                             if (params.table == "Auditor") {
                                 _p.push(params.empresa ? 1 : 0)
-                                _cadsql = "CALL Insert_Data_BORME_" + params.table + "(?,?,?,?,?,?,?,?)"
+                                _cadsql = "CALL Insert_Data_PARSER_" + params.table + "(?,?,?,?,?,?,?,?)"
                             }
                             options.SQL.db.query(_cadsql, _p , function (err, _rec) {
                                 if (err != null || _rec[0][0] == null) {
@@ -345,7 +345,7 @@ module.exports = function (app, callback) {
                             //if (params[12] == 'Constitucion')
                             //    debugger
 
-                            options.SQL.db.query("CALL INSERT_Data_BORME_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?,?,?,?,?)", params, function (err, _rec) {
+                            options.SQL.db.query("CALL INSERT_Data_PARSER_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?,?,?,?,?)", params, function (err, _rec) {
                                 if (err) {
                                     options.SQL.db.query('INSERT INTO _parser_errors (errno,code,sql) VALUES (?,?,?)', [err.errno, err.code, err.sql], function (err, _rec) {
                                         callback(err, _rec)

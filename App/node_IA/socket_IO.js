@@ -21,27 +21,31 @@
             //    console.log(stats)
             //});
             io.on('connection', function (socket) {
+                const act = function (_socket) {
+                    _socket.on('add', function (_data) {
+
+                        app._io.functions.BORME.add(_data)
+                        _data = null
+                    })
+                    _socket.on('update', function (_data) {
+                        app._io.functions.BORME.update(_data)
+                        _data = null
+                    })
+                    _socket.on('movimiento', function (_data) {
+
+                        app._io.functions.BORME.movimiento(_data)
+                        _data = null
+                    })
+                    _socket.on('relacion', function (_data) {
+
+                        app._io.functions.BORME.relacion(_data)
+                        _data = null
+                    })
+                  
+                }
                 console.log('IO Connect ' + socket.id)
                 app.sockets.array[socket.id] = socket
-                app.sockets.array[socket.id].on('add', function (_data) {
-                    
-                    app._io.functions.BORME.add(_data)
-                    _data = null
-                })
-                app.sockets.array[socket.id].on('update', function (_data) {                    
-                    app._io.functions.BORME.update(_data)
-                    _data=null
-                })
-                app.sockets.array[socket.id].on('movimiento', function (_data) {
-                    
-                    app._io.functions.BORME.movimiento(_data)
-                    _data = null
-                })
-                app.sockets.array[socket.id].on('relacion', function (_data) {
-                    
-                    app._io.functions.BORME.relacion(_data)
-                    _data = null
-                })
+                //act( app.sockets.array[socket.id] )
                 socket=null
             })
             //callback(io)
