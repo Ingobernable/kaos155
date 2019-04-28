@@ -345,13 +345,19 @@ module.exports = function (app, callback) {
                             //if (params[12] == 'Constitucion')
                             //    debugger
 
-                            options.SQL.db.query("CALL INSERT_Data_PARSER_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?,?,?,?,?)", params, function (err, _rec) {
+                            options.SQL.db.query("CALL INSERT_Data_PARSER_Diario(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?, ?,?,?)", params, function (err, _rec) {
                                 if (err) {
                                     options.SQL.db.query('INSERT INTO _parser_errors (errno,code,sql) VALUES (?,?,?)', [err.errno, err.code, err.sql], function (err, _rec) {
                                         callback(err, _rec)
                                     })
                                     //debugger
                                 } else {
+                                    if (_rec[0])
+                                        if (_rec[0][0]) {
+                                            console.log(_rec[0][0]['_xNombre'],_rec[0][0]['_xTRelations'])
+                                            if (_rec[0][0]['_xTRelations'] > 100)
+                                                debugger
+                                        }
                                     callback(err, _rec)
                                 }
                             })
