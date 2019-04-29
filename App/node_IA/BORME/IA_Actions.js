@@ -55,12 +55,12 @@
         update: function () {
 
         },
-        relacion: function () {
+        relacion: function (data) {
             const cadsql = 'UPDATE borme_keys SET ia_suspicius = 1 WHERE((id IN('+
-                'SELECT Empresa_id from borme_relaciones WHERE Relation_id = _Relacion_Id)) or id = _Relacion_Id) and not ia_suspicius;'
-
-            app.options.SQL.db.query(cadsql, function (err,_response) {
-                debugger
+                'SELECT Empresa_id from borme_relaciones WHERE Relation_id = ' + data.id + ')) or id = ' + data.id + ') and not ia_suspicius;'
+            process.stdout.write('IA suspicius->'+ data.id+":"+ data.Nombre+" ........ "+ data._tr)
+            app.IA.SQL.db.query(cadsql, function (err,_response) {
+                console.log(' ->OK')
             })
         }
     }

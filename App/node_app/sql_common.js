@@ -354,9 +354,14 @@ module.exports = function (app, callback) {
                                 } else {
                                     if (_rec[0])
                                         if (_rec[0][0]) {
-                                            console.log(_rec[0][0]['_xNombre'],_rec[0][0]['_xTRelations'])
-                                            if (_rec[0][0]['_xTRelations'] > app._IAparameters.min_TRelations && _rec[0][0]['_xType'] ==1)
-                                                options._common.IAgo({ id: _rec[0][0]['_xid'], Nombre: _rec[0][0]['_xNombre'], _tr: _rec[0][0]['_xTRelations'] }, 'relation')
+                                            if (_rec[0][0]['_xTRelations'] >= app._IAparameters.min_TRelations) {
+                                                // console.log(_rec[0][0]['_xType'], _rec[0][0]['_xNombre'], _rec[0][0]['_xTRelations'])
+                                                if (_rec[0][0]['_xType'] * 1 == 1) {
+
+                                                    console.log(_rec[0][0]['_xType'], _rec[0][0]['_xNombre'], _rec[0][0]['_xTRelations'])
+                                                    options._common.IAgo({ id: _rec[0][0]['_xid'], Nombre: _rec[0][0]['_xNombre'], _tr: _rec[0][0]['_xTRelations'] }, 'relation')
+                                                }
+                                            }
                                         }
                                     callback(err, _rec)
                                 }

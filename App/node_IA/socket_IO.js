@@ -38,14 +38,14 @@
                     })
                     _socket.on('relation', function (_data) {
 
-                        app._io.functions.BORME.relacion(_data)
+                        app._io.functions.BORME.relacion(_data.data)
                         _data = null
                     })
                   
                 }
                 console.log('IO Connect ' + socket.id)
                 app.sockets.array[socket.id] = socket
-                //act( app.sockets.array[socket.id] )
+                act( app.sockets.array[socket.id] )
                 socket=null
             })
             //callback(io)
