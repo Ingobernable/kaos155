@@ -355,8 +355,8 @@ module.exports = function (app, callback) {
                                     if (_rec[0])
                                         if (_rec[0][0]) {
                                             console.log(_rec[0][0]['_xNombre'],_rec[0][0]['_xTRelations'])
-                                            if (_rec[0][0]['_xTRelations'] > 100)
-                                                debugger
+                                            if (_rec[0][0]['_xTRelations'] > app._IAparameters.min_TRelations && _rec[0][0]['_xType'] ==1)
+                                                options._common.IAgo({ id: _rec[0][0]['_xid'], Nombre: _rec[0][0]['_xNombre'], _tr: _rec[0][0]['_xTRelations'] }, 'relation')
                                         }
                                     callback(err, _rec)
                                 }

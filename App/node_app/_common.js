@@ -5,56 +5,59 @@
         
         IAgo: function ( _p, _command) {
             var _params = {}
-            if (_p.table == null)
-                debugger
+            if (_command == 'relation') {
+                _params =_p
+            } else {
+                if (_p.table == null)
+                    debugger
 
-            if (_p.id) {
-                _params = {
-                    table: _p.table,
-                    id: _p.id,
-                    e: _p.e,
-                    k: _p.k,
-                    provincia: _p.provincia
+                if (_p.id) {
+                    _params = {
+                        table: _p.table,
+                        id: _p.id,
+                        e: _p.e,
+                        k: _p.k,
+                        provincia: _p.provincia
+                    }
+                } else {
+                    _params = {
+                        table: _p.table,
+                        e: _p.e,
+                        _id_empresa: _p._id_empresa,
+                        _id_relation: _p._id_relation,
+                        _key_relation: _p._key_relation,
+                        _provincia: _p._provincia
+                    }
+
                 }
-            }else {
-                _params = {
-                    table: _p.table,
-                    e : _p.e,
-                    _id_empresa: _p._id_empresa,
-                    _id_relation: _p._id_relation,
-                    _key_relation: _p._key_relation,
-                    _provincia : _p._provincia
+                //app._.clone(params) //.clone()
+                if (_p.acto != null)
+                    _params.acto = {
+                        _def: _p.acto._def,
+                        _type: _p.acto._type,
+                        _cargo: _p.acto._cargo,
+                        _value: _p.acto._value,
+                    }
+                if (_p.record != null)
+                    _params.record = {
+                        _Empresa: _p.record._Empresa.toString() == '\u0001' ? 1 : 0,
+                        _Financiera: _p.record._Financiera.toString() == '\u0001' ? 1 : 0,
+                        _Auditor: _p.record._Auditor.toString() == '\u0001' ? 1 : 0,
+                        _Sicav: _p.record._Sicav.toString() == '\u0001' ? 1 : 0,
+                    }
+
+                //_params.keys == null
+                //_params.original = null
+                //_params.contenido = null
+
+                _params._fecha = _p.data == null ? _p._fecha : {
+                    dia: _p.data.dia,
+                    mes: _p.data.mes,
+                    anyo: app.anyo
                 }
-                
+
+
             }
-            //app._.clone(params) //.clone()
-            if (_p.acto != null)
-                _params.acto = {
-                    _def: _p.acto._def,
-                    _type: _p.acto._type,
-                    _cargo: _p.acto._cargo,
-                    _value: _p.acto._value,
-                }
-            if (_p.record!= null)
-                _params.record = {
-                    _Empresa: _p.record._Empresa.toString() == '\u0001' ? 1 : 0,
-                    _Financiera: _p.record._Financiera.toString() == '\u0001' ? 1 : 0,
-                    _Auditor: _p.record._Auditor.toString() == '\u0001' ? 1 : 0,
-                    _Sicav: _p.record._Sicav.toString() == '\u0001' ? 1 : 0,
-                }
-
-            //_params.keys == null
-            //_params.original = null
-            //_params.contenido = null
-
-            _params._fecha = _p.data == null ? _p._fecha: {
-                dia: _p.data.dia,
-                mes: _p.data.mes,
-                anyo: app.anyo
-            }
-            
-            
-               
                 
 
             this.io_client.emit(_command, {

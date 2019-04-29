@@ -54,6 +54,14 @@
         },
         update: function () {
 
+        },
+        relacion: function () {
+            const cadsql = 'UPDATE borme_keys SET ia_suspicius = 1 WHERE((id IN('+
+                'SELECT Empresa_id from borme_relaciones WHERE Relation_id = _Relacion_Id)) or id = _Relacion_Id) and not ia_suspicius;'
+
+            app.options.SQL.db.query(cadsql, function (err,_response) {
+                debugger
+            })
         }
     }
 }

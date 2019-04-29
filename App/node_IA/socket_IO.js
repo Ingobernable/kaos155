@@ -36,7 +36,7 @@
                         app._io.functions.BORME.movimiento(_data)
                         _data = null
                     })
-                    _socket.on('relacion', function (_data) {
+                    _socket.on('relation', function (_data) {
 
                         app._io.functions.BORME.relacion(_data)
                         _data = null
