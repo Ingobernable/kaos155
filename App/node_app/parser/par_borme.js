@@ -140,6 +140,8 @@ module.exports = function (app, callback) {
                                     _linea.record._Sicav
 
                                 ], function (err, _record) {
+                                        if (err)
+                                            console.log(err)
                                         //if (_that == null)
                                         //    debugger
                                             options.parser.printOut(app, options, '\x1b[33m', '.', '\x1b[0m')

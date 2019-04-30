@@ -2,7 +2,7 @@ CREATE DATABASE  IF NOT EXISTS `bbdd_kaos155_borme` /*!40100 DEFAULT CHARACTER S
 USE `bbdd_kaos155_borme`;
 -- MySQL dump 10.13  Distrib 8.0.15, for Win64 (x86_64)
 --
--- Host: 51.75.94.125    Database: bbdd_kaos155_borme
+-- Host: 54.36.112.100    Database: bbdd_kaos155_borme
 -- ------------------------------------------------------
 -- Server version	8.0.16
 
@@ -83,7 +83,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB AUTO_INCREMENT=1676005 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -528,11 +528,11 @@ BEGIN
 		     VALUES (_Empresa_id,_Relacion_id,JSON_ARRAY(_Tx)) ON DUPLICATE KEY UPDATE Cargos = JSON_ARRAY_APPEND(Cargos,'$',_Tx ) ;
              
         IF  @Counter=0 THEN
-        	SET _Ex = (SELECT JSON_OBJECT('id', id ,"_N", Nombre, "_t", 0 ,"_T",T_Relations, "type", borme_keys._type , 'ia',borme_keys.ia_suspicius)
-					From borme_keys WHERE id=_Empresa_id);
+        	SET _Ex = _Empresa_id; -- (SELECT JSON_OBJECT('id', id ,"_N", Nombre, "_t", 0 ,"_T",T_Relations, "type", borme_keys._type , 'ia',borme_keys.ia_suspicius)
+					-- From borme_keys WHERE id=_Empresa_id);
 
-			SET _Rx = (SELECT JSON_OBJECT('id', id ,"_N", Nombre, "_t", 1 ,"_T",T_Relations, "type", borme_keys._type , 'ia',borme_keys.ia_suspicius)
-						From borme_keys WHERE id=_Relacion_id);
+			SET _Rx = _Relacion_id; -- (SELECT JSON_OBJECT('id', id ,"_N", Nombre, "_t", 1 ,"_T",T_Relations, "type", borme_keys._type , 'ia',borme_keys.ia_suspicius)
+						 -- From borme_keys WHERE id=_Relacion_id);
 			-- SELECT JSON_ARRAY_APPEND( Nodes, '$', IF( id =_Empresa_Id,_Ex,_Rx) ) FROM borme_keys WHERE id = _Empresa_Id OR id = _Relacion_Id;
 			UPDATE borme_keys SET T_Relations =T_Relations + 1, Nodes = JSON_ARRAY_APPEND( Nodes, '$', IF( id =_Empresa_Id,_Rx,_Ex) ) WHERE id = _Empresa_Id OR id = _Relacion_Id;
 		
@@ -832,4 +832,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-04-29 20:47:16
+-- Dump completed on 2019-05-01  0:26:01
