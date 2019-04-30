@@ -24,8 +24,8 @@ conOrigen.connect(function (err) {
 
 
     const _q = function (conOrigen, conDestino, _q) {
-
-        conOrigen.query("select * From bbdd_kaos155_text._borme_text_2010 where parser=0 LIMIT 1", function (err, record) {
+         
+        conOrigen.query("select * From bbdd_kaos155_text._borme_text_2011 where parser=0 LIMIT 1", function (err, record) {
             if (record[0]) {
                 const params = [
                     record[0].dia,
@@ -35,8 +35,8 @@ conOrigen.connect(function (err) {
                     record[0].ID_BORME,
                     record[0].provincia
                 ]
-                conDestino.query("INSERT INTO bbdd_kaos155_text._borme_text_2010 (dia,mes,BOLETIN,texto,ID_BORME,Provincia) VALUES(?,?,?,?,?,?)", params, function (_err, _record) {
-                    conOrigen.query("UPDATE bbdd_kaos155_text._borme_text_2010 SET parser=1 WHERE id=?", [record[0].id], function () {
+                conDestino.query("INSERT INTO bbdd_kaos155_text._borme_text_2011 (dia,mes,BOLETIN,texto,ID_BORME,Provincia) VALUES(?,?,?,?,?,?)", params, function (_err, _record) {
+                    conOrigen.query("UPDATE bbdd_kaos155_text._borme_text_2011 SET parser=1 WHERE id=?", [record[0].id], function () {
                         process.stdout.write(".")
                         _q(conOrigen, conDestino,_q)
                     })
