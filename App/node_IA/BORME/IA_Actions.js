@@ -56,10 +56,9 @@
 
         },
         relacion: function (data) {
-            const cadsql = 'UPDATE borme_keys SET ia_suspicius = 1 WHERE((id IN('+
-                'SELECT Empresa_id from borme_relaciones WHERE Relation_id = ' + data.id + ')) or id = ' + data.id + ') and not ia_suspicius;'
+            const cadsql = 'CALL Insert_Data_PARSER_suspicius(?)'
             process.stdout.write('IA suspicius->'+ data.id+":"+ data.Nombre+" ........ "+ data._tr)
-            app.IA.SQL.db.query(cadsql, function (err,_response) {
+            app.IA.SQL.db.query(cadsql, [data.id], function (err,_response) {
                 console.log(' ->OK')
             })
         }
