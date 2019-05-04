@@ -50,6 +50,7 @@ CREATE TABLE `borme_empresas` (
   `_Auditor` bit(1) DEFAULT b'0',
   `_Financiera` bit(1) DEFAULT b'0',
   `_sicav` bit(1) DEFAULT b'0',
+  `_Socimi` bit(1) DEFAULT b'0',
   `_ute` bit(1) DEFAULT b'0',
   `Actos` json DEFAULT NULL,
   PRIMARY KEY (`_key`),
@@ -74,6 +75,7 @@ CREATE TABLE `borme_keys` (
   `_Auditor` bit(1) DEFAULT b'0',
   `_Financiera` bit(1) DEFAULT b'0',
   `_Sicav` bit(1) DEFAULT b'0',
+  `_Socimi` bit(1) DEFAULT b'0',
   `_Slp` bit(1) DEFAULT b'0',
   `T_Relations` int(11) unsigned DEFAULT '0',
   `ia_suspicius` bit(1) DEFAULT b'0',
@@ -83,7 +85,7 @@ CREATE TABLE `borme_keys` (
   KEY `_estado` (`_Empresa`,`_Directivo`,`_Auditor`,`_Financiera`,`_Sicav`,`_Slp`),
   KEY `_key` (`_key`),
   FULLTEXT KEY `Name` (`Nombre`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2000338 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -239,6 +241,51 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `JSON_ARRAY_UNIQUE` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `JSON_ARRAY_UNIQUE`(xid int) RETURNS json
+    DETERMINISTIC
+BEGIN
+	DECLARE _fin int DEFAULT 0;
+	DECLARE _id int;
+    DECLARE _JSON JSON;
+    DECLARE _keys CURSOR FOR
+			SELECT DISTINCT node.id FROM  
+                         borme_keys,
+						JSON_TABLE(Nodes, '$[*]' columns(
+									id int PATH '$'
+                                    ) ) node 
+									INNER JOIN bbdd_kaos155_borme.borme_keys as _Tr ON _Tr.id = node.id
+									where borme_keys.id = xid;
+                                    
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET _fin=1; 
+	OPEN _keys;
+    SET _JSON = JSON_ARRAY();
+    
+	get_keys: LOOP
+		FETCH _keys INTO _id;
+		IF _fin = 1 THEN
+			LEAVE get_keys;
+		END IF;
+         SET _JSON = JSON_ARRAY_APPEND(_JSON,'$',_id);
+	END LOOP get_keys;
+	CLOSE _keys;  
+    
+RETURN _JSON;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP FUNCTION IF EXISTS `lastIndex` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -286,6 +333,36 @@ BEGIN
         END IF;
 
     END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `Tree_JSONnode` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` FUNCTION `Tree_JSONnode`(_xid int) RETURNS json
+    DETERMINISTIC
+BEGIN
+	DECLARE pp JSON;
+    
+    -- USE bbdd_kaos155_borme;
+	SELECT  JSON_ARRAYAGG(  JSON_OBJECT('id',_Tr.id)) 
+					INTO @Nodes
+                    FROM 
+                    bbdd_kaos155_borme.borme_keys,
+					JSON_TABLE(Nodes, '$[*]' columns(id int PATH '$') ) node 
+								INNER JOIN bbdd_kaos155_borme.borme_keys as _Tr ON _Tr.id = node.id
+								where borme_keys.id = _xid;
+	RETURN @Nodes;
+END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -373,30 +450,112 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` FUNCTION `_type`( Empresa int, Directivo int, Auditor int, Financiera int, Sicav int) RETURNS int(11)
+CREATE DEFINER=`root`@`localhost` FUNCTION `_type`( Empresa int, Directivo int, Auditor int, Financiera int, Sicav int, Socimi int) RETURNS int(11)
     DETERMINISTIC
 BEGIN  
   DECLARE _r int; 
-  IF Sicav>0 THEN
-	SET _r = 3;
+  IF Socimi>0 THEN
+	  SET _r = 5;
   ELSE
-	  IF Financiera >0 THEN
-		SET _r = 3;
+	  IF Sicav>0 THEN
+		SET _r = 4;
 	  ELSE
-		  IF Auditor >0 THEN
-			SET _r = 2;
+		  IF Financiera >0 THEN
+			SET _r = 3;
 		  ELSE
-			  IF Directivo >0 THEN
-				SET _r = 1;
+			  IF Auditor >0 THEN
+				SET _r = 2;
 			  ELSE
-				  IF Empresa >0 THEN
-					SET _r = 0;
+				  IF Directivo >0 THEN
+					SET _r = 1;
+				  ELSE
+					  IF Empresa >0 THEN
+						SET _r = 0;
+					  END IF;
 				  END IF;
 			  END IF;
-		  END IF;
+			END IF;
 		END IF;
-	END IF;
+    END IF;
   RETURN _r;  
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `bug_duplicate` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `bug_duplicate`()
+BEGIN
+	DECLARE _finito int default 0;
+    DECLARE _xid int;
+	DECLARE _ids CURSOR FOR
+					SELECT id FROM borme_keys;
+                    
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET _finito=1; 
+	OPEN _ids;                
+    get_ids: LOOP
+		FETCH _ids INTO _xid;
+		IF _finito = 1 THEN
+			LEAVE get_ids;
+		END IF; 
+        
+		BEGIN
+			DECLARE _fin int DEFAULT 0;
+			DECLARE _id int;
+			DECLARE _JSON JSON;
+			DECLARE _keys CURSOR FOR
+					SELECT DISTINCT node.id FROM  
+								 borme_keys,
+								JSON_TABLE(Nodes, '$[*]' columns(
+											id int PATH '$'
+											) ) node 
+											INNER JOIN bbdd_kaos155_borme.borme_keys as _Tr ON _Tr.id = node.id
+											where borme_keys.id = _xid;
+			
+            
+
+            
+            
+			DECLARE CONTINUE HANDLER FOR NOT FOUND SET _fin=1; 
+            
+            
+            					SELECT count(DISTINCT node.id) 
+								INTO @counter
+								FROM  
+								 borme_keys,
+								JSON_TABLE(Nodes, '$[*]' columns(
+											id int PATH '$'
+											) ) node 
+											INNER JOIN bbdd_kaos155_borme.borme_keys as _Tr ON _Tr.id = node.id
+											where borme_keys.id = _xid;
+            
+			OPEN _keys;
+			SET _JSON = JSON_ARRAY();
+			-- SELECT xid,_id,_fin;
+			get_keys: LOOP
+				FETCH _keys INTO _id;
+				SELECT _xid,_id,_fin,@counter;
+				IF _fin = 1 THEN
+					LEAVE get_keys;
+				END IF;
+				 SET _JSON = JSON_ARRAY_APPEND(_JSON,'$',_id);
+                 SELECT _xid,_id,_fin;
+			END LOOP get_keys;
+			CLOSE _keys;
+            
+		END;
+	END LOOP get_ids;
+    CLOSE _ids; 
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -444,7 +603,7 @@ BEGIN
 	END IF;
     
 	IF @repeat = 0 THEN
-		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav, _type , Nodes) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,_type( @Empresa,@Directivo,@Auditor,@Financiera,@Sicav ) ,JSON_ARRAY() );
+		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav, _type , Nodes) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,_type( @Empresa,@Directivo,@Auditor,@Financiera,@Sicav,0 ) ,JSON_ARRAY() );
 
 		-- INSERT INTO borme_keys (_key, Nombre, _Empresa,_Directivo, _Auditor, _Financiera, _Sicav) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
 		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
@@ -503,16 +662,16 @@ CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_PARSER_Diario`(
 BEGIN
 
 	DECLARE _Tx JSON;
-	DECLARE _Ex JSON;
-    DECLARE _Rx JSON;
+	DECLARE _Ex int;
+    DECLARE _Rx int;
 
 	DECLARE _xTRelations INTEGER DEFAULT 0;
 	DECLARE _xType int;
 	DECLARE _xNombre nvarchar(255);
 	DECLARE _xid int;
     
-	DECLARE runners_cursor CURSOR FOR 
-		SELECT id,Nombre,T_Relations,borme_keys._type FROM borme_keys  WHERE id=_Relacion_Id;
+	-- DECLARE runners_cursor CURSOR FOR 
+		-- SELECT id,Nombre,T_Relations,borme_keys._type FROM borme_keys  WHERE id=_Relacion_Id;
             
     -- SET @vox = (SELECT CONCAT(_BOLETIN,"/",_BOLETIN_ID)) ;
     -- SELECT _key FROM borme_empresas Where _id=_Empresa_id;
@@ -523,31 +682,41 @@ BEGIN
 		-- INSERT IGNORE INTO borme_relaciones (BOLETIN,Empresa_key,Type,Relation_key,Motivo,Cargo,Activo,Anyo,Mes,Dia,DatosRegistrales)
 		-- 	VALUES (_BOLETIN,_Empresa_key,_T_Relacion,_Relacion_key,_type,_key,_Activo,_Anyo,_Mes,_Dia,_DatosRegistrales); 
 		-- SELECT _Empresa_Id,_Relacion_Id,JSON_ARRAY_APPEND(Actos,'$',_Tx ) FROM borme_empresas Where _id=_Empresa_id;
-		 SET @Counter = (SELECT COUNT(*) from borme_relaciones WHERE Empresa_id=_Empresa_Id and Relation_id=_Relacion_Id );
+        
+		 -- SET @Counter = ( SELECT  count(*) FROM  borme_keys, 
+		 -- 					JSON_TABLE(Nodes, '$[*]' columns(
+		-- 								id int PATH '$' -- ,
+		-- 								)) node 
+		-- 					INNER JOIN borme_keys as _Tr ON _Tr.id = node.id
+		-- 						where borme_keys.id=_Empresa_Id and node.id=_Relacion_Id );         
+
+        -- ( SELECT COUNT(*) from borme_relaciones WHERE Empresa_id=_Empresa_Id and Relation_id=_Relacion_Id );
          INSERT INTO borme_relaciones (Empresa_id,Relation_id,Cargos) 
 		     VALUES (_Empresa_id,_Relacion_id,JSON_ARRAY(_Tx)) ON DUPLICATE KEY UPDATE Cargos = JSON_ARRAY_APPEND(Cargos,'$',_Tx ) ;
              
-        IF  @Counter=0 THEN
-        	SET _Ex = _Empresa_id; -- (SELECT JSON_OBJECT('id', id ,"_N", Nombre, "_t", 0 ,"_T",T_Relations, "type", borme_keys._type , 'ia',borme_keys.ia_suspicius)
+        IF  ROW_COUNT()=1 THEN
+        	SET _Ex = _Empresa_id;  -- _Relacion_id -- (SELECT JSON_OBJECT('_', _Empresa_id ));
 					-- From borme_keys WHERE id=_Empresa_id);
 
-			SET _Rx = _Relacion_id; -- (SELECT JSON_OBJECT('id', id ,"_N", Nombre, "_t", 1 ,"_T",T_Relations, "type", borme_keys._type , 'ia',borme_keys.ia_suspicius)
+			SET _Rx = _Relacion_id; -- (SELECT JSON_OBJECT('_', _Relacion_id ));
 						 -- From borme_keys WHERE id=_Relacion_id);
 			-- SELECT JSON_ARRAY_APPEND( Nodes, '$', IF( id =_Empresa_Id,_Ex,_Rx) ) FROM borme_keys WHERE id = _Empresa_Id OR id = _Relacion_Id;
 			UPDATE borme_keys SET T_Relations =T_Relations + 1, Nodes = JSON_ARRAY_APPEND( Nodes, '$', IF( id =_Empresa_Id,_Rx,_Ex) ) WHERE id = _Empresa_Id OR id = _Relacion_Id;
 		
 		END IF;  
         
-		OPEN runners_cursor;
-		FETCH runners_cursor INTO _xid,_xNombre, _xTRelations,_xType;
+		-- OPEN runners_cursor;
+		-- FETCH runners_cursor INTO _xid,_xNombre, _xTRelations,_xType;
 		-- SET _xType = (SELECT CONCAT(IF(_Empresa,'1','0'),IF(_Directivo ,'1','0'),IF(_Financiera ,'1','0'),IF(_Auditor ,'1','0'),IF(_Sicav ,'1','0'),IF(ia_suspicius ,'1','0'))  FROM borme_keys  WHERE id=_xid);
 		
-        SELECT _xNombre,_xTRelations,_xType,_xid;
-		IF _xTRelations >= _minRel AND _xType=1 THEN	                   
-			UPDATE borme_keys SET ia_suspicius=1 WHERE ((id IN (
-					SELECT Empresa_id from borme_relaciones WHERE Relation_id=_Relacion_Id )) or id=_Relacion_Id) and not ia_suspicius	;
-		END IF;            
-		CLOSE runners_cursor;
+        
+        SELECT id as _xid, Nombre as _xNombre, T_Relations as _xTRelations, borme_keys._type as _xType FROM borme_keys  WHERE id=_Relacion_Id;
+        -- SELECT _xNombre,_xTRelations,_xType,_xid;
+		-- IF _xTRelations >= _minRel AND _xType=1 THEN	                   
+		-- 	UPDATE borme_keys SET ia_suspicius=1 WHERE ((id IN (
+		-- 			SELECT Empresa_id from borme_relaciones WHERE Relation_id=_Relacion_Id )) or id=_Relacion_Id) and not ia_suspicius	;
+		-- END IF;            
+		-- CLOSE runners_cursor;
 		
     else
 		SET _Tx = (SELECT JSON_OBJECT('_b',CONCAT(_BOLETIN,"/",_BOLETIN_ID),"Motivo",_type,"Cargo",_key,"Anyo",_Anyo,"Mes",_Mes));
@@ -580,11 +749,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `Insert_Data_PARSER_Directivo`(_mes 
 BEGIN
 	SET @repeat = (SELECT count(*) FROM borme_keys WHERE _key = _iKey);
 	
+    
 	SET @Directivo = 1;
 	SET @Empresa = 0;
 	SET @Financiera = 0;
 	SET @Auditor= 0;
-    SET @UTE = _NAME REGEXP ' UTE$';
+    SET @UTE = UPPER(_NAME) REGEXP ' UTE$';
+    SET @Socimi = UPPER(_NAME) REGEXP ' SOCIMI$';
     
 	IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'BANK')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
 		SET @Financiera = 1;
@@ -608,22 +779,23 @@ BEGIN
 	
 	IF @Empresa=1 THEN
 		SET _NAME= UCASE(_NAME);
-	END IF;
+	END IF;    
+    
 	IF @repeat = 0 THEN 
-INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ,_type , nodes) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,_type( @Empresa,@Directivo,@Auditor,@Financiera,@Sicav ), JSON_ARRAY() );
+INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav,_Socimi ,_type , nodes) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,@Socimi,_type( @Empresa,@Directivo,@Auditor,@Financiera,@Sicav,@Socimi ), JSON_ARRAY() );
 		-- INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav);
-		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
+		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav,@Socimi as _Socimi;
         
         IF @Empresa=1  THEN
-			INSERT INTO borme_empresas (_id,_key,Nombre,provincia,SA,SL,SLL,SLP,_Auditor,_Financiera, _Sicav,_ute,Actos) 
+			INSERT INTO borme_empresas (_id,_key,Nombre,provincia,SA,SL,SLL,SLP,_Auditor,_Financiera, _Sicav,_ute,_Socimi,Actos) 
 				VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia,_NAME REGEXP 'SA$',
 																		_NAME REGEXP 'SL$',
 																		_NAME REGEXP 'SLL$',
-																		_NAME REGEXP 'SLP$',@Auditor,@Financiera,@Sicav,@UTE, JSON_ARRAY());
+																		_NAME REGEXP 'SLP$',@Auditor,@Financiera,@Sicav,@UTE,@Socimi, JSON_ARRAY());
 		END IF;
         
     ELSE
-		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
+		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav,@Socimi as _Socimi;
     END IF;
 END ;;
 DELIMITER ;
@@ -650,7 +822,9 @@ BEGIN
 		SET @Financiera = 0;
 		SET @Auditor=0;
 		SET @Sicav = 0;
-		SET @UTE = _NAME REGEXP ' UTE$';
+        
+		SET @Socimi = UPPER(_NAME) REGEXP ' SOCIMI$';
+		SET @UTE = UPPER(_NAME) REGEXP ' UTE$';
 		
 		IF INSTR(UPPER(_NAME),'BANCO ')>0 OR INSTR(UPPER(_NAME),'BANK')>0 OR INSTR(UPPER(_NAME),'CAJA ')>0 OR INSTR(UPPER(_NAME),'CAIXA ')>0 OR INSTR(UPPER(_NAME),'SEGUROS ')>0 OR INSTR(UPPER(_NAME),'CAJAS')>0 THEN
 			SET @Financiera = 1;
@@ -665,21 +839,24 @@ BEGIN
 		IF INSTR(UPPER(_NAME),'AUDITOR')>0 or INSTR(UPPER(_NAME),'ASESOR')>0 or INSTR(UPPER(_NAME),'CONSULTOR')>0 THEN
 			SET @Auditor= 1;
 		END IF;
-        
+ 
+
+ 
+ 
 	IF @repeat = 0 THEN
 	
 
          
-		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav ,_type , nodes) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav,_type( @Empresa,@Directivo,@Auditor,@Financiera,@Sicav ), JSON_ARRAY() );
-		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav;
+		INSERT INTO borme_keys (_key,Nombre,_Empresa,_Directivo,_Auditor,_Financiera, _Sicav, _Socimi ,_type , nodes) VALUES(_iKey,_NAME,@Empresa,@Directivo,@Auditor,@Financiera,@Sicav, @Socimi,_type( @Empresa,@Directivo,@Auditor,@Financiera,@Sicav, @Socimi ), JSON_ARRAY() );
+		SELECT 1 as _add, _iKey as _key, LAST_INSERT_ID()  as Id, 0 as ia_suspicius,@Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav,@Socimi as _Socimi;
         
-        INSERT INTO borme_empresas (_id,_key,Nombre,provincia,SA,SL,SLL,SLP,_Auditor,_Financiera, _Sicav,_ute,Actos) 
+        INSERT INTO borme_empresas (_id,_key,Nombre,provincia,SA,SL,SLL,SLP,_Auditor,_Financiera, _Sicav,_ute,_Socimi,Actos) 
         VALUES (LAST_INSERT_ID(),_iKey, _NAME ,_provincia,_NAME REGEXP 'SA$',
 														_NAME REGEXP 'SL$',
 														_NAME REGEXP 'SLL$',
-														_NAME REGEXP 'SLP$',@Auditor,@Financiera,@Sicav,@UTE,JSON_ARRAY());
+														_NAME REGEXP 'SLP$',@Auditor,@Financiera,@Sicav,@UTE,@Socimi,JSON_ARRAY());
     ELSE
-		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius, @Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav ;
+		SELECT 0 as _add, _iKey as _key, (SELECT id FROM borme_keys WHERE _key=_iKey) as Id, (SELECT ia_suspicius FROM borme_keys WHERE _key=_iKey) as ia_suspicius, @Empresa as _Empresa,@Directivo as _Directivo,@Financiera as _Financiera,@Auditor as _Auditor,@Sicav as _Sicav, @Socimi as _Socimi ;
     END IF;
     
 END ;;
@@ -698,32 +875,102 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_PARSER_suspicius`(_did int, _minrel int)
+CREATE DEFINER=`root`@`%` PROCEDURE `Insert_Data_PARSER_suspicius`(_did int)
 BEGIN
+	DECLARE _id int;	
+    DECLARE _fin int DEFAULT 0;
+    DECLARE _keys CURSOR FOR 
+		SELECT id FROM borme_keys
+			WHERE id IN (
+				SELECT node.idx FROM borme_keys,
+						JSON_TABLE(Nodes, '$[*]' columns(
+														idx int PATH '$'
+														)) node
+						  WHERE borme_keys.id=_did);
 
-    DECLARE _id INT;
+
+	DECLARE CONTINUE HANDLER FOR NOT FOUND SET _fin=1; 
+	OPEN _keys;
+	get_keys: LOOP
+		FETCH _keys INTO _id;
+
+		IF _fin = 1 THEN
+			LEAVE get_keys;
+		END IF;
+		UPDATE borme_keys SET ia_suspicius=1 WHERE id =_id;
+						
+	END LOOP get_keys;
+	CLOSE _keys; 
+    UPDATE borme_keys SET ia_suspicius=1 WHERE id =_did;
+end ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `JSON_Tree_Relations` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`%` PROCEDURE `JSON_Tree_Relations`(_xid int, _JSON boolean)
+BEGIN
+	
+    IF _JSON THEN
+			SELECT _xid;
+    		SELECT  JSON_OBJECT(
+						"_id", borme_keys.id,
+                        "_Nombre", borme_keys.Nombre,
+                        "_type",_type(borme_keys._Empresa,borme_keys._Directivo, borme_keys._Auditor , borme_keys._Financiera , borme_keys._Sicav , borme_keys._Socimi ),
+                        "_tr",borme_keys.T_Relations,
+                        "_ia",IF(borme_keys.Ia_suspicius,1,0),       
+                        "_Nodes",JSON_ARRAYAGG(JSON_OBJECT(
+													'_id',_Tr.id,
+                                                    "_Nombre",_Tr.Nombre,
+                                                    "_type",_type(_Tr._Empresa,_Tr._Directivo, _Tr._Auditor , _Tr._Financiera , _Tr._Sicav , _Tr._Socimi ),
+                                                    "_tr",_Tr.T_Relations,
+                                                    "_ia",IF(_Tr.Ia_suspicius,1,0),						
+                                                    "_xNodes",_Tr.Nodes)) ) as JSON_Relations
+						FROM  
+                         bbdd_kaos155_borme.borme_keys,
+						JSON_TABLE(Nodes, '$[*]' columns(
+									id int PATH '$'
+                                    ) ) node 
+									INNER JOIN bbdd_kaos155_borme.borme_keys as _Tr ON _Tr.id = node.id
+									where bbdd_kaos155_borme.borme_keys.id = _xid;
+	else
     
-    DECLARE fin INTEGER DEFAULT 0;
-    DECLARE runners_cursor CURSOR FOR 
-		SELECT borme_keys.id FROM borme_relaciones JOIN borme_keys on borme_relaciones.Empresa_id=borme_keys._id WHERE borme_relations.Relation_id=_did AND NOT borme_keys.ia_suspicius;
-        
-	DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin=1;
-    SET @Counter = (SELECT T_Relations FROM borme_keys where _id=_did AND T_Relations>_minrel AND _Directivo AND NOT _Auditor AND NOT _Financiera AND NOT _sicav);
-    IF @Counter>0 THEN
-		OPEN runners_cursor;
-		get_cursor: LOOP
-			FETCH runners_cursor INTO _id;
-			IF fin = 1 THEN
-			   LEAVE get_cursor;
-			END IF;
-            UPDATE borme_keys SET ia_suspicius=1 WHERE id = _id;
-			
-		END LOOP get_cursor;
-		
-		UPDATE borme_keys SET ia_suspicius=1 WHERE _id = _did ;
-		CLOSE runners_cursor;   
-	END IF;
-    SELECT @Counter as counter;
+			SELECT JSON_OBJECT(
+                        "_type",_type(borme_keys._Empresa,borme_keys._Directivo, borme_keys._Auditor , borme_keys._Financiera , borme_keys._Sicav , borme_keys._Socimi ),
+                        "_tr",borme_keys.T_Relations,
+                        "_ia",IF(borme_keys.Ia_suspicius,1,0)  ,                        						
+                        "_Nombre", borme_keys.Nombre,
+                        "_id", borme_keys.id) as JSON_Relaciones_De
+			FROM borme_keys
+			where borme_keys.id = _xid;
+    
+    		SELECT  JSON_OBJECT(
+				'_id',_Tr.id,
+                "_Nombre",_Tr.Nombre,
+                "_type",_type(_Tr._Empresa,_Tr._Directivo, _Tr._Auditor , _Tr._Financiera , _Tr._Sicav , _Tr._Socimi ),
+                
+                "_tr",_Tr.T_Relations,
+                "_ia",IF(_Tr.Ia_suspicius,1,0),
+                "_Nodes",_Tr.Nodes) as JSON_Relacionados_con 
+						
+						FROM  
+                         borme_keys,
+						JSON_TABLE(Nodes, '$[*]' columns(
+									id int PATH '$'
+                                    ) ) node 
+									INNER JOIN bbdd_kaos155_borme.borme_keys as _Tr ON _Tr.id = node.id
+									where borme_keys.id = _xid;
+    END IF;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -832,4 +1079,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-01  0:26:01
+-- Dump completed on 2019-05-04  8:57:01
