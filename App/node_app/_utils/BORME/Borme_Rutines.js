@@ -575,25 +575,25 @@ module.exports = function (app, options, transforms) {
                 const _this = this
                 return {
                     Concurso: function (_linea, __data, callback) {
-                        callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: app._.upperFirst(__data.values.value.toLowerCase()) }, 0)
+                        callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: app._.upperFirst(__data.values.value.toLowerCase()) }, 0, { k: null }, true)
                     },
                     Varios: function (_linea, __data, callback) {
-                        callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: app._.upperFirst(__data.values.value.toLowerCase()) }, 0)
+                        callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: app._.upperFirst(__data.values.value.toLowerCase()) }, 0, { k: null }, true)
                     },
                     Constitucion: function (_linea, __data, callback) {
-                        callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
+                        callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0, { k: null }, true)
                     },
                     AmpliaCapital: function (_linea, __data, callback) {
                         //debugger
-                        callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
+                        callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0, { k: null }, true)
                     },
                     Disolucion: function (_linea, __data, callback) {
                         //debugger
-                        callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
+                        callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0, { k: null }, false)
                     },
                     Extincion: function (_linea, __data, callback) {
                         //debugger
-                        callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0)
+                        callback({ type: __data.type, key: __data.values.key, value: __data.values.value }, 0, { k: null },false)
                     },
                     SaveDirectivo: function (_linea, __data, Active, callback) {
                         const capitalizeFirstLetter = function (string) {
@@ -762,7 +762,7 @@ module.exports = function (app, options, transforms) {
                         this.SaveDirectivo(_linea, __data, false, callback)
                     },
                     Erratas: function (_linea, __data, callback) {
-                        callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: __data.values.value }, 0)
+                        callback({ type: __data.type, key: app._.trim(__data.values.key.replace(".", "").replace(":", "")), value: __data.values.value }, 0, { k: null }, true)
                     },
                 }
             },
