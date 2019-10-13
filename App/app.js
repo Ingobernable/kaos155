@@ -45,11 +45,12 @@ var App = {
     //datos generales
     //_fileCredenciales: 'cred_',
     TypeBoletines: ["BORME", "BOE", "BOCM"],
-    Commands: ['SCRAP', 'PARSER', 'GRAFOS', 'IA', 'EXIT'],
+    Commands: ['SCRAP', 'PARSER', 'GRAFOS', 'IA', 'WWW', 'EXIT'],
     Mins: { BOE: 2001, BOCM: 2010, BORME: 2009 },
 
     //Plugins
     _: require('lodash'),
+
     dns: require('dns'),
     net : require('net'),
     mysql: require('mysql'),
@@ -156,7 +157,7 @@ String.prototype.capitalizeAllFirstLetter = function () {
                     min_TRelations: 100
                 }, 
                 update: myArgs[3],
-                anyo: myArgs[0] == 'IA' ? null : !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
+                anyo: myArgs[0] == 'IA' || myArgs[0] == 'WWW' ? null : !isNaN(myArgs[2]) ? myArgs[2] : date.getFullYear(),
                 Command: myArgs[0],
 
 
@@ -350,6 +351,30 @@ String.prototype.capitalizeAllFirstLetter = function () {
 
                                     })
                                 })
+
+
+                            },
+                            WWW: function (type) {
+
+                                app.express = require('express')
+                                require('./node_app/sql_common.js')(app, function (SQL) {
+                                    app.commonSQL = SQL
+                                    SQL.init({ SQL: { db: null }, Command: 'WWW' }, 'WWW', function (options) {
+                                        app.commonSQL.SQL.db = options.SQL.db
+
+                                        app._io = require('./node_www/IO.js')(app)
+                                        require('./node_www/server_www.js')(app, function (io) {
+                                            if (app.process.stdout.io == null) {
+                                                app.process.stdout.io = io
+
+                                                //options._common.Actualize(options, type, {}, app._returnfunc)
+                                            }
+                                        })
+
+                                    })
+                                })
+
+
 
 
                             },

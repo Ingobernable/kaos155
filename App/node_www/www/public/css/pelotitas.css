@@ -1,0 +1,236 @@
+﻿body {
+    padding: 10px;
+}
+#graph_container {
+    margin-top: 10px;
+    position: relative;
+    width: 100%;
+    
+}
+
+
+
+.hidden {
+    display: none;
+}
+
+.node {
+    cursor: pointer;
+    fill: #fff;
+    stroke: #000;
+}
+
+.company {
+    fill: #c2d3cf
+}
+
+.person {
+    fill: #9b96ab
+}
+
+.juridic {
+    fill: #f1992b
+}
+
+.link {
+    stroke: #444;
+    stroke-width: 1px;
+    fill: none
+}
+
+.nodetext {
+    font-family: 'Trebuchet MS';
+    font-size: .85em;
+    cursor: pointer;
+    stroke-width: .04px;
+    fill: #111
+}
+
+.nopointer {
+    cursor: default
+}
+
+.nodenumrelstext {
+    font-family: 'Open Sans';
+    font-size: .7em;
+    cursor: pointer;
+    stroke-width: .01px;
+    fill: #fff
+}
+
+.nodenumrelsback {
+    fill: #ff5600;
+    stroke: #c44200;
+    stroke-width: 2px
+}
+
+.fixed {
+    stroke-width: 2px;
+    stroke: #454545
+}
+
+.inactivelink {
+    stroke-width: 1px;
+    stroke: #444;
+    stroke-dasharray: 5,5
+}
+
+.button {
+    stroke: #ddd;
+    stroke-width: 2px;
+    fill: transparent;
+    cursor: pointer
+}
+
+.buttontext {
+    fill: #3e77ac;
+    cursor: pointer;
+    font-size: 10px
+}
+
+.fullscreen {
+    position: fixed !important;
+    width: 100%;
+    height: 100% !important;
+    top: 43px;
+    left: 0;
+    z-index: 1000;
+    background-color: #fff
+}
+
+
+
+#relations {
+    width: 100%;
+    height: calc(100% - 10px);
+    cursor: default
+}
+
+#ui #topright, #ui #topleft, #ui #bottomleft, #ui #bottomright {
+    display: block;
+    position: absolute;
+    padding: 5px 3px;
+    z-index: 1001
+}
+
+#ui #topright {
+    top: 0;
+    right: 0
+}
+
+#ui #topleft {
+    top: 0;
+    left: 0
+}
+
+#ui #bottomleft {
+    bottom: 0;
+    left: 0
+}
+
+#ui #bottomright {
+    bottom: 0;
+    right: 0
+}
+
+.fullscreen #ui #bottomleft, .fullscreen #ui #bottomright {
+    bottom: 45px
+}
+
+#ui {
+    color: #999
+}
+
+    #ui .disabled {
+        color: #ddd;
+        cursor: default;
+        text-decoration: none
+    }
+
+    #ui h1 {
+        margin: 0 5px 5px 5px;
+        font-size: 1.7em;
+        font-weight: 700;
+        color: #444
+    }
+
+    #ui h2 {
+        margin: 0 0 10px 0;
+        font-size: 1.4em
+    }
+
+    #ui .overlay {
+        background-color: rgba(255,255,255,.9);
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 2px;
+        font-size: .8em
+    }
+
+    #ui #help {
+        display: none;
+        margin: 10px 5px;
+        width: 260px
+    }
+
+    #ui #showhelp {
+        margin-left: 7px
+    }
+
+    #ui #closehelp {
+        float: right;
+        cursor: pointer
+    }
+
+    #ui #help svg {
+        height: 150px
+    }
+
+    #ui #help ul {
+        padding-left: 15px
+    }
+
+    #ui #help li {
+        margin: 0 0 2px 0
+    }
+
+    #ui #uilargeoptions {
+        display: none;
+        margin: 35px 2px 0 0;
+        width: 250px
+    }
+
+        #ui #uilargeoptions p {
+            margin: 10px 0
+        }
+
+        #ui #uilargeoptions .glyphicon {
+            margin-right: 10px
+        }
+
+    #ui #uierror {
+        margin: 0 0 10px 10px
+    }
+
+    #ui .grapherror {
+        color: #db3c00;
+        font-size: .8em;
+        margin: 0
+    }
+
+    #ui a {
+        cursor: pointer
+    }
+
+    #ui #permalinkbox {
+        display: none
+    }
+
+        #ui #permalinkbox input {
+            width: 200px
+        }
+
+    #ui #linkroles {
+        margin: 0 0 10px 10px;
+        font-size: .8em
+    }

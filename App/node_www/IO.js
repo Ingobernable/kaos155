@@ -4,17 +4,18 @@
         ip : require('ip'),
         listen: function (io, callback) {
             var _this = this
-            console.log("para comenzar el scrap http:" + this.ip.address() + ":" + app.process.port+"/"+app.Command+"/"+app.Type)
-                io.on('connection', function (socket) {
-                    console.log('IO Connect ' + socket.id)
+            if (app.Command!='WWW')
+                console.log("para comenzar el scrap http:" + this.ip.address() + ":" + app.process.port+"/"+app.Command+"/"+app.Type)
+            io.on('connection', function (socket) {
+                console.log('IO Connect ' + socket.id)
 
-                    //socket.on('elasticsearch', function (data) {
-                    //    if (_this.elasticIO.socket == null && data.command == 'hello')
-                    //        _this.elasticIO.socket = socket
-                    //    _this.elasticIO.receive(data, socket)
+                //socket.on('elasticsearch', function (data) {
+                //    if (_this.elasticIO.socket == null && data.command == 'hello')
+                //        _this.elasticIO.socket = socket
+                //    _this.elasticIO.receive(data, socket)
                     
-                    //})
-                    
+                //})
+                if (app.Command != 'WWW') {
                     socket.on('sqlLite', function (data) {
                         if (data == null)
                             debugger
@@ -113,19 +114,19 @@
 
                     })
 
-                   // app.SQL.commands.getLstEmpresas(app, app.SQL.BORME.db, function (app, _this, data) {
-                   //     var send = { Directivo: data.Directivo, Empresa: data.Empresa, data: app._xData, list: { tipo: [], tramite: [] }, Tramas: data.trama }
+                    // app.SQL.commands.getLstEmpresas(app, app.SQL.BORME.db, function (app, _this, data) {
+                    //     var send = { Directivo: data.Directivo, Empresa: data.Empresa, data: app._xData, list: { tipo: [], tramite: [] }, Tramas: data.trama }
                     socket.emit('connected', { command :app.Command, anyo:app.anyo, type:app.Type , framework:'<div class"boxcontainer"></div>' })
-                        //socket.emit('lst_cif', data)
-                    //})
-                    //}
-                    if (app.process.stdout.io == null)
-                        callback(io)
-                })
-                io.on('disconnect', function (reason) {
-                    debugger
-                    console.log('disconnect', reason)
-                })
+                    //socket.emit('lst_cif', data)
+                //})
+                }
+                if (app.process.stdout.io == null)
+                    callback(io)
+            })
+            io.on('disconnect', function (reason) {
+                debugger
+                console.log('disconnect', reason)
+            })
 
             
         }

@@ -97,7 +97,7 @@ module.exports = function (app, callback) {
             //    return app.path.normalize('sqlfiles/' + Command.toLowerCase() + '\cred_' + type.toLowerCase() + '.json')
         },
         filedb: function (Command,type) {
-            return "bbdd_kaos155" + (Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() :  (type == "GRAFOS" || type=="IA" ? "_" + type.toLowerCase()  :  "_contratos")))
+            return "bbdd_kaos155" + (Command == 'SCRAP' ? '_text' : (type == "BORME" ? "_" + type.toLowerCase() : type == "WWW"?'_borme_IA': (type == "GRAFOS" || type=="IA" ? "_" + type.toLowerCase()  :  "_contratos")))
         },
         init: function (options, type, callback) {
             //debugger
@@ -561,7 +561,7 @@ module.exports = function (app, callback) {
                 search: function (SQL, options, type, valor, callback) {
 
                     // valor = valor // type=='Empresa'?valor.toUpperCase():valor // _.kebabCase(_.unescape(valor)).replace("--","-").split("-").join(" +")
-                    const _cadsql = "SELECT JSON_OBJECT('_key',_key ,'Nombre',Nombre, '_Empresa',CONVERT(_Empresa , UNSIGNED),'_Directivo',CONVERT(_Directivo, UNSIGNED),'_Auditor', CONVERT(_Auditor, UNSIGNED)) as root FROM borme_keys WHERE _" + type + "=1 AND MATCH(Nombre) AGAINST ('" + valor + "' IN BOOLEAN MODE) LIMIT 20;"
+                    const _cadsql = "SELECT JSON_OBJECT('_key',_key ,'Nombre',Nombre, '_Empresa',CONVERT(_Empresa , UNSIGNED),'_Directivo',CONVERT(_Directivo, UNSIGNED),'_Auditor', CONVERT(_Auditor, UNSIGNED)) as root FROM bbdd_kaos155_borme.borme_keys WHERE _" + type + "=1 AND MATCH(Nombre) AGAINST ('" + valor + "' IN BOOLEAN MODE) LIMIT 20;"
                     this.query(SQL, options, _cadsql, [], callback)
                 },
                 relations: function (SQL, options, _key, callback) {

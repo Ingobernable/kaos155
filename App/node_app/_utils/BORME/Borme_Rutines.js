@@ -1194,10 +1194,10 @@ module.exports = function (app, options, transforms) {
                 }
                 return _e
             },
-            explora: function (cadena, keys, options) {
+            explora: function (cadena, keys, maps) {
 
                 const _ret = []
-                const array = options.Rutines.maps
+                const array = maps
                 let _i = 0
                 let _p = ""
                 let _func = null

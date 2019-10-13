@@ -230,11 +230,13 @@ module.exports = function (app, options) {
                     'censores',
                     'codemaso',
                     'condelegado',
+                    'conind',                       // new
                     'consejero',
                     'consdeleg',
                     'consdelman',
                     'consdelsol',
                     'consjdomini',
+                    
                     'consjl',
                     'entdeposit',
                     'entiddeposit',

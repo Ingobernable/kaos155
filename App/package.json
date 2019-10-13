@@ -7,6 +7,7 @@
     "name": "INGOBERLAB"
   },
   "dependencies": {
+    "@mysql/xdevapi": "^8.0.16",
     "aguid": "^2.0.0",
     "cheerio": "^1.0.0-rc.2",
     "child_process": "^1.0.2",
