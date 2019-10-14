@@ -269,11 +269,16 @@ module.exports = function (app, options) {
                     'secjrec',
                     'secjgpv',
                     'secrcenocon',
+                    'secret',
+                    'secretgral',
+                    
+                
                     'seccmdirncon',
                     'seccomaudit',
                     'seccomeje',
                     'seccomsaud',
                     'seccomsctr',
+                    'secrenoconsj',
                     'secconsrec',
                     'secr2nc',
                     'secrcomctr',
@@ -294,12 +299,25 @@ module.exports = function (app, options) {
                     'socio unico',
                     'socprof',
                     'socuniprof',
-                    'vicepresid',
+                    
                     'v-sec No Con',
                     'vsecr1nc',
 
                     'vsecrnoconsj',
                     'vsec Cejcr',
+
+                    'vicepresiden',
+                    'vicepresid',
+                    'vicepr1',
+                    'vicepr2',
+                    'vicepr3',
+                    'vicepr4',
+                    'viceprejun',
+                    'vicepresi1º',
+
+
+                    'vicepresid',
+                    'vicepresiden',
                     'vicesecret',
                     'vicesecret1',
                     'vicsec Ce',
